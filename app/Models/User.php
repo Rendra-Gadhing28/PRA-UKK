@@ -32,12 +32,18 @@ class User extends Authenticatable
         'total_spending', 
         'is_active',
         'role', 
-        'email_verified_at'
+        'email_verified_at',
+        'google_id',
+        'google_token',
+        'google_refresh_token',
+        'avatar_url',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        'google_token',        // Sembunyikan token
+        'google_refresh_token', 
     ];
 
     protected $casts = [

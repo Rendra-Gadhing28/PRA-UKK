@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class vouchers extends Model
+class Vouchers extends Model
 {
     protected $fillable = [
         'code', 
