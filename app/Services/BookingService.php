@@ -15,13 +15,6 @@ class BookingService
 {
     protected int $lockTtlSeconds = 10;
 
-    /**
-     * Hitung waktu selesai booking = waktu mulai + total durasi semua treatment.
-     *
-     * @param  Carbon  $startDateTime  Tanggal + jam mulai booking
-     * @param  array<int>  $treatmentIds
-     * @return array{end: Carbon, total_duration: int, treatments: \Illuminate\Support\Collection}
-     */
     public function calculateEndTime(Carbon $startDateTime, array $treatmentIds): array
     {
         $treatments = Treatments::whereIn('id', $treatmentIds)->get();
@@ -90,14 +83,7 @@ class BookingService
             ->exists();
     }
 
-    /**
-     * Buat booking baru dengan proteksi race condition 3 lapis:
-     *   1. Cache lock (mencegah 2 request bersamaan proses booking beautician+tanggal yang sama)
-     *   2. DB transaction + lockForUpdate (row lock di level database)
-     *   3. Re-check overlap di dalam transaction sebelum insert (defense terakhir)
-     *
-     * @param  array<int, array{treatment_id:int, quantity:int}>  $items
-     */
+    
     public function createBooking(
         int $userId,
         int $beauticianId,

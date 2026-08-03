@@ -21,4 +21,8 @@ class Treatments extends Model
         'rating', 
         'rating_count', 
     ];
+
+    public function Categories(){
+        return $this->belongsTo(Categories::class, 'category_id');
+    }
 }

@@ -14,4 +14,10 @@ class BookingTreatments extends Model
         'subtotal', 
     ];
 
+    public function Bookings(){
+        return $this->belongsTo(Bookings::class, 'booking_id');
+    }
+    public function Treatments(){
+        return $this->belongsTo(Treatments::class, 'treatment_id');
+    }
 }

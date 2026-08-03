@@ -31,4 +31,15 @@ class Bookings extends Model
         'canceled_at', 
         'version', 
     ];
+
+    public function User(){
+        return $this->belongsTo(User::class, 'user_id');
+    }
+    public function Beauticians(){
+        return $this->belongsTo(Beauticians::class, 'beautician_id');
+    }
+
+    public function BookingTreatments(){
+        return $this->hasMany(BookingTreatments::class, 'booking_id');
+    }
 }

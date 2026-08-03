@@ -19,4 +19,10 @@ class Transactions extends Model
         'metadata', 
         'created_by',
     ];
+
+    public function Bookings(){
+        return $this->belongsTo(Bookings::class, 'booking_id');
+    }
+
+    
 }

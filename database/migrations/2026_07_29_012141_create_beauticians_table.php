@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('email')->nullable()->unique();
             $table->longtext('photo')->nullable();
             $table->text('bio');
+            $table->integer('total_bookings')->default(0)->comment('Total booking yang telah dilakukan oleh beautician');
+            $table->longText('service_area')->nullable()->comment('Daftar area layanan (array)');
             $table->boolean('is_active')->default(true);
             $table->timestamps();
 

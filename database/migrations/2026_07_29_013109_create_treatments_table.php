@@ -24,7 +24,7 @@ return new class extends Migration
             $table->decimal('price', 20, 2);
             $table->integer('duration_minutes')->comment('Durasi dalam menit');
             $table->longText('images')->nullable();
-            $table->enum('badge', ['none', 'best_seller', 'new', 'promo'])->default('none');
+            $table->enum('badge', ['none', 'best_seller', 'new']);
             $table->boolean('is_active')->default(true);
             $table->integer('sort_order')->default(0);
             $table->decimal('rating', 5,2)->default(0.00);

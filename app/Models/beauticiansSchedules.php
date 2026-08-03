@@ -13,4 +13,8 @@ class BeauticiansSchedules extends Model
         'end_time', 
         'is_working'
     ];
+
+    public function Beautians(){
+        return $this->belongsTo(Beauticians::class, 'beautician_id');
+    }
 }

@@ -14,5 +14,4 @@ class Beauticians extends Model
         'bio', 
         'is_active'
     ];
-
 }

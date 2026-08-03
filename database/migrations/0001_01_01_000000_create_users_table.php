@@ -18,10 +18,10 @@ return new class extends Migration
             $table->string('phone', 30)->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->longText('avatar');
-            $table->string('address');
-            $table->decimal('latitude');
-            $table->decimal('longitude');
+            $table->longText('avatar')->nullable();
+            $table->string('address')->nullable();
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
             $table->enum('membership_level', ['regular', 'silver', 'gold', 'platinum'])->default('regular');
             $table->integer('total_points')->default(0);
             $table->integer('total_bookings')->default(0);
