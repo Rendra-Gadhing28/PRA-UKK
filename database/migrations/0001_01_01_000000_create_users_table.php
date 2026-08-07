@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('phone', 30)->unique();
+            $table->string('phone', 30)->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->longText('avatar')->nullable();
@@ -28,12 +28,17 @@ return new class extends Migration
             $table->decimal('total_spending', 15,2)->default(0);
             $table->boolean('is_active')->default(true);
             $table->enum('role', ['admin', 'user'])->default('user');
+            $table->string('google_id')->nullable()->unique()->nullable();
+            $table->text('google_token')->nullable();
+            $table->text('google_refresh_token')->nullable();
+            $table->string('avatar_url')->nullable(); // Avatar dari Google
             $table->rememberToken();
             $table->timestamps();
 
             $table->index('role');
             $table->index('membership_level');
             $table->index('is_active');
+            $table->index('google_id');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

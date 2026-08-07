@@ -207,6 +207,7 @@ Package yang Digunakan:
   - barryvdh/laravel-dompdf (PDF export)
   - maatwebsite/excel (Excel export)
   - intervention/image (Image optimization - optional)
+  - MidTrans (Sandbox)
 
 Development Tools:
   Local Server: Laravel Sail (Docker) / Laragon / XAMPP
@@ -459,7 +460,11 @@ erDiagram
         int total_bookings default 0
         decimal total_spending default 0
         boolean is_active default true
-        boolean is_admin default false
+        enum role
+        google_id
+        google_token
+        google_refresh_token
+        avatar_url
         remember_token
         timestamps
     }
@@ -490,7 +495,7 @@ erDiagram
         enum badge nullable
         boolean is_active default true
         int sort_order default 0
-        decimal rating_avg default 0
+        decimal rating default 0
         int rating_count default 0
         timestamps
     }
@@ -504,8 +509,6 @@ erDiagram
         string email nullable
         string photo nullable
         text bio nullable
-        json specialties nullable
-        decimal rating_avg default 0
         int total_bookings default 0
         json service_area nullable
         boolean is_active default true
@@ -627,6 +630,22 @@ erDiagram
         boolean is_used default false
         timestamp used_at nullable
         timestamps
+    }
+
+    NOTIFICATIONS {
+        bigint id PK
+        string type 
+        string notifiable_type 
+        bigint notifiable_id 
+        text data 
+        timestamp read_at
+        timestamps
+    }
+
+    CACHE {
+        string key
+        text value
+        expiration bigint
     }
 ```
 

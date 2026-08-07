@@ -14,120 +14,101 @@ use Laravel\Socialite\Facades\Socialite;
 class GoogleAuthController extends Controller
 {
     /**
-     * Redirect user ke Google consent screen.
+     * Redirect ke Google consent screen
      */
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')
+            ->with(['prompt' => 'select_account'])
+            ->redirect();
     }
 
     /**
-     * Handle callback dari Google.
+     * Handle callback dari Google
      */
     public function handleGoogleCallback()
     {
         try {
-            // 1. Dapatkan data user dari Google
+            // 1. Dapatkan user dari Google
             $googleUser = Socialite::driver('google')->user();
             
-            // 2. Cari user existing atau buat baru
+            // 2. Cari atau buat user
             $user = $this->findOrCreateUser($googleUser);
             
-            // 3. Update Google token (untuk keperluan refresh token)
-            $this->updateGoogleToken($user, $googleUser);
+            // 3. Update Google tokens
+            $this->updateGoogleTokens($user, $googleUser);
             
             // 4. Login user
-            Auth::login($user, true); // true = remember me
+            Auth::login($user, true);
             
-            // 5. Redirect dengan toast
-            ToastHelper::success(
-                'Login Berhasil! 🎉',
-                "Selamat datang kembali, {$user->name}!"
-            );
+            // 5. Regenerate session
+            request()->session()->regenerate();
             
-            return $this->redirectAfterLogin($user);
+            // 6. Redirect dengan toast
+            return redirect()->route($user->isAdmin() ? 'admin.dashboard' : 'dashboard')
+                ->with('toast', [
+                    'type' => 'success',
+                    'message' => 'Login Berhasil! ',
+                    'description' => "Selamat datang, {$user->name}!",
+                ]);
             
         } catch (\Exception $e) {
-            // Log error untuk debugging
             \Log::error('Google Login Error: ' . $e->getMessage());
             
-            ToastHelper::error(
-                'Login Gagal 😥',
-                'Terjadi kesalahan saat login dengan Google. Silakan coba lagi.'
-            );
-            
-            return redirect()->route('login');
+            return redirect()->route('login')
+                ->with('toast', [
+                    'type' => 'error',
+                    'message' => 'Login Gagal',
+                    'description' => 'Terjadi kesalahan. Silakan coba lagi.',
+                ]);
         }
     }
 
     /**
-     * Cari user existing atau buat baru.
+     * Cari existing user atau buat baru
      */
     private function findOrCreateUser($googleUser): User
     {
-        // Cari berdasarkan google_id
-        $user = User::where('google_id', $googleUser->id)->first();
-        
+        // 1. Cari berdasarkan google_id
+        $user = User::where('google_id', $googleUser->getId())->first();
         if ($user) {
-            // User sudah pernah login dengan Google sebelumnya
             return $user;
         }
-        
-        // Cari berdasarkan email
-        $user = User::where('email', $googleUser->email)->first();
-        
+
+        // 2. Cari berdasarkan email
+        $user = User::where('email', $googleUser->getEmail())->first();
         if ($user) {
-            // User sudah terdaftar dengan email yang sama
-            // Link akun Google ke akun existing
+            // Link Google ke akun existing
             $user->update([
-                'google_id' => $googleUser->id,
-                'google_token' => $googleUser->token,
-                'google_refresh_token' => $googleUser->refreshToken,
-                'avatar_url' => $googleUser->avatar,
+                'google_id' => $googleUser->getId(),
+                'avatar_url' => $googleUser->getAvatar(),
             ]);
-            
             return $user;
         }
-        
-        // Buat user baru
+
+        // 3. Buat user baru
         return User::create([
-            'name' => $googleUser->name,
-            'email' => $googleUser->email,
-            'google_id' => $googleUser->id,
-            'google_token' => $googleUser->token,
-            'google_refresh_token' => $googleUser->refreshToken,
-            'avatar_url' => $googleUser->avatar,
-            'phone' => null, // User bisa isi nanti
-            'password' => bcrypt(Str::random(32)), // Random password (tidak digunakan)
-            'email_verified_at' => now(), // Email dari Google sudah verified
+            'name' => $googleUser->getName(),
+            'email' => $googleUser->getEmail(),
+            'google_id' => $googleUser->getId(),
+            'avatar_url' => $googleUser->getAvatar(),
+            'phone' => null, // Bisa diisi nanti
+            'password' => null, // No password for Google users
+            'email_verified_at' => now(), // Google already verified
             'role' => 'user',
             'membership_level' => 'regular',
         ]);
     }
 
     /**
-     * Update Google token.
+     * Update Google tokens
      */
-    private function updateGoogleToken(User $user, $googleUser): void
+    private function updateGoogleTokens(User $user, $googleUser): void
     {
         $user->update([
             'google_token' => $googleUser->token,
             'google_refresh_token' => $googleUser->refreshToken,
-            'avatar_url' => $googleUser->avatar,
+            'avatar_url' => $googleUser->getAvatar(),
         ]);
-    }
-
-    /**
-     * Redirect setelah login berdasarkan role.
-     */
-    private function redirectAfterLogin(User $user)
-    {
-        // Redirect berdasarkan role
-        if ($user->isAdmin()) {
-            return redirect()->route('admin.dashboard');
-        }
-        
-        // Redirect ke halaman sebelumnya atau dashboard user
-        return redirect()->intended(route('user.dashboard'));
     }
 }

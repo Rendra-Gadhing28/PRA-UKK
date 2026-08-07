@@ -12,12 +12,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 
-class User extends Model
+class User extends Authenticatable
 {
     
     use HasFactory, Notifiable;
     //field menampung data sementara
-    protected $fillable = [
+    
+        protected $fillable = [
         'name',
         'email',
         'phone', 
@@ -93,6 +94,7 @@ class User extends Model
         return $this->membership_level === $level;
     }
 
+
     public function hasMinMembership(string $level): bool {
         $levels = [
             'regular' => 0,
@@ -164,4 +166,10 @@ class User extends Model
     public function scopeMembership($query, string $level){
         return $query->where('membership_level', $level);
     }
+
+      public function hasGoogleAccount() {
+        return !is_null($this->google_id);
+    }
+
+
 }
