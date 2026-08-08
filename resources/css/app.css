@@ -1,3 +1,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Work+Sans:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
+
+.glass-card {
+    background: rgba(255, 248, 248, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(91, 58, 41, 0.08);
+}
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+     vertical-align: middle;
+}
+
+.blob-bg {
+    position: fixed;
+    z-index: -10;
+    filter: blur(60px);
+    opacity: 0.4;
+    border-radius: 9999px;
+    pointer-events: none;
+}

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('beauticians', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('phone', 30);
+            $table->string('phone', 30)->nullable();
             $table->string('email')->nullable()->unique();
             $table->longtext('photo')->nullable();
             $table->text('bio');

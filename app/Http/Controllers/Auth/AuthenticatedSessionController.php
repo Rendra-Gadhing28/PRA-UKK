@@ -50,7 +50,7 @@ class AuthenticatedSessionController extends Controller
         // Regenerasi session untuk mencegah session fixation attack
         $request->session()->regenerate();
 
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         // Periksa status akun aktif

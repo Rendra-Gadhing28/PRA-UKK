@@ -5,6 +5,8 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\User\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\User\BookingController;
+use App\Http\Controllers\User\TreatmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,7 +66,16 @@ Route::middleware(['auth'])->prefix('dashboard')->name('user.')->group(function 
 
     // Dashboard utama
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-
+    Route::get('/bookings/list', [BookingController::class, 'list'])
+    ->middleware('throttle:60,1')
+    ->name('bookings.list');
+    
+    Route::get('/treatments', [TreatmentController::class, 'index'])
+    ->name('treatments.index');
+ 
+    Route::get('/treatments/search', [TreatmentController::class, 'search'])
+    ->middleware('throttle:30,1')
+    ->name('treatments.search');
 //     // Treatment (browse & detail)
 //     Route::get('/treatment', [\App\Http\Controllers\User\TreatmentController::class, 'index'])->name('treatments.index');
 //     Route::get('/treatment/{slug}', [\App\Http\Controllers\User\TreatmentController::class, 'show'])->name('treatments.show');
