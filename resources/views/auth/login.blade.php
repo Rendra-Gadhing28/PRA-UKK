@@ -1,21 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Masuk - Yalia Beauty</title>
-    <!-- Fonts -->
+
+    {{-- Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS -->
+
+    {{-- Tailwind CSS (CDN — konsisten dengan desain asli) --}}
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Alpine.js -->
+
+    {{-- Alpine.js --}}
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
-    <!-- Motion.dev (Motion One) & Lenis -->
+
+    {{-- Motion.dev (Motion One) & Lenis — JANGAN diubah, sesuai permintaan --}}
     <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
 
@@ -68,33 +70,42 @@
         [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 to-rose-100 px-4 py-12 relative overflow-hidden">
+<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 to-rose-100 px-4 py-8 sm:py-12 relative overflow-hidden">
 
-    <!-- Background Decorative Elements -->
-    <div class="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-accent-clear opacity-30 blur-[120px] rounded-full"></div>
-    <div class="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-accent-soft opacity-30 blur-[120px] rounded-full"></div>
+    {{-- Background Decorative Elements --}}
+    <div class="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-accent-clear opacity-30 blur-[120px] rounded-full pointer-events-none"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-accent-soft opacity-30 blur-[120px] rounded-full pointer-events-none"></div>
 
-    <div id="login-container" class="w-full max-w-md relative z-10 opacity-0">
+    {{-- Card dibatasi max-w-96 (24rem/384px) — tidak terlalu lebar di desktop, full-width di mobile --}}
+    <div id="login-container" class="w-full max-w-96 relative z-10 opacity-0">
+
         {{-- Logo & Judul --}}
-        <div class="text-center mb-8">
-            <a href="#" class="inline-flex items-center gap-3 mb-4 group">
-                <div class="w-12 h-12 rounded-full bg-gradient-brand p-0.5 shadow-lg group-hover:scale-110 transition-transform duration-300">
+        <div class="text-center mb-6 sm:mb-8">
+            <a href="{{ route('home') }}" class="inline-flex items-center gap-3 mb-4 group">
+                <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-brand p-0.5 shadow-lg group-hover:scale-110 transition-transform duration-300">
                     <div class="w-full h-full rounded-full bg-white flex items-center justify-center">
-                        <span class="text-xl">🌸</span>
+                        <img src="{{ asset('logo/yalia-logos-trnsprnt.svg') }}" alt="Yalia Beauty Logo" class="w-8 h-8 sm:w-10 sm:h-10 object-cover rounded-full">
                     </div>
                 </div>
-                <span class="text-2xl font-display font-extrabold bg-gradient-brand bg-clip-text text-transparent">Yalia Beauty</span>
+                <span class="text-xl sm:text-2xl font-display font-extrabold bg-gradient-brand bg-clip-text text-transparent">Yalia Beauty</span>
             </a>
-            <h1 class="text-3xl font-display font-extrabold text-dark tracking-tight">Masuk ke Akun Anda</h1>
+            <h1 class="text-2xl sm:text-3xl font-display font-extrabold text-dark tracking-tight">Masuk ke Akun Anda</h1>
             <p class="text-gray-500 text-sm mt-2">Selamat datang kembali di Yalia Beauty!</p>
         </div>
 
         {{-- Card Form Login --}}
-        <div class="glass-card rounded-2xl shadow-2xl p-8 md:p-10">
+        <div class="glass-card rounded-2xl shadow-2xl p-6 sm:p-8">
+
+            {{-- Flash error umum (mis. rate limit / kredensial salah) --}}
+            @if ($errors->any())
+                <div class="mb-5 rounded-xl bg-red-50 border border-red-200 px-4 py-3">
+                    <p class="text-red-600 text-xs font-semibold">{{ $errors->first() }}</p>
+                </div>
+            @endif
 
             {{-- Tombol Login Google --}}
-            <a href={{ route('auth.google') }}
-               class="flex items-center justify-center gap-3 w-full border border-gray-200 bg-white/50 rounded-xl py-3.5 px-4 text-dark font-bold hover:bg-white hover:shadow-md transition-all duration-300 mb-6 group">
+            <a href="{{ route('auth.google') }}"
+               class="flex items-center justify-center gap-3 w-full border border-gray-200 bg-white/50 rounded-xl py-3 px-4 text-dark font-bold hover:bg-white hover:shadow-md transition-all duration-300 mb-6 group">
                 <svg class="w-5 h-5 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                     <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -115,10 +126,11 @@
             </div>
 
             {{-- Form Login --}}
-            <form action="#"
+            <form method="POST" action="{{ route('login') }}"
                   x-data="{ isLoading: false }"
-                  @submit.prevent="isLoading = true; setTimeout(() => isLoading = false, 2000)"
+                  @submit="isLoading = true"
                   class="space-y-5">
+                @csrf
 
                 {{-- Email / Nomor HP --}}
                 <div>
@@ -129,10 +141,16 @@
                         type="text"
                         id="email"
                         name="email"
+                        value="{{ old('email') }}"
                         required
+                        autofocus
+                        autocomplete="username"
                         placeholder="email@contoh.com"
-                        class="w-full rounded-xl border border-gray-200 bg-white/50 px-4 py-3.5 text-sm focus:outline-none input-focus transition-all duration-300"
+                        class="w-full rounded-xl border bg-white/50 px-4 py-3 text-sm focus:outline-none input-focus transition-all duration-300 {{ $errors->has('email') ? 'border-red-300' : 'border-gray-200' }}"
                     >
+                    @error('email')
+                        <p class="text-red-500 text-xs mt-1.5 ml-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- Password --}}
@@ -141,7 +159,7 @@
                         <label for="password" class="block text-xs font-bold uppercase tracking-widest text-accent">
                             Password
                         </label>
-                        <a href="#"
+                        <a href="{{ route('password.request') }}"
                            class="text-[11px] font-bold text-gray-400 hover:text-accent transition-colors uppercase tracking-wider">
                             Lupa password?
                         </a>
@@ -152,8 +170,9 @@
                             id="password"
                             name="password"
                             required
+                            autocomplete="current-password"
                             placeholder="Masukkan password"
-                            class="w-full rounded-xl border border-gray-200 bg-white/50 px-4 py-3.5 text-sm focus:outline-none input-focus transition-all duration-300 pr-11"
+                            class="w-full rounded-xl border border-gray-200 bg-white/50 px-4 py-3 text-sm focus:outline-none input-focus transition-all duration-300 pr-11"
                         >
                         <button type="button"
                                 @click="showPassword = !showPassword"
@@ -167,6 +186,9 @@
                             </svg>
                         </button>
                     </div>
+                    @error('password')
+                        <p class="text-red-500 text-xs mt-1.5 ml-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- Remember Me --}}
@@ -181,7 +203,7 @@
                 {{-- Tombol Submit --}}
                 <button type="submit"
                         :disabled="isLoading"
-                        class="w-full bg-gradient-brand text-white font-display font-bold rounded-xl py-4 shadow-lg shadow-accent/20 hover:shadow-accent/40 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:translate-y-0 transition-all duration-300 flex items-center justify-center gap-2 uppercase tracking-widest text-xs">
+                        class="w-full bg-gradient-brand text-white font-display font-bold rounded-xl py-3.5 shadow-lg shadow-accent/20 hover:shadow-accent/40 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:translate-y-0 transition-all duration-300 flex items-center justify-center gap-2 uppercase tracking-widest text-xs">
                     <svg x-show="isLoading" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24" x-cloak>
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
@@ -192,17 +214,19 @@
         </div>
 
         {{-- Link ke Register --}}
-        <p class="text-center text-sm text-gray-600 mt-8">
+        <p class="text-center text-sm text-gray-600 mt-6 sm:mt-8">
             Belum punya akun?
-            <a href={{ route('register') }} class="text-accent font-bold hover:text-accent-deep transition-colors ml-1">
+            <a href="{{ route('register') }}" class="text-accent font-bold hover:text-accent-deep transition-colors ml-1">
                 Daftar sekarang
             </a>
         </p>
 
     </div>
 
+    <x-toast />
+
     <script>
-        // Initialize Lenis Smooth Scroll
+        // Inisialisasi Lenis Smooth Scroll
         const lenis = new Lenis();
         function raf(time) {
             lenis.raf(time);
@@ -210,24 +234,22 @@
         }
         requestAnimationFrame(raf);
 
-        // Motion.dev Animations
+        // Motion.dev — animasi entrance (tidak diubah)
         const { animate, stagger } = Motion;
 
-        // Entrance Animation
         animate(
             "#login-container",
             { opacity: [0, 1], y: [40, 0] },
-            { 
-                duration: 1, 
-                easing: [0.22, 1, 0.36, 1] 
+            {
+                duration: 1,
+                easing: [0.22, 1, 0.36, 1]
             }
         );
 
-        // Staggered Entrance for Form Elements
         animate(
             ".text-center > *, .glass-card > *",
             { opacity: [0, 1], y: [20, 0] },
-            { 
+            {
                 delay: stagger(0.1, { start: 0.4 }),
                 duration: 0.6
             }

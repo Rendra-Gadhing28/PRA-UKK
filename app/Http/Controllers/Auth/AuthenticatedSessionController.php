@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Helpers\ToastHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Auth\RegisteredRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -97,7 +98,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $namaDepan = explode(' ', $user->name)[0];
-        ToastHelper::success("Selamat datang di Yalia Beauty, {$namaDepan}! 🌸 Akun Anda berhasil dibuat.");
+        ToastHelper::success("Selamat datang di Yalia Beauty, {$namaDepan}! 🌸  Akun Anda berhasil dibuat.");
 
         return redirect()->route('user.dashboard');
     }
@@ -115,7 +116,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        ToastHelper::info('Anda telah berhasil keluar. Sampai jumpa! 👋');
+        ToastHelper::info('Anda telah berhasil keluar.');
 
         return redirect()->route('login');
     }

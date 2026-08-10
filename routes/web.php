@@ -80,12 +80,12 @@ Route::middleware(['auth'])->prefix('dashboard')->name('user.')->group(function 
 //     Route::get('/treatment', [\App\Http\Controllers\User\TreatmentController::class, 'index'])->name('treatments.index');
 //     Route::get('/treatment/{slug}', [\App\Http\Controllers\User\TreatmentController::class, 'show'])->name('treatments.show');
 
-//     // Booking
-//     Route::get('/booking', [\App\Http\Controllers\User\BookingController::class, 'index'])->name('bookings.index');
-//     Route::get('/booking/buat', [\App\Http\Controllers\User\BookingController::class, 'create'])->name('bookings.create');
-//     Route::post('/booking', [\App\Http\Controllers\User\BookingController::class, 'store'])->name('bookings.store');
-//     Route::get('/booking/{booking}', [\App\Http\Controllers\User\BookingController::class, 'show'])->name('bookings.show');
-//     Route::patch('/booking/{booking}/batalkan', [\App\Http\Controllers\User\BookingController::class, 'cancel'])->name('bookings.cancel');
+    // Booking
+    Route::get('/booking', [\App\Http\Controllers\User\BookingController::class, 'index'])->name('bookings.index');
+    Route::get('/booking/buat', [\App\Http\Controllers\User\BookingController::class, 'create'])->name('bookings.create');
+    Route::post('/booking', [\App\Http\Controllers\User\BookingController::class, 'store'])->name('bookings.store');
+    Route::get('/booking/{booking}', [\App\Http\Controllers\User\BookingController::class, 'show'])->name('bookings.show');
+    Route::patch('/booking/{booking}/batalkan', [\App\Http\Controllers\User\BookingController::class, 'cancel'])->name('bookings.cancel');
    
 });
 

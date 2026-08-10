@@ -1,12 +1,15 @@
 <?php
- 
+
 namespace Database\Seeders;
- 
+
 use App\Models\Categories;
 use App\Models\Treatments;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
- 
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+
 class TreatmentSeeder extends Seeder
 {
     public function run(): void
@@ -42,32 +45,71 @@ class TreatmentSeeder extends Seeder
                 ['name' => 'Kupal Full Motif', 'price' => 75000, 'duration' => 45, 'badge' => 'new'],
             ],
             'Behel' => [
-                ['name' => 'Behel Diamond', 'price' => 25000, 'duration' => 15, 'badge' => 'new'],
-                ['name' => 'Behel Fasion Atas', 'price' => 120000, 'duration' => 45, 'badge' => 'best_seller'],
-                ['name' => 'Behel Fasion Bawah', 'price' => 120000, 'duration' => 45, 'badge' => 'best_seller'],
-                ['name' => 'Behel Perawatan Atas', 'price' => 180000, 'duration' => 45, 'badge' => 'none'],
-                ['name' => 'Behel Perawatan Bawah', 'price' => 180000, 'duration' => 45, 'badge' => 'none'],
+                ['name' => 'Behel Diamond', 'price' => 25000, 'duration' => 15, 'badge' => 'best_seller'],
                 ['name' => 'Remove Behel', 'price' => 25000, 'duration' => 25, 'badge' => 'none'],
             ]
         ];
- 
+
+        $manager = new ImageManager(new Driver());
+
         foreach ($data as $categoryName => $treatments) {
             $category = Categories::where('name', $categoryName)->first();
- 
+
             if (! $category) {
                 continue;
             }
- 
+
+            $folderName = Str::slug($categoryName);
+
             foreach ($treatments as $index => $t) {
+                $treatmentSlug = Str::slug($t['name']);
+                $imagePathForDb = null;
+
+                $possibleExtensions = ['jpg', 'jpeg', 'png'];
+                $sourceFile = null;
+
+                foreach ($possibleExtensions as $ext) {
+                    $checkPath = public_path("images/treatments/{$folderName}/{$treatmentSlug}.{$ext}");
+                    if (file_exists($checkPath)) {
+                        $sourceFile = $checkPath;
+                        break;
+                    }
+                }
+
+                if ($sourceFile) {
+                    try {
+                        // Gunakan ImageManager v4
+                        $image = $manager->read($sourceFile);
+                        $encodedImage = $image->toWebp(80);
+
+                        $destinationDir = "treatments/{$folderName}";
+                        $destinationPath = "{$destinationDir}/{$treatmentSlug}.webp";
+
+                        if (!Storage::disk('public')->exists($destinationDir)) {
+                            Storage::disk('public')->makeDirectory($destinationDir);
+                        }
+
+                        // Simpan stream binary hasil encode()
+                        Storage::disk('public')->put($destinationPath, (string) $encodedImage);
+                        $imagePathForDb = $destinationPath;
+
+                        $this->command->info("✅ Berhasil convert: {$destinationPath}");
+                    } catch (\Exception $e) {
+                        $this->command->error("❌ Gagal convert {$sourceFile}: " . $e->getMessage());
+                    }
+                } else {
+                    $this->command->warn("⚠️ Gambar tidak ditemukan untuk: {$t['name']}");
+                }
+
                 Treatments::create([
                     'category_id' => $category->id,
                     'name' => $t['name'],
-                    'slug' => Str::slug($t['name']).'-'.$category->id,
+                    'slug' => $treatmentSlug.'-'.$category->id,
                     'description' => "Layanan {$t['name']} yang dilakukan oleh beautician profesional dengan produk berkualitas.",
                     'benefits' => "Membuat kulit/tubuh lebih sehat, segar, dan terawat.",
                     'price' => $t['price'],
                     'duration_minutes' => $t['duration'],
-                    'images' => null,
+                    'images' => $imagePathForDb,
                     'badge' => $t['badge'],
                     'is_active' => true,
                     'sort_order' => $index + 1,
@@ -78,4 +120,3 @@ class TreatmentSeeder extends Seeder
         }
     }
 }
- 

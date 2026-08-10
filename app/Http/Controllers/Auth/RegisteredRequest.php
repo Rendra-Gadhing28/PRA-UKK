@@ -11,7 +11,7 @@ use Illuminate\Validation\Rules\Password;
  * Memastikan data yang masuk sudah bersih, valid, dan aman
  * sebelum diproses oleh controller.
  */
-class RegisterRequest extends FormRequest
+class RegisteredRequest extends FormRequest
 {
     /**
      * Semua pengguna diizinkan mengakses endpoint registrasi.
