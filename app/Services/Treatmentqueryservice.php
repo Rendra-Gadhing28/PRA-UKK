@@ -61,44 +61,13 @@ class TreatmentQueryService
     public function paginateActiveTreatments(
         ?string $search,
         ?string $categorySlug,
-        ?string $cursor,
+        ?string $page = null,
         int $perPage = self::DEFAULT_PER_PAGE,
-    ): CursorPaginator {
-        // Hasil pencarian bebas (kombinasi filter tak terbatas) sengaja TIDAK
-        // di-cache karena kombinasi query bisa sangat banyak. Sebagai
-        // gantinya kita cache hanya query "default" (tanpa filter, halaman
-        // pertama / cursor kosong) yang paling sering diakses.
-        $isDefaultQuery = blank($search) && (blank($categorySlug) || $categorySlug === 'all') && blank($cursor);
-
-        if (! $isDefaultQuery) {
-            return $this->baseQuery($search, $categorySlug)
-                ->cursorPaginate($perPage, ['*'], 'cursor', $cursor);
-        }
-
-        $cacheKey = sprintf('treatments:default:v%d', $this->currentVersion());
-
-        $fetchFreshRows = fn (): array => $this->baseQuery($search, $categorySlug)
-            // ambil 1 baris ekstra untuk mendeteksi hasMorePages,
-            // sesuai konvensi internal CursorPaginator
-            ->limit($perPage + 1)
-            ->get()
-            ->toArray();
-
-        // Hanya array atribut mentah (bukan objek Model/Paginator) yang disimpan
-        // ke cache, karena array plain PHP selalu aman di-serialize/unserialize.
-        $cachedRows = Cache::remember($cacheKey, self::CACHE_TTL_SECONDS, $fetchFreshRows);
-
-        // Pengaman: jika entry cache yang terbaca ternyata bukan array plain
-        // (mis. sisa cache lama dari versi kode sebelumnya yang sempat
-        // menyimpan objek paginator utuh dan gagal di-unserialize dengan
-        // bersih), buang entry yang korup itu dan ambil data segar dari DB
-        // alih-alih membiarkan aplikasi crash.
-        if (! is_array($cachedRows)) {
-            Cache::forget($cacheKey);
-            $cachedRows = Cache::remember($cacheKey, self::CACHE_TTL_SECONDS, $fetchFreshRows);
-        }
-
-        return $this->hydratePaginator($cachedRows, $perPage);
+    ): \Illuminate\Contracts\Pagination\LengthAwarePaginator {
+        // Query akan menggunakan simple Eloquent pagination agar URL mengandung "?page=" 
+        // dan menampilkan link nomor halaman lengkap.
+        return $this->baseQuery($search, $categorySlug)
+            ->paginate($perPage);
     }
 
     /**
@@ -124,48 +93,7 @@ class TreatmentQueryService
             ->orderByDesc('id');
     }
 
-    /**
-     * Membangun ulang objek CursorPaginator dari array data mentah (baik
-     * yang baru diambil dari database maupun yang berasal dari cache).
-     * Cursor selalu null di sini karena hanya halaman pertama yang di-cache.
-     *
-     * @param  array<int, array<string, mixed>>  $rows
-     */
-    private function hydratePaginator(array $rows, int $perPage): CursorPaginator
-    {
-        // Treatment::hydrate() mengembalikan atribut apa adanya dari array,
-        // termasuk "category" yang saat ini masih berupa array biasa (hasil
-        // ->toArray() sebelumnya), BUKAN relasi Model. Karena itu kita perlu
-        // secara eksplisit mengonversinya kembali menjadi relasi Category
-        // via setRelation(), agar $treatment->category->name di view bekerja
-        // seperti relasi Eloquent normal (dan tidak memicu query tambahan,
-        // sebab datanya sudah ada di tangan / tidak lazy-loaded).
-        $items = Treatments::hydrate($rows)->map(function (Treatments $treatment): Treatments {
-            $categoryData = $treatment->getAttribute('category');
 
-            $treatment->setRelation(
-                'category',
-                is_array($categoryData) ? new Categories($categoryData) : null,
-            );
-
-            // Hapus atribut mentah "category" supaya tidak dobel/rancu
-            // dengan relasi yang baru saja di-set di atas.
-            $treatment->offsetUnset('category');
-
-            return $treatment;
-        });
-
-        return new \Illuminate\Pagination\CursorPaginator(
-            $items,
-            $perPage,
-            null,
-            [
-                'path' => RequestFacade::url(),
-                'cursorName' => 'cursor',
-                'parameters' => self::ORDER_COLUMNS,
-            ],
-        );
-    }
 
     /**
      * Mengambil daftar kategori aktif untuk filter bar, di-cache karena

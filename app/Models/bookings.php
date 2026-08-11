@@ -45,16 +45,19 @@ class Bookings extends Model
         'total_amount' => 'decimal:2',
     ];
 
-    public function User(){
+    public function user(){
         return $this->belongsTo(User::class, 'user_id');
     }
-    public function Beauticians(){
+
+    public function beautician(){
         return $this->belongsTo(Beauticians::class, 'beautician_id');
     }
 
-    public function BookingTreatments(){
+    public function bookingTreatments(){
         return $this->hasMany(BookingTreatments::class, 'booking_id');
     }
+
+
 
     public function treatments(): BelongsToMany
     {

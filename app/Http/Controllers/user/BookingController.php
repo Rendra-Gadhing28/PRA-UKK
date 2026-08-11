@@ -4,7 +4,6 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bookings;
-use App\Models\Treatment;
 use App\Models\Treatments;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,6 +24,31 @@ use Illuminate\View\View;
 class BookingController extends Controller
 {
     private const ALLOWED_TABS = ['upcoming', 'past', 'cancelled'];
+
+    public function index(Request $request): View
+    {
+        $tab = $request->string('tab', 'upcoming')->lower()->value();
+
+        if (! in_array($tab, self::ALLOWED_TABS, true)) {
+            $tab = 'upcoming';
+        }
+
+        $bookings = Bookings::query()
+            ->ownedBy(Auth::id())
+            ->{$tab}() // scopeUpcoming / scopePast / scopeCancelled
+            ->with([
+                'beautician:id,name',
+                'treatments:id,name,duration_minutes,image',
+                'review:id,booking_id,rating',
+            ])
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('user.bookings.index', [
+            'bookings' => $bookings,
+            'activeTab' => $tab,
+        ]);
+    }
 
     public function list(Request $request): View
     {
@@ -56,7 +80,7 @@ class BookingController extends Controller
         $selectedTreatment = null;
         
         if ($treatmentId) {
-            $selectedTreatment = Treatment::find($treatmentId);
+            $selectedTreatment = Treatments::find($treatmentId);
         }
 
         return view('user.bookings.create', compact('selectedTreatment'));

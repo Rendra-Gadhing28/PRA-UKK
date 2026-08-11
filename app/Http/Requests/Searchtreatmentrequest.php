@@ -32,9 +32,8 @@ class SearchTreatmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'q' => ['nullable', 'string', 'max:100'],
+            'search' => ['nullable', 'string', 'max:100'],
             'category' => ['nullable', 'string', 'max:50', 'alpha_dash'],
-            'cursor' => ['nullable', 'string', 'max:255'],
         ];
     }
 
@@ -43,7 +42,7 @@ class SearchTreatmentRequest extends FormRequest
      */
     public function search(): ?string
     {
-        $value = $this->validated('q');
+        $value = $this->validated('search');
 
         return is_string($value) ? trim($value) : null;
     }
@@ -56,11 +55,4 @@ class SearchTreatmentRequest extends FormRequest
         return $this->validated('category');
     }
 
-    /**
-     * Cursor pagination yang sudah divalidasi.
-     */
-    public function cursor(): ?string
-    {
-        return $this->validated('cursor');
-    }
 }

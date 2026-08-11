@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Storage;
  * @property string|null $benefits
  * @property float $price
  * @property int $duration_minutes
- * @property string|null $image nama file gambar yang sudah dikonversi ke .webp
+ * @property string|null $images nama file gambar yang sudah dikonversi ke .webp
  * @property string $badge
  * @property bool $is_active
  * @property int $sort_order
@@ -74,6 +74,7 @@ class Treatments extends Model
         ];
     }
 
+    
     /**
      * Relasi ke kategori. Selalu eager-load ini via ->with('category')
      * di layer query supaya tidak memicu N+1 saat menampilkan listing.
@@ -84,6 +85,24 @@ class Treatments extends Model
     }
 
     /**
+     * Relasi ke bookings (Many-to-Many via booking_treatments).
+     */
+    public function bookings(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Bookings::class, 'booking_treatments', 'treatment_id', 'booking_id')
+            ->withPivot(['quantity', 'price_per_unit', 'subtotal']);
+    }
+
+    /**
+     * Relasi ke booking_treatments pivot.
+     */
+    public function bookingTreatments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(BookingTreatments::class, 'treatment_id');
+    }
+
+
+    /**
      * URL publik gambar treatment. Mengembalikan placeholder bila
      * treatment belum memiliki gambar, sehingga view tidak perlu
      * melakukan pengecekan null berulang kali.
@@ -91,8 +110,8 @@ class Treatments extends Model
     protected function imageUrl(): Attribute
     {
         return Attribute::make(
-            get: fn (): string => $this->image
-                ? Storage::disk('public')->url(self::IMAGE_DIRECTORY.'/'.$this->image)
+            get: fn (): string => $this->images
+                ? Storage::disk('public')->url(self::IMAGE_DIRECTORY.'/'.$this->images)
                 : asset('images/treatment-placeholder.webp'),
         );
     }
@@ -132,7 +151,7 @@ class Treatments extends Model
             return $query;
         }
 
-        return $query->whereHas('categories', function (Builder $q) use ($categorySlug): void {
+        return $query->whereHas('category', function (Builder $q) use ($categorySlug): void {
             $q->where('slug', $categorySlug);
         });
     }

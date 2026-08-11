@@ -10,9 +10,9 @@
     <div class="blob-bg bg-accent-clear w-[500px] h-[500px] -top-24 -left-24" aria-hidden="true"></div>
     <div class="blob-bg bg-primary-fixed w-[400px] h-[400px] top-1/2 -right-24" aria-hidden="true"></div>
 
-    <div x-data="bookingTabs('{{ route('user.bookings.list') }}')">
+    <div x-data="bookingTabs('{{ route('user.bookings.index') }}')">
 
-        <main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12">
+        <main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-40">
 
             {{-- Hero + Membership --}}
             <section class="flex flex-col lg:flex-row gap-8 items-start mb-16">

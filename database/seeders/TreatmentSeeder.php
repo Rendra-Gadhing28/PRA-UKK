@@ -26,9 +26,8 @@ class TreatmentSeeder extends Seeder
                 ['name' => 'Eyelash Type Y', 'price' => 65000, 'duration' => 35, 'badge' => 'best_seller'],
                 ['name' => 'Eyelash Medium', 'price' => 65000, 'duration' => 35, 'badge' => 'none'],
                 ['name' => 'Eyelash Natural', 'price' => 65000, 'duration' => 35, 'badge' => 'none'],
-                ['name' => 'Eyelash volume', 'price' => 85000, 'duration' => 25, 'badge' => 'none'],
-                ['name' => 'Retouch', 'price' => 35000, 'duration' => 30, 'badge' => 'none'],
-                ['name' => 'Remove', 'price' => 35000, 'duration' => 30, 'badge' => 'none'],
+                ['name' => 'Retouch Eyelash', 'price' => 35000, 'duration' => 30, 'badge' => 'none'],
+                ['name' => 'Remove Eyelash', 'price' => 35000, 'duration' => 30, 'badge' => 'none'],
             ],
             'Perawatan Rambut' => [
                 ['name' => 'Creambath', 'price' => 60000, 'duration' => 45, 'badge' => 'best_seller'],
@@ -45,7 +44,7 @@ class TreatmentSeeder extends Seeder
                 ['name' => 'Kupal Full Motif', 'price' => 75000, 'duration' => 45, 'badge' => 'new'],
             ],
             'Behel' => [
-                ['name' => 'Behel Diamond', 'price' => 25000, 'duration' => 15, 'badge' => 'best_seller'],
+                ['name' => 'Behel Damon', 'price' => 25000, 'duration' => 15, 'badge' => 'best_seller'],
                 ['name' => 'Remove Behel', 'price' => 25000, 'duration' => 25, 'badge' => 'none'],
             ]
         ];

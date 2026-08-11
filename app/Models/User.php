@@ -82,13 +82,18 @@ class User extends Authenticatable
 
 
     // Role and Membership Helpers
+    public function getIsAdminAttribute(): bool {
+        return $this->role === 'admin';
+    }
+
     public function isAdmin(): bool {
-        return $this->role == 'admin';
+        return $this->role === 'admin';
     }
 
     public function isUser(): bool {
-        return $this->role == 'user';
+        return $this->role === 'user';
     }
+
 
     public function hasMembership(string $level): bool {
         return $this->membership_level === $level;

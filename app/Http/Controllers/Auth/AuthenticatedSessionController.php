@@ -69,10 +69,13 @@ class AuthenticatedSessionController extends Controller
         ToastHelper::success("Selamat datang kembali, {$namaDepan}! 👋");
 
         // Arahkan admin ke dashboard admin, user biasa ke dashboard user
-        return $user->role === 'admin'
-            ? redirect()->intended(route('admin.dashboard'))
-            : redirect()->intended(route('user.dashboard'));
+        if ($user->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        return redirect()->intended(route('user.dashboard'));
     }
+
 
     /**
      * Proses registrasi pengguna baru.
@@ -108,7 +111,7 @@ class AuthenticatedSessionController extends Controller
      *
      * Menghapus session dan token CSRF untuk keamanan.
      */
-    public function logout(Request $request): RedirectResponse
+    public function destroy(Request $request): RedirectResponse
     {
         Auth::logout();
 

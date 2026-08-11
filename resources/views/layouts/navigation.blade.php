@@ -31,7 +31,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('user.bookings.list') }}" 
+                <a href="{{ route('user.bookings.index') }}" 
                    class="text-[12px] py-1.5 px-3 rounded-full transition-all duration-300 whitespace-nowrap {{ request()->routeIs('user.bookings.*') ? 'text-[#FF6B8A] bg-[#FF6B8A]/12 font-bold' : 'text-[#666] font-semibold hover:text-[#FF6B8A] hover:bg-[#FF6B8A]/10' }}">
                     My Bookings
                 </a>
@@ -43,6 +43,8 @@
                 </a>
             </li>
         </ul>
+
+
 
         {{-- Right Actions (Profile & CTA) --}}
         <div class="flex gap-3 md:gap-4 items-center shrink-0">

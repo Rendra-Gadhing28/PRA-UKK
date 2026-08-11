@@ -33,11 +33,12 @@ class AdminMiddleware
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        if (! $user->is_admin) {
+        if (! $user->isAdmin()) {
             ToastHelper::error('Anda tidak memiliki akses ke halaman admin.');
 
             return redirect()->route('user.dashboard');
         }
+
 
         return $next($request);
     }

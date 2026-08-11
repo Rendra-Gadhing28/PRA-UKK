@@ -36,8 +36,7 @@ class TreatmentController extends Controller
     {
         $paginatedTreatments = $this->treatments->paginateActiveTreatments(
             search: $request->search(),
-            categorySlug: $request->categorySlug(),
-            cursor: $request->cursor(),
+            categorySlug: $request->categorySlug()
         );
 
         $categories = $this->treatments->getActiveCategories();
@@ -50,25 +49,7 @@ class TreatmentController extends Controller
         ]);
     }
 
-    /**
-     * Endpoint AJAX untuk pencarian & filter real-time (dipanggil dengan
-     * debounce dari frontend). Dibatasi rate limit di route (throttle)
-     * untuk mencegah penyalahgunaan/spam request.
-     */
-    public function search(SearchTreatmentRequest $request): JsonResponse
-    {
-        $paginatedTreatments = $this->treatments->paginateActiveTreatments(
-            search: $request->search(),
-            categorySlug: $request->categorySlug(),
-            cursor: $request->cursor(),
-        );
 
-        return response()->json([
-            'html' => view('user.treatments.partials.grid', [
-                'treatments' => $paginatedTreatments,
-            ])->render(),
-            'next_cursor' => $paginatedTreatments->nextCursor()?->encode(),
-            'has_more' => $paginatedTreatments->hasMorePages(),
-        ]);
-    }
+    
+
 }
