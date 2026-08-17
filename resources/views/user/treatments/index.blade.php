@@ -5,130 +5,458 @@
         </h2>
     </x-slot>
 
-    <div class="bg-gray-50 min-h-screen py-20">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Header Section -->
+    {{-- Google Fonts --}}
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ── Design tokens ── */
+        :root {
+            --yalia-pink:       #f45472;
+            --yalia-pink-soft:  #ff8fa4;
+            --yalia-pink-pale:  #ffeef2;
+            --yalia-rose-dark:  #b5294a;
+            --yalia-rose-mid:   #d94060;
+            --yalia-brown:      #5b3a29;
+            --yalia-bg:         #fdf5f6;
+            --yalia-surface:    #fff8f9;
+        }
+
+        body { font-family: 'Work Sans', sans-serif; }
+
+        .yalia-heading {
+            font-family: 'Playfair Display', serif;
+            color: var(--yalia-brown);
+        }
+
+        /* ── Search & filter bar ── */
+        .yalia-input {
+            border: 1.5px solid #f9c5cf;
+            border-radius: 12px;
+            padding: 0.65rem 1rem 0.65rem 2.75rem;
+            font-family: 'Work Sans', sans-serif;
+            font-size: 0.875rem;
+            background: var(--yalia-surface);
+            transition: border-color .2s, box-shadow .2s;
+            outline: none;
+        }
+        .yalia-input:focus {
+            border-color: var(--yalia-pink);
+            box-shadow: 0 0 0 3px rgba(244,84,114,.12);
+        }
+
+        .yalia-select {
+            border: 1.5px solid #f9c5cf;
+            border-radius: 12px;
+            padding: 0.65rem 2.5rem 0.65rem 1rem;
+            font-family: 'Work Sans', sans-serif;
+            font-size: 0.875rem;
+            background: var(--yalia-surface);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23f45472' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            transition: border-color .2s, box-shadow .2s;
+            outline: none;
+        }
+        .yalia-select:focus {
+            border-color: var(--yalia-pink);
+            box-shadow: 0 0 0 3px rgba(244,84,114,.12);
+        }
+
+        .yalia-search-btn {
+            background: linear-gradient(135deg, var(--yalia-pink), var(--yalia-rose-mid));
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 0.65rem 1.5rem;
+            font-family: 'Work Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(244,84,114,.3);
+            transition: transform .2s, box-shadow .2s;
+        }
+        .yalia-search-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(244,84,114,.4);
+        }
+
+        /* ── Treatment card ── */
+        .treatment-card {
+            background: var(--yalia-surface);
+            border: 1px solid #fce4e9;
+            border-radius: 24px;
+            overflow: hidden;
+            transition: transform .3s, box-shadow .3s;
+            display: flex;
+            flex-direction: column;
+        }
+        .treatment-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(180,40,70,.12);
+        }
+
+        .card-img-wrapper {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #fce4e9, #fff0f3);
+        }
+        .card-img-wrapper img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform .5s;
+        }
+        .treatment-card:hover .card-img-wrapper img { transform: scale(1.07); }
+
+        /* badge overlay (best seller, new, promo) */
+        .overlay-badge {
+            position: absolute;
+            top: 12px; right: 12px;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+        }
+        .badge-best-seller { background: #b5294a; color: #fff; }
+        .badge-new         { background: #14a879; color: #fff; }
+        .badge-promo       { background: var(--yalia-pink); color: #fff; }
+
+        /* category pill */
+        .category-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--yalia-pink-pale);
+            color: var(--yalia-rose-dark);
+            border: 1px solid #fac8d2;
+            border-radius: 999px;
+            padding: 3px 10px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: .3px;
+        }
+
+        /* rating chip */
+        .rating-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--yalia-rose-dark);
+        }
+        .new-chip {
+            background: #f3f4f6;
+            color: #9ca3af;
+            border-radius: 999px;
+            padding: 2px 8px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        /* Book Now button */
+        .btn-book {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 0.5rem 1.25rem;
+            background: linear-gradient(135deg, var(--yalia-pink), var(--yalia-rose-mid));
+            color: #fff;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+            text-decoration: none;
+            box-shadow: 0 4px 14px rgba(244,84,114,.35);
+            transition: transform .2s, box-shadow .2s;
+            white-space: nowrap;
+        }
+        .btn-book:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 22px rgba(244,84,114,.45);
+        }
+
+        /* price text */
+        .price-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--yalia-brown);
+        }
+
+        /* ── Empty state ── */
+        .empty-state {
+            background: var(--yalia-surface);
+            border: 1.5px dashed #fac8d2;
+            border-radius: 24px;
+            padding: 3rem 1.5rem;
+            text-align: center;
+        }
+
+        /* ── Pagination ── */
+        .yalia-pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        /* override Laravel's default pagination links */
+        .yalia-pagination nav { width: 100%; }
+        .yalia-pagination nav > div:first-child { display: none; } /* hide "Showing X to Y" */
+        .yalia-pagination nav > div:last-child {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        /* all anchor/span tags inside pagination */
+        .yalia-pagination span[aria-current="page"] > span,
+        .yalia-pagination span > span,
+        .yalia-pagination a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 38px;
+            height: 38px;
+            padding: 0 10px;
+            border-radius: 10px;
+            font-family: 'Work Sans', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all .2s;
+            border: 1.5px solid transparent;
+        }
+
+        /* inactive page numbers */
+        .yalia-pagination a {
+            color: var(--yalia-rose-dark);
+            background: var(--yalia-pink-pale);
+            border-color: #fac8d2;
+        }
+        .yalia-pagination a:hover {
+            background: var(--yalia-pink);
+            color: #fff;
+            border-color: var(--yalia-pink);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(244,84,114,.3);
+        }
+
+        /* active page */
+        .yalia-pagination span[aria-current="page"] > span {
+            background: linear-gradient(135deg, var(--yalia-pink), var(--yalia-rose-mid));
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(244,84,114,.35);
+        }
+
+        /* disabled (prev/next when at edge) */
+        .yalia-pagination span > span {
+            color: #d1a3ac;
+            background: #fdf0f2;
+            border-color: #fce4e9;
+            cursor: not-allowed;
+        }
+
+        /* dots */
+        .yalia-pagination span.pagination-dots > span {
+            background: transparent;
+            border-color: transparent;
+            color: #c47d8e;
+            cursor: default;
+        }
+    </style>
+
+    <div style="background: var(--yalia-bg); min-height: 100vh; padding: 5rem 0 4rem;">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            {{-- ── Page header ── --}}
             <div class="text-center mb-12">
-                <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight sm:text-5xl">
-                    Discover Our Premium <span class="text-amber-600">Treatments</span>
+                <p class="text-xs font-semibold tracking-widest uppercase mb-3" style="color: var(--yalia-pink);">
+                    Our Services
+                </p>
+                <h1 class="yalia-heading text-4xl sm:text-5xl font-bold leading-tight mb-4">
+                    Discover Premium <br class="hidden sm:block">
+                    <span style="color: var(--yalia-pink);">Treatments</span>
                 </h1>
-                <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
+                <p class="max-w-xl mx-auto text-base" style="color: #9b6374; font-family: 'Work Sans', sans-serif;">
                     Experience luxury and relaxation with our curated selection of beauty services.
                 </p>
-                
-                <!-- Search & Filter Form -->
-                <form action="{{ route('user.treatments.index') }}" method="GET" class="mt-8 max-w-2xl mx-auto">
-                    <div class="flex flex-col sm:flex-row gap-4">
+
+                {{-- ── React Search & filter bar ── --}}
+                <div id="react-user-treatment-filter"
+                     data-categories='@json($categories)'
+                     data-initial-category="{{ request('category', 'all') }}"
+                     data-initial-search="{{ request('search', '') }}"
+                     data-action-url="{{ route('user.treatments.index') }}">
+                    
+                    {{-- Fallback form --}}
+                    <form action="{{ route('user.treatments.index') }}" method="GET"
+                          class="mt-8 max-w-2xl mx-auto flex flex-col sm:flex-row gap-3">
                         <div class="relative flex-grow">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i data-lucide="search" class="h-5 w-5 text-gray-400"></i>
-                            </div>
                             <input type="text" name="search" value="{{ request('search') }}"
-                                class="focus:ring-amber-500 focus:border-amber-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-3"
-                                placeholder="Search treatments (e.g., Facial, Hair Spa)...">
+                                   class="yalia-input w-full"
+                                   placeholder="Search treatments...">
                         </div>
-                        
                         <div class="flex-shrink-0">
-                            <select name="category" class="block w-full pl-3 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm rounded-md">
-                                <option value="all" {{ request('category', 'all') === 'all' ? 'selected' : '' }}>All Services</option>
+                            <select name="category" class="yalia-select w-full sm:w-auto">
+                                <option value="all" {{ request('category', 'all') === 'all' ? 'selected' : '' }}>
+                                    All Services
+                                </option>
                                 @foreach($categories as $cat)
-                                    <option value="{{ $cat->slug }}" {{ request('category') === $cat->slug ? 'selected' : '' }}>{{ $cat->name }}</option>
+                                    <option value="{{ $cat->slug }}"
+                                        {{ request('category') === $cat->slug ? 'selected' : '' }}>
+                                        {{ $cat->name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
-                        
-                        <button type="submit" class="inline-flex justify-center items-center py-3 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
+                        <button type="submit" class="yalia-search-btn flex-shrink-0">
                             Search
                         </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
 
-            <!-- Treatments Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {{-- ── Active filter pill ── --}}
+            @if(request('search') || (request('category') && request('category') !== 'all'))
+                <div class="flex items-center gap-2 mb-6 flex-wrap">
+                    <span class="text-xs font-medium" style="color:#9b6374;">Filtered by:</span>
+                    @if(request('search'))
+                        <span class="category-pill">
+                            <i data-lucide="search" class="h-3 w-3"></i>
+                            {{ request('search') }}
+                        </span>
+                    @endif
+                    @if(request('category') && request('category') !== 'all')
+                        <span class="category-pill">
+                            <i data-lucide="layers" class="h-3 w-3"></i>
+                            {{ $categories->firstWhere('slug', request('category'))?->name }}
+                        </span>
+                    @endif
+                    <a href="{{ route('user.treatments.index') }}"
+                       class="text-xs font-semibold underline"
+                       style="color: var(--yalia-rose-dark);">Clear</a>
+                </div>
+            @endif
+
+            {{-- ── Treatments grid ── --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
                 @forelse($treatments as $treatment)
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1">
-                    <div class="relative h-48 w-full bg-gray-200 overflow-hidden">
-                        @if($treatment->images)
-                            <img src="{{ Storage::url($treatment->images) }}" alt="{{ $treatment->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                        @else
-                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-100 to-amber-50">
-                                <i data-lucide="sparkles" class="h-12 w-12 text-amber-300"></i>
-                            </div>
+                <div class="treatment-card">
+
+                    {{-- Image --}}
+                    <div class="card-img-wrapper">
+                        <img src="{{ $treatment->image_url }}"
+                             alt="{{ $treatment->name }}">
+
+                        {{-- Overlay badge --}}
+                        @if($treatment->badge && $treatment->badge !== 'none')
+                            <span class="overlay-badge
+                                {{ $treatment->badge === 'best_seller' ? 'badge-best-seller' :
+                                   ($treatment->badge === 'new' ? 'badge-new' : 'badge-promo') }}">
+                                {{ str_replace('_', ' ', $treatment->badge) }}
+                            </span>
                         @endif
-                        
-                        <div class="absolute top-4 right-4 flex flex-col gap-2">
-                            @if($treatment->badge && $treatment->badge !== 'none')
-                                <span class="px-3 py-1 rounded-full text-xs font-semibold shadow-sm {{ $treatment->badge === 'best_seller' ? 'bg-amber-500 text-white' : ($treatment->badge === 'new' ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white') }}">
-                                    {{ str_replace('_', ' ', strtoupper($treatment->badge)) }}
-                                </span>
-                            @endif
-                        </div>
                     </div>
-                    
-                    <div class="p-6 flex flex-col h-full">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-lg font-bold text-gray-900 group-hover:text-amber-600 transition-colors">
+
+                    {{-- Body --}}
+                    <div class="p-5 flex flex-col flex-1">
+
+                        {{-- Name + rating --}}
+                        <div class="flex justify-between items-start gap-2 mb-2">
+                            <h3 class="yalia-heading text-base font-bold leading-snug">
                                 {{ $treatment->name }}
                             </h3>
                             @if($treatment->rating_avg > 0)
-                                <span class="inline-flex items-center gap-1 text-sm font-medium text-amber-500 shrink-0 ml-2">
-                                    <i data-lucide="star" class="h-4 w-4 fill-current"></i>
-                                    {{ number_format($treatment->rating, 1) }}
+                                <span class="rating-chip shrink-0">
+                                    <i data-lucide="star" class="h-3.5 w-3.5 fill-current"
+                                       style="color: var(--yalia-pink);"></i>
+                                    {{ number_format($treatment->rating_avg, 1) }}
                                 </span>
                             @else
-                                <span class="inline-flex items-center gap-1 text-xs font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full shrink-0 ml-2">
-                                    New
-                                </span>
+                                <span class="new-chip shrink-0">New</span>
                             @endif
                         </div>
-                        
-                        <p class="text-sm text-gray-500 line-clamp-2 mb-4 flex-grow">
+
+                        {{-- Description --}}
+                        <p class="text-sm leading-relaxed line-clamp-2 mb-4 flex-1"
+                           style="color:#9b6374;">
                             {{ $treatment->description }}
                         </p>
-                        
-                        <div class="flex items-center gap-4 text-sm text-gray-600 mb-6">
-                            <div class="flex items-center gap-1.5">
-                                <i data-lucide="clock" class="h-4 w-4 text-amber-500"></i>
-                                <span>{{ $treatment->duration_minutes }} min</span>
+
+                        {{-- Meta row: duration + category pill --}}
+                        <div class="flex items-center gap-2 mb-5 flex-wrap">
+                            <div class="flex items-center gap-1 text-xs font-medium"
+                                 style="color:#9b6374;">
+                                <i data-lucide="clock" class="h-3.5 w-3.5"
+                                   style="color: var(--yalia-pink-soft);"></i>
+                                {{ $treatment->duration_minutes }} min
                             </div>
-                            <div class="flex items-center gap-1.5">
-                                <i data-lucide="tag" class="h-4 w-4 text-amber-500"></i>
-                                <span>{{ $treatment->category->name }}</span>
-                            </div>
+
+                            {{-- Category pill badge --}}
+                            <span class="category-pill">
+                                @if($treatment->category?->icon)
+                                    <i class="{{ $treatment->category->icon }} text-xs"></i>
+                                @else
+                                    <i data-lucide="tag" class="h-3 w-3"></i>
+                                @endif
+                                {{ $treatment->category?->name }}
+                            </span>
                         </div>
-                        
+
+                        {{-- Price + CTA --}}
                         <div class="flex items-center justify-between mt-auto">
-    <span class="text-xl font-bold text-gray-900">
-        Rp {{ number_format($treatment->price, 0, ',', '.') }}
-    </span>
-    
-    {{-- Tombol Book Now yang membawa data treatment_id ke halaman form --}}
-    <a href="{{ route('user.bookings.create', ['treatment_id' => $treatment->id]) }}" 
-        class="inline-flex items-center justify-center px-6 py-2.5 border border-transparent text-[11px] font-bold rounded-full text-white bg-gradient-to-br from-[#FF6B8A] to-[#E91E63] shadow-[0_4px_15px_rgba(233,30,99,0.3)] hover:-translate-y-[1px] hover:shadow-[0_6px_20px_rgba(233,30,99,0.4)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FF6B8A] uppercase tracking-[0.5px]">
-        Book Now
-    </a>
-</div>
+                            <span class="price-text">
+                                Rp {{ number_format($treatment->price, 0, ',', '.') }}
+                            </span>
+
+                            <a href="{{ route('user.bookings.create', ['treatment' => $treatment->id]) }}"
+                               class="btn-book">
+                                <i data-lucide="calendar-plus" class="h-3.5 w-3.5"></i>
+                                Book Now
+                            </a>
+                        </div>
                     </div>
                 </div>
+
                 @empty
-                <div class="col-span-full text-center py-12 bg-white rounded-2xl shadow-sm border border-gray-100">
-                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 mb-4">
-                        <i data-lucide="search-x" class="h-8 w-8 text-amber-600"></i>
+                <div class="col-span-full empty-state">
+                    <div class="inline-flex items-center justify-center w-14 h-14 rounded-full mb-4"
+                         style="background: var(--yalia-pink-pale);">
+                        <i data-lucide="search-x" class="h-6 w-6" style="color: var(--yalia-pink);"></i>
                     </div>
-                    <h3 class="text-lg font-medium text-gray-900">No treatments found</h3>
-                    <p class="mt-2 text-sm text-gray-500">We couldn't find anything matching your criteria. Try adjusting your filters.</p>
-                    <a href="{{ route('user.treatments.index') }}" class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-amber-700 bg-amber-100 hover:bg-amber-200">
+                    <h3 class="yalia-heading text-lg font-bold mb-1">No treatments found</h3>
+                    <p class="text-sm mb-4" style="color:#9b6374;">
+                        Try adjusting your search or filter to find what you're looking for.
+                    </p>
+                    <a href="{{ route('user.treatments.index') }}"
+                       class="inline-flex items-center gap-1 text-sm font-semibold"
+                       style="color: var(--yalia-rose-dark);">
+                        <i data-lucide="x-circle" class="h-4 w-4"></i>
                         Clear Filters
                     </a>
                 </div>
                 @endforelse
             </div>
 
-            <!-- Pagination -->
-            <div class="mt-12">
-                {{ $treatments->withQueryString()->links() }}
-            </div>
+            {{-- ── Pagination ── --}}
+            @if($treatments->hasPages())
+                <div class="mt-12 yalia-pagination">
+                    {{ $treatments->withQueryString()->links() }}
+                </div>
+            @endif
+
         </div>
     </div>
 </x-app-layout>

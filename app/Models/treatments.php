@@ -110,9 +110,34 @@ class Treatments extends Model
     protected function imageUrl(): Attribute
     {
         return Attribute::make(
-            get: fn (): string => $this->images
-                ? Storage::disk('public')->url(self::IMAGE_DIRECTORY.'/'.$this->images)
-                : asset('images/treatment-placeholder.webp'),
+            get: function (): string {
+                if (! $this->images) {
+                    return asset('images/treatment-placeholder.webp');
+                }
+
+                if (str_starts_with($this->images, 'http://') || str_starts_with($this->images, 'https://')) {
+                    return $this->images;
+                }
+
+                $cleanPath = ltrim($this->images, '/');
+
+                if (Storage::disk('public')->exists($cleanPath)) {
+                    return Storage::disk('public')->url($cleanPath);
+                }
+
+                if (! str_starts_with($cleanPath, self::IMAGE_DIRECTORY . '/')) {
+                    $subPath = self::IMAGE_DIRECTORY . '/' . $cleanPath;
+                    if (Storage::disk('public')->exists($subPath)) {
+                        return Storage::disk('public')->url($subPath);
+                    }
+                }
+
+                if (file_exists(public_path('images/' . $cleanPath))) {
+                    return asset('images/' . $cleanPath);
+                }
+
+                return asset('images/treatment-placeholder.webp');
+            }
         );
     }
 

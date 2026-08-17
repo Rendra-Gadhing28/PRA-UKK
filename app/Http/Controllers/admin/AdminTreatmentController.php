@@ -73,7 +73,8 @@ class AdminTreatmentController extends Controller
             'description'      => ['required', 'string'],
             'benefits'         => ['nullable', 'string'],
             'is_active'        => ['nullable', 'boolean'],
-            'images'            => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'image'            => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'images'           => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);
 
         // Auto-generate slug unik
@@ -86,10 +87,11 @@ class AdminTreatmentController extends Controller
         }
 
         $imageName = null;
-        if ($request->hasFile('images')) {
-            $file = $request->file('imagess');
+        $file = $request->file('image') ?? $request->file('images');
+        if ($file) {
             $imageName = time() . '_' . Str::slug($validated['name']) . '.' . $file->getClientOriginalExtension();
             $file->storeAs(Treatments::IMAGE_DIRECTORY, $imageName, 'public');
+            $imageName = Treatments::IMAGE_DIRECTORY . '/' . $imageName;
         }
 
         Treatments::create([
@@ -102,7 +104,7 @@ class AdminTreatmentController extends Controller
             'description'      => $validated['description'],
             'benefits'         => $validated['benefits'] ?? null,
             'is_active'        => $request->boolean('is_active', true),
-            'images'            => $imageName,
+            'images'           => $imageName,
             'rating'           => 0.0,
             'rating_count'     => 0,
             'sort_order'       => 0,
@@ -137,7 +139,8 @@ class AdminTreatmentController extends Controller
             'description'      => ['required', 'string'],
             'benefits'         => ['nullable', 'string'],
             'is_active'        => ['nullable', 'boolean'],
-            'images'            => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'image'            => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'images'           => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);
 
         if ($validated['name'] !== $treatment->name) {
@@ -151,16 +154,15 @@ class AdminTreatmentController extends Controller
             $treatment->slug = $slug;
         }
 
-        if ($request->hasFile('images')) {
-            // Hapus gambar lama bila ada
+        $file = $request->file('image') ?? $request->file('images');
+        if ($file) {
             if ($treatment->images) {
-                Storage::disk('public')->delete(Treatments::IMAGE_DIRECTORY . '/' . $treatment->images);
+                Storage::disk('public')->delete($treatment->images);
             }
 
-            $file = $request->file('images');
             $imageName = time() . '_' . Str::slug($validated['name']) . '.' . $file->getClientOriginalExtension();
             $file->storeAs(Treatments::IMAGE_DIRECTORY, $imageName, 'public');
-            $treatment->images = $imageName;
+            $treatment->images = Treatments::IMAGE_DIRECTORY . '/' . $imageName;
         }
 
         $treatment->update([

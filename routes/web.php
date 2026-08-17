@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\BookingController;
 use App\Http\Controllers\User\TreatmentController;
+use App\Http\Controllers\Webhooks\MidtransWebhookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,18 +66,42 @@ Route::middleware(['auth'])->prefix('dashboard')->name('user.')->group(function 
 
     // Endpoint for AJAX checking booked slots
     Route::get('/slots/check', [\App\Http\Controllers\Api\SlotController::class, 'check'])->name('slots.check');
-//     // Treatment (browse & detail)
-//     Route::get('/treatment', [\App\Http\Controllers\User\TreatmentController::class, 'index'])->name('treatments.index');
-//     Route::get('/treatment/{slug}', [\App\Http\Controllers\User\TreatmentController::class, 'show'])->name('treatments.show');
 
     // Booking
-    Route::get('/booking', [\App\Http\Controllers\User\BookingController::class, 'index'])->name('bookings.index');
-    Route::get('/booking/buat', [\App\Http\Controllers\User\BookingController::class, 'create'])->name('bookings.create');
-    Route::post('/booking', [\App\Http\Controllers\User\BookingController::class, 'store'])->name('bookings.store');
-    Route::get('/booking/{booking}', [\App\Http\Controllers\User\BookingController::class, 'show'])->name('bookings.show');
-    Route::patch('/booking/{booking}/batalkan', [\App\Http\Controllers\User\BookingController::class, 'cancel'])->name('bookings.cancel');
+    Route::get('/booking', [BookingController::class, 'index'])->name('bookings.index');
+    Route::get('/booking/buat', [BookingController::class, 'create'])->name('bookings.create');
+    Route::post('/booking', [BookingController::class, 'store'])->name('bookings.store');
+
+    // Cek ketersediaan jadwal (auto-assign aware) - dipanggil AJAX dari custom time picker
+    Route::get('/booking/cek-ketersediaan', [BookingController::class, 'checkAvailability'])
+        ->middleware('throttle:60,1')
+        ->name('bookings.check-availability');
+
+    // Cek seluruh slot harian sekaligus
+    Route::get('/booking/slot-harian', [BookingController::class, 'dailySlots'])
+        ->middleware('throttle:60,1')
+        ->name('bookings.daily-slots');
+
+
+    // Pembayaran QRIS
+    Route::get('/booking/{booking}/pembayaran', [BookingController::class, 'payment'])->name('bookings.payment');
+    Route::get('/booking/{booking}/pembayaran/status', [BookingController::class, 'paymentStatus'])
+        ->middleware('throttle:120,1') // dipanggil tiap 5 detik oleh polling
+        ->name('bookings.payment.status');
+
+    Route::get('/booking/{booking}', [BookingController::class, 'show'])->name('bookings.show');
+    Route::patch('/booking/{booking}/batalkan', [BookingController::class, 'cancel'])->name('bookings.cancel');
    
 });
+
+
+// =============================================================
+// WEBHOOK — Notifikasi server-to-server dari Midtrans (tanpa auth/CSRF)
+// =============================================================
+
+Route::post('/webhooks/midtrans', [MidtransWebhookController::class, 'handle'])
+    ->name('webhooks.midtrans');
+
 
 
 // =============================================================
@@ -125,6 +150,25 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])
             Route::put('/{beautician}', [\App\Http\Controllers\Admin\AdminBeauticianController::class, 'update'])->name('update');
             Route::delete('/{beautician}', [\App\Http\Controllers\Admin\AdminBeauticianController::class, 'destroy'])->name('destroy');
             Route::patch('/{beautician}/toggle-active', [\App\Http\Controllers\Admin\AdminBeauticianController::class, 'toggleActive'])->name('toggle-active');
+        });
+
+        // Admin Vouchers Management
+        Route::prefix('vouchers')->name('vouchers.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'store'])->name('store');
+            Route::get('/{voucher}/edit', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'edit'])->name('edit');
+            Route::put('/{voucher}', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'update'])->name('update');
+            Route::delete('/{voucher}', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'destroy'])->name('destroy');
+            Route::patch('/{voucher}/toggle-active', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'toggleActive'])->name('toggle-active');
+        });
+
+        // Admin Finances Management (Track Pengeluaran & Scan Struk)
+        Route::prefix('finances')->name('finances.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\AdminFinanceController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\AdminFinanceController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\AdminFinanceController::class, 'store'])->name('store');
+            Route::delete('/{finance}', [\App\Http\Controllers\Admin\AdminFinanceController::class, 'destroy'])->name('destroy');
         });
     });
 

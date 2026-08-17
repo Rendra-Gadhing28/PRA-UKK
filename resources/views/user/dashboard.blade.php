@@ -138,7 +138,7 @@
     </div>
 
     <script>
-        function bookingTabs(listUrl) {
+        window.bookingTabs = function bookingTabs(listUrl) {
             return {
                 tabs: ['upcoming', 'past', 'cancelled'],
                 activeTab: 'upcoming',

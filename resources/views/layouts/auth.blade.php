@@ -16,8 +16,9 @@
 
     @yield('content')
 
-    {{-- Toast Notifications --}}
+    {{-- Toast Notifications & Action Modals --}}
     <x-toast />
+    <x-action-modal />
 
 </body>
 </html>

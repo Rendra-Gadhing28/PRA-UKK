@@ -57,4 +57,12 @@ class Beauticians extends Model
     {
         return $this->hasMany(Reviews::class, 'beautician_id');
     }
+
+    /**
+     * Relasi ke jadwal kerja mingguan (dipakai untuk auto-assign booking).
+     */
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(BeauticiansSchedules::class, 'beautician_id');
+    }
 }

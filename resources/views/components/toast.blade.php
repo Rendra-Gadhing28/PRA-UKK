@@ -27,8 +27,17 @@
     x-init="
         @if(session('toast'))
             addToast('{{ session('toast.type') }}', '{{ addslashes(session('toast.message')) }}');
+        @elseif(session('success'))
+            addToast('success', '{{ addslashes(session('success')) }}');
+        @elseif(session('error'))
+            addToast('error', '{{ addslashes(session('error')) }}');
+        @elseif(session('status') === 'password-updated')
+            addToast('success', 'Password berhasil diperbarui.');
+        @elseif(session('status') === 'profile-updated')
+            addToast('success', 'Profil berhasil diperbarui.');
         @endif
     "
+
     @toast.window="addToast($event.detail.type, $event.detail.message)"
     class="fixed bottom-5 right-5 z-50 space-y-3 w-80 max-w-[calc(100vw-2.5rem)]"
     aria-live="polite"
@@ -45,27 +54,27 @@
             x-transition:leave-end="opacity-0 translate-x-full"
             class="relative flex items-start gap-3 bg-white rounded-2xl shadow-xl border overflow-hidden pr-4 pl-4 pt-4 pb-3"
             :class="{
-                'border-green-200': toast.type === 'success',
-                'border-red-200': toast.type === 'error',
-                'border-yellow-200': toast.type === 'warning',
-                'border-blue-200': toast.type === 'info',
+                'border-green-400': toast.type === 'success',
+                'border-red-400': toast.type === 'error',
+                'border-yellow-400': toast.type === 'warning',
+                'border-blue-400': toast.type === 'info',
             }"
             role="alert"
         >
             {{-- Ikon --}}
             <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mt-0.5"
                  :class="{
-                     'bg-green-100': toast.type === 'success',
-                     'bg-red-100': toast.type === 'error',
-                     'bg-yellow-100': toast.type === 'warning',
-                     'bg-blue-100': toast.type === 'info',
+                     'bg-green-100 text-green-600': toast.type === 'success',
+                     'bg-red-100 text-red-600': toast.type === 'error',
+                     'bg-yellow-100 text-yellow-600': toast.type === 'warning',
+                     'bg-blue-100 text-blue-600': toast.type === 'info',
                  }">
                 {{-- Success --}}
-                <svg x-show="toast.type === 'success'" class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg x-show="toast.type === 'success'" class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                 </svg>
                 {{-- Error --}}
-                <svg x-show="toast.type === 'error'" class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg x-show="toast.type === 'error'" class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
                 {{-- Warning --}}
@@ -73,7 +82,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
                 </svg>
                 {{-- Info --}}
-                <svg x-show="toast.type === 'info'" class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg x-show="toast.type === 'info'" class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
             </div>

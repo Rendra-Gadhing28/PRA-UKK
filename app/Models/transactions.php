@@ -20,9 +20,19 @@ class Transactions extends Model
         'created_by',
     ];
 
-    public function Bookings(){
+    protected $casts = [
+        'amount' => 'decimal:2',
+        'transaction_date' => 'date',
+        'metadata' => 'array',
+    ];
+
+    public function Bookings()
+    {
         return $this->belongsTo(Bookings::class, 'booking_id');
     }
 
-    
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }

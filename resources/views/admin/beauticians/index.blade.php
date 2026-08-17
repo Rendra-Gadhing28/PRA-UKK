@@ -2,140 +2,233 @@
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-                <h2 class="font-bold text-2xl text-gray-900 tracking-tight flex items-center gap-2 font-headline">
-                    <span class="w-3 h-8 bg-[#f45472] rounded-full inline-block"></span>
-                    Manajemen Beautician & Staf Salon
+                <h2 class="font-bold text-2xl text-gray-900 tracking-tight flex items-center gap-4 font-headline">
+                    <span class="w-4 h-8 bg-[#f45472] rounded-full inline-block"></span>
+                    Kartu Staf & Beautician Salon
                 </h2>
-                <p class="text-sm text-gray-500 mt-1">Kelola profil beautician, jadwal penugasan, foto staf, & riwayat reservasi</p>
+                <p class="text-sm text-gray-500 mt-1">Daftar ID Card resmi beautician, keahlian, status penugasan, dan total reservasi</p>
             </div>
             
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-4">
                 <a href="{{ route('admin.beauticians.create') }}" 
-                   class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#f45472] text-white hover:bg-[#d93856] text-sm font-semibold shadow-md transition-all">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                    Tambah Beautician Baru
+                   class="inline-flex items-center gap-4 px-8 py-4 rounded-full bg-[#f45472] text-white hover:bg-[#d93856] text-sm font-bold shadow-md transition-all">
+                    <i class="fas fa-plus text-xs"></i>
+                    <span>Tambah Beautician Baru</span>
                 </a>
             </div>
         </div>
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
             
-            {{-- FILTER BAR SECTION --}}
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-rose-100">
-                <form method="GET" action="{{ route('admin.beauticians.index') }}" class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
+            {{-- PURE BLADE FILTER BAR SECTION --}}
+            <div class="bg-white rounded-3xl p-8 shadow-sm border border-rose-100">
+                <form method="GET" action="{{ route('admin.beauticians.index') }}" class="space-y-4">
                     
-                    {{-- Filter Status --}}
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Status Penugasan</label>
-                        <select name="status" class="w-full px-3 py-2 text-xs rounded-xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472]">
-                            <option value="all">Semua Status</option>
-                            <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Aktif</option>
-                            <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nonaktif</option>
-                        </select>
-                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
+                        
+                        {{-- Filter Status Penugasan --}}
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-4 flex items-center gap-4">
+                                <i class="fas fa-filter text-rose-500 text-xs"></i>
+                                Status Penugasan
+                            </label>
+                            <select name="status" class="w-full px-4 py-4 text-xs font-semibold rounded-2xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472] text-gray-800 bg-white">
+                                <option value="all">🎟️ Semua Status</option>
+                                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>🟢 Aktif & Bertugas</option>
+                                <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>⚪ Nonaktif / Off</option>
+                            </select>
+                        </div>
 
-                    {{-- Search Input --}}
-                    <div class="sm:col-span-4">
-                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Cari Beautician</label>
-                        <input type="text" name="search" placeholder="Nama, telepon, email, atau keahlian..." value="{{ request('search') }}" 
-                               class="w-full px-3 py-2 text-xs rounded-xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472]">
-                    </div>
+                        {{-- Search Input --}}
+                        <div class="sm:col-span-4">
+                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-4 flex items-center gap-4">
+                                <i class="fas fa-magnifying-glass text-rose-500 text-xs"></i>
+                                Cari Beautician
+                            </label>
+                            <div class="relative">
+                                <input type="text" name="search" placeholder="Cari nama beautician, no hp, email, atau keahlian..." value="{{ request('search') }}" 
+                                       class="w-full pl-12 pr-8 py-4 text-xs font-semibold rounded-2xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472] text-gray-800">
+                                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-rose-400">
+                                    <i class="fas fa-magnifying-glass text-xs"></i>
+                                </div>
+                                @if(request('search'))
+                                    <a href="{{ route('admin.beauticians.index', array_filter(['status' => request('status')])) }}" 
+                                       class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-rose-600">
+                                        <i class="fas fa-xmark text-xs"></i>
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
 
-                    {{-- Action Buttons --}}
-                    <div class="flex items-center gap-2">
-                        <button type="submit" class="w-full py-2 px-4 rounded-xl bg-[#f45472] text-white text-xs font-bold hover:bg-[#d93856] transition-all shadow-sm">
-                            Filter
-                        </button>
-                        <a href="{{ route('admin.beauticians.index') }}" class="py-2 px-3 rounded-xl bg-gray-100 text-gray-600 text-xs font-semibold hover:bg-gray-200 transition-all">
-                            Reset
-                        </a>
+                        {{-- Action Buttons --}}
+                        <div class="flex items-center gap-4">
+                            <button type="submit" class="flex-1 py-4 px-4 rounded-2xl bg-[#f45472] text-white text-xs font-bold hover:bg-[#d93856] transition-all shadow-sm flex items-center justify-center gap-4">
+                                <i class="fas fa-sliders text-xs"></i>
+                                <span>Filter</span>
+                            </button>
+                            <a href="{{ route('admin.beauticians.index') }}" class="py-4 px-4 rounded-2xl bg-gray-100 text-gray-600 text-xs font-semibold hover:bg-rose-50 hover:text-rose-600 transition-all flex items-center justify-center" title="Reset Filter">
+                                <i class="fas fa-rotate-left text-xs"></i>
+                            </a>
+                        </div>
+
                     </div>
 
                 </form>
             </div>
 
-            {{-- BEAUTICIANS GRID SECTION --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {{-- BEAUTICIANS PROFESSIONAL ID CARD GRID SECTION --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @forelse($beauticians as $b)
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-rose-100 flex flex-col justify-between hover:shadow-md transition-all">
-                    <div>
-                        {{-- Photo & Status Badge Header --}}
-                        <div class="flex items-start justify-between mb-4">
+                
+                {{-- PROFESSIONAL EMPLOYEE ID CARD ITEM --}}
+                <div class="bg-white rounded-3xl border border-rose-200 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden relative group">
+                    
+                    {{-- ID Card Lanyard Hole Top Bar --}}
+                    <div class="bg-gray-100 py-2 border-b border-gray-200 flex justify-center items-center">
+                        <div class="w-12 h-3 bg-gray-300 rounded-full border border-gray-400 shadow-inner flex items-center justify-center">
+                            <div class="w-8 h-1 bg-gray-400 rounded-full"></div>
+                        </div>
+                    </div>
+
+                    {{-- ID Card Header Banner --}}
+                    <div class="bg-gradient-to-r from-gray-900 via-rose-950 to-gray-900 px-8 py-4 text-white flex items-center justify-between border-b-2 border-rose-400 relative">
+                        <div class="flex items-center gap-4">
+                            <img src="{{ asset('logo/yalia-logos-trnsprnt.svg') }}" alt="Yalia Logo" class="w-8 h-8 rounded-full bg-white/10 p-1 border border-white/20">
+                            <div>
+                                <h4 class="font-bold text-xs uppercase tracking-widest text-rose-300 font-headline">Yalia Beauty</h4>
+                                <p class="text-[9px] text-gray-300 uppercase tracking-wider font-mono">Official Staff Card</p>
+                            </div>
+                        </div>
+
+                        {{-- Employee Badge ID --}}
+                        <div class="text-right">
+                            <span class="font-mono text-xs font-black text-rose-300 tracking-wider">#STAFF-{{ sprintf('%03d', $b->id) }}</span>
+                            <span class="block text-[9px] text-gray-400 font-semibold uppercase">ID Number</span>
+                        </div>
+                    </div>
+
+                    {{-- Card Body --}}
+                    <div class="p-8 space-y-4 relative">
+                        
+                        {{-- Photo Avatar with Metallic Ring & Status Indicator --}}
+                        <div class="flex items-center justify-between">
                             <div class="relative">
-                                <img src="{{ $b->photo_url }}" alt="{{ $b->name }}" 
-                                     class="w-16 h-16 rounded-full object-cover border-2 border-rose-200 shadow-sm">
-                                <span class="absolute bottom-0 right-0 w-4 h-4 rounded-full border-2 border-white {{ $b->is_active ? 'bg-emerald-500' : 'bg-gray-300' }}"></span>
+                                <div class="w-24 h-24 rounded-2xl p-1 bg-gradient-to-br from-[#f45472] via-rose-300 to-amber-300 shadow-md">
+                                    <img src="{{ $b->photo_url }}" alt="{{ $b->name }}" 
+                                         class="w-full h-full rounded-xl object-cover border border-white bg-white">
+                                </div>
+                                {{-- Status Dot Indicator --}}
+                                <span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white {{ $b->is_active ? 'bg-emerald-500' : 'bg-gray-400' }}"
+                                      title="{{ $b->is_active ? 'Status: Aktif' : 'Status: Off' }}"></span>
                             </div>
 
+                            {{-- Active Toggle Form Button --}}
                             <form method="POST" action="{{ route('admin.beauticians.toggle-active', $b->id) }}">
                                 @csrf
                                 @method('PATCH')
                                 <button type="submit" 
-                                        class="px-2.5 py-1 rounded-full text-[10px] font-bold transition-all {{ $b->is_active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
-                                    {{ $b->is_active ? '● Aktif' : '○ Off' }}
+                                        class="px-4 py-2 rounded-full text-xs font-extrabold transition-all border flex items-center gap-4 shadow-sm {{ $b->is_active ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200' }}">
+                                    <span class="w-2 h-2 rounded-full {{ $b->is_active ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400' }}"></span>
+                                    <span>{{ $b->is_active ? 'Aktif Bertugas' : 'Off Penugasan' }}</span>
                                 </button>
                             </form>
                         </div>
 
-                        {{-- Staf Info --}}
-                        <h3 class="font-headline font-bold text-gray-900 text-lg mb-0.5 truncate">{{ $b->name }}</h3>
-                        <p class="text-xs text-[#f45472] font-semibold mb-3">Beautician Specialist</p>
-
-                        <div class="space-y-1.5 text-xs text-gray-600 mb-4">
-                            <div class="flex items-center gap-2 truncate">
-                                <span>📱</span> <span>{{ $b->phone ?: 'Tidak ada no HP' }}</span>
-                            </div>
-                            <div class="flex items-center gap-2 truncate">
-                                <span>✉️</span> <span>{{ $b->email ?: 'Tidak ada email' }}</span>
-                            </div>
-                            <div class="pt-2 text-xs text-gray-500 line-clamp-2">
-                                "{{ $b->bio }}"
+                        {{-- Employee Name & Role --}}
+                        <div>
+                            <h3 class="font-headline font-black text-gray-900 text-xl tracking-tight leading-snug truncate" title="{{ $b->name }}">
+                                {{ $b->name }}
+                            </h3>
+                            <div class="flex items-center gap-4 mt-1">
+                                <span class="px-4 py-1 rounded-md bg-rose-50 text-[#f45472] text-xs font-bold border border-rose-100 uppercase tracking-wider inline-block">
+                                    Senior Beautician
+                                </span>
                             </div>
                         </div>
+
+                        {{-- Contact Details --}}
+                        <div class="space-y-4 text-xs text-gray-600 bg-rose-50/40 p-4 rounded-2xl border border-rose-100/60">
+                            <div class="flex items-center gap-4 truncate">
+                                <i class="fas fa-phone text-rose-500 w-4 text-center"></i>
+                                <span class="font-semibold text-gray-800">{{ $b->phone ?: 'Tidak ada no HP' }}</span>
+                            </div>
+                            <div class="flex items-center gap-4 truncate">
+                                <i class="fas fa-envelope text-rose-500 w-4 text-center"></i>
+                                <span class="font-semibold text-gray-800">{{ $b->email ?: 'Tidak ada email' }}</span>
+                            </div>
+                            <div class="pt-2 border-t border-rose-100 text-xs text-gray-500 line-clamp-2 italic">
+                                "{{ $b->bio ?: 'Terapis profesional Yalia Beauty Salon & Spa' }}"
+                            </div>
+                        </div>
+
+                        {{-- Total Bookings & Security Barcode Strip --}}
+                        <div class="flex items-center justify-between pt-2 border-t border-gray-100">
+                            <div>
+                                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Total Penugasan:</span>
+                                <span class="font-black text-rose-600 text-sm font-headline">
+                                    {{ number_format($b->bookings_count ?? $b->total_bookings) }} Layanan
+                                </span>
+                            </div>
+
+                            {{-- Security Barcode Visual Element --}}
+                            <div class="text-right">
+                                <div class="font-mono text-gray-400 text-xs tracking-tighter opacity-80 select-none">
+                                    ||| | |||| | || |||
+                                </div>
+                                <span class="text-[9px] text-gray-400 font-mono block">VERIFIED STAFF</span>
+                            </div>
+                        </div>
+
                     </div>
 
-                    {{-- Footer Stats & Action Buttons --}}
-                    <div class="pt-4 border-t border-gray-100">
-                        <div class="flex items-center justify-between text-xs mb-4">
-                            <span class="text-gray-400">Total Booking:</span>
-                            <span class="font-black text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-full">
-                                {{ number_format($b->bookings_count ?? $b->total_bookings) }} Layanan
-                            </span>
-                        </div>
+                    {{-- ID Card Actions Footer --}}
+                    <div class="p-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between gap-4">
+                        <a href="{{ route('admin.beauticians.show', $b->id) }}" 
+                           class="flex-1 py-4 rounded-2xl bg-white border border-gray-200 text-gray-800 text-xs font-bold hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all flex items-center justify-center gap-4 shadow-sm">
+                            <i class="fas fa-id-card text-xs"></i>
+                            <span>Detail ID</span>
+                        </a>
 
-                        <div class="grid grid-cols-3 gap-1.5 text-center">
-                            <a href="{{ route('admin.beauticians.show', $b->id) }}" 
-                               class="py-1.5 rounded-xl bg-purple-50 text-purple-700 text-xs font-bold hover:bg-purple-100 transition-colors">
-                                Detail
-                            </a>
-                            <a href="{{ route('admin.beauticians.edit', $b->id) }}" 
-                               class="py-1.5 rounded-xl bg-gray-100 text-gray-700 text-xs font-bold hover:bg-gray-200 transition-colors">
-                                Edit
-                            </a>
-                            <form method="POST" action="{{ route('admin.beauticians.destroy', $b->id) }}" 
-                                  onsubmit="return confirm('Apakah Anda yakin ingin menghapus staf {{ $b->name }}?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="w-full py-1.5 rounded-xl bg-rose-50 text-rose-600 text-xs font-bold hover:bg-rose-100 transition-colors">
-                                    Hapus
-                                </button>
-                            </form>
-                        </div>
+                        <a href="{{ route('admin.beauticians.edit', $b->id) }}" 
+                           class="flex-1 py-4 rounded-2xl bg-white border border-gray-200 text-gray-800 text-xs font-bold hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all flex items-center justify-center gap-4 shadow-sm">
+                            <i class="fas fa-pen text-xs"></i>
+                            <span>Edit</span>
+                        </a>
+
+                        <form method="POST" action="{{ route('admin.beauticians.destroy', $b->id) }}" 
+                              onsubmit="return confirm('Apakah Anda yakin ingin menghapus staf {{ $b->name }}?')" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="p-4 rounded-2xl bg-rose-50 text-rose-600 text-xs font-bold hover:bg-rose-100 transition-all border border-rose-200" title="Hapus Staf">
+                                <i class="fas fa-trash-can text-xs"></i>
+                            </button>
+                        </form>
                     </div>
+
                 </div>
+
                 @empty
-                <div class="col-span-full bg-white rounded-3xl p-12 text-center text-gray-400 border border-rose-100">
-                    <p class="text-base font-semibold">Belum ada staf beautician yang terdaftar.</p>
+                <div class="col-span-full bg-white rounded-3xl p-12 text-center text-gray-400 border border-rose-100 space-y-4">
+                    <div class="w-16 h-16 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center mx-auto text-2xl">
+                        <i class="fas fa-id-badge"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-base">Belum Ada Staf Beautician</h4>
+                    <p class="text-xs text-gray-500 max-w-sm mx-auto">Daftarkan terapis / beautician baru untuk menerima penugasan reservasi pelanggan Yalia Beauty.</p>
+                    <a href="{{ route('admin.beauticians.create') }}" class="inline-flex items-center gap-4 px-8 py-4 rounded-full bg-[#f45472] text-white text-xs font-bold hover:bg-[#d93856] shadow-sm transition-all">
+                        <i class="fas fa-plus"></i> Tambah Beautician Sekarang
+                    </a>
                 </div>
                 @endforelse
             </div>
 
             {{-- Custom Numbered Pagination Links --}}
-            <div class="bg-white rounded-3xl p-4 shadow-sm border border-rose-100">
-                {{ $beauticians->links() }}
-            </div>
+            @if($beauticians->hasPages())
+                <div class="bg-white rounded-3xl p-4 shadow-sm border border-rose-100">
+                    {{ $beauticians->links() }}
+                </div>
+            @endif
 
         </div>
     </div>
