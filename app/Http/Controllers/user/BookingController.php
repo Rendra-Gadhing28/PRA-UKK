@@ -96,7 +96,7 @@ class BookingController extends Controller
             ->with(['treatments', 'beautician'])
             ->when($activeTab === 'upcoming', fn ($q) => $q->upcoming())
             ->when($activeTab === 'past', fn ($q) => $q->past())
-            ->when($activeTab === 'canceled', fn ($q) => $q->cancelled())
+            ->when(in_array($activeTab, ['canceled', 'cancelled'], true), fn ($q) => $q->cancelled())
             ->orderByDesc('booking_date')
             ->orderByDesc('time_start')
             ->paginate(10);
@@ -110,7 +110,24 @@ class BookingController extends Controller
 
     public function list(Request $request): View
     {
-        return $this->index($request);
+        $activeTab = $request->string('tab', 'upcoming')->toString();
+        $sort = $request->string('sort', 'desc')->toString();
+
+        $bookings = Bookings::query()
+            ->ownedBy(auth()->id())
+            ->with(['treatments', 'beautician'])
+            ->when($activeTab === 'upcoming', fn ($q) => $q->upcoming())
+            ->when($activeTab === 'past', fn ($q) => $q->past())
+            ->when(in_array($activeTab, ['canceled', 'cancelled'], true), fn ($q) => $q->cancelled())
+            ->orderBy('booking_date', $sort)
+            ->orderBy('time_start', $sort)
+            ->get();
+
+        return view('user.bookings.BookingList', [
+            'bookings'  => $bookings,
+            'tab'       => $activeTab,
+            'paginated' => false,
+        ]);
     }
 
  

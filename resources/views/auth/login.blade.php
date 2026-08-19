@@ -68,165 +68,219 @@
             box-shadow: 0 0 0 4px rgba(244, 84, 114, 0.1);
         }
         [x-cloak] { display: none !important; }
+
+        /* Panel hero kanan: gradasi brand + noise halus supaya tidak flat */
+        .hero-panel {
+            background: linear-gradient(155deg, #FF6B8A 0%, #E91E63 55%, #b6134a 100%);
+        }
+        .hero-panel::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.18) 1px, transparent 1px);
+            background-size: 22px 22px;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        /* Elemen yang di-tilt mengikuti mouse (parallax ringan) */
+        #hero-parallax { will-change: transform; transform-style: preserve-3d; }
+        .parallax-layer { will-change: transform; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 to-rose-100 px-4 py-8 sm:py-12 relative overflow-hidden">
+<body class="min-h-screen bg-bg-main">
 
-    {{-- Background Decorative Elements --}}
-    <div class="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-accent-clear opacity-30 blur-[120px] rounded-full pointer-events-none"></div>
-    <div class="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-accent-soft opacity-30 blur-[120px] rounded-full pointer-events-none"></div>
+    <div class="min-h-screen w-full lg:grid lg:grid-cols-2 relative overflow-hidden">
 
-    {{-- Card dibatasi max-w-96 (24rem/384px) — tidak terlalu lebar di desktop, full-width di mobile --}}
-    <div id="login-container" class="w-full max-w-96 relative z-10 opacity-0">
+        {{-- ============ KIRI: FORM LOGIN ============ --}}
+        <div class="relative flex items-center justify-center px-4 py-10 sm:py-14">
 
-        {{-- Logo & Judul --}}
-        <div class="text-center mb-6 sm:mb-8">
-            <a href="{{ route('home') }}" class="inline-flex items-center gap-3 mb-4 group">
-                <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-brand p-0.5 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <div class="w-full h-full rounded-full bg-white flex items-center justify-center">
-                        <img src="{{ asset('logo/yalia-logos-trnsprnt.svg') }}" alt="Yalia Beauty Logo" class="w-8 h-8 sm:w-10 sm:h-10 object-cover rounded-full">
+            {{-- Dekorasi blur, hanya relevan di mode mobile (saat hero tersembunyi) --}}
+            <div class="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-accent-clear opacity-30 blur-[120px] rounded-full pointer-events-none lg:hidden"></div>
+            <div class="fixed bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-accent-soft opacity-20 blur-[120px] rounded-full pointer-events-none lg:hidden"></div>
+
+            <div id="login-container" class="w-full max-w-96 relative z-10 opacity-0">
+
+                {{-- Logo & Judul --}}
+                <div class="text-center mb-6 sm:mb-8">
+                    <a href="{{ route('home') }}" class="inline-flex items-center gap-3 mb-4 group">
+                        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-brand p-0.5 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <div class="w-full h-full rounded-full bg-white flex items-center justify-center">
+                                <img src="{{ asset('logo/yalia-logos-trnsprnt.svg') }}" alt="Yalia Beauty Logo" class="w-8 h-8 sm:w-10 sm:h-10 object-cover rounded-full">
+                            </div>
+                        </div>
+                        <span class="text-xl sm:text-2xl font-display font-extrabold bg-gradient-brand bg-clip-text text-transparent">Yalia Beauty</span>
+                    </a>
+                    <h1 class="text-2xl sm:text-3xl font-display font-extrabold text-dark tracking-tight">Masuk ke Akun Anda</h1>
+                    <p class="text-gray-500 text-sm mt-2">Selamat datang kembali di Yalia Beauty!</p>
+                </div>
+
+                {{-- Card Form Login --}}
+                <div class="glass-card rounded-2xl shadow-2xl p-6 sm:p-8">
+
+                    {{-- Flash error umum (mis. rate limit / kredensial salah) --}}
+                    @if ($errors->any())
+                        <div class="mb-5 rounded-xl bg-red-50 border border-red-200 px-4 py-3">
+                            <p class="text-red-600 text-xs font-semibold">{{ $errors->first() }}</p>
+                        </div>
+                    @endif
+
+                    {{-- Tombol Login Google (minimal) --}}
+                    <a href="{{ route('auth.google') }}"
+                       class="flex items-center justify-center gap-3 w-full border border-gray-200 bg-white/50 rounded-xl py-3 px-4 text-dark font-bold hover:bg-white hover:shadow-md transition-all duration-300 mb-6 group">
+                        <svg class="w-5 h-5 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        <span class="text-sm">Masuk dengan Google</span>
+                    </a>
+
+                    {{-- Divider --}}
+                    <div class="relative mb-6">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-200"></div>
+                        </div>
+                        <div class="relative flex justify-center text-[10px] uppercase tracking-[0.2em] font-bold">
+                            <span class="px-4 bg-transparent text-gray-400">Atau Email</span>
+                        </div>
                     </div>
-                </div>
-                <span class="text-xl sm:text-2xl font-display font-extrabold bg-gradient-brand bg-clip-text text-transparent">Yalia Beauty</span>
-            </a>
-            <h1 class="text-2xl sm:text-3xl font-display font-extrabold text-dark tracking-tight">Masuk ke Akun Anda</h1>
-            <p class="text-gray-500 text-sm mt-2">Selamat datang kembali di Yalia Beauty!</p>
-        </div>
 
-        {{-- Card Form Login --}}
-        <div class="glass-card rounded-2xl shadow-2xl p-6 sm:p-8">
+                    {{-- Form Login --}}
+                    <form method="POST" action="{{ route('login') }}"
+                          x-data="{ isLoading: false }"
+                          @submit="isLoading = true"
+                          class="space-y-5">
+                        @csrf
 
-            {{-- Flash error umum (mis. rate limit / kredensial salah) --}}
-            @if ($errors->any())
-                <div class="mb-5 rounded-xl bg-red-50 border border-red-200 px-4 py-3">
-                    <p class="text-red-600 text-xs font-semibold">{{ $errors->first() }}</p>
-                </div>
-            @endif
+                        {{-- Email / Nomor HP --}}
+                        <div>
+                            <label for="email" class="block text-xs font-bold uppercase tracking-widest text-accent mb-2 ml-1">
+                                Email atau Nomor HP
+                            </label>
+                            <input
+                                type="text"
+                                id="email"
+                                name="email"
+                                value="{{ old('email') }}"
+                                required
+                                autofocus
+                                autocomplete="username"
+                                placeholder="email@contoh.com"
+                                class="w-full rounded-xl border bg-white/50 px-4 py-3 text-sm focus:outline-none input-focus transition-all duration-300 {{ $errors->has('email') ? 'border-red-300' : 'border-gray-200' }}"
+                            >
+                            @error('email')
+                                <p class="text-red-500 text-xs mt-1.5 ml-1">{{ $message }}</p>
+                            @enderror
+                        </div>
 
-            {{-- Tombol Login Google --}}
-            <a href="{{ route('auth.google') }}"
-               class="flex items-center justify-center gap-3 w-full border border-gray-200 bg-white/50 rounded-xl py-3 px-4 text-dark font-bold hover:bg-white hover:shadow-md transition-all duration-300 mb-6 group">
-                <svg class="w-5 h-5 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                </svg>
-                <span class="text-sm">Masuk dengan Google</span>
-            </a>
+                        {{-- Password --}}
+                        <div x-data="{ showPassword: false }">
+                            <div class="flex items-center justify-between mb-2 ml-1">
+                                <label for="password" class="block text-xs font-bold uppercase tracking-widest text-accent">
+                                    Password
+                                </label>
+                                <a href="{{ route('password.request') }}"
+                                   class="text-[11px] font-bold text-gray-400 hover:text-accent transition-colors uppercase tracking-wider">
+                                    Lupa password?
+                                </a>
+                            </div>
+                            <div class="relative">
+                                <input
+                                    :type="showPassword ? 'text' : 'password'"
+                                    id="password"
+                                    name="password"
+                                    required
+                                    autocomplete="current-password"
+                                    placeholder="Masukkan password"
+                                    class="w-full rounded-xl border border-gray-200 bg-white/50 px-4 py-3 text-sm focus:outline-none input-focus transition-all duration-300 pr-11"
+                                >
+                                <button type="button"
+                                        @click="showPassword = !showPassword"
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-accent transition-colors p-1.5">
+                                    <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
+                                    <svg x-show="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-cloak>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            @error('password')
+                                <p class="text-red-500 text-xs mt-1.5 ml-1">{{ $message }}</p>
+                            @enderror
+                        </div>
 
-            {{-- Divider --}}
-            <div class="relative mb-6">
-                <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t border-gray-200"></div>
-                </div>
-                <div class="relative flex justify-center text-[10px] uppercase tracking-[0.2em] font-bold">
-                    <span class="px-4 bg-transparent text-gray-400">Atau Email</span>
-                </div>
-            </div>
+                        {{-- Remember Me --}}
+                        <div class="flex items-center gap-2 ml-1">
+                            <input type="checkbox" id="remember" name="remember"
+                                   class="rounded border-gray-300 text-accent focus:ring-accent w-4 h-4 accent-accent">
+                            <label for="remember" class="text-sm text-gray-500 cursor-pointer select-none">
+                                Ingat saya selama 30 hari
+                            </label>
+                        </div>
 
-            {{-- Form Login --}}
-            <form method="POST" action="{{ route('login') }}"
-                  x-data="{ isLoading: false }"
-                  @submit="isLoading = true"
-                  class="space-y-5">
-                @csrf
-
-                {{-- Email / Nomor HP --}}
-                <div>
-                    <label for="email" class="block text-xs font-bold uppercase tracking-widest text-accent mb-2 ml-1">
-                        Email atau Nomor HP
-                    </label>
-                    <input
-                        type="text"
-                        id="email"
-                        name="email"
-                        value="{{ old('email') }}"
-                        required
-                        autofocus
-                        autocomplete="username"
-                        placeholder="email@contoh.com"
-                        class="w-full rounded-xl border bg-white/50 px-4 py-3 text-sm focus:outline-none input-focus transition-all duration-300 {{ $errors->has('email') ? 'border-red-300' : 'border-gray-200' }}"
-                    >
-                    @error('email')
-                        <p class="text-red-500 text-xs mt-1.5 ml-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Password --}}
-                <div x-data="{ showPassword: false }">
-                    <div class="flex items-center justify-between mb-2 ml-1">
-                        <label for="password" class="block text-xs font-bold uppercase tracking-widest text-accent">
-                            Password
-                        </label>
-                        <a href="{{ route('password.request') }}"
-                           class="text-[11px] font-bold text-gray-400 hover:text-accent transition-colors uppercase tracking-wider">
-                            Lupa password?
-                        </a>
-                    </div>
-                    <div class="relative">
-                        <input
-                            :type="showPassword ? 'text' : 'password'"
-                            id="password"
-                            name="password"
-                            required
-                            autocomplete="current-password"
-                            placeholder="Masukkan password"
-                            class="w-full rounded-xl border border-gray-200 bg-white/50 px-4 py-3 text-sm focus:outline-none input-focus transition-all duration-300 pr-11"
-                        >
-                        <button type="button"
-                                @click="showPassword = !showPassword"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-accent transition-colors p-1.5">
-                            <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        {{-- Tombol Submit --}}
+                        <button type="submit"
+                                :disabled="isLoading"
+                                class="w-full bg-gradient-brand text-white font-display font-bold rounded-xl py-3.5 shadow-lg shadow-accent/20 hover:shadow-accent/40 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:translate-y-0 transition-all duration-300 flex items-center justify-center gap-2 uppercase tracking-widest text-xs">
+                            <svg x-show="isLoading" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24" x-cloak>
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                             </svg>
-                            <svg x-show="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-cloak>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
-                            </svg>
+                            <span x-text="isLoading ? 'Sedang masuk...' : 'Masuk'">Masuk</span>
                         </button>
-                    </div>
-                    @error('password')
-                        <p class="text-red-500 text-xs mt-1.5 ml-1">{{ $message }}</p>
-                    @enderror
+                    </form>
                 </div>
 
-                {{-- Remember Me --}}
-                <div class="flex items-center gap-2 ml-1">
-                    <input type="checkbox" id="remember" name="remember"
-                           class="rounded border-gray-300 text-accent focus:ring-accent w-4 h-4 accent-accent">
-                    <label for="remember" class="text-sm text-gray-500 cursor-pointer select-none">
-                        Ingat saya selama 30 hari
-                    </label>
-                </div>
+                {{-- Link ke Register --}}
+                <p class="text-center text-sm text-gray-600 mt-6 sm:mt-8">
+                    Belum punya akun?
+                    <a href="{{ route('register') }}" class="text-accent font-bold hover:text-accent-deep transition-colors ml-1">
+                        Daftar sekarang
+                    </a>
+                </p>
 
-                {{-- Tombol Submit --}}
-                <button type="submit"
-                        :disabled="isLoading"
-                        class="w-full bg-gradient-brand text-white font-display font-bold rounded-xl py-3.5 shadow-lg shadow-accent/20 hover:shadow-accent/40 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:translate-y-0 transition-all duration-300 flex items-center justify-center gap-2 uppercase tracking-widest text-xs">
-                    <svg x-show="isLoading" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24" x-cloak>
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                    </svg>
-                    <span x-text="isLoading ? 'Sedang masuk...' : 'Masuk'">Masuk</span>
-                </button>
-            </form>
+            </div>
         </div>
 
-        {{-- Link ke Register --}}
-        <p class="text-center text-sm text-gray-600 mt-6 sm:mt-8">
-            Belum punya akun?
-            <a href="{{ route('register') }}" class="text-accent font-bold hover:text-accent-deep transition-colors ml-1">
-                Daftar sekarang
-            </a>
-        </p>
+        {{-- ============ KANAN: HERO PANEL (disembunyikan di bawah breakpoint lg) ============ --}}
+        <div id="hero-panel" class="hidden lg:flex relative items-center justify-center hero-panel overflow-hidden opacity-0">
 
+            {{-- Blob dekoratif yang mengambang pelan (diberi animasi via Motion di bawah) --}}
+            <div class="parallax-layer floating-blob absolute top-[8%] right-[12%] w-40 h-40 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
+            <div class="parallax-layer floating-blob absolute bottom-[10%] left-[8%] w-56 h-56 rounded-full bg-white/10 blur-3xl pointer-events-none"></div>
+            <div class="parallax-layer floating-blob absolute top-[45%] left-[-5%] w-24 h-24 rounded-full bg-white/15 blur-xl pointer-events-none"></div>
+
+            <div id="hero-parallax" class="relative z-10 flex flex-col items-center text-center px-10 xl:px-16">
+                {{--
+                    Ganti path ini sesuai lokasi asset hero-section.svg kamu,
+                    mis. resources/svg atau public/images.
+                --}}
+                <img
+                    src="{{ asset('logo/hero-section4.svg') }}"
+                    alt="Yalia Beauty"
+                    class="parallax-layer w-full max-w-md xl:max-w-lg drop-shadow-2xl select-none animate-scale-in"
+                    draggable="false"
+                >
+
+                <h2 class="parallax-layer font-display text-2xl xl:text-3xl font-extrabold text-white mt-8 leading-snug">
+                    Cantik itu Perawatan,<br>Bukan Kebetulan.
+                </h2>
+                <p class="parallax-layer text-white/80 text-sm mt-3 max-w-xs">
+                    Booking treatment favoritmu di salon atau langsung di rumah, kapan saja.
+                </p>
+            </div>
+        </div>
     </div>
 
     <x-toast />
 
     <script>
-        // Inisialisasi Lenis Smooth Scroll
+        // ============================================================
+        // Lenis Smooth Scroll — TIDAK DIUBAH
+        // ============================================================
         const lenis = new Lenis();
         function raf(time) {
             lenis.raf(time);
@@ -234,26 +288,74 @@
         }
         requestAnimationFrame(raf);
 
-        // Motion.dev — animasi entrance (tidak diubah)
-        const { animate, stagger } = Motion;
+        // ============================================================
+        // Motion.dev — animasi entrance
+        // ============================================================
+        const { animate, stagger, spring } = Motion;
 
+        // Panel form: fade + slide up
         animate(
             "#login-container",
             { opacity: [0, 1], y: [40, 0] },
-            {
-                duration: 1,
-                easing: [0.22, 1, 0.36, 1]
-            }
+            { duration: 1, easing: [0.22, 1, 0.36, 1] }
         );
 
         animate(
             ".text-center > *, .glass-card > *",
             { opacity: [0, 1], y: [20, 0] },
-            {
-                delay: stagger(0.1, { start: 0.4 }),
-                duration: 0.6
-            }
+            { delay: stagger(0.1, { start: 0.4 }), duration: 0.6 }
         );
+
+        // Panel hero kanan: fade + slide dari kanan, sedikit lebih lambat
+        // supaya terasa berurutan dengan form (bukan muncul bersamaan).
+        if (document.getElementById('hero-panel')) {
+            animate(
+                "#hero-panel",
+                { opacity: [0, 1], x: [60, 0] },
+                { duration: 1.1, delay: 0.15, easing: [0.22, 1, 0.36, 1] }
+            );
+
+            animate(
+                "#hero-parallax > *",
+                { opacity: [0, 1], y: [16, 0] },
+                { delay: stagger(0.12, { start: 0.5 }), duration: 0.7 }
+            );
+
+            // Blob mengambang pelan, infinite loop, tiap blob beda ritme
+            document.querySelectorAll('.floating-blob').forEach((el, i) => {
+                animate(
+                    el,
+                    { y: [0, i % 2 === 0 ? -18 : 18, 0], x: [0, i % 2 === 0 ? 10 : -10, 0] },
+                    { duration: 6 + i, repeat: Infinity, easing: 'ease-in-out' }
+                );
+            });
+
+            // Parallax ringan mengikuti kursor: elemen hero bergeser tipis
+            // relatif ke posisi mouse, dihaluskan pakai Motion (bukan langsung snap).
+            const heroPanel = document.getElementById('hero-panel');
+            const parallaxLayers = document.querySelectorAll('#hero-parallax .parallax-layer, .floating-blob');
+
+            heroPanel.addEventListener('mousemove', (e) => {
+                const rect = heroPanel.getBoundingClientRect();
+                const relX = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 .. 0.5
+                const relY = (e.clientY - rect.top) / rect.height - 0.5;
+
+                parallaxLayers.forEach((el, i) => {
+                    const depth = (i % 3 + 1) * 6; // kedalaman parallax berbeda tiap elemen
+                    animate(
+                        el,
+                        { x: relX * depth, y: relY * depth },
+                        { duration: 0.6, easing: [0.22, 1, 0.36, 1] }
+                    );
+                });
+            });
+
+            heroPanel.addEventListener('mouseleave', () => {
+                parallaxLayers.forEach((el) => {
+                    animate(el, { x: 0, y: 0 }, { duration: 0.8, easing: [0.22, 1, 0.36, 1] });
+                });
+            });
+        }
     </script>
 </body>
 </html>

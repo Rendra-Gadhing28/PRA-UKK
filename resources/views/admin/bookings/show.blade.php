@@ -118,8 +118,9 @@
                                     default => 'bg-gray-100 text-gray-700',
                                 };
                             @endphp
+                            @php $stVal = is_object($booking->status) ? $booking->status->value : (string)$booking->status; @endphp
                             <span class="px-3 py-1 rounded-full text-xs font-bold {{ $statusBg }}">
-                                {{ ucfirst($booking->status) }}
+                                {{ is_object($booking->status) && method_exists($booking->status, 'badgeLabel') ? $booking->status->badgeLabel() : ucfirst($stVal) }}
                             </span>
                         </div>
 

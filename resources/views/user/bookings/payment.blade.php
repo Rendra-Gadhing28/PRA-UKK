@@ -25,7 +25,7 @@
 <div class="min-h-screen bg-gradient-to-b from-[#fff0f3] via-[#fff5f7] to-[#ffe4e8] font-body py-28 px-4 relative flex items-center justify-center overflow-hidden"
      x-data="paymentPage({
         statusUrl: '{{ route('user.bookings.payment.status', $booking) }}',
-        secondsRemaining: {{ max(0, now()->diffInSeconds($booking->payment_expires_at, false)) }},
+        secondsRemaining: {{ (int) max(0, now()->diffInSeconds($booking->payment_expires_at, false)) }},
         redirectUrl: '{{ route('user.bookings.show', $booking) }}'
      })"
      x-init="init()">
@@ -203,9 +203,15 @@ window.paymentPage = function paymentPage(config) {
 
         get formattedTimer() {
             if (this.secondsRemaining <= 0) return '00:00';
-            const m = Math.floor(this.secondsRemaining / 60);
-            const s = this.secondsRemaining % 60;
-            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            const totalSec = Math.max(0, Math.floor(this.secondsRemaining));
+            const h = Math.floor(totalSec / 3600);
+            const m = Math.floor((totalSec % 3600) / 60);
+            const s = totalSec % 60;
+            const pad = (n) => String(n).padStart(2, '0');
+            if (h > 0) {
+                return `${pad(h)}:${pad(m)}:${pad(s)}`;
+            }
+            return `${pad(m)}:${pad(s)}`;
         },
 
         startTimer() {

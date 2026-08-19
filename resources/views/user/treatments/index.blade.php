@@ -280,7 +280,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             {{-- ── Page header ── --}}
-            <div class="text-center mb-12">
+            <div class="text-center mb-40 mt-10">
                 <p class="text-xs font-semibold tracking-widest uppercase mb-3" style="color: var(--yalia-pink);">
                     Our Services
                 </p>
@@ -378,14 +378,19 @@
                             <h3 class="yalia-heading text-base font-bold leading-snug">
                                 {{ $treatment->name }}
                             </h3>
-                            @if($treatment->rating_avg > 0)
-                                <span class="rating-chip shrink-0">
-                                    <i data-lucide="star" class="h-3.5 w-3.5 fill-current"
-                                       style="color: var(--yalia-pink);"></i>
-                                    {{ number_format($treatment->rating_avg, 1) }}
+                            @if((float)$treatment->rating > 0)
+                                <span class="rating-chip shrink-0 inline-flex items-center gap-1">
+                                    <i class="fas fa-star text-amber-400"></i>
+                                    <span class="font-bold text-gray-800">{{ number_format($treatment->rating, 1) }}</span>
+                                    @if($treatment->rating_count > 0)
+                                        <span class="text-xs text-gray-400 font-normal">({{ $treatment->rating_count }})</span>
+                                    @endif
                                 </span>
                             @else
-                                <span class="new-chip shrink-0">New</span>
+                                <span class="new-chip shrink-0 inline-flex items-center gap-1">
+                                    <i class="fas fa-star text-amber-400"></i>
+                                    <span>New</span>
+                                </span>
                             @endif
                         </div>
 

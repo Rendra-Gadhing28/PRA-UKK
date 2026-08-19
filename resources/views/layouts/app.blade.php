@@ -4,10 +4,11 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-          <link rel="icon" href="{{ asset('logo/yalia-logos.svg') }}" type="image/x-icon">
-
+        <link rel="icon" href="{{ asset('logo/yalia-logos.svg') }}" type="image/x-icon">
+        <link rel="stylesheet" type="text/css" href="loading-bar.css"/>
+        <script type="text/javascript" src="loading-bar.js"></script>
         <title>{{ config('app.name', 'Laravel') }}</title>
-
+        <script type="module" src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"></script>
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -37,3 +38,4 @@
         @stack('scripts')
     </body>
 </html>
+

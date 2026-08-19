@@ -51,9 +51,11 @@ class Bookings extends Model
         'cancel_reason', 
         'canceled_at', 
         'version', 
+        'points_added',
     ];
 
     protected $casts = [
+        'status' => \App\Enums\BookingStatus::class,
         'booking_date' => 'date',
         'total_amount' => 'decimal:2',
         'subtotal' => 'decimal:2',
@@ -111,7 +113,7 @@ class Bookings extends Model
     public function scopeUpcoming(Builder $query): Builder
     {
         return $query->whereIn('status', ['pending', 'confirmed', 'in_progress'])
-            ->where('booking_date', '>=', today())
+            ->whereDate('booking_date', '>=', today())
             ->orderBy('booking_date')
             ->orderBy('time_start');
     }
@@ -124,12 +126,44 @@ class Bookings extends Model
 
     public function scopeCancelled(Builder $query): Builder
     {
-        return $query->where('status', 'canceled')
+        return $query->whereIn('status', ['canceled', 'cancelled'])
             ->orderByDesc('updated_at');
     }
 
     public function scopeOwnedBy(Builder $query, int $userId): Builder
     {
         return $query->where('user_id', $userId);
+    }
+
+    /**
+     * Accessor untuk mendapatkan treatment pertama (karena relation bernama treatments)
+     */
+    public function getTreatmentAttribute(): ?Treatments
+    {
+        return $this->treatments->first();
+    }
+
+    /**
+     * Accessor untuk format total harga
+     */
+    public function getFormattedTotalAttribute(): string
+    {
+        return 'Rp ' . number_format((float) $this->total_amount, 0, ',', '.');
+    }
+
+    /**
+     * Alias accessor untuk start_time -> time_start
+     */
+    public function getStartTimeAttribute(): ?string
+    {
+        return $this->attributes['time_start'] ?? null;
+    }
+
+    /**
+     * Alias accessor untuk end_time -> time_end
+     */
+    public function getEndTimeAttribute(): ?string
+    {
+        return $this->attributes['time_end'] ?? null;
     }
 }

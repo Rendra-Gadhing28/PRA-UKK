@@ -38,14 +38,7 @@
             @endif
         </div>
 
-        <div>
-            <x-input-label for="is_admin" :value="__('Account Role')" />
-            <select id="is_admin" name="is_admin" class="mt-1 block w-full border-gray-300 focus:border-amber-500 focus:ring-amber-500 rounded-md shadow-sm">
-                <option value="0" {{ old('is_admin', $user->is_admin) == 0 ? 'selected' : '' }}>User</option>
-                <option value="1" {{ old('is_admin', $user->is_admin) == 1 ? 'selected' : '' }}>Admin</option>
-            </select>
-            <x-input-error class="mt-2" :messages="$errors->get('is_admin')" />
-        </div>
+        {{-- Save CTA --}}
 
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>

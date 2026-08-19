@@ -29,6 +29,7 @@ return new class extends Migration
             $table->integer('sort_order')->default(0);
             $table->decimal('rating', 5,2)->default(0.00);
             $table->integer('rating_count')->default(0);
+            $table->integer('points')->default(0)->comment('Jumlah poin yang didapatkan user ketika membeli treatment ini');
             $table->timestamps();
 
             // Indexes

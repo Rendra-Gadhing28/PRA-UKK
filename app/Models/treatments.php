@@ -57,6 +57,7 @@ class Treatments extends Model
         'sort_order',
         'rating',
         'rating_count',
+        'points',
     ];
 
     /**

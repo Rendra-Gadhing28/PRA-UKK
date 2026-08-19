@@ -18,12 +18,14 @@
         "vite": "^8.0.0"
     },
     "dependencies": {
-        "9router": "^0.5.55",
         "@fortawesome/fontawesome-svg-core": "^7.3.1",
         "@fortawesome/free-solid-svg-icons": "^7.3.1",
         "@fortawesome/react-fontawesome": "^3.5.0",
         "@google/gemini-cli": "^0.54.0",
+        "@lordicon/element": "^2.3.1",
+        "@lottiefiles/dotlottie-react": "^0.19.15",
         "@vitejs/plugin-react": "^6.0.5",
+        "9router": "^0.5.55",
         "pnpm": "^11.20.0",
         "react": "^19.2.8",
         "react-dom": "^19.2.8"

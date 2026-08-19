@@ -17,11 +17,21 @@ class UserVouchers extends Model
     public function Users(){
         return $this->belongsTo(User::class, 'user_id');
     }
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function Vouchers(){
+        return $this->belongsTo(Vouchers::class, 'voucher_id');
+    }
+    public function voucher(){
         return $this->belongsTo(Vouchers::class, 'voucher_id');
     }
 
     public function Bookings(){
+        return $this->belongsTo(Bookings::class, 'booking_id');
+    }
+    public function booking(){
         return $this->belongsTo(Bookings::class, 'booking_id');
     }
 }

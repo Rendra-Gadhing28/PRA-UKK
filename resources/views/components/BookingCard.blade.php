@@ -1,20 +1,21 @@
 {{-- Satu kartu booking. $booking sudah eager-loaded (beautician, treatments) — aman dari N+1. --}}
 @php
-    $statusLabel = match($booking->status) {
+    $stVal = is_object($booking->status) ? $booking->status->value : (string)$booking->status;
+    $statusLabel = match($stVal) {
         'pending'     => 'Pending Approval',
         'confirmed'   => 'Confirmed',
         'in_progress' => 'In Progress',
         'completed'   => 'Completed',
         'canceled'    => 'Cancelled',
-        default       => ucfirst($booking->status),
+        default       => is_object($booking->status) && method_exists($booking->status, 'badgeLabel') ? $booking->status->badgeLabel() : ucfirst($stVal),
     };
-    $statusBadgeClass = $booking->status === 'confirmed'
+    $statusBadgeClass = $stVal === 'confirmed'
         ? 'bg-accent-clear text-on-secondary-container'
         : 'bg-surface-container-high text-on-secondary-container';
     $thumbnail = optional($booking->treatments->first())->image;
 @endphp
 
-<div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-border-subtle flex flex-col lg:flex-row gap-8 items-center transition-all hover:shadow-md {{ $booking->status === 'canceled' ? 'opacity-70' : '' }}">
+<div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-border-subtle flex flex-col lg:flex-row gap-8 items-center transition-all hover:shadow-md {{ $stVal === 'canceled' ? 'opacity-70' : '' }}">
     <div class="relative w-full lg:w-48 h-48 rounded-2xl overflow-hidden shrink-0 bg-surface-container-high">
         @if($thumbnail)
             <img class="w-full h-full object-cover" src="{{ asset('storage/' . $thumbnail) }}" alt="{{ $booking->treatments->first()->name }}">
@@ -60,7 +61,7 @@
             View Details
         </a>
 
-        @if(in_array($booking->status, ['pending', 'confirmed']))
+        @if(in_array($stVal, ['pending', 'confirmed']))
             <form method="POST" action="{{ route('user.bookings.cancel', $booking) }}"
                   onsubmit="return confirm('Cancel this booking?')">
                 @csrf

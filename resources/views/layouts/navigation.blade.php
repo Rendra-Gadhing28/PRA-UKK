@@ -36,6 +36,10 @@
                class="text-xs font-semibold tracking-wide transition-all duration-200 hover:text-[#FF6B8A] {{ request()->routeIs('user.treatments.*') ? 'text-[#FF6B8A]' : 'text-gray-800' }}">
                 Treatments
             </a>
+            <a href="{{ route('user.vouchers.index') }}" 
+               class="text-xs font-semibold tracking-wide transition-all duration-200 hover:text-[#FF6B8A] {{ request()->routeIs('user.vouchers.*') ? 'text-[#FF6B8A]' : 'text-gray-800' }}">
+                Vouchers & PTS
+            </a>
         </div>
 
         {{-- Right Action Buttons --}}
@@ -129,6 +133,9 @@
         </a>
         <a href="{{ route('user.treatments.index') }}" class="block px-4 py-3 text-sm font-semibold rounded-2xl transition-all duration-200 {{ request()->routeIs('user.treatments.*') ? 'text-[#FF6B8A] bg-rose-50' : 'text-gray-800 hover:text-[#FF6B8A] hover:bg-rose-50' }}">
             Treatments
+        </a>
+        <a href="{{ route('user.vouchers.index') }}" class="block px-4 py-3 text-sm font-semibold rounded-2xl transition-all duration-200 {{ request()->routeIs('user.vouchers.*') ? 'text-[#FF6B8A] bg-rose-50' : 'text-gray-800 hover:text-[#FF6B8A] hover:bg-rose-50' }}">
+            Vouchers & PTS
         </a>
 
         <button type="button" @click="confirmLogout = true; mobileMenu = false" class="w-full text-left mt-2 px-4 py-3 text-sm font-bold text-rose-600 rounded-2xl hover:bg-rose-50 transition-colors">

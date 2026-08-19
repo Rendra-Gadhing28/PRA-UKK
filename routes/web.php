@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\User\DashboardController;
+use App\Http\Controllers\User\UserVoucherController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\BookingController;
@@ -63,6 +64,10 @@ Route::middleware(['auth'])->prefix('dashboard')->name('user.')->group(function 
     ->name('bookings.list');
     Route::get('/treatments', [TreatmentController::class, 'index'])
     ->name('treatments.index');
+
+    // Vouchers & Tukar Point
+    Route::get('/vouchers', [UserVoucherController::class, 'index'])->name('vouchers.index');
+    Route::post('/vouchers/{voucher}/claim', [UserVoucherController::class, 'claim'])->name('vouchers.claim');
 
     // Endpoint for AJAX checking booked slots
     Route::get('/slots/check', [\App\Http\Controllers\Api\SlotController::class, 'check'])->name('slots.check');
