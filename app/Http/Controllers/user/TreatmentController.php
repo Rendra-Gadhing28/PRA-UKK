@@ -49,7 +49,42 @@ class TreatmentController extends Controller
         ]);
     }
 
+    /**
+     * AUDIT: method ini disebut di docblock class di atas ("search(): endpoint
+     * AJAX ringan... mengembalikan JSON berisi HTML partial grid + status
+     * pagination") tapi SEBELUMNYA TIDAK PERNAH diimplementasikan — badan
+     * method-nya kosong. Ini saya isi berdasarkan deskripsi docblock tersebut,
+     * memakai service & request yang sama persis dengan index() supaya hasil
+     * pencarian AJAX konsisten dengan hasil SSR.
+     *
+     * ASUMSI yang PERLU DIVERIFIKASI terhadap Blade Anda:
+     * - Nama partial view: 'user.treatments.partials.grid'. Ganti kalau
+     *   Blade Anda pakai path/nama lain.
+     * - Bentuk payload JSON (html, currentPage, lastPage, hasMorePages,
+     *   total) — sesuaikan dengan apa yang dibaca Alpine.js di frontend.
+     * - Route belum tentu terdaftar di routes/web.php — pastikan ada,
+     *   misalnya:
+     *   Route::get('/treatments/search', [TreatmentController::class, 'search'])
+     *       ->name('user.treatments.search');
+     *
+     * Nomor halaman ('page') tidak perlu ditangani manual di sini — Eloquent
+     * paginator otomatis membaca query string ?page= dari request.
+     */
+    public function search(SearchTreatmentRequest $request): JsonResponse
+    {
+        $paginatedTreatments = $this->treatments->paginateActiveTreatments(
+            search: $request->search(),
+            categorySlug: $request->categorySlug()
+        );
 
-    
-
+        return response()->json([
+            'html' => view('user.treatments.partials.grid', [
+                'treatments' => $paginatedTreatments,
+            ])->render(),
+            'currentPage' => $paginatedTreatments->currentPage(),
+            'lastPage' => $paginatedTreatments->lastPage(),
+            'hasMorePages' => $paginatedTreatments->hasMorePages(),
+            'total' => $paginatedTreatments->total(),
+        ]);
+    }
 }

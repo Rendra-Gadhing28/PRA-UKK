@@ -36,20 +36,20 @@
                 </button>
             </div>
 
-            {{-- SCAN BARCODE / QR CODE STRUK -- SIMPLE BROWSER CAMERA --}}
+            {{-- SCAN KAMERA STRUK / BARCODE STRUK -- SIMPLE BROWSER CAMERA --}}
             <div x-show="mode === 'scan'" x-cloak class="bg-white rounded-3xl p-8 shadow-sm border border-rose-100 space-y-6">
                 <div class="border-b border-rose-100 pb-4">
                     <h3 class="font-bold text-gray-900 text-base flex items-center gap-4 font-headline">
-                        <i class="fas fa-qrcode text-[#f45472]"></i>
-                        Scan Barcode / QR Code Struk
+                        <i class="fas fa-camera-retro text-[#f45472]"></i>
+                        Scan Kamera Struk Belanja / Barcode
                     </h3>
                     <p class="text-xs text-gray-500 mt-1">
-                        Arahkan kamera ke barcode atau QR code yang ada di struk belanja. Browser akan meminta izin akses kamera — klik <strong>Allow / Izinkan</strong>.
+                        Arahkan kamera langsung ke dokumen struk belanja fisik atau barcode. Frame scan telah diperluas agar mencakup seluruh bagian struk. Klik <strong>Allow / Izinkan</strong> saat browser meminta akses kamera.
                     </p>
                 </div>
 
-                {{-- Scanner Viewfinder (html5-qrcode renders here) --}}
-                <div id="qr-scanner-box" class="rounded-2xl overflow-hidden border-2 border-rose-200 bg-gray-900" style="min-height: 300px;"></div>
+                {{-- Scanner Viewfinder (html5-qrcode renders here - enlarged container) --}}
+                <div id="qr-scanner-box" class="rounded-2xl overflow-hidden border-2 border-rose-200 bg-gray-900 w-full shadow-inner" style="min-height: 520px;"></div>
 
                 {{-- Scan Status Result --}}
                 <div id="qr-scan-result" class="hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-start gap-4">
@@ -300,9 +300,14 @@
             qrScanner = new Html5Qrcode("qr-scanner-box");
 
             const config = {
-                fps: 10,
-                qrbox: { width: 280, height: 200 },
-                aspectRatio: 1.5,
+                fps: 15,
+                qrbox: function(viewfinderWidth, viewfinderHeight) {
+                    // Frame pembaca diperluas 88% dari lebar & 82% dari tinggi container agar muat struk fisik
+                    const width = Math.floor(viewfinderWidth * 0.88);
+                    const height = Math.floor(viewfinderHeight * 0.82);
+                    return { width: Math.max(width, 320), height: Math.max(height, 360) };
+                },
+                aspectRatio: 1.3333,
                 supportedScanTypes: [
                     Html5QrcodeScanType.SCAN_TYPE_CAMERA
                 ]

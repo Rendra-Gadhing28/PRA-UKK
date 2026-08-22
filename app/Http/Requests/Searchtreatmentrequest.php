@@ -8,19 +8,9 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Memvalidasi & mensanitasi parameter pencarian/filter treatment.
- *
- * Semua input publik (search, category, cursor) divalidasi ketat di sini
- * sebelum menyentuh layer query, sebagai lapisan pertahanan terhadap:
- * - SQL injection (dibatasi panjang & karakter, walau Eloquent sudah
- *   memakai parameter binding)
- * - abuse / query yang tidak wajar (panjang string dibatasi)
- * - mass assignment tidak relevan di sini karena request ini read-only
  */
 class SearchTreatmentRequest extends FormRequest
 {
-    /**
-     * Endpoint ini publik (tidak perlu login), sehingga otorisasi selalu true.
-     */
     public function authorize(): bool
     {
         return true;
@@ -54,5 +44,4 @@ class SearchTreatmentRequest extends FormRequest
     {
         return $this->validated('category');
     }
-
 }

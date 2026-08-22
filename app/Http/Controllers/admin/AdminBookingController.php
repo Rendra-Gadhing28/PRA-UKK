@@ -86,7 +86,13 @@ class AdminBookingController extends Controller
             'cancel_reason' => ['nullable', 'string', 'max:500'],
         ]);
 
-        $oldStatus = $booking->status;
+        $oldStatus = is_object($booking->status) ? $booking->status->value : (string) $booking->status;
+
+        if (in_array($oldStatus, ['completed', 'canceled', 'cancelled'], true)) {
+            ToastHelper::error('Reservasi yang sudah Selesai atau Dibatalkan tidak dapat diubah lagi statusnya.');
+            return redirect()->back();
+        }
+
         $newStatus = $validated['status'];
 
         $booking->status = $newStatus;
@@ -133,11 +139,13 @@ class AdminBookingController extends Controller
      */
     public function verifyPayment(Request $request, Bookings $booking)
     {
+        $currStatus = is_object($booking->status) ? $booking->status->value : (string) $booking->status;
+
         $booking->update([
             'payment_status' => 'paid',
             'payment_verified_at' => now(),
             'payment_verified_by' => auth()->id(),
-            'status' => $booking->status === 'pending' ? 'confirmed' : $booking->status,
+            'status' => $currStatus === 'pending' ? 'confirmed' : $booking->status,
         ]);
 
         ToastHelper::success("Pembayaran untuk reservasi #{$booking->booking_code} berhasil diverifikasi!");
@@ -197,20 +205,46 @@ class AdminBookingController extends Controller
         }
 
         $bookings = $query->orderBy('booking_date', 'desc')->get();
-
+        $totalAmount = $bookings->sum('total_amount');
         $fileName = 'Laporan_Booking_Yalia_Beauty_' . now()->format('Ymd_His') . '.csv';
 
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
-        ];
-
-        $callback = function () use ($bookings) {
+        return response()->streamDownload(function () use ($bookings, $totalAmount) {
             $file = fopen('php://output', 'w');
-            fputcsv($file, ['Kode Booking', 'Pelanggan', 'No. HP', 'Beautician', 'Treatment', 'Tanggal Booking', 'Waktu', 'Tipe', 'Total Harga', 'Status Pembayaran', 'Status Booking']);
+            
+            // UTF-8 BOM untuk MS Excel
+            fputs($file, "\xEF\xBB\xBF");
+            
+            // === HEADER ATAS LAPORAN ===
+            fputcsv($file, ['LAPORAN DAFTAR RESERVASI BOOKING - YALIA BEAUTY SALON']);
+            fputcsv($file, ['Alamat Salon: GHV9+F2 Candi, Kabupaten Boyolali, Jawa Tengah | WA: 0822-2702-3362']);
+            fputcsv($file, ['Tanggal Diunduh:', now()->translatedFormat('l, d F Y H:i') . ' WIB']);
+            fputcsv($file, ['Ringkasan:', 'Total Data: ' . $bookings->count() . ' Reservasi', 'Nilai Total: Rp ' . number_format($totalAmount, 0, ',', '.')]);
+            fputcsv($file, []); // Baris Kosong Pemisah
 
+            // === TABEL DATA & FIELD AKURAT API/DATABASE ===
+            fputcsv($file, [
+                'No',
+                'Kode Booking',
+                'Nama Pelanggan',
+                'No. Handphone',
+                'Terapis / Beautician',
+                'Layanan Treatment',
+                'Tanggal Booking',
+                'Waktu Layanan',
+                'Tipe Kunjungan',
+                'Total Harga (Rp)',
+                'Status Pembayaran',
+                'Status Booking'
+            ]);
+
+            $no = 1;
             foreach ($bookings as $b) {
+                $statusText = is_object($b->status) 
+                    ? (method_exists($b->status, 'badgeLabel') ? $b->status->badgeLabel() : $b->status->value) 
+                    : (string) $b->status;
+
                 fputcsv($file, [
+                    $no++,
                     $b->booking_code,
                     $b->user?->name ?? 'Guest',
                     $b->user?->phone ?? '-',
@@ -218,16 +252,20 @@ class AdminBookingController extends Controller
                     $b->treatments->pluck('name')->join(', ') ?: 'N/A',
                     $b->booking_date ? $b->booking_date->format('Y-m-d') : '-',
                     ($b->time_start ?? '') . ' - ' . ($b->time_end ?? ''),
-                    $b->booking_type,
+                    $b->booking_type === 'home' ? 'Home Service' : 'Ke Salon',
                     $b->total_amount,
-                    $b->payment_status,
-                    $b->status,
+                    $b->payment_status ? ucfirst($b->payment_status) : 'Lunas',
+                    $statusText,
                 ]);
             }
 
-            fclose($file);
-        };
+            // === BARIS TOTAL SUMMARY ===
+            fputcsv($file, []); // Baris Kosong
+            fputcsv($file, ['', '', '', '', '', '', '', '', 'TOTAL NILAI RESERVASI', $totalAmount, '', '']);
 
-        return response()->stream($callback, 200, $headers);
+            fclose($file);
+        }, $fileName, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
     }
 }

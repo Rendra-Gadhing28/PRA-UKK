@@ -40,10 +40,11 @@ class BookingService
         string $timeStart,
         string $timeEnd,
         ?string $notes = null,
+        ?int $userVoucherId = null,
     ): Bookings {
         return DB::transaction(function () use (
             $user, $treatmentItems, $bookingType, $homeLocation,
-            $bookingDate, $timeStart, $timeEnd, $notes,
+            $bookingDate, $timeStart, $timeEnd, $notes, $userVoucherId,
         ) {
             $treatments = Treatments::query()
                 ->whereIn('id', array_column($treatmentItems, 'treatment_id'))
@@ -120,7 +121,37 @@ class BookingService
 
             $beautician = $this->beauticianAssignment->findAvailable($bookingDate, $timeStart, $timeEnd);
 
-            $totalAmount = $subtotal + $transportFee;
+            // Calculate Voucher Discount
+            $discountAmount = 0.0;
+            $userVoucherRecord = null;
+
+            if ($userVoucherId) {
+                $userVoucherRecord = \App\Models\UserVouchers::with('voucher')
+                    ->where('id', $userVoucherId)
+                    ->where('user_id', $user->id)
+                    ->where('is_used', false)
+                    ->first();
+
+                if ($userVoucherRecord && $userVoucherRecord->voucher && $userVoucherRecord->voucher->is_active) {
+                    $v = $userVoucherRecord->voucher;
+
+                    // Validate min_purchase against subtotal
+                    if (! $v->min_purchase || $subtotal >= (float) $v->min_purchase) {
+                        if ($v->type === 'free_shipping' || str_contains(strtolower($v->code), 'freeship') || str_contains(strtolower($v->name), 'ongkir')) {
+                            // Discount applies to transport fee
+                            $rawDiscount = $transportFee * ((float) $v->value / 100);
+                            $discountAmount = (float) $v->max_discount ? min($rawDiscount, (float) $v->max_discount) : $rawDiscount;
+                        } elseif ($v->type === 'percentage') {
+                            $rawDiscount = $subtotal * ((float) $v->value / 100);
+                            $discountAmount = (float) $v->max_discount ? min($rawDiscount, (float) $v->max_discount) : $rawDiscount;
+                        } else { // fixed
+                            $discountAmount = min((float) $v->value, $subtotal);
+                        }
+                    }
+                }
+            }
+
+            $totalAmount = max(0, ($subtotal + $transportFee) - $discountAmount);
 
             $booking = Bookings::create([
                 'booking_code' => $this->generateBookingCode(),
@@ -136,7 +167,7 @@ class BookingService
                 'home_longitude' => $homeLng,
                 'distance_km' => $distanceKm,
                 'subtotal' => $subtotal,
-                'discount_amount' => 0,
+                'discount_amount' => $discountAmount,
                 'transport_fee' => $transportFee,
                 'total_amount' => $totalAmount,
                 'payment_method' => 'qris',
@@ -154,6 +185,16 @@ class BookingService
                     'price_per_unit' => $line['price_per_unit'],
                     'subtotal' => $line['subtotal'],
                 ]);
+            }
+
+            // Mark UserVoucher as used
+            if ($userVoucherRecord) {
+                $userVoucherRecord->update([
+                    'is_used' => true,
+                    'used_at' => now(),
+                    'booking_id' => $booking->id,
+                ]);
+                $userVoucherRecord->voucher->increment('used_count');
             }
 
             return $booking->fresh(['treatments', 'beautician']);

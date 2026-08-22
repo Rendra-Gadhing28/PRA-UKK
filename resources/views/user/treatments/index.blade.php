@@ -276,11 +276,11 @@
         }
     </style>
 
-    <div style="background: var(--yalia-bg); min-height: 100vh; padding: 5rem 0 4rem;">
+    <div x-data="{ loading: false }" style="background: var(--yalia-bg); min-height: 100vh; padding: 5rem 0 4rem;">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             {{-- ── Page header ── --}}
-            <div class="text-center mb-40 mt-10">
+            <div class="text-center mb-8 mt-8">
                 <p class="text-xs font-semibold tracking-widest uppercase mb-3" style="color: var(--yalia-pink);">
                     Our Services
                 </p>
@@ -300,15 +300,16 @@
                      data-action-url="{{ route('user.treatments.index') }}">
                     
                     {{-- Fallback form --}}
-                    <form action="{{ route('user.treatments.index') }}" method="GET"
+                    <form @submit="loading = true" action="{{ route('user.treatments.index') }}" method="GET"
                           class="mt-8 max-w-2xl mx-auto flex flex-col sm:flex-row gap-3">
                         <div class="relative flex-grow">
                             <input type="text" name="search" value="{{ request('search') }}"
+                                   aria-label="Cari treatment"
                                    class="yalia-input w-full"
                                    placeholder="Search treatments...">
                         </div>
                         <div class="flex-shrink-0">
-                            <select name="category" class="yalia-select w-full sm:w-auto">
+                            <select @change="loading = true; $el.form.submit()" name="category" aria-label="Pilih kategori treatment" class="yalia-select w-full sm:w-auto">
                                 <option value="all" {{ request('category', 'all') === 'all' ? 'selected' : '' }}>
                                     All Services
                                 </option>
@@ -329,7 +330,7 @@
 
             {{-- ── Active filter pill ── --}}
             @if(request('search') || (request('category') && request('category') !== 'all'))
-                <div class="flex items-center gap-2 mb-6 flex-wrap">
+                <div class="flex items-center gap-2 mb-4 flex-wrap">
                     <span class="text-xs font-medium" style="color:#9b6374;">Filtered by:</span>
                     @if(request('search'))
                         <span class="category-pill">
@@ -349,16 +350,29 @@
                 </div>
             @endif
 
+            {{-- ── Skeleton Loading Grid ── --}}
+            <div x-show="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                @for ($i = 0; $i < 6; $i++)
+                    <x-skeleton.card />
+                @endfor
+            </div>
+
+
             {{-- ── Treatments grid ── --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div x-show="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[400px]">
+
 
                 @forelse($treatments as $treatment)
                 <div class="treatment-card">
 
                     {{-- Image --}}
-                    <div class="card-img-wrapper">
+                    <div class="card-img-wrapper aspect-video bg-rose-50">
                         <img src="{{ $treatment->image_url }}"
-                             alt="{{ $treatment->name }}">
+                             alt="{{ $treatment->name }}"
+                             width="320"
+                             height="200"
+                             loading="lazy"
+                             decoding="async">
 
                         {{-- Overlay badge --}}
                         @if($treatment->badge && $treatment->badge !== 'none')

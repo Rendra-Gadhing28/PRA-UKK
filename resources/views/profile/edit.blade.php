@@ -21,6 +21,9 @@
                     <div class="relative w-14 h-14 rounded-full bg-gradient-to-br from-[#FF6B8A] via-[#FF8FA3] to-[#FFB6C1] p-0.5 shadow-sm shrink-0">
                         <img src="{{ $user->avatar_url ?? 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=FF6B8A&color=fff&size=128' }}"
                              alt="{{ $user->name }}"
+                             width="56"
+                             height="56"
+                             decoding="async"
                              class="w-full h-full object-cover rounded-full bg-white">
                     </div>
                     <div>
@@ -35,7 +38,7 @@
                                 Member Yalia
                             </span>
                             <span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-full text-[10px] font-bold flex items-center gap-1">
-                                <i class="fas fa-coins text-amber-500"></i>
+                                <i class="fas fa-coins text-amber-500" aria-hidden="true"></i>
                                 {{ number_format($user->total_points ?? 0) }} PTS
                             </span>
                         </div>
@@ -47,7 +50,7 @@
             <div class="space-y-6">
                 
                 {{-- 1. Profile Information Section --}}
-                <div class="bg-white/90 backdrop-blur-xl rounded-2xl p-5 sm:p-6 border border-rose-100 shadow-sm transition-all hover:shadow-md">
+                <div x-data="{ saving: false }" class="bg-white/90 backdrop-blur-xl rounded-2xl p-5 sm:p-6 border border-rose-100 shadow-sm transition-all hover:shadow-md">
                     <div class="flex items-center gap-3 mb-4 pb-3 border-b border-rose-100">
                         <div class="w-8 h-8 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-[#f45472] shrink-0">
                             <i class="fas fa-user-gear text-sm"></i>
@@ -59,12 +62,17 @@
                     </div>
 
                     <div class="max-w-md">
-                        @include('profile.partials.update-profile-information-form')
+                        <div x-show="saving" class="py-2">
+                            <x-skeleton.form fields="2" />
+                        </div>
+                        <div x-show="!saving" @submit="saving = true">
+                            @include('profile.partials.update-profile-information-form')
+                        </div>
                     </div>
                 </div>
 
                 {{-- 2. Update Password Section --}}
-                <div class="bg-white/90 backdrop-blur-xl rounded-2xl p-5 sm:p-6 border border-rose-100 shadow-sm transition-all hover:shadow-md">
+                <div x-data="{ saving: false }" class="bg-white/90 backdrop-blur-xl rounded-2xl p-5 sm:p-6 border border-rose-100 shadow-sm transition-all hover:shadow-md">
                     <div class="flex items-center gap-3 mb-4 pb-3 border-b border-rose-100">
                         <div class="w-8 h-8 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 shrink-0">
                             <i class="fas fa-lock text-sm"></i>
@@ -76,7 +84,12 @@
                     </div>
 
                     <div class="max-w-md">
-                        @include('profile.partials.update-password-form')
+                        <div x-show="saving" x-cloak class="py-2">
+                            <x-skeleton.form fields="3" />
+                        </div>
+                        <div x-show="!saving" @submit="saving = true">
+                            @include('profile.partials.update-password-form')
+                        </div>
                     </div>
                 </div>
 
@@ -98,6 +111,7 @@
                 </div>
 
             </div>
+
         </div>
     </div>
 </x-app-layout>

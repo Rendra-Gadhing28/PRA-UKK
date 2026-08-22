@@ -60,7 +60,7 @@
 
                 <td>{{ $b->booking_date->format('d/m/Y') }}</td>
                 <td class="text-right">Rp {{ number_format($b->total_amount, 0, ',', '.') }}</td>
-                <td>{{ ucfirst($b->status) }}</td>
+                <td>{{ is_object($b->status) && method_exists($b->status, 'badgeLabel') ? $b->status->badgeLabel() : ucfirst((string)$b->status) }}</td>
             </tr>
             @empty
             <tr>

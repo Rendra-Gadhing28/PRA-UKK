@@ -31,6 +31,7 @@ class StoreBookingRequest extends FormRequest
             'time_start' => ['required', 'date_format:H:i'],
 
             'notes' => ['nullable', 'string', 'max:1000'],
+            'user_voucher_id' => ['nullable', 'integer', 'exists:user_vouchers,id'],
         ];
     }
 

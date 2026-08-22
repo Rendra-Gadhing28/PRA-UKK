@@ -3,7 +3,7 @@
     <div class="md:hidden flex items-center justify-between bg-white px-4 py-3 border-b border-rose-100 sticky top-0 z-40">
         <div class="flex items-center gap-2.5">
             <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#f45472] to-[#ff8fa4] p-[2px] flex items-center justify-center shadow-md">
-                <img src="{{ asset('logo/yalia-logos-trnsprnt.svg') }}" alt="Yalia Admin" class="w-full h-full object-cover rounded-full bg-white">
+                <img src="{{ asset('logo/yalia-logos-trnsprnt.svg') }}" alt="Yalia Admin" width="36" height="36" style="width: 36px; height: 36px;" class="w-full h-full object-cover rounded-full bg-white">
             </div>
             <span class="font-headline font-bold text-gray-900 text-sm tracking-wide">Yalia Admin</span>
         </div>
@@ -31,7 +31,7 @@
         <div class="p-6 border-b border-rose-50 flex items-center justify-between">
             <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#f45472] to-[#ff8fa4] p-[2px] flex items-center justify-center shadow-lg shadow-rose-200">
-                    <img src="{{ asset('logo/yalia-logos-trnsprnt.svg') }}" alt="Yalia Beauty" class="w-full h-full object-cover rounded-full bg-white">
+                    <img src="{{ asset('logo/yalia-logos-trnsprnt.svg') }}" alt="Yalia Beauty" width="40" height="40" style="width: 40px; height: 40px;" class="w-full h-full object-cover rounded-full bg-white">
                 </div>
                 <div>
                     <span class="font-headline font-bold text-gray-900 text-base block leading-tight">Yalia Beauty</span>

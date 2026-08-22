@@ -1,0 +1,1 @@
+<x-skeleton.table {{ $attributes }} />

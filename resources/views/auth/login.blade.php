@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Masuk - Yalia Beauty</title>
+    <link rel="icon" href="{{ asset('logo/yalia-logos.svg') }}" type="image/svg+xml">
+    <link rel="alternate icon" href="{{ asset('logo/yalia-logos-trnsprnt.png') }}" type="image/png">
+
+    {{-- Styles & Scripts --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     {{-- Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,10 +21,6 @@
 
     {{-- Alpine.js --}}
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-    {{-- Motion.dev (Motion One) & Lenis — JANGAN diubah, sesuai permintaan --}}
-    <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -85,6 +86,21 @@
         /* Elemen yang di-tilt mengikuti mouse (parallax ringan) */
         #hero-parallax { will-change: transform; transform-style: preserve-3d; }
         .parallax-layer { will-change: transform; }
+
+        /* Animasi masuk tipis (subtle entrance) */
+        @keyframes fadeUpSubtle {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-subtle-in {
+            animation: fadeUpSubtle 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
     </style>
 </head>
 <body class="min-h-screen bg-bg-main">
@@ -98,14 +114,14 @@
             <div class="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-accent-clear opacity-30 blur-[120px] rounded-full pointer-events-none lg:hidden"></div>
             <div class="fixed bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-accent-soft opacity-20 blur-[120px] rounded-full pointer-events-none lg:hidden"></div>
 
-            <div id="login-container" class="w-full max-w-96 relative z-10 opacity-0">
+            <div id="login-container" class="w-full max-w-96 relative z-10">
 
                 {{-- Logo & Judul --}}
                 <div class="text-center mb-6 sm:mb-8">
                     <a href="{{ route('home') }}" class="inline-flex items-center gap-3 mb-4 group">
                         <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-brand p-0.5 shadow-lg group-hover:scale-110 transition-transform duration-300">
                             <div class="w-full h-full rounded-full bg-white flex items-center justify-center">
-                                <img src="{{ asset('logo/yalia-logos-trnsprnt.svg') }}" alt="Yalia Beauty Logo" class="w-8 h-8 sm:w-10 sm:h-10 object-cover rounded-full">
+                                <img src="{{ asset('logo/yalia-logos-trnsprnt.svg') }}" alt="Yalia Beauty Logo" width="40" height="40" style="width: 40px; height: 40px;" class="w-8 h-8 sm:w-10 sm:h-10 object-cover rounded-full">
                             </div>
                         </div>
                         <span class="text-xl sm:text-2xl font-display font-extrabold bg-gradient-brand bg-clip-text text-transparent">Yalia Beauty</span>
@@ -166,7 +182,7 @@
                                 required
                                 autofocus
                                 autocomplete="username"
-                                placeholder="email@contoh.com"
+                                placeholder="email@contoh.com atau 08123456789"
                                 class="w-full rounded-xl border bg-white/50 px-4 py-3 text-sm focus:outline-none input-focus transition-all duration-300 {{ $errors->has('email') ? 'border-red-300' : 'border-gray-200' }}"
                             >
                             @error('email')
@@ -246,7 +262,7 @@
         </div>
 
         {{-- ============ KANAN: HERO PANEL (disembunyikan di bawah breakpoint lg) ============ --}}
-        <div id="hero-panel" class="hidden lg:flex relative items-center justify-center hero-panel overflow-hidden opacity-0">
+        <div id="hero-panel" class="hidden lg:flex relative items-center justify-center hero-panel overflow-hidden">
 
             {{-- Blob dekoratif yang mengambang pelan (diberi animasi via Motion di bawah) --}}
             <div class="parallax-layer floating-blob absolute top-[8%] right-[12%] w-40 h-40 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
@@ -278,84 +294,32 @@
     <x-toast />
 
     <script>
-        // ============================================================
-        // Lenis Smooth Scroll — TIDAK DIUBAH
-        // ============================================================
-        const lenis = new Lenis();
-        function raf(time) {
-            lenis.raf(time);
-            requestAnimationFrame(raf);
-        }
-        requestAnimationFrame(raf);
-
-        // ============================================================
-        // Motion.dev — animasi entrance
-        // ============================================================
-        const { animate, stagger, spring } = Motion;
-
-        // Panel form: fade + slide up
-        animate(
-            "#login-container",
-            { opacity: [0, 1], y: [40, 0] },
-            { duration: 1, easing: [0.22, 1, 0.36, 1] }
-        );
-
-        animate(
-            ".text-center > *, .glass-card > *",
-            { opacity: [0, 1], y: [20, 0] },
-            { delay: stagger(0.1, { start: 0.4 }), duration: 0.6 }
-        );
-
-        // Panel hero kanan: fade + slide dari kanan, sedikit lebih lambat
-        // supaya terasa berurutan dengan form (bukan muncul bersamaan).
-        if (document.getElementById('hero-panel')) {
-            animate(
-                "#hero-panel",
-                { opacity: [0, 1], x: [60, 0] },
-                { duration: 1.1, delay: 0.15, easing: [0.22, 1, 0.36, 1] }
-            );
-
-            animate(
-                "#hero-parallax > *",
-                { opacity: [0, 1], y: [16, 0] },
-                { delay: stagger(0.12, { start: 0.5 }), duration: 0.7 }
-            );
-
-            // Blob mengambang pelan, infinite loop, tiap blob beda ritme
-            document.querySelectorAll('.floating-blob').forEach((el, i) => {
-                animate(
-                    el,
-                    { y: [0, i % 2 === 0 ? -18 : 18, 0], x: [0, i % 2 === 0 ? 10 : -10, 0] },
-                    { duration: 6 + i, repeat: Infinity, easing: 'ease-in-out' }
-                );
-            });
-
-            // Parallax ringan mengikuti kursor: elemen hero bergeser tipis
-            // relatif ke posisi mouse, dihaluskan pakai Motion (bukan langsung snap).
+        document.addEventListener('DOMContentLoaded', () => {
+            // Parallax mousemove ringan untuk hero panel
             const heroPanel = document.getElementById('hero-panel');
             const parallaxLayers = document.querySelectorAll('#hero-parallax .parallax-layer, .floating-blob');
 
-            heroPanel.addEventListener('mousemove', (e) => {
-                const rect = heroPanel.getBoundingClientRect();
-                const relX = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 .. 0.5
-                const relY = (e.clientY - rect.top) / rect.height - 0.5;
+            if (heroPanel && parallaxLayers.length > 0) {
+                heroPanel.addEventListener('mousemove', (e) => {
+                    const rect = heroPanel.getBoundingClientRect();
+                    const relX = (e.clientX - rect.left) / rect.width - 0.5;
+                    const relY = (e.clientY - rect.top) / rect.height - 0.5;
 
-                parallaxLayers.forEach((el, i) => {
-                    const depth = (i % 3 + 1) * 6; // kedalaman parallax berbeda tiap elemen
-                    animate(
-                        el,
-                        { x: relX * depth, y: relY * depth },
-                        { duration: 0.6, easing: [0.22, 1, 0.36, 1] }
-                    );
+                    parallaxLayers.forEach((el, i) => {
+                        const depth = (i % 3 + 1) * 8;
+                        el.style.transform = `translate3d(${relX * depth}px, ${relY * depth}px, 0)`;
+                        el.style.transition = 'transform 0.15s ease-out';
+                    });
                 });
-            });
 
-            heroPanel.addEventListener('mouseleave', () => {
-                parallaxLayers.forEach((el) => {
-                    animate(el, { x: 0, y: 0 }, { duration: 0.8, easing: [0.22, 1, 0.36, 1] });
+                heroPanel.addEventListener('mouseleave', () => {
+                    parallaxLayers.forEach((el) => {
+                        el.style.transform = 'translate3d(0, 0, 0)';
+                        el.style.transition = 'transform 0.5s ease-out';
+                    });
                 });
-            });
-        }
+            }
+        });
     </script>
 </body>
 </html>

@@ -52,6 +52,7 @@ class Bookings extends Model
         'canceled_at', 
         'version', 
         'points_added',
+        'photo_assign',
     ];
 
     protected $casts = [
@@ -107,7 +108,7 @@ class Bookings extends Model
 
     public function review(): HasOne
     {
-        return $this->hasOne(Reviews::class);
+        return $this->hasOne(Reviews::class, 'booking_id');
     }
 
     public function scopeUpcoming(Builder $query): Builder

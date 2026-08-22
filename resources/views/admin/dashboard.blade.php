@@ -115,28 +115,67 @@
 
             </div>
 
-            {{-- 2. MONITORING CHART SECTION --}}
-            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-rose-100">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900 font-headline">Grafik Monitoring Keuangan Bulanan</h3>
-                        <p class="text-xs text-gray-500 mt-0.5">Perbandingan Tren Pemasukan vs Pengeluaran Harian</p>
+            {{-- 2. MONITORING CHART & DOUGHNUT SECTION --}}
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                {{-- Left: 7-Day Finance Line Chart (8 Cols / ~70% width) --}}
+                <div class="lg:col-span-8 bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-rose-100 flex flex-col justify-between">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900 font-headline">Grafik Monitoring Keuangan (7 Hari)</h3>
+                            <p class="text-xs text-gray-500 mt-0.5">Tren Pemasukan vs Pengeluaran 7 Hari Terakhir</p>
+                        </div>
+                        <div class="flex items-center gap-4 text-xs font-semibold">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-[#b01f44]"></span>
+                                <span>Pemasukan</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+                                <span>Pengeluaran</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-4 text-xs font-semibold">
-                        <div class="flex items-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-[#f45472]"></span>
-                            <span>Pemasukan</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-amber-400"></span>
-                            <span>Pengeluaran</span>
-                        </div>
+
+                    <div class="relative w-full h-72">
+                        <canvas id="financeChart"></canvas>
                     </div>
                 </div>
 
-                <div class="relative w-full h-72">
-                    <canvas id="financeChart"></canvas>
+                {{-- Right: Treatment Booking Percentage Doughnut Chart (4 Cols / ~30% width) --}}
+                <div class="lg:col-span-4 bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-rose-100 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 font-headline">Persentase Booking</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Proporsi Treatment Paling Banyak Dibooking</p>
+                    </div>
+
+                    <div class="relative w-full h-48 my-3 flex items-center justify-center">
+                        <canvas id="treatmentDoughnutChart"></canvas>
+                        {{-- Center Text overlay for total --}}
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                            <span class="text-2xl font-black text-[#2b1a1f]">{{ $totalTreatmentBookings }}</span>
+                            <span class="text-[9px] uppercase font-bold text-gray-400">Total Booking</span>
+                        </div>
+                    </div>
+
+                    {{-- Percentage breakdown legend --}}
+                    <div class="space-y-2 text-xs border-t border-rose-100 pt-3">
+                        @foreach($topTreatments as $index => $t)
+                        @php
+                            $pct = $treatmentChartPercentages[$index] ?? 0;
+                            $color = $treatmentChartColors[$index % count($treatmentChartColors)];
+                        @endphp
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: {{ $color }};"></span>
+                                <span class="font-medium text-gray-700 truncate">{{ $t->name }}</span>
+                            </div>
+                            <span class="font-bold text-gray-900 shrink-0 ml-2">{{ $pct }}%</span>
+                        </div>
+                        @endforeach
+                    </div>
                 </div>
+
             </div>
 
             {{-- 3. BOTTOM GRID: TOP TREATMENTS & RECENT BOOKINGS --}}
@@ -242,48 +281,70 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const ctx = document.getElementById('financeChart').getContext('2d');
+            // 1. Line Chart 7-Hari Monitoring Keuangan
+            const ctxLine = document.getElementById('financeChart').getContext('2d');
             
-            const labels = @json($chartLabels);
-            const incomeData = @json($chartIncome);
-            const expenseData = @json($chartExpense);
+            // Soft Gradient background (Palette warna dari tailwind.config.js)
+            const incomeGradient = ctxLine.createLinearGradient(0, 0, 0, 280);
+            incomeGradient.addColorStop(0, 'rgba(176, 31, 68, 0.35)');  // Soft #b01f44 (primary)
+            incomeGradient.addColorStop(1, 'rgba(176, 31, 68, 0.01)');
 
-            new Chart(ctx, {
+            const expenseGradient = ctxLine.createLinearGradient(0, 0, 0, 280);
+            expenseGradient.addColorStop(0, 'rgba(251, 191, 36, 0.30)'); // Soft #fbbf24 (amber)
+            expenseGradient.addColorStop(1, 'rgba(251, 191, 36, 0.01)');
+
+            new Chart(ctxLine, {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels: @json($chartLabels),
                     datasets: [
                         {
                             label: 'Pemasukan (Rp)',
-                            data: incomeData,
-                            borderColor: '#f45472',
-                            backgroundColor: 'rgba(244, 84, 114, 0.08)',
+                            data: @json($chartIncome),
+                            borderColor: '#b01f44',
+                            backgroundColor: incomeGradient,
                             fill: true,
                             tension: 0.4,
-                            borderWidth: 3,
-                            pointRadius: 3,
-                            pointBackgroundColor: '#f45472'
+                            borderWidth: 2.5,
+                            pointRadius: 0,
+                            pointHoverRadius: 6,
+                            pointHoverBackgroundColor: '#ffffff',
+                            pointHoverBorderColor: '#b01f44',
+                            pointHoverBorderWidth: 3,
+                            pointHitRadius: 10
                         },
                         {
                             label: 'Pengeluaran (Rp)',
-                            data: expenseData,
+                            data: @json($chartExpense),
                             borderColor: '#fbbf24',
-                            backgroundColor: 'rgba(251, 191, 36, 0.05)',
+                            backgroundColor: expenseGradient,
                             fill: true,
                             tension: 0.4,
                             borderWidth: 2,
-                            borderDash: [5, 5],
-                            pointRadius: 2,
-                            pointBackgroundColor: '#fbbf24'
+                            borderDash: [4, 4],
+                            pointRadius: 0,
+                            pointHoverRadius: 6,
+                            pointHoverBackgroundColor: '#ffffff',
+                            pointHoverBorderColor: '#fbbf24',
+                            pointHoverBorderWidth: 3,
+                            pointHitRadius: 10
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
                     plugins: {
                         legend: { display: false },
                         tooltip: {
+                            backgroundColor: '#2b1a1f',
+                            padding: 12,
+                            titleFont: { size: 12, weight: 'bold' },
+                            bodyFont: { size: 12 },
                             callbacks: {
                                 label: function(context) {
                                     return context.dataset.label + ': Rp ' + context.parsed.y.toLocaleString('id-ID');
@@ -294,14 +355,54 @@
                     scales: {
                         x: {
                             grid: { display: false },
-                            ticks: { font: { size: 10 } }
+                            ticks: { font: { size: 11, weight: '600' }, color: '#594043' }
                         },
                         y: {
-                            grid: { color: '#f3f4f6' },
+                            grid: { color: 'rgba(244, 221, 225, 0.5)' },
                             ticks: {
                                 font: { size: 10 },
+                                color: '#594043',
                                 callback: function(value) {
-                                    return 'Rp ' + (value / 1000).toLocaleString('id-ID') + 'k';
+                                    if (value >= 1000000) return 'Rp ' + (value / 1000000).toLocaleString('id-ID') + 'M';
+                                    if (value >= 1000) return 'Rp ' + (value / 1000).toLocaleString('id-ID') + 'k';
+                                    return 'Rp ' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 2. Doughnut Chart Persentase Booking Treatment
+            const ctxDoughnut = document.getElementById('treatmentDoughnutChart').getContext('2d');
+            
+            new Chart(ctxDoughnut, {
+                type: 'doughnut',
+                data: {
+                    labels: @json($treatmentChartLabels),
+                    datasets: [{
+                        data: @json($treatmentChartData),
+                        backgroundColor: @json($treatmentChartColors),
+                        borderWidth: 3,
+                        borderColor: '#ffffff',
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '72%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#2b1a1f',
+                            padding: 10,
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const value = context.parsed;
+                                    const pct = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                    return context.label + ': ' + value + ' booking (' + pct + '%)';
                                 }
                             }
                         }

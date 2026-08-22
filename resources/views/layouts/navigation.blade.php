@@ -10,7 +10,7 @@
         <a href="{{ route('user.dashboard') }}" class="flex items-center gap-3 cursor-pointer shrink-0">
             <div :class="scrolled ? 'w-9 h-9' : 'w-10 h-10'"
                  class="rounded-full bg-gradient-to-br from-[#FF6B8A] via-[#FF8FA3] to-[#FFB6C1] p-0.5 flex items-center justify-center shadow-sm transition-all duration-300">
-                <img src="{{ asset('logo/yalia-logos-trnsprnt.svg') }}" alt="Yalia Beauty" class="w-full h-full object-cover rounded-full bg-white">
+                <img src="{{ asset('logo/yalia-logos-trnsprnt.svg') }}" alt="Yalia Beauty" width="40" height="40" style="width: 40px; height: 40px;" decoding="async" class="w-full h-full object-cover rounded-full bg-white">
             </div>
             <div class="flex flex-col">
                 <span class="font-sans text-sm md:text-base font-bold tracking-wide bg-gradient-to-br from-[#FF6B8A] to-[#E91E63] text-transparent bg-clip-text leading-tight">
@@ -46,10 +46,13 @@
         <div class="flex items-center gap-3">
             {{-- User Profile Dropdown --}}
             <div class="relative" @click.away="profileDropdown = false">
-                <button @click="profileDropdown = !profileDropdown" 
+                <button type="button" aria-label="Menu Profil User" @click="profileDropdown = !profileDropdown" 
                         class="flex items-center gap-2 p-1 rounded-full border border-rose-300/40 hover:border-rose-400 transition-all bg-white/50">
                     <img src="{{ auth()->user()->avatar_url ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=FF6B8A&color=fff' }}"
                          alt="Avatar" 
+                         width="28"
+                         height="28"
+                         decoding="async"
                          class="h-7 w-7 rounded-full object-cover">
                     <span class="hidden lg:inline text-xs font-semibold text-gray-700 pr-1 max-w-[100px] truncate">
                         {{ auth()->user()->name }}

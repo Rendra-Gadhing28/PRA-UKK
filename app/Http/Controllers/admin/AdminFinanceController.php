@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Helpers\ToastHelper;
 use App\Http\Controllers\Controller;
+use App\Models\Bookings;
 use App\Models\ExpenseCategories;
 use App\Models\Transactions;
 use Illuminate\Http\Request;
@@ -54,10 +55,17 @@ class AdminFinanceController extends Controller
             ->whereMonth('transaction_date', now()->month)
             ->sum('amount');
 
-        $monthlyIncome = Transactions::where('type', 'income')
+        $monthlyIncome = (float) Transactions::where('type', 'income')
             ->whereYear('transaction_date', now()->year)
             ->whereMonth('transaction_date', now()->month)
             ->sum('amount');
+
+        if ($monthlyIncome == 0) {
+            $monthlyIncome = (float) Bookings::whereIn('status', ['completed', 'confirmed'])
+                ->whereYear('booking_date', now()->year)
+                ->whereMonth('booking_date', now()->month)
+                ->sum('total_amount');
+        }
 
         $totalScanStruk = Transactions::where('type', 'expense')
             ->whereNotNull('receipt_image')

@@ -41,7 +41,7 @@
             </div>
             <h1 class="font-headline font-bold text-2xl text-gray-900 tracking-tight">YALIA BEAUTY</h1>
             <p class="text-[11px] text-gray-500 font-medium">Salon & Luxury Treatment Center</p>
-            <p class="text-[10px] text-gray-400 mt-1">Jl. Beauty Salon No. 88 | WA: 0812-3456-7890</p>
+            <p class="text-[10px] text-gray-400 mt-1">GHV9+F2 Candi, Kabupaten Boyolali, Jawa Tengah | WA: 0822-2702-3362</p>
         </div>
 
         {{-- Transaction Metadata --}}

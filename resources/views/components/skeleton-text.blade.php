@@ -1,0 +1,1 @@
+<x-skeleton.text {{ $attributes }} />

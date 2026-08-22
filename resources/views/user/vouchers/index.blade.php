@@ -12,7 +12,16 @@
     {{--
         mt-36 (144px): Jarak aman kelipatan 4 agar tidak tabrakan dengan fixed navigation bar
     --}}
-    <div x-data="{ activeTab: 'all', search: '' }" class="relative z-10 min-h-screen mt-36 pb-24">
+    <div x-data="{ 
+        activeTab: 'all', 
+        loading: false,
+        switchTab(tab) {
+            if (this.activeTab === tab) return;
+            this.loading = true;
+            this.activeTab = tab;
+            setTimeout(() => { this.loading = false; }, 400);
+        }
+    }" class="relative z-10 min-h-screen mt-36 pb-24">
         <main class="max-w-[1280px] mx-auto px-4 sm:px-8 space-y-8">
 
             {{-- HEADER TITLE & REWARD PTS BANNER --}}
@@ -64,31 +73,35 @@
                 
                 {{-- Tabs Button List --}}
                 <div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-none">
-                    <button @click="activeTab = 'all'" 
+                    <button type="button" @click="switchTab('all')" 
+                            aria-label="Tampilkan semua promo voucher"
                             :class="activeTab === 'all' ? 'bg-[#f45472] text-white shadow-md' : 'bg-rose-50 text-rose-700 hover:bg-rose-100'"
                             class="px-5 py-2.5 rounded-2xl text-xs font-bold transition-all shrink-0 flex items-center gap-2">
-                        <i class="fas fa-ticket text-xs"></i>
+                        <i class="fas fa-ticket text-xs" aria-hidden="true"></i>
                         <span>Semua Promo ({{ $allVouchers->count() }})</span>
                     </button>
 
-                    <button @click="activeTab = 'pts'" 
+                    <button type="button" @click="switchTab('pts')" 
+                            aria-label="Tampilkan voucher tukar poin PTS"
                             :class="activeTab === 'pts' ? 'bg-[#f45472] text-white shadow-md' : 'bg-rose-50 text-rose-700 hover:bg-rose-100'"
                             class="px-5 py-2.5 rounded-2xl text-xs font-bold transition-all shrink-0 flex items-center gap-2">
-                        <i class="fas fa-coins text-amber-500 text-xs"></i>
+                        <i class="fas fa-coins text-amber-500 text-xs" aria-hidden="true"></i>
                         <span>Tukar Poin PTS ({{ $pointVouchers->count() }})</span>
                     </button>
 
-                    <button @click="activeTab = 'event'" 
+                    <button type="button" @click="switchTab('event')" 
+                            aria-label="Tampilkan voucher event spesial"
                             :class="activeTab === 'event' ? 'bg-[#f45472] text-white shadow-md' : 'bg-rose-50 text-rose-700 hover:bg-rose-100'"
                             class="px-5 py-2.5 rounded-2xl text-xs font-bold transition-all shrink-0 flex items-center gap-2">
-                        <i class="fas fa-gift text-rose-500 text-xs"></i>
+                        <i class="fas fa-gift text-rose-500 text-xs" aria-hidden="true"></i>
                         <span>Event Special ({{ $eventVouchers->count() }})</span>
                     </button>
 
-                    <button @click="activeTab = 'my_vouchers'" 
+                    <button type="button" @click="switchTab('my_vouchers')" 
+                            aria-label="Tampilkan voucher milik saya"
                             :class="activeTab === 'my_vouchers' ? 'bg-[#f45472] text-white shadow-md' : 'bg-rose-50 text-rose-700 hover:bg-rose-100'"
                             class="px-5 py-2.5 rounded-2xl text-xs font-bold transition-all shrink-0 flex items-center gap-2">
-                        <i class="fas fa-user-check text-xs"></i>
+                        <i class="fas fa-user-check text-xs" aria-hidden="true"></i>
                         <span>Voucher Saya ({{ $myVouchers->count() }})</span>
                     </button>
                 </div>
@@ -100,9 +113,15 @@
                 </div>
             </div>
 
+            {{-- Skeleton Loading Grid --}}
+            <div x-show="loading" class="grid grid-cols-1 md:grid-cols-2 gap-8 py-4">
+                <x-skeleton.card />
+                <x-skeleton.card />
+            </div>
 
             {{-- 1. TAB: SEMUA PROMO --}}
-            <div x-show="activeTab === 'all'" x-transition class="space-y-4">
+            <div x-show="!loading && activeTab === 'all'" class="space-y-4">
+
                 <div class="flex items-center justify-between">
                     <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2 font-headline">
                         <span class="w-2.5 h-6 bg-[#f45472] rounded-full inline-block"></span>
@@ -125,7 +144,8 @@
 
 
             {{-- 2. TAB: TUKAR POIN PTS --}}
-            <div x-show="activeTab === 'pts'" x-transition class="space-y-4">
+            <div x-show="!loading && activeTab === 'pts'" class="space-y-4">
+
                 <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center justify-between gap-4">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-xl bg-amber-400 text-amber-950 flex items-center justify-center text-lg font-bold shrink-0">
@@ -153,7 +173,7 @@
 
 
             {{-- 3. TAB: EVENT SPECIAL --}}
-            <div x-show="activeTab === 'event'" x-transition class="space-y-4">
+            <div x-show="!loading && activeTab === 'event'" class="space-y-4">
                 <div class="bg-gradient-to-r from-purple-500 to-rose-500 text-white rounded-2xl p-4 flex items-center justify-between gap-4 shadow-sm">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md text-white flex items-center justify-center text-lg font-bold shrink-0">
@@ -181,7 +201,10 @@
 
 
             {{-- 4. TAB: VOUCHER SAYA (CLAIMED) --}}
-            <div x-show="activeTab === 'my_vouchers'" x-transition class="space-y-4">
+            <div x-show="!loading && activeTab === 'my_vouchers'" class="space-y-4">
+
+
+
                 <div class="flex items-center justify-between">
                     <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2 font-headline">
                         <span class="w-2.5 h-6 bg-emerald-500 rounded-full inline-block"></span>

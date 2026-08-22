@@ -84,82 +84,119 @@
             @csrf
 
             {{-- ============ STEP 1: TREATMENT SELECTION ============ --}}
-            <div x-show="step === 1" x-cloak class="bg-white/90 backdrop-blur-md rounded-3xl border border-rose-100 shadow-[0_15px_45px_rgba(244,84,114,0.08)] p-6 md:p-10">
-                <div class="flex items-center justify-between mb-6 border-b border-rose-100/60 pb-4">
-                    <div>
-                        <h2 class="font-display text-2xl font-bold text-[#5b3a29]">1. Treatment Pilihan</h2>
-                        <p class="text-sm text-[#5b3a29]/70 mt-1">Perawatan terpilih dan Anda bisa menambah perawatan menarik lainnya.</p>
+            <div x-show="step === 1" x-cloak class="min-h-[480px] bg-white/90 backdrop-blur-md rounded-3xl border border-rose-100 shadow-[0_15px_45px_rgba(244,84,114,0.08)] overflow-hidden">
+
+                {{-- Step Header --}}
+                <div class="px-6 md:px-10 pt-8 pb-6 border-b border-rose-100/60">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="font-display text-2xl font-bold text-[#5b3a29]">1. Treatment Pilihan</h2>
+                            <p class="text-sm text-[#5b3a29]/70 mt-1">Perawatan terpilih — tambah perawatan lain di bawah.</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-8 h-8 rounded-full bg-gradient-to-br from-[#f45472] to-[#e03e5c] text-white text-xs font-extrabold flex items-center justify-center shadow-sm" x-text="selectedTreatments.length"></span>
+                            <span class="text-[#5b3a29]/60 text-xs font-semibold">Treatment</span>
+                        </div>
                     </div>
-                    <span class="px-3 py-1 bg-rose-50 text-[#f45472] rounded-full text-xs font-bold" x-text="selectedTreatments.length + ' Treatment'"></span>
                 </div>
 
-                {{-- Selected Treatments List --}}
-                <div class="space-y-4 mb-8">
+                <div class="px-6 md:px-10 py-7">
+
+                {{-- ── Selected Treatments ── --}}
+                <div class="space-y-3 mb-8">
                     <template x-for="(item, index) in selectedTreatments" :key="item.id">
-                        <div class="flex items-center gap-4 rounded-2xl border border-rose-200/80 bg-gradient-to-r from-white to-[#fff9fa] p-4 shadow-sm hover:shadow-md transition-all">
-                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#f45472]/15 to-[#ff8fa4]/20 flex items-center justify-center text-[#f45472] shrink-0 font-bold">
-                                ✨
+                        <div class="flex items-center gap-4 rounded-2xl border border-rose-200/70 bg-gradient-to-r from-[#fff9fa] to-white p-3.5 shadow-sm hover:shadow-md transition-all group">
+                            {{-- Treatment Photo --}}
+                            <div class="w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-rose-50 relative">
+                                <img :src="item.image_url || '/images/treatment-placeholder.webp'"
+                                     :alt="item.name"
+                                     class="w-full h-full object-cover"
+                                     @@error="$event.target.src='/images/treatment-placeholder.webp'">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
                             </div>
-                            <div class="flex-1">
-                                <p class="font-bold text-[#5b3a29] text-base" x-text="item.name"></p>
-                                <p class="text-xs text-[#5b3a29]/70 mt-0.5 flex items-center gap-2">
-                                    <span class="font-semibold text-[#f45472]" x-text="formatRupiah(item.price)"></span>
-                                    <span>&bull;</span>
-                                    <span>⏱️ <span x-text="item.duration_minutes"></span> menit</span>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-bold text-[#5b3a29] text-sm leading-snug truncate" x-text="item.name"></p>
+                                <p class="text-xs text-[#5b3a29]/60 mt-0.5" x-text="item.category || ''"></p>
+                                <p class="text-xs mt-1 flex items-center gap-1.5">
+                                    <span class="font-bold text-[#f45472]" x-text="formatRupiah(item.price * item.quantity)"></span>
+                                    <span class="text-[#5b3a29]/40">•</span>
+                                    <span class="text-[#5b3a29]/60">⏱ <span x-text="item.duration_minutes * item.quantity"></span> mnt</span>
                                 </p>
                             </div>
-                            <div class="flex items-center gap-2 bg-[#fdf5f6] border border-rose-200/60 rounded-full px-2 py-1">
-                                <button type="button" class="w-7 h-7 rounded-full bg-white text-[#5b3a29] font-bold shadow-xs hover:bg-rose-100 transition" @click="changeQty(index, -1)">-</button>
-                                <span class="w-6 text-center font-bold text-sm text-[#5b3a29]" x-text="item.quantity"></span>
-                                <button type="button" class="w-7 h-7 rounded-full bg-white text-[#5b3a29] font-bold shadow-xs hover:bg-rose-100 transition" @click="changeQty(index, 1)">+</button>
+                            {{-- Qty Controls --}}
+                            <div class="flex items-center gap-1.5 bg-[#fdf5f6] border border-rose-200/60 rounded-full px-2 py-1 shrink-0">
+                                <button type="button" class="w-6 h-6 rounded-full bg-white text-[#5b3a29] font-bold text-sm shadow-xs hover:bg-rose-100 transition flex items-center justify-center" @click="changeQty(index, -1)">−</button>
+                                <span class="w-5 text-center font-extrabold text-sm text-[#5b3a29]" x-text="item.quantity"></span>
+                                <button type="button" class="w-6 h-6 rounded-full bg-white text-[#5b3a29] font-bold text-sm shadow-xs hover:bg-rose-100 transition flex items-center justify-center" @click="changeQty(index, 1)">+</button>
                             </div>
-                            <button type="button" class="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition" @click="removeTreatment(index)" x-show="selectedTreatments.length > 1">
-                                &times;
+                            <button type="button"
+                                class="w-8 h-8 rounded-full flex items-center justify-center text-gray-300 hover:text-red-400 hover:bg-red-50 transition shrink-0"
+                                @click="removeTreatment(index)" x-show="selectedTreatments.length > 1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                             </button>
                         </div>
                     </template>
                 </div>
 
-                {{-- Add Extra Treatment Section (Custom Luxury Grid) --}}
-                <div class="rounded-2xl border border-rose-200/60 bg-[#fffdfd] p-5 mb-8">
+                {{-- ── Add Extra Treatment — Luxury Photo Grid ── --}}
+                <div class="mb-8" x-show="unselectedTreatments.length > 0">
                     <div class="flex items-center justify-between mb-4">
-                        <label class="block text-sm font-bold text-[#5b3a29] uppercase tracking-wider flex items-center gap-2">
-                            <span>🌸 Tambah Perawatan Lainnya</span>
-                        </label>
+                        <p class="text-xs font-extrabold text-[#5b3a29] uppercase tracking-widest">Tambah Perawatan Lainnya</p>
+                        <span class="text-[10px] text-[#5b3a29]/50 font-semibold" x-text="unselectedTreatments.length + ' tersedia'"></span>
                     </div>
 
-                    {{-- Custom Search / Select Grid --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-1 scrollbar-hide">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-3.5 gap-y-0 max-h-[420px] overflow-y-auto pr-1 scrollbar-hide">
                         <template x-for="t in unselectedTreatments" :key="t.id">
-                            <div class="p-3.5 rounded-xl border border-rose-100 bg-white hover:border-[#f45472]/40 hover:shadow-sm transition cursor-pointer flex justify-between items-center"
+                            <div class="relative rounded-2xl overflow-hidden border border-rose-100 bg-white shadow-xs hover:shadow-lg hover:border-[#f45472]/40 transition-all duration-200 cursor-pointer group flex flex-col mb-3.5"
                                  @click="addTreatmentDirect(t)">
-                                <div>
-                                    <p class="text-sm font-bold text-[#5b3a29]" x-text="t.name"></p>
-                                    <p class="text-xs text-[#f45472] font-semibold mt-0.5">
-                                        <span x-text="formatRupiah(t.price)"></span> &bull; <span class="text-[#5b3a29]/60" x-text="t.duration_minutes + ' mnt'"></span>
-                                    </p>
+                                {{-- Treatment Image — fixed height --}}
+                                <div class="h-36 overflow-hidden bg-rose-50 relative shrink-0">
+                                    <img :src="t.image_url || '/images/treatment-placeholder.webp'"
+                                         :alt="t.name"
+                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                         @@error="$event.target.src='/images/treatment-placeholder.webp'">
+                                    {{-- Overlay gradient --}}
+                                    <div class="absolute inset-0 bg-gradient-to-t from-[#5b3a29]/50 via-transparent to-transparent"></div>
+                                    {{-- Badge --}}
+                                    <div x-show="t.badge" class="absolute top-2 left-2">
+                                        <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-[#f45472] text-white shadow-sm" x-text="t.badge"></span>
+                                    </div>
+                                    {{-- Add Button overlay --}}
+                                    <div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                        <div class="w-8 h-8 rounded-full bg-white/95 shadow-md flex items-center justify-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#f45472]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                                        </div>
+                                    </div>
                                 </div>
-                                <button type="button" class="px-3 py-1.5 rounded-full bg-rose-50 text-[#f45472] font-semibold text-xs hover:bg-[#f45472] hover:text-white transition">
-                                    + Tambah
-                                </button>
+                                {{-- Card Info — always at same height --}}
+                                <div class="p-3 flex flex-col flex-1">
+                                    <p class="text-xs font-bold text-[#5b3a29] leading-snug line-clamp-2 flex-1" x-text="t.name"></p>
+                                    <div class="flex items-center justify-between mt-2">
+                                        <p class="text-[11px] font-extrabold text-[#f45472]" x-text="formatRupiah(t.price)"></p>
+                                        <p class="text-[10px] text-[#5b3a29]/50 font-semibold" x-text="t.duration_minutes + ' mnt'"></p>
+                                    </div>
+                                </div>
                             </div>
                         </template>
                     </div>
                 </div>
 
-                {{-- Subtotal Summary Bar --}}
-                <div class="flex justify-between items-center bg-gradient-to-r from-[#fdf5f6] to-[#fff0f3] p-4 rounded-2xl border border-rose-100 mb-8">
+                {{-- ── Subtotal Summary Bar ── --}}
+                <div class="flex justify-between items-center bg-gradient-to-r from-[#fdf5f6] to-[#fff0f3] p-5 rounded-2xl border border-rose-100 mb-8">
                     <div>
-                        <p class="text-xs uppercase font-bold text-[#5b3a29]/60 tracking-wider">Subtotal Treatment</p>
-                        <p class="text-xs text-[#5b3a29]/70">Durasi: <span class="font-semibold text-[#5b3a29]" x-text="totalDurationMinutes"></span> menit</p>
+                        <p class="text-[10px] uppercase font-extrabold text-[#5b3a29]/50 tracking-widest mb-0.5">Subtotal Treatment</p>
+                        <p class="text-xs text-[#5b3a29]/70">Estimasi durasi: <span class="font-bold text-[#5b3a29]" x-text="totalDurationMinutes"></span> menit</p>
                     </div>
                     <p class="font-display text-2xl font-extrabold text-[#f45472]" x-text="formatRupiah(subtotal)"></p>
                 </div>
 
-                <button type="button" class="w-full rounded-full bg-gradient-to-r from-[#f45472] to-[#e03e5c] text-white font-bold py-4 text-base shadow-[0_6px_20px_rgba(244,84,114,0.3)] hover:shadow-lg transition-all disabled:opacity-40"
+                <button type="button"
+                    class="w-full rounded-full bg-gradient-to-r from-[#f45472] to-[#e03e5c] text-white font-bold py-4 text-sm shadow-[0_6px_20px_rgba(244,84,114,0.3)] hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-40 disabled:transform-none"
                     :disabled="selectedTreatments.length === 0" @click="step = 2">
                     Lanjut ke Tipe Layanan &rarr;
                 </button>
+
+                </div>
             </div>
 
             {{-- ============ STEP 2: TIPE LAYANAN ============ --}}
@@ -277,11 +314,13 @@
                         <span class="text-[10px] text-[#5b3a29]/60 font-semibold">Jam Operasional 08:00 - 20:00 WIB</span>
                     </div>
 
-                    {{-- Skeleton Loading --}}
-                    <div x-show="loadingSlots" class="py-8 text-center text-xs text-[#5b3a29]/70 bg-rose-50/50 rounded-2xl border border-rose-100 mb-4">
-                        <span class="inline-block animate-spin text-[#f45472] font-bold text-lg mb-1">🌸</span>
-                        <p class="font-semibold">Mengecek ketersediaan seluruh jam di tanggal ini...</p>
+                    {{-- Skeleton Loading Slots Grid --}}
+                    <div x-show="loadingSlots" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-4">
+                        @for ($i = 0; $i < 10; $i++)
+                            <x-skeleton class="h-14 w-full rounded-2xl" />
+                        @endfor
                     </div>
+
 
                     {{-- All Time Slots Grid --}}
                     <div x-show="!loadingSlots" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
@@ -367,6 +406,52 @@
                     <div class="flex justify-between"><span class="text-[#5b3a29]/70 font-semibold">Subtotal Treatment</span><span class="font-bold text-[#5b3a29]" x-text="formatRupiah(subtotal)"></span></div>
                     <div class="flex justify-between" x-show="bookingType === 'home'"><span class="text-[#5b3a29]/70 font-semibold">Ongkir Transport</span><span class="font-bold text-[#5b3a29]" x-text="formatRupiah(estimateTransportFee(gps.distanceKm))"></span></div>
                     
+                    {{-- ── CUSTOM VOUCHER DROPDOWN SELECTOR ── --}}
+                    <div class="py-3 px-4 my-2 rounded-2xl bg-gradient-to-r from-rose-50/80 to-amber-50/60 border border-rose-200/80 space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <label class="text-xs font-extrabold text-[#5b3a29] flex items-center gap-1.5">
+                                <i class="fas fa-[#f45472] fa-ticket-alt"></i>
+                                <span>Voucher Promo / Gratis Ongkir:</span>
+                            </label>
+                            <a href="{{ route('user.vouchers.index') }}" target="_blank" class="text-[10px] font-bold text-[#f45472] hover:underline flex items-center gap-1">
+                                <span>Klaim Voucher</span>
+                                <i class="fas fa-external-link-alt text-[8px]"></i>
+                            </a>
+                        </div>
+
+                        <select x-model="selectedUserVoucherId"
+                                class="w-full rounded-xl border border-rose-300 bg-white px-3.5 py-2.5 text-xs text-[#333] font-semibold focus:outline-none focus:ring-2 focus:ring-[#f45472] shadow-sm">
+                            <option value="">-- Tanpa Voucher (Gunakan Penuh) --</option>
+                            <template x-for="v in userVouchers" :key="v.id">
+                                <option :value="v.id"
+                                        x-text="v.code + ' - ' + v.name + (v.is_free_shipping ? ' (Gratis Ongkir)' : (v.type === 'percentage' ? ' (Diskon ' + v.value + '%)' : ' (Potongan Rp ' + v.value.toLocaleString('id-ID') + ')'))"></option>
+                            </template>
+                        </select>
+
+                        {{-- Active Voucher Alert / Validation Banner --}}
+                        <template x-if="selectedVoucher">
+                            <div>
+                                <div x-show="isVoucherValidForSubtotal" class="flex items-center justify-between text-[11px] font-bold bg-emerald-50 text-emerald-700 p-2.5 rounded-xl border border-emerald-200">
+                                    <div class="flex items-center gap-1.5 truncate">
+                                        <i class="fas fa-circle-check text-emerald-500"></i>
+                                        <span x-text="'Voucher applied: ' + selectedVoucher.code"></span>
+                                    </div>
+                                    <span class="font-mono text-emerald-800" x-text="'- ' + formatRupiah(discountAmount)"></span>
+                                </div>
+                                <div x-show="!isVoucherValidForSubtotal" class="flex items-center gap-1.5 text-[11px] font-bold bg-amber-50 text-amber-800 p-2.5 rounded-xl border border-amber-200">
+                                    <i class="fas fa-triangle-exclamation text-amber-500"></i>
+                                    <span x-text="'Min. transaksi ' + formatRupiah(selectedVoucher.min_purchase) + ' belum terpenuhi'"></span>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    {{-- Discount Line in Summary --}}
+                    <div class="flex justify-between text-emerald-600 font-bold" x-show="discountAmount > 0">
+                        <span>Diskon Voucher Applied</span>
+                        <span x-text="'- ' + formatRupiah(discountAmount)"></span>
+                    </div>
+
                     <div class="flex justify-between items-center text-base border-t border-rose-200/80 pt-3 mt-3">
                         <span class="font-display font-bold text-[#5b3a29]">Total Tagihan</span>
                         <span class="font-display font-extrabold text-[#f45472] text-xl" x-text="formatRupiah(estimatedTotal)"></span>
@@ -391,6 +476,7 @@
                 <input type="hidden" name="home_latitude" :value="gps.lat">
                 <input type="hidden" name="home_longitude" :value="gps.lng">
                 <input type="hidden" name="home_address" :value="gps.address">
+                <input type="hidden" name="user_voucher_id" :value="selectedUserVoucherId">
                 <input type="hidden" name="notes" :value="notes">
 
                 <div class="flex gap-4 mt-8">
@@ -436,7 +522,40 @@ function bookingWizard() {
         availability: { checking: false, available: null, message: '' },
         availabilityTimer: null,
 
+        userVouchers: @json($userVouchersData),
+        selectedUserVoucherId: null,
+
         notes: '',
+
+        get selectedVoucher() {
+            if (!this.selectedUserVoucherId) return null;
+            return this.userVouchers.find(v => v.id == this.selectedUserVoucherId) || null;
+        },
+
+        get isVoucherValidForSubtotal() {
+            if (!this.selectedVoucher) return false;
+            if (this.selectedVoucher.min_purchase && this.subtotal < this.selectedVoucher.min_purchase) {
+                return false;
+            }
+            return true;
+        },
+
+        get discountAmount() {
+            const v = this.selectedVoucher;
+            if (!v || !this.isVoucherValidForSubtotal) return 0;
+
+            const transportFee = this.bookingType === 'home' ? this.estimateTransportFee(this.gps.distanceKm) : 0;
+
+            if (v.is_free_shipping) {
+                const rawDiscount = transportFee * (v.value / 100);
+                return v.max_discount ? Math.min(rawDiscount, v.max_discount) : rawDiscount;
+            } else if (v.type === 'percentage') {
+                const rawDiscount = this.subtotal * (v.value / 100);
+                return v.max_discount ? Math.min(rawDiscount, v.max_discount) : rawDiscount;
+            } else { // fixed
+                return Math.min(v.value, this.subtotal);
+            }
+        },
 
         init() {
             const preselected = @json($preselectedData);
@@ -491,7 +610,7 @@ function bookingWizard() {
 
         get estimatedTotal() {
             const fee = this.bookingType === 'home' ? this.estimateTransportFee(this.gps.distanceKm) : 0;
-            return this.subtotal + fee;
+            return Math.max(0, this.subtotal + fee - this.discountAmount);
         },
 
         get canProceedFromStep2() {
@@ -580,7 +699,13 @@ function bookingWizard() {
             this.fetchDailySlots();
         },
 
-        async fetchDailySlots() {
+        _fetchSlotsTimer: null,
+        fetchDailySlots() {
+            if (this._fetchSlotsTimer) clearTimeout(this._fetchSlotsTimer);
+            this._fetchSlotsTimer = setTimeout(() => this._doFetchDailySlots(), 150);
+        },
+
+        async _doFetchDailySlots() {
             if (!this.selectedDate || this.totalDurationMinutes === 0) {
                 this.dailySlots = [];
                 return;

@@ -110,16 +110,11 @@
 
                                 <td class="py-3.5 px-4">
                                     @php
-                                        $statusBg = match($b->status) {
-                                            'completed' => 'bg-emerald-100 text-emerald-700',
-                                            'confirmed' => 'bg-blue-100 text-blue-700',
-                                            'in_progress' => 'bg-amber-100 text-amber-700',
-                                            'canceled' => 'bg-rose-100 text-rose-700',
-                                            default => 'bg-gray-100 text-gray-700',
-                                        };
+                                        $stVal = is_object($b->status) ? $b->status->value : (string)$b->status;
+                                        $stObj = is_object($b->status) ? $b->status : \App\Enums\BookingStatus::tryFrom($stVal);
                                     @endphp
-                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold {{ $statusBg }}">
-                                        {{ ucfirst($b->status) }}
+                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold {{ $stObj ? $stObj->badgeClasses() : 'bg-gray-100 text-gray-700' }}">
+                                        {{ $stObj ? $stObj->badgeLabel() : ucfirst($stVal) }}
                                     </span>
                                 </td>
 

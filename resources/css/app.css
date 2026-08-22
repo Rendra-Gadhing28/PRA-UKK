@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Work+Sans:wght@400;500;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Vollkorn:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -24,3 +26,72 @@
     border-radius: 9999px;
     pointer-events: none;
 }
+
+/* Heading Fonts */
+
+
+/* Custom font-face for Calluna (requires hosting the font files) */
+@font-face {
+    font-family: 'Calluna';
+    src: url('/fonts/Calluna-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}
+/* Custom font-face for Questa Grande */
+@font-face {
+    font-family: 'Questa Grande';
+    src: url('/fonts/QuestaGrande-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}
+/* Custom font-face for Foglighten */
+@font-face {
+    font-family: 'Foglighten';
+    src: url('/fonts/Foglighten-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* Apply fonts to heading tags */
+h1 { font-family: 'Calluna', serif; }
+h2 { font-family: 'Questa Grande', serif; }
+h3 { font-family: 'Abhaya Libre', serif; }
+h4 { font-family: 'Foglighten', serif; }
+h5, h6 { font-family: 'Vollkorn', serif; }
+
+/* Skeleton Shimmer & Pulse Utility */
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        rgba(244, 221, 225, 0.45) 25%,
+        rgba(255, 255, 255, 0.85) 37%,
+        rgba(244, 221, 225, 0.45) 63%
+    );
+    background-size: 400% 100%;
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+    border-radius: 0.75rem;
+}
+
+.skeleton-shimmer {
+    background: linear-gradient(
+        90deg,
+        rgba(244, 221, 225, 0.45) 25%,
+        rgba(255, 255, 255, 0.85) 37%,
+        rgba(244, 221, 225, 0.45) 63%
+    );
+    background-size: 400% 100%;
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+
+
+

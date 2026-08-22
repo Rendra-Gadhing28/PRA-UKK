@@ -29,6 +29,11 @@ use App\Http\Controllers\Webhooks\MidtransWebhookController;
     Route::get('/', function(){
         return view('welcome');
     })->name('home');
+
+    Route::get('/skeleton-demo', function() {
+        return view('skeleton-demo');
+    })->name('skeleton.demo');
+
     
 // =============================================================
 // AUTENTIKASI — Hanya untuk tamu (belum login)
@@ -64,7 +69,7 @@ Route::middleware(['auth'])->prefix('dashboard')->name('user.')->group(function 
     ->name('bookings.list');
     Route::get('/treatments', [TreatmentController::class, 'index'])
     ->name('treatments.index');
-
+    Route::get('/treatments/search', [TreatmentController::class, 'search'])->name('user.treatments.search');
     // Vouchers & Tukar Point
     Route::get('/vouchers', [UserVoucherController::class, 'index'])->name('vouchers.index');
     Route::post('/vouchers/{voucher}/claim', [UserVoucherController::class, 'claim'])->name('vouchers.claim');
@@ -96,7 +101,17 @@ Route::middleware(['auth'])->prefix('dashboard')->name('user.')->group(function 
 
     Route::get('/booking/{booking}', [BookingController::class, 'show'])->name('bookings.show');
     Route::patch('/booking/{booking}/batalkan', [BookingController::class, 'cancel'])->name('bookings.cancel');
-   
+    Route::post('/booking/{booking}/photo-assign', [BookingController::class, 'uploadPhotoAssign'])->name('bookings.photo-assign');
+});
+
+// =============================================================
+// TRACKER PENGELUARAN STRUK (LLM AI) — Harus Login
+// =============================================================
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/expenses', [\App\Http\Controllers\ExpenseController::class, 'index'])->name('expenses.index');
+    Route::post('/expenses/scan', [\App\Http\Controllers\ExpenseController::class, 'scan'])->name('expenses.scan');
+    Route::post('/expenses', [\App\Http\Controllers\ExpenseController::class, 'store'])->name('expenses.store');
 });
 
 

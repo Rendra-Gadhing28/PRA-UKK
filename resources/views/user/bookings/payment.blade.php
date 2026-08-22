@@ -70,7 +70,7 @@
             {{-- Struk Brand Header --}}
             <div class="text-center pb-5 border-b border-dashed border-gray-200">
                 <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#FF6B8A] to-[#E91E63] p-0.5 mx-auto mb-2 shadow-md">
-                    <img src="{{ asset('logo/yalia-logos-trnsprnt.svg') }}" alt="Logo" class="w-full h-full object-cover rounded-full bg-white">
+                    <img src="{{ asset('logo/yalia-logos-trnsprnt.svg') }}" alt="Logo" width="48" height="48" style="width: 48px; height: 48px;" decoding="async" class="w-full h-full object-cover rounded-full bg-white">
                 </div>
                 <h1 class="font-display text-xl font-extrabold text-[#5b3a29]">YALIA BEAUTY SALON</h1>
                 <p class="text-[11px] text-gray-500 uppercase tracking-widest font-semibold mt-0.5">Struk Reservasi & Tagihan Pembayaran</p>
@@ -97,11 +97,15 @@
                 
                 <div class="bg-white p-3 rounded-2xl inline-block shadow-md border border-rose-200/80 mb-3">
                     @if($booking->qris_image_url)
-                        <img src="{{ $booking->qris_image_url }}" alt="QRIS Code" class="w-48 h-48 object-contain mx-auto rounded-lg">
+                        <img src="{{ $booking->qris_image_url }}" alt="QRIS Code" width="192" height="192" loading="lazy" decoding="async" class="w-48 h-48 object-contain mx-auto rounded-lg">
                     @else
                         {{-- Fallback QR Code Image generator --}}
                         <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ urlencode($booking->qris_code ?? $booking->booking_code) }}" 
                              alt="QR Code Fallback" 
+                             width="192"
+                             height="192"
+                             loading="lazy"
+                             decoding="async"
                              class="w-48 h-48 object-contain mx-auto rounded-lg">
                     @endif
                 </div>

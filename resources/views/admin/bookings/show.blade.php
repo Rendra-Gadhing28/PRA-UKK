@@ -133,7 +133,7 @@
                                 <span class="text-gray-500">Jam Layanan:</span>
                                 <span class="font-bold text-gray-900">{{ $booking->time_start ?? '' }} - {{ $booking->time_end ?? '' }}</span>
                             </div>
-                            @if($booking->status === 'canceled')
+                            @if($stVal === 'canceled' || $stVal === 'cancelled')
                                 <div class="py-1 text-rose-600 font-semibold">
                                     <span>Alasan Batal:</span> {{ $booking->cancel_reason ?: 'Tidak diisi' }}
                                 </div>
@@ -141,29 +141,38 @@
                         </div>
                     </div>
 
-                    {{-- Form Change Status --}}
-                    <form method="POST" action="{{ route('admin.bookings.update-status', $booking->id) }}" class="mt-2 pt-3 border-t border-gray-100" x-data="{ selectedStatus: '{{ $booking->status }}' }">
-                        @csrf
-                        @method('PATCH')
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Ubah Status Reservasi</label>
-                        <div class="space-y-2">
-                            <select name="status" x-model="selectedStatus" class="w-full text-xs rounded-xl border-gray-200 focus:border-[#f45472]">
-                                <option value="pending">Pending</option>
-                                <option value="confirmed">Confirmed</option>
-                                <option value="in_progress">In Progress</option>
-                                <option value="completed">Completed (Selesai)</option>
-                                <option value="canceled">Canceled (Batalkan)</option>
-                            </select>
+                    @if(!in_array($stVal, ['completed', 'canceled', 'cancelled'], true))
+                        {{-- Form Change Status --}}
+                        <form method="POST" action="{{ route('admin.bookings.update-status', $booking->id) }}" class="mt-2 pt-3 border-t border-gray-100" x-data="{ selectedStatus: '{{ $stVal }}' }">
+                            @csrf
+                            @method('PATCH')
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Ubah Status Reservasi</label>
+                            <div class="space-y-2">
+                                <select name="status" x-model="selectedStatus" class="w-full text-xs rounded-xl border-gray-200 focus:border-[#f45472]">
+                                    <option value="pending" {{ $stVal === 'pending' ? 'selected' : '' }}>Pending (Menunggu)</option>
+                                    <option value="confirmed" {{ $stVal === 'confirmed' ? 'selected' : '' }}>Confirmed (Terkonfirmasi)</option>
+                                    <option value="in_progress" {{ $stVal === 'in_progress' ? 'selected' : '' }}>In Progress (Sedang Berlangsung)</option>
+                                    <option value="completed">Completed (Selesai)</option>
+                                    <option value="canceled">Canceled (Batalkan)</option>
+                                </select>
 
-                            <div x-show="selectedStatus === 'canceled'" x-cloak class="mt-2">
-                                <input type="text" name="cancel_reason" placeholder="Alasan pembatalan..." class="w-full text-xs rounded-xl border-rose-200">
+                                <div x-show="selectedStatus === 'canceled'" x-cloak class="mt-2">
+                                    <input type="text" name="cancel_reason" placeholder="Alasan pembatalan..." class="w-full text-xs rounded-xl border-rose-200">
+                                </div>
+
+                                <button type="submit" class="w-full py-2 bg-gray-900 text-white text-xs font-bold rounded-xl hover:bg-gray-800 transition-all">
+                                    Update Status Reservasi
+                                </button>
                             </div>
-
-                            <button type="submit" class="w-full py-2 bg-gray-900 text-white text-xs font-bold rounded-xl hover:bg-gray-800 transition-all">
-                                Update Status Reservasi
-                            </button>
+                        </form>
+                    @else
+                        <div class="mt-3 pt-3 border-t border-gray-100 text-center">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-500">
+                                <i class="fas fa-lock text-[10px]"></i>
+                                Status {{ $stVal === 'completed' ? 'Selesai' : 'Dibatalkan' }} (tidak dapat diubah)
+                            </span>
                         </div>
-                    </form>
+                    @endif
                 </div>
 
             </div>

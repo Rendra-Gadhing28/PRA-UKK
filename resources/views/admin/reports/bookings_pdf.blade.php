@@ -47,8 +47,8 @@
                 <td>{{ $b->treatments->pluck('name')->join(', ') ?: 'N/A' }}</td>
                 <td>{{ $b->booking_date ? $b->booking_date->format('d/m/Y') : '-' }}<br><small>{{ $b->time_start ?? '' }}</small></td>
                 <td class="text-right">Rp {{ number_format($b->total_amount, 0, ',', '.') }}</td>
-                <td class="text-center">{{ ucfirst($b->payment_status) }}</td>
-                <td class="text-center">{{ ucfirst($b->status) }}</td>
+                <td class="text-center">{{ ucfirst((string) $b->payment_status) }}</td>
+                <td class="text-center">{{ is_object($b->status) && method_exists($b->status, 'badgeLabel') ? $b->status->badgeLabel() : ucfirst((string) $b->status) }}</td>
             </tr>
             @empty
             <tr>

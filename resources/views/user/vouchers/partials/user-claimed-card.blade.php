@@ -50,6 +50,9 @@
                 <div class="flex items-center gap-2.5 min-w-0">
                     <img src="{{ asset('logo/yalia-logos-trnsprnt.svg') }}" 
                          alt="Yalia Logo" 
+                         width="28"
+                         height="28"
+                         decoding="async"
                          class="w-7 h-7 object-cover rounded-full bg-emerald-50 p-0.5 border border-emerald-200 shrink-0 shadow-xs">
                     <div class="min-w-0">
                         <h3 class="font-bold text-gray-900 text-sm leading-snug truncate" title="{{ $v->name }}">
@@ -87,6 +90,15 @@
                 <span class="text-gray-500 font-medium">Min. Transaksi:</span>
                 <span class="font-bold text-gray-800">
                     {{ $v->min_purchase > 0 ? 'Rp '.number_format($v->min_purchase, 0, ',', '.') : 'Tanpa Min. Belanja' }}
+                </span>
+            </div>
+
+            <div class="bg-emerald-50/70 rounded-xl p-1.5 border border-emerald-100 flex items-center justify-between text-xs">
+                <span class="text-emerald-800 font-semibold text-[11px] flex items-center gap-1">
+                    <i class="fas fa-ticket text-emerald-600 text-[10px]"></i> Sisa Kuota Anda:
+                </span>
+                <span class="font-mono font-bold text-emerald-700 text-xs">
+                    {{ $uv->is_used ? '0 Voucher (Sudah Terpakai)' : '1 Voucher (Tersedia)' }}
                 </span>
             </div>
 

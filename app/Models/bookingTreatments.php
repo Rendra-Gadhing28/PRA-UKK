@@ -14,10 +14,23 @@ class BookingTreatments extends Model
         'subtotal', 
     ];
 
-    public function Bookings(){
+    public function booking(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
         return $this->belongsTo(Bookings::class, 'booking_id');
     }
-    public function Treatments(){
+
+    public function treatment(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
         return $this->belongsTo(Treatments::class, 'treatment_id');
+    }
+
+    public function Bookings(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->booking();
+    }
+
+    public function Treatments(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->treatment();
     }
 }
