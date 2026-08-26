@@ -33,11 +33,9 @@
         .tab-pill.active::after { transform: scaleX(1); }
     </style>
 
-    <div class="booking-page pt-28 pb-24 min-h-screen bg-background-main relative overflow-hidden">
+    <div class="booking-page pt-28 pb-24 min-h-screen bg-gray-100 relative overflow-hidden">
 
-        {{-- Ambient blobs --}}
-        <div class="pointer-events-none absolute -top-32 -left-32 w-96 h-96 bg-primary-fixed/30 rounded-full blur-[100px]"></div>
-        <div class="pointer-events-none absolute -bottom-32 -right-32 w-80 h-80 bg-tertiary-fixed/20 rounded-full blur-[90px]"></div>
+        {{-- Ambient background removed per request --}}
 
         <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 space-y-6 animate-card-enter">
 

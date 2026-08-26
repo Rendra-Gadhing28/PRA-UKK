@@ -177,11 +177,40 @@
             </div>
 
         </div>
+    {{-- Payment Success & Points Reward Modal --}}
+    <div x-show="showSuccessModal" x-cloak
+         class="fixed inset-0 z-[700] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100">
+        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-sm w-full text-center shadow-2xl border border-rose-100 relative overflow-hidden">
+            <div class="w-20 h-20 bg-gradient-to-tr from-amber-400 to-rose-400 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg animate-bounce">
+                <span class="text-4xl">🎉</span>
+            </div>
+            <h3 class="font-display text-2xl font-bold text-[#5b3a29] mb-1">Pembayaran Berhasil!</h3>
+            <p class="text-sm text-gray-600 mb-5">Terima kasih telah melakukan reservasi di Yalia Beauty Salon.</p>
+
+            <div class="bg-rose-50 border border-rose-200 rounded-2xl p-4 mb-6 text-center">
+                <p class="text-xs font-semibold text-rose-600 uppercase tracking-wider mb-1">Poin PTS Diperoleh</p>
+                <div class="text-3xl font-extrabold text-[#f45472] font-mono-code" x-text="`+${earnedPoints} PTS`">
+                    +0 PTS
+                </div>
+                <p class="text-xs text-gray-500 mt-2">
+                    Total Poin Kamu Sekarang: <span class="font-bold text-[#5b3a29]" x-text="`${userTotalPoints} PTS`"></span>
+                </p>
+            </div>
+
+            <button @click="goToReceipt()"
+                    class="w-full py-3.5 bg-gradient-to-r from-[#f45472] to-[#e03e5c] text-white font-bold rounded-xl shadow-lg hover:shadow-rose-300 hover:scale-[1.02] transition">
+                Lihat Struk Reservasi ✨
+            </button>
+        </div>
     </div>
 </div>
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 <script>
 window.paymentPage = function paymentPage(config) {
     return {
@@ -193,6 +222,10 @@ window.paymentPage = function paymentPage(config) {
         timerInterval: null,
         pollInterval: null,
         toast: { show: false, message: '' },
+        showSuccessModal: false,
+        earnedPoints: 0,
+        userTotalPoints: 0,
+        targetRedirectUrl: '',
 
         init() {
             if (this.secondsRemaining <= 0) {
@@ -259,12 +292,19 @@ window.paymentPage = function paymentPage(config) {
                 if (data.payment_status === 'paid' || data.status === 'confirmed' || data.status === 'completed') {
                     clearInterval(this.timerInterval);
                     clearInterval(this.pollInterval);
-                    
-                    this.toast = { show: true, message: '✓ Pembayaran Berhasil! Mengalihkan ke struk...' };
-                    
-                    setTimeout(() => {
-                        window.location.href = data.redirect_url || this.redirectUrl;
-                    }, 1200);
+
+                    this.earnedPoints = data.earned_points || 0;
+                    this.userTotalPoints = data.user_total_points || 0;
+                    this.targetRedirectUrl = data.redirect_url || this.redirectUrl;
+                    this.showSuccessModal = true;
+
+                    if (typeof confetti === 'function') {
+                        confetti({
+                            particleCount: 120,
+                            spread: 80,
+                            origin: { y: 0.6 }
+                        });
+                    }
                 } else if (!isAuto) {
                     this.toast = { show: true, message: 'Belum terdeteksi pembayaran. Silakan selesaikan via QRIS.' };
                     setTimeout(() => { this.toast.show = false; }, 3000);
@@ -274,6 +314,10 @@ window.paymentPage = function paymentPage(config) {
             } finally {
                 this.isChecking = false;
             }
+        },
+
+        goToReceipt() {
+            window.location.href = this.targetRedirectUrl || this.redirectUrl;
         }
     }
 }

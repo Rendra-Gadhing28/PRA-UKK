@@ -29,6 +29,7 @@ class User extends Authenticatable
         'longitude',
         'membership_level',
         'total_points',
+        'last_daily_checkin_at',
         'total_bookings', 
         'total_spending', 
         'is_active',
@@ -49,6 +50,7 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'last_daily_checkin_at' => 'datetime',
         'password' => 'hashed',
         'is_active' => 'boolean',
         'total_points' => 'integer',

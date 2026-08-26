@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="bg-gray-100">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,8 +11,6 @@
         <style>[x-cloak] { display: none !important; }</style>
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-        <link rel="stylesheet" type="text/css" href="loading-bar.css"/>
-        <script type="text/javascript" src="loading-bar.js"></script>
         <title>{{ config('app.name', 'Laravel') }}</title>
         <!-- Fonts & Preconnect (Sesi 2 Optimalisasi) -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,7 +26,7 @@
         <script defer type="module" src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"></script>
         @stack('styles')
     </head>
-    <body class="font-sans antialiased">
+    <body class="font-sans antialiased bg-gray-100">
         <div class="min-h-screen bg-gray-100">
             @include('layouts.navigation')
 

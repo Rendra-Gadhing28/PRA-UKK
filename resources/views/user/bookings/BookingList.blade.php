@@ -132,15 +132,15 @@
         @endphp
 
         {{-- ══ Card ══ --}}
-        <div class="bk-card group relative bg-gradient-to-r from-[#fff9fa] via-[#fff5f7] to-[#fff0f3] rounded-3xl overflow-hidden
-                    border border-rose-200/80 border-l-4 {{ $accentBorder }}
-                    shadow-[-80px_16px_90px_rgba(244,84,114,0.55)] hover:shadow-[-100px_20px_110px_rgba(244,84,114,0.68)] hover:-translate-y-0.5
+        <div class="bk-card group relative bg-white rounded-3xl overflow-hidden
+                    border border-slate-200/80 border-l-4 {{ $accentBorder }}
+                    shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.12)] hover:-translate-y-0.5
                     transition-all duration-[380ms] ease-[cubic-bezier(0.22,0.61,0.36,1)]
                     flex flex-row items-stretch"
              style="animation-delay:{{ $delay }}ms">
 
             {{-- ── THUMBNAIL (kiri - rasio presisi & tidak terpotong) ── --}}
-            <div class="relative shrink-0 w-32 sm:w-40 bg-rose-100/30 border-r border-rose-200/60 flex items-center justify-center overflow-hidden">
+            <div class="relative shrink-0 w-32 sm:w-40 bg-slate-50 border-r border-slate-100 flex items-center justify-center overflow-hidden">
                 <div class="absolute inset-0 flex items-center justify-center p-2">
                     @if($heroPhoto)
                         <img src="{{ $heroPhoto }}"
@@ -229,24 +229,24 @@
                 {{-- ── Info pills row ── --}}
                 <div class="flex flex-wrap gap-2">
                     {{-- Tanggal --}}
-                    <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/90 border border-rose-100/90 text-[11px] font-semibold text-on-surface-variant shadow-2xs">
+                    <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200/60 text-[11px] font-semibold text-on-surface-variant shadow-2xs">
                         <i class="fas fa-calendar-day text-primary text-[10px]"></i>
                         <span>{{ $dayStr }}, {{ $dateStr }}</span>
                     </div>
                     {{-- Jam --}}
-                    <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/90 border border-rose-100/90 text-[11px] font-semibold text-on-surface-variant shadow-2xs">
+                    <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200/60 text-[11px] font-semibold text-on-surface-variant shadow-2xs">
                         <i class="fas fa-clock text-secondary text-[10px]"></i>
                         <span>{{ $tStart }} – {{ $tEnd }} <span class="text-[9px]">({{ $totalDuration }}mnt)</span></span>
                     </div>
                     {{-- Beautician --}}
-                    <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/90 border border-rose-100/90 text-[11px] font-semibold text-on-surface-variant shadow-2xs">
+                    <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200/60 text-[11px] font-semibold text-on-surface-variant shadow-2xs">
                         <i class="fas fa-user-sparkles text-tertiary text-[10px]"></i>
                         <span>{{ $booking->beautician?->name ?? 'Auto Assign' }}</span>
                     </div>
                 </div>
 
                 {{-- ── Divider ── --}}
-                <div class="border-t border-rose-200/60"></div>
+                <div class="border-t border-slate-100"></div>
 
                 {{-- ── Payment status + Actions ── --}}
                 <div class="flex items-center justify-between gap-3">

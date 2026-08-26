@@ -140,21 +140,34 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 min-h-[320px]">
                         @forelse($topTreatments as $treatment)
                             @php
+                                $tObj = $treatment;
                                 if (is_string($treatment)) {
-                                    $tObj = json_decode($treatment) ?: (object)['name' => $treatment, 'description' => '', 'image_url' => asset('images/beauty.png'), 'rating' => 4.9, 'duration_minutes' => 60, 'price' => 0, 'id' => null];
-                                } elseif (is_array($treatment)) {
-                                    $tObj = (object)$treatment;
-                                } else {
-                                    $tObj = is_object($treatment) ? $treatment : (object)[];
+                                    $tObj = json_decode($treatment) ?: (object)['name' => $treatment];
                                 }
-                                $tName = $tObj->name ?? '';
-                                $tDesc = $tObj->description ?? '';
-                                $tPrice = $tObj->price ?? 0;
-                                $tRating = $tObj->rating ?? 4.9;
-                                $tDuration = $tObj->duration_minutes ?? 60;
-                                $tImage = $tObj->image_url ?? asset('images/beauty.png');
-                                $tId = $tObj->id ?? null;
-                                $catName = (isset($tObj->category) && is_object($tObj->category)) ? ($tObj->category->name ?? '') : '';
+                                $tName = is_object($tObj) ? ($tObj->name ?? '') : ($tObj['name'] ?? '');
+                                $tDesc = is_object($tObj) ? ($tObj->description ?? '') : ($tObj['description'] ?? '');
+                                $tPrice = is_object($tObj) ? ($tObj->price ?? 0) : ($tObj['price'] ?? 0);
+                                $tRating = is_object($tObj) ? ($tObj->rating ?? 4.9) : ($tObj['rating'] ?? 4.9);
+                                $tDuration = is_object($tObj) ? ($tObj->duration_minutes ?? 60) : ($tObj['duration_minutes'] ?? 60);
+                                $tId = is_object($tObj) ? ($tObj->id ?? null) : ($tObj['id'] ?? null);
+
+                                if ($tObj instanceof \App\Models\Treatments) {
+                                    $tImage = $tObj->image_url;
+                                } else {
+                                    $rawImg = is_object($tObj) ? ($tObj->image_url ?? $tObj->images ?? null) : ($tObj['image_url'] ?? $tObj['images'] ?? null);
+                                    if ($rawImg && (str_starts_with($rawImg, 'http://') || str_starts_with($rawImg, 'https://'))) {
+                                        $tImage = $rawImg;
+                                    } elseif ($rawImg) {
+                                        $tImage = asset('storage/' . ltrim($rawImg, '/'));
+                                    } else {
+                                        $tImage = asset('logo/yalia-logos-trnsprnt.svg');
+                                    }
+                                }
+
+                                $catName = '';
+                                if (is_object($tObj) && isset($tObj->category)) {
+                                    $catName = is_object($tObj->category) ? ($tObj->category->name ?? '') : ($tObj->category['name'] ?? '');
+                                }
                             @endphp
 
                             <div x-show="matchesFilter('{{ strtolower(addslashes($tName)) }}', '{{ strtolower(addslashes($tDesc)) }}', '{{ strtolower(addslashes($catName)) }}')"
@@ -550,7 +563,7 @@
                 // Dynamic Day of Week Calculation (Monday = 1 ... Friday = 5 ... Sunday = 7)
                 todayDayOfWeek: (new Date().getDay() === 0 ? 7 : new Date().getDay()),
                 currentStreak: 4,
-                hasClaimedToday: false,
+                hasClaimedToday: @json((bool) ($user->last_daily_checkin_at && $user->last_daily_checkin_at->isToday())),
 
                 tabs: ['upcoming', 'past', 'cancelled'],
                 activeTab: 'upcoming',
@@ -582,7 +595,9 @@
                 init() {
                     const todayStr = new Date().toISOString().split('T')[0];
                     const lastClaimDate = localStorage.getItem('yalia_last_claimed_date');
-                    this.hasClaimedToday = (lastClaimDate === todayStr);
+                    if (lastClaimDate === todayStr) {
+                        this.hasClaimedToday = true;
+                    }
 
                     const currentDayIdx = this.todayDayOfWeek - 1; // 0..6 (Friday = 4 -> Day 5)
 
@@ -607,7 +622,7 @@
                     return matchesSearch && matchesCat;
                 },
 
-                claimTodayReward() {
+                async claimTodayReward() {
                     if (this.hasClaimedToday) return;
 
                     const todayStr = new Date().toISOString().split('T')[0];
@@ -615,7 +630,6 @@
                     const activeM = this.missions[currentDayIdx];
 
                     this.hasClaimedToday = true;
-                    this.userPoints += 25;
                     this.currentStreak = this.todayDayOfWeek;
 
                     if (activeM) {
@@ -623,6 +637,26 @@
                     }
 
                     localStorage.setItem('yalia_last_claimed_date', todayStr);
+
+                    try {
+                        const response = await fetch(`{{ route('user.daily-checkin') }}`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                            },
+                        });
+
+                        const data = await response.json();
+                        if (data.total_points !== undefined) {
+                            this.userPoints = data.total_points;
+                        } else {
+                            this.userPoints += 25;
+                        }
+                    } catch (e) {
+                        this.userPoints += 25;
+                    }
 
                     if (typeof confetti === 'function') {
                         confetti({
@@ -636,7 +670,7 @@
                         icon: '✨',
                         title: `${activeM ? activeM.dayTitle : 'Hadiah Hari Ini'}!`,
                         reward: activeM ? activeM.reward : '+25 Points',
-                        message: `Selamat Ratu Beauty! Kamu berhasil mengklaim misi hari ini. Aura cantikmu resmi naik 1000 Watt!`
+                        message: `Selamat Ratu Beauty! Kamu berhasil mengklaim misi hari ini. Bonus poin PTS telah disimpan ke akunmu!`
                     };
 
                     this.showRewardModal = true;

@@ -114,6 +114,7 @@ class TreatmentSeeder extends Seeder
                     'sort_order' => $index + 1,
                     'rating' => fake()->randomFloat(1, 4.0, 5.0),
                     'rating_count' => fake()->numberBetween(5, 120),
+                    ''
                 ]);
             }
         }

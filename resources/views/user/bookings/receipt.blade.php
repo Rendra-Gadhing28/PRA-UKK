@@ -51,8 +51,36 @@
     .r-enter-5 { animation-delay: .38s; }
 
     @media print {
-        .no-print { display:none !important; }
-        body { background:#fff !important; }
+        @page {
+            size: portrait;
+            margin: 10mm;
+        }
+        body, html {
+            background: #ffffff !important;
+            color: #000000 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        /* Hide navbar, layout elements, photo upload card, forms, flash messages, action buttons */
+        nav, header, footer, .no-print, form, [role="navigation"] {
+            display: none !important;
+        }
+        .receipt-font {
+            padding: 0 !important;
+            background: #ffffff !important;
+            min-height: auto !important;
+        }
+        .max-w-lg {
+            max-width: 480px !important;
+            margin: 0 auto !important;
+        }
+        .r-enter {
+            animation: none !important;
+            transform: none !important;
+            opacity: 1 !important;
+        }
     }
 </style>
 @endpush
@@ -198,24 +226,21 @@
 
             <div class="space-y-3">
                 @forelse($booking->bookingTreatments as $item)
+                    @php
+                        $trObj = $item->Treatments ?? $item->treatment;
+                        $trImg = $trObj?->image_url ?? ($trObj?->images ? asset('storage/'.$trObj->images) : asset('logo/yalia-logos-trnsprnt.svg'));
+                    @endphp
                     <div class="flex items-center gap-3">
                         {{-- mini thumb --}}
-                        <div class="w-10 h-10 rounded-xl overflow-hidden shrink-0 border"
+                        <div class="w-10 h-10 rounded-xl overflow-hidden shrink-0 border bg-rose-50/50"
                              style="border-color:var(--receipt-border)">
-                            @if($item->Treatments?->image)
-                                <img src="{{ asset('storage/'.$item->Treatments->image) }}"
-                                     alt="{{ $item->Treatments->name }}"
-                                     class="w-full h-full object-cover">
-                            @else
-                                <div class="w-full h-full flex items-center justify-center"
-                                     style="background:var(--clr-brand-lt);color:var(--clr-brand)">
-                                    <i class="fas fa-spa text-xs"></i>
-                                </div>
-                            @endif
+                            <img src="{{ $trImg }}"
+                                 alt="{{ $trObj?->name }}"
+                                 class="w-full h-full object-cover">
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-[12px] font-bold truncate" style="color:var(--clr-value)">{{ $item->Treatments?->name }}</p>
-                            <p class="text-[10px]" style="color:var(--clr-muted)">× {{ $item->quantity }} &middot; {{ $item->Treatments?->duration_minutes ?? 0 }} mnt</p>
+                            <p class="text-[12px] font-bold truncate" style="color:var(--clr-value)">{{ $trObj?->name }}</p>
+                            <p class="text-[10px]" style="color:var(--clr-muted)">× {{ $item->quantity }} &middot; {{ $trObj?->duration_minutes ?? 0 }} mnt</p>
                         </div>
                         <span class="receipt-mono text-[12px] font-bold shrink-0" style="color:var(--clr-brand)">
                             Rp {{ number_format($item->subtotal, 0, ',', '.') }}
@@ -223,15 +248,12 @@
                     </div>
                 @empty
                     @foreach($booking->treatments as $tr)
+                    @php
+                        $trImg = $tr->image_url ?? ($tr->images ? asset('storage/'.$tr->images) : asset('logo/yalia-logos-trnsprnt.svg'));
+                    @endphp
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl overflow-hidden shrink-0 border" style="border-color:var(--receipt-border)">
-                            @if($tr->image)
-                                <img src="{{ asset('storage/'.$tr->image) }}" alt="{{ $tr->name }}" class="w-full h-full object-cover">
-                            @else
-                                <div class="w-full h-full flex items-center justify-center" style="background:var(--clr-brand-lt);color:var(--clr-brand)">
-                                    <i class="fas fa-spa text-xs"></i>
-                                </div>
-                            @endif
+                        <div class="w-10 h-10 rounded-xl overflow-hidden shrink-0 border bg-rose-50/50" style="border-color:var(--receipt-border)">
+                            <img src="{{ $trImg }}" alt="{{ $tr->name }}" class="w-full h-full object-cover">
                         </div>
                         <div class="flex-1 min-w-0">
                             <p class="text-[12px] font-bold truncate" style="color:var(--clr-value)">{{ $tr->name }}</p>
@@ -287,7 +309,7 @@
         {{-- ══════════════════════════════════════════════════ --}}
         {{-- CARD D: Foto Hasil Treatment (photo_assign)        --}}
         {{-- ══════════════════════════════════════════════════ --}}
-        <div class="r-enter r-enter-4 rounded-3xl shadow-sm border px-6 py-5"
+        <div class="no-print r-enter r-enter-4 rounded-3xl shadow-sm border px-6 py-5"
              style="background:var(--receipt-card);border-color:var(--receipt-border)">
 
             <div class="flex items-center justify-between mb-4">

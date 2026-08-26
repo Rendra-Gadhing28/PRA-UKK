@@ -167,4 +167,23 @@ class Bookings extends Model
     {
         return $this->attributes['time_end'] ?? null;
     }
+
+    /**
+     * Hitung perolehan poin dari transaksi booking.
+     * Aturan:
+     * - >= Rp 100.000: 100 pts
+     * - Rp 50.000 s/d Rp 99.999: 50 pts
+     * - < Rp 50.000: 15 pts
+     */
+    public function calculateEarnedPoints(): int
+    {
+        $amount = (float) $this->total_amount;
+        if ($amount >= 100000) {
+            return 100;
+        }
+        if ($amount >= 50000) {
+            return 50;
+        }
+        return 15;
+    }
 }

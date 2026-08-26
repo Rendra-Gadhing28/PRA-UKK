@@ -114,17 +114,12 @@ class AdminBookingController extends Controller
         // Simpan perubahan status booking terlebih dahulu
         $booking->save();
 
-        // Jika status menjadi completed dan poin belum ditambahkan, akumulasi poin dari treatment
+        // Jika status menjadi completed dan poin belum ditambahkan, akumulasi poin
         if ($newStatus === 'completed' && !$booking->points_added) {
-            // Load treatment pivot data
-            $booking->load('bookingTreatments.treatment');
-            $totalPoints = $booking->bookingTreatments->sum(function ($bt) {
-                return ($bt->treatment->points ?? 0) * ($bt->quantity ?? 1);
-            });
-            if ($totalPoints > 0) {
+            $totalPoints = $booking->calculateEarnedPoints();
+            if ($totalPoints > 0 && $booking->user) {
                 $booking->user->increment('total_points', $totalPoints);
             }
-            // Tandai bahwa poin sudah ditambahkan untuk booking ini
             $booking->points_added = true;
             $booking->save();
         }
@@ -147,6 +142,14 @@ class AdminBookingController extends Controller
             'payment_verified_by' => auth()->id(),
             'status' => $currStatus === 'pending' ? 'confirmed' : $booking->status,
         ]);
+
+        if (!$booking->points_added) {
+            $totalPoints = $booking->calculateEarnedPoints();
+            if ($totalPoints > 0 && $booking->user) {
+                $booking->user->increment('total_points', $totalPoints);
+            }
+            $booking->update(['points_added' => true]);
+        }
 
         ToastHelper::success("Pembayaran untuk reservasi #{$booking->booking_code} berhasil diverifikasi!");
 

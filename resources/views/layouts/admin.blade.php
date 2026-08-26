@@ -10,8 +10,6 @@
         <!-- Scripts & Styles -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-        <link rel="stylesheet" type="text/css" href="loading-bar.css"/>
-        <script type="text/javascript" src="loading-bar.js"></script>
         <title>{{ config('app.name', 'Yalia Beauty') }} — Admin Executive</title>
 
         <!-- Fonts -->

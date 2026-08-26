@@ -61,6 +61,15 @@ class Treatments extends Model
     ];
 
     /**
+     * Aksesor yang otomatis ikut disertakan saat model dikonversi ke array/JSON/cache.
+     *
+     * @var list<string>
+     */
+    protected $appends = [
+        'image_url',
+    ];
+
+    /**
      * @return array<string, string>
      */
     protected function casts(): array
@@ -112,8 +121,10 @@ class Treatments extends Model
     {
         return Attribute::make(
             get: function (): string {
+                $defaultFallback = asset('logo/yalia-logos-trnsprnt.svg');
+
                 if (! $this->images) {
-                    return asset('images/treatment-placeholder.webp');
+                    return $defaultFallback;
                 }
 
                 if (str_starts_with($this->images, 'http://') || str_starts_with($this->images, 'https://')) {
@@ -137,7 +148,19 @@ class Treatments extends Model
                     return asset('images/' . $cleanPath);
                 }
 
-                return asset('images/treatment-placeholder.webp');
+                // Fallback: check alternate extensions (e.g. .jpg instead of .webp)
+                $pathWithoutExt = preg_replace('/\.[^.]+$/', '', $cleanPath);
+                foreach (['jpg', 'jpeg', 'png', 'webp', 'svg'] as $ext) {
+                    $testPath = $pathWithoutExt . '.' . $ext;
+                    if (Storage::disk('public')->exists($testPath)) {
+                        return Storage::disk('public')->url($testPath);
+                    }
+                    if (file_exists(public_path('images/' . $testPath))) {
+                        return asset('images/' . $testPath);
+                    }
+                }
+
+                return $defaultFallback;
             }
         );
     }

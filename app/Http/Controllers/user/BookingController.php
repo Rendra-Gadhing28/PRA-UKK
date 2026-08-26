@@ -359,6 +359,9 @@ class BookingController extends Controller
             }
         }
 
+        $earnedPoints = $booking->calculateEarnedPoints();
+        $userPoints = $booking->user ? $booking->user->total_points : 0;
+
         return response()->json([
             'payment_status' => $booking->payment_status,
             'status' => $booking->status,
@@ -366,6 +369,8 @@ class BookingController extends Controller
             'seconds_remaining' => $booking->payment_expires_at
                 ? max(0, now()->diffInSeconds($booking->payment_expires_at, false))
                 : 0,
+            'earned_points' => $earnedPoints,
+            'user_total_points' => $userPoints,
             'redirect_url' => $booking->payment_status === 'paid'
                 ? route('user.bookings.show', $booking)
                 : null,
@@ -390,12 +395,9 @@ class BookingController extends Controller
         }
 
         return view('user.bookings.receipt', [
-            // AUDIT: kolom 'user' SENGAJA tidak dibatasi — saya belum melihat
-            // blade user.bookings.receipt sehingga tidak tahu field apa saja
-            // yang benar-benar dipakai (nama/email/telp/dll). Kirim blade-nya
-            // kalau mau dibatasi juga seperti treatments & beautician di bawah.
             'booking' => $booking->load([
                 'treatments:id,name,duration_minutes,images,price',
+                'bookingTreatments.Treatments',
                 'beautician:id,name',
                 'user',
             ]),
@@ -458,6 +460,15 @@ class BookingController extends Controller
             'payment_verified_at' => now(),
             'version' => $booking->version + 1,
         ]);
+
+        if (! $booking->points_added) {
+            $earnedPoints = $booking->calculateEarnedPoints();
+            if ($earnedPoints > 0 && $booking->user) {
+                $booking->user->increment('total_points', $earnedPoints);
+            }
+            $booking->update(['points_added' => true]);
+        }
+
         $booking->refresh();
     }
 

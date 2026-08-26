@@ -5,9 +5,7 @@
         </h2>
     </x-slot>
 
-    {{-- Ornamen Ambient Background Blobs --}}
-    <div class="blob-bg bg-accent-clear w-[500px] h-[500px] -top-24 -left-24 rounded-[40%_60%_70%_30%]" aria-hidden="true"></div>
-    <div class="blob-bg bg-primary-fixed-dim w-[600px] h-[600px] top-1/2 -right-36 rounded-[60%_40%_30%_70%] opacity-20" aria-hidden="true"></div>
+    {{-- Ambient background removed --}}
 
     {{--
         mt-36 (144px): Jarak aman kelipatan 4 agar tidak tabrakan dengan fixed navigation bar
@@ -25,42 +23,46 @@
         <main class="max-w-[1280px] mx-auto px-4 sm:px-8 space-y-8">
 
             {{-- HEADER TITLE & REWARD PTS BANNER --}}
-            <section class="bg-gradient-to-r from-[#f45472] via-[#e64262] to-[#d93856] rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
-                <div class="absolute right-0 top-0 bottom-0 w-1/3 opacity-10 pointer-events-none flex items-center justify-end pr-8">
-                    <i class="fas fa-ticket-alt text-[200px] text-white"></i>
+            <section class="bg-[#fff5f7] rounded-3xl p-6 sm:p-10 border border-rose-200/80 shadow-[0_8px_30px_rgba(0,0,0,0.06)] relative overflow-hidden">
+                {{-- Background Image Layer with Gradient Overlay --}}
+                <div class="absolute inset-y-0 right-0 w-full lg:w-[70%] pointer-events-none overflow-hidden">
+                    <img src="{{ asset('images/voucher-banner-bg.jpg') }}"
+                         alt="Yalia Beauty Rewards"
+                         class="w-full h-full object-cover object-center scale-105 opacity-80 transition-transform duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#fff5f7] via-[#fff5f7]/80 via-30% to-transparent"></div>
                 </div>
 
                 <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
                     <div class="space-y-4 max-w-xl">
-                        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-bold border border-white/30">
-                            <i class="fas fa-crown text-amber-300"></i>
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-100/90 text-[#631828] border border-rose-200/80 text-xs font-bold shadow-2xs">
+                            <i class="fas fa-crown text-amber-500"></i>
                             <span>Yalia Beauty Loyalty & Promo Rewards</span>
                         </div>
-                        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight font-headline leading-tight">
+                        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#2e0e16] tracking-tight leading-tight" style="font-family:'Playfair Display',serif">
                             Klaim Voucher & Tukar Poin PTS Kamu ✨
                         </h1>
-                        <p class="text-sm text-rose-100 font-medium leading-relaxed">
+                        <p class="text-sm sm:text-base text-[#5c3740] font-semibold leading-relaxed">
                             Nikmati berbagai potongan harga eksklusif, voucher event special, dan tukarkan poin PTS dari setiap booking perawatanmu!
                         </p>
                     </div>
 
                     {{-- USER PTS BALANCE CARD --}}
-                    <div class="bg-white/15 backdrop-blur-lg p-6 rounded-2xl border border-white/30 flex items-center gap-6 shrink-0 shadow-inner">
-                        <div class="w-16 h-16 rounded-2xl bg-amber-400 text-amber-950 flex items-center justify-center text-3xl shadow-lg shrink-0">
+                    <div class="bg-white/90 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 flex items-center gap-5 shrink-0 shadow-[0_10px_25px_rgba(0,0,0,0.08)] relative z-10">
+                        <div class="w-14 h-14 rounded-2xl bg-amber-500 text-amber-950 flex items-center justify-center text-2xl shadow-sm shrink-0">
                             <i class="fas fa-coins"></i>
                         </div>
                         <div>
-                            <span class="text-xs uppercase tracking-wider text-rose-100 font-bold block mb-1">
+                            <span class="text-[11px] uppercase tracking-wider text-slate-500 font-bold block mb-0.5">
                                 Saldo Poin PTS Anda
                             </span>
                             <div class="flex items-baseline gap-2">
-                                <span class="text-4xl font-black font-mono tracking-tight text-white">
+                                <span class="text-3xl sm:text-4xl font-black font-mono tracking-tight text-slate-900">
                                     {{ number_format($user->total_points ?? 0) }}
                                 </span>
-                                <span class="text-sm font-bold text-amber-300 uppercase tracking-widest">PTS</span>
+                                <span class="text-xs font-bold text-amber-700 uppercase tracking-widest">PTS</span>
                             </div>
-                            <p class="text-[11px] text-rose-100 mt-1">
-                                Level Membership: <strong class="uppercase text-white font-bold">{{ $user->membership_level ?? 'Regular' }}</strong>
+                            <p class="text-[11px] text-slate-600 mt-1 font-medium">
+                                Level Membership: <strong class="uppercase text-slate-900 font-bold">{{ $user->membership_level ?? 'Regular' }}</strong>
                             </p>
                         </div>
                     </div>
@@ -174,14 +176,14 @@
 
             {{-- 3. TAB: EVENT SPECIAL --}}
             <div x-show="!loading && activeTab === 'event'" class="space-y-4">
-                <div class="bg-gradient-to-r from-purple-500 to-rose-500 text-white rounded-2xl p-4 flex items-center justify-between gap-4 shadow-sm">
+                <div class="bg-gradient-to-r from-[#f45472] via-[#e64262] to-[#b01f44] text-white rounded-2xl p-4 flex items-center justify-between gap-4 shadow-sm">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md text-white flex items-center justify-center text-lg font-bold shrink-0">
                             <i class="fas fa-gift"></i>
                         </div>
                         <div>
                             <h4 class="text-xs font-bold uppercase tracking-wider">Promo Event Special Yalia Beauty</h4>
-                            <p class="text-xs text-purple-100">Klaim voucher khusus selama event berlangsung sebelum kuota habis!</p>
+                            <p class="text-xs text-rose-100">Klaim voucher khusus selama event berlangsung sebelum kuota habis!</p>
                         </div>
                     </div>
                 </div>

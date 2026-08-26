@@ -64,6 +64,7 @@ Route::middleware(['auth'])->prefix('dashboard')->name('user.')->group(function 
 
     // Dashboard utama
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/daily-checkin', [DashboardController::class, 'dailyCheckin'])->name('daily-checkin');
     Route::get('/bookings/list', [BookingController::class, 'list'])
     ->middleware('throttle:60,1')
     ->name('bookings.list');
