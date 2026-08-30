@@ -87,6 +87,23 @@ class User extends Authenticatable
     }
 
 
+    // Accessor Avatar URL
+    public function getAvatarUrlAttribute(): string
+    {
+        if (!empty($this->avatar)) {
+            if (str_starts_with($this->avatar, 'http://') || str_starts_with($this->avatar, 'https://')) {
+                return $this->avatar;
+            }
+            return asset('storage/' . $this->avatar);
+        }
+
+        if (!empty($this->attributes['avatar_url'])) {
+            return $this->attributes['avatar_url'];
+        }
+
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name ?? 'User') . '&background=f45472&color=fff&size=128';
+    }
+
     // Role and Membership Helpers
     public function getIsAdminAttribute(): bool {
         return $this->role === 'admin';

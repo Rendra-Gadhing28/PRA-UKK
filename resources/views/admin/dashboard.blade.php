@@ -41,15 +41,15 @@
                 <div class="bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-rose-100 shadow-sm hover:shadow-md transition-all">
                     <div class="flex items-center justify-between mb-4">
                         <span class="text-xs font-bold uppercase tracking-wider text-rose-500">Pemasukan Bulan Ini</span>
-                        <div class="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-[#f45472]">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <div class="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-[#f45472] shrink-0 border border-rose-100">
+                            <i class="fa-solid fa-money-bill-wave text-base"></i>
                         </div>
                     </div>
-                    <div class="text-2xl font-black text-gray-900 mb-2">
+                    <div class="text-2xl font-black text-gray-900 mb-2 font-headline tabular-nums">
                         Rp {{ number_format($incomeThisMonth, 0, ',', '.') }}
                     </div>
                     <div class="flex items-center gap-1.5 text-xs font-semibold">
-                        <span class="px-2 py-0.5 rounded-full {{ $incomeGrowth['is_positive'] ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' }}">
+                        <span class="px-2 py-0.5 rounded-full {{ $incomeGrowth['is_positive'] ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-950' }} tabular-nums">
                             {{ $incomeGrowth['formatted'] }}
                         </span>
                         <span class="text-gray-400">vs bulan lalu</span>
@@ -60,15 +60,15 @@
                 <div class="bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-rose-100 shadow-sm hover:shadow-md transition-all">
                     <div class="flex items-center justify-between mb-4">
                         <span class="text-xs font-bold uppercase tracking-wider text-amber-600">Pengeluaran Bulan Ini</span>
-                        <div class="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-500">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                        <div class="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 shrink-0 border border-amber-100">
+                            <i class="fa-solid fa-wallet text-base"></i>
                         </div>
                     </div>
-                    <div class="text-2xl font-black text-gray-900 mb-2">
+                    <div class="text-2xl font-black text-gray-900 mb-2 font-headline tabular-nums">
                         Rp {{ number_format($expenseThisMonth, 0, ',', '.') }}
                     </div>
                     <div class="flex items-center gap-1.5 text-xs font-semibold">
-                        <span class="px-2 py-0.5 rounded-full {{ !$expenseGrowth['is_positive'] ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700' }}">
+                        <span class="px-2 py-0.5 rounded-full {{ !$expenseGrowth['is_positive'] ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-950' }} tabular-nums">
                             {{ $expenseGrowth['formatted'] }}
                         </span>
                         <span class="text-gray-400">vs bulan lalu</span>
@@ -79,15 +79,15 @@
                 <div class="bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-rose-100 shadow-sm hover:shadow-md transition-all">
                     <div class="flex items-center justify-between mb-4">
                         <span class="text-xs font-bold uppercase tracking-wider text-purple-600">Booking Selesai</span>
-                        <div class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-500">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <div class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-500 shrink-0 border border-purple-100">
+                            <i class="fa-solid fa-circle-check text-base"></i>
                         </div>
                     </div>
-                    <div class="text-2xl font-black text-gray-900 mb-2">
+                    <div class="text-2xl font-black text-gray-900 mb-2 font-headline tabular-nums">
                         {{ number_format($completedThisMonth) }} <span class="text-sm font-normal text-gray-500">Reservasi</span>
                     </div>
                     <div class="flex items-center gap-1.5 text-xs font-semibold">
-                        <span class="px-2 py-0.5 rounded-full {{ $completedGrowth['is_positive'] ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' }}">
+                        <span class="px-2 py-0.5 rounded-full {{ $completedGrowth['is_positive'] ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-950' }} tabular-nums">
                             {{ $completedGrowth['formatted'] }}
                         </span>
                         <span class="text-gray-400">vs bulan lalu</span>
@@ -98,15 +98,15 @@
                 <div class="bg-gradient-to-br from-[#f45472] to-[#d93856] p-6 rounded-3xl text-white shadow-lg shadow-rose-200">
                     <div class="flex items-center justify-between mb-4">
                         <span class="text-xs font-bold uppercase tracking-wider text-rose-100">Estimasi Laba Bersih</span>
-                        <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                        <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white shrink-0 border border-white/20">
+                            <i class="fa-solid fa-chart-line text-base"></i>
                         </div>
                     </div>
-                    <div class="text-2xl font-black mb-2">
+                    <div class="text-2xl font-black mb-2 font-headline tabular-nums">
                         Rp {{ number_format($netProfitThisMonth, 0, ',', '.') }}
                     </div>
                     <div class="flex items-center gap-1.5 text-xs font-semibold">
-                        <span class="px-2 py-0.5 rounded-full bg-white/20 text-white">
+                        <span class="px-2 py-0.5 rounded-full bg-white/20 text-white tabular-nums">
                             {{ $netProfitGrowth['formatted'] }}
                         </span>
                         <span class="text-rose-100">vs bulan lalu</span>
@@ -163,7 +163,7 @@
                         <canvas id="treatmentDoughnutChart"></canvas>
                         {{-- Center Text overlay for total --}}
                         <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                            <span class="text-2xl font-black text-[#2b1a1f]">{{ $totalTreatmentBookings }}</span>
+                            <span class="text-2xl font-black text-[#2b1a1f] tabular-nums">{{ $totalTreatmentBookings }}</span>
                             <span class="text-xs uppercase font-bold text-gray-400 tracking-wider">Total Booking</span>
                         </div>
                     </div>
@@ -173,14 +173,14 @@
                         @foreach($topTreatments as $index => $t)
                         @php
                             $pct = $treatmentChartPercentages[$index] ?? 0;
-                            $color = $treatmentChartColors[$index % count($treatmentChartColors)];
+                            $color = $treatmentChartColors[$loop->index % count($treatmentChartColors)];
                         @endphp
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2 min-w-0">
                                 <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: {{ $color }};"></span>
                                 <span class="font-medium text-gray-700 truncate">{{ $t->name }}</span>
                             </div>
-                            <span class="font-bold text-gray-900 shrink-0 ml-2">{{ $pct }}%</span>
+                            <span class="font-bold text-gray-900 shrink-0 ml-2 tabular-nums">{{ $pct }}%</span>
                         </div>
                         @endforeach
                     </div>
@@ -195,7 +195,7 @@
                 <div class="bg-white rounded-3xl p-6 shadow-sm border border-rose-100 flex flex-col">
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-lg font-bold text-gray-900 font-headline">Top Treatments</h3>
-                        <span class="text-xs font-semibold text-rose-500 bg-rose-50 px-2.5 py-1 rounded-full">Favorit Bulan Ini</span>
+                        <span class="text-xs font-semibold text-rose-500 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-100">Favorit Bulan Ini</span>
                     </div>
 
                     <div class="space-y-4 flex-1">
@@ -212,11 +212,11 @@
                                     #{{ $index + 1 }}
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <h4 class="text-sm font-bold text-gray-900 truncate">{{ $treatment->name }}</h4>
-                                    <p class="text-xs text-gray-500">Rp {{ number_format($treatment->price, 0, ',', '.') }}</p>
+                                    <h4 class="text-sm font-bold text-gray-900 truncate font-headline">{{ $treatment->name }}</h4>
+                                    <p class="text-xs text-gray-500 tabular-nums">Rp {{ number_format($treatment->price, 0, ',', '.') }}</p>
                                 </div>
                                 <div class="text-right shrink-0">
-                                    <span class="text-sm font-black text-rose-600">{{ $treatment->bookings_count }}</span>
+                                    <span class="text-sm font-black text-rose-600 tabular-nums">{{ $treatment->bookings_count }}</span>
                                     <span class="text-xs text-gray-400 block">booking</span>
                                 </div>
                             </div>
@@ -235,9 +235,12 @@
                     <div class="flex items-center justify-between mb-6">
                         <div>
                             <h3 class="text-lg font-bold text-gray-900 font-headline">Recent Bookings</h3>
-                            <p class="text-xs text-gray-500">Daftar Reservasi Pelanggan Terbaru</p>
+                            <p class="text-xs text-gray-500 mt-0.5">Daftar Reservasi Pelanggan Terbaru</p>
                         </div>
-                        <a href="{{ route('user.bookings.index') }}" class="text-xs font-bold text-rose-600 hover:text-rose-700">Lihat Semua →</a>
+                        <a href="{{ route('admin.bookings.index') }}" class="text-xs font-bold text-rose-600 hover:text-rose-700 transition-colors flex items-center gap-1">
+                            <span>Lihat Semua</span>
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </a>
                     </div>
 
                     <div class="overflow-x-auto">
@@ -264,18 +267,18 @@
                                     <td class="py-3 px-2 text-xs text-gray-500">
                                         {{ $booking->booking_date ? $booking->booking_date->format('d M Y') : '-' }}
                                     </td>
-                                    <td class="py-3 px-2 font-bold text-gray-900">
+                                    <td class="py-3 px-2 font-bold text-gray-900 tabular-nums">
                                         Rp {{ number_format($booking->total_amount, 0, ',', '.') }}
                                     </td>
                                     <td class="py-3 px-2 text-right">
                                         @php
                                             $stVal = is_object($booking->status) ? $booking->status->value : (string)$booking->status;
                                             $badgeBg = match($stVal) {
-                                                'completed' => 'bg-emerald-100 text-emerald-700',
-                                                'confirmed' => 'bg-blue-100 text-blue-700',
-                                                'in_progress' => 'bg-amber-100 text-amber-700',
-                                                'canceled' => 'bg-rose-100 text-rose-700',
-                                                default => 'bg-gray-100 text-gray-700',
+                                                'completed' => 'bg-emerald-100 text-emerald-800 border border-emerald-200',
+                                                'confirmed' => 'bg-blue-100 text-blue-950 border border-blue-200',
+                                                'in_progress' => 'bg-amber-100 text-amber-950 border border-amber-200',
+                                                'canceled' => 'bg-rose-100 text-rose-950 border border-rose-200',
+                                                default => 'bg-gray-100 text-gray-800 border border-gray-200',
                                             };
                                             $badgeIcon = match($stVal) {
                                                 'completed' => 'fa-solid fa-circle-check',

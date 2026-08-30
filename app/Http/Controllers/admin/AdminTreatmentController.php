@@ -7,44 +7,54 @@ use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use App\Models\Treatments;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class AdminTreatmentController extends Controller
 {
+    private const VERSION_KEY = 'treatments:cache-version';
+
     /**
-     * Tampilkan daftar treatment admin dengan optimalisasi query & filter kategori.
+     * Tampilkan daftar treatment admin dengan sistem caching & filter kategori.
      */
     public function index(Request $request)
     {
-        $query = Treatments::query()
-            ->select([
-                'id', 'category_id', 'name', 'slug', 'description',
-                'price', 'duration_minutes', 'images', 'badge',
-                'is_active', 'rating', 'rating_count', 'sort_order', 'created_at',
-            ])
-            ->with(['category:id,name,slug']);
+        $version = $this->currentVersion();
+        $cacheKey = "admin.treatments.list.v{$version}." . md5(json_encode($request->all()));
 
-        // Filter berdasarkan kategori
-        if ($request->filled('category_id') && $request->category_id !== 'all') {
-            $query->where('category_id', $request->category_id);
-        }
+        $treatments = Cache::remember($cacheKey, 300, function () use ($request) {
+            $query = Treatments::query()
+                ->select([
+                    'id', 'category_id', 'name', 'slug', 'description',
+                    'price', 'duration_minutes', 'images', 'badge',
+                    'is_active', 'rating', 'rating_count', 'sort_order', 'created_at',
+                ])
+                ->with(['category:id,name,slug']);
 
-        // Filter berdasarkan kata kunci pencarian
-        if ($request->filled('search')) {
-            $search = trim($request->search);
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
-            });
-        }
+            // Filter berdasarkan kategori
+            if ($request->filled('category_id') && $request->category_id !== 'all') {
+                $query->where('category_id', $request->category_id);
+            }
 
-        $treatments = $query->orderBy('sort_order', 'asc')
-            ->orderBy('id', 'desc')
-            ->paginate(9)
-            ->withQueryString();
+            // Filter berdasarkan kata kunci pencarian
+            if ($request->filled('search')) {
+                $search = trim($request->search);
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('description', 'like', "%{$search}%");
+                });
+            }
 
-        $categories = Categories::where('is_active', true)->orderBy('sort_order', 'asc')->get();
+            return $query->orderBy('sort_order', 'asc')
+                ->orderBy('id', 'desc')
+                ->paginate(9)
+                ->withQueryString();
+        });
+
+        $categories = Cache::remember("categories.active_list.v{$version}", 300, function () {
+            return Categories::where('is_active', true)->orderBy('sort_order', 'asc')->get();
+        });
 
         return view('admin.treatments.index', compact('treatments', 'categories'));
     }
@@ -54,7 +64,10 @@ class AdminTreatmentController extends Controller
      */
     public function create()
     {
-        $categories = Categories::where('is_active', true)->orderBy('sort_order', 'asc')->get();
+        $version = $this->currentVersion();
+        $categories = Cache::remember("categories.active_list.v{$version}", 300, function () {
+            return Categories::where('is_active', true)->orderBy('sort_order', 'asc')->get();
+        });
 
         return view('admin.treatments.create', compact('categories'));
     }
@@ -110,6 +123,8 @@ class AdminTreatmentController extends Controller
             'sort_order'       => 0,
         ]);
 
+        $this->bumpCacheVersion();
+
         ToastHelper::success("Treatment '{$validated['name']}' berhasil ditambahkan! 🌸");
 
         return redirect()->route('admin.treatments.index');
@@ -120,7 +135,10 @@ class AdminTreatmentController extends Controller
      */
     public function edit(Treatments $treatment)
     {
-        $categories = Categories::where('is_active', true)->orderBy('sort_order', 'asc')->get();
+        $version = $this->currentVersion();
+        $categories = Cache::remember("categories.active_list.v{$version}", 300, function () {
+            return Categories::where('is_active', true)->orderBy('sort_order', 'asc')->get();
+        });
 
         return view('admin.treatments.edit', compact('treatment', 'categories'));
     }
@@ -176,6 +194,8 @@ class AdminTreatmentController extends Controller
             'is_active'        => $request->boolean('is_active', true),
         ]);
 
+        $this->bumpCacheVersion();
+
         ToastHelper::success("Treatment '{$treatment->name}' berhasil diperbarui! ✨");
 
         return redirect()->route('admin.treatments.index');
@@ -189,10 +209,12 @@ class AdminTreatmentController extends Controller
         $name = $treatment->name;
 
         if ($treatment->images) {
-            Storage::disk('public')->delete(Treatments::IMAGE_DIRECTORY . '/' . $treatment->images      );
+            Storage::disk('public')->delete(Treatments::IMAGE_DIRECTORY . '/' . $treatment->images);
         }
 
         $treatment->delete();
+
+        $this->bumpCacheVersion();
 
         ToastHelper::success("Treatment '{$name}' berhasil dihapus.");
 
@@ -207,9 +229,27 @@ class AdminTreatmentController extends Controller
         $treatment->is_active = ! $treatment->is_active;
         $treatment->save();
 
+        $this->bumpCacheVersion();
+
         $statusText = $treatment->is_active ? 'diaktifkan' : 'dinonaktifkan';
         ToastHelper::info("Status treatment '{$treatment->name}' berhasil {$statusText}.");
 
         return redirect()->back();
+    }
+
+    /**
+     * Bump versi cache agar query lama otomatis ter-invalidasi.
+     */
+    private function bumpCacheVersion(): void
+    {
+        Cache::forever(self::VERSION_KEY, $this->currentVersion() + 1);
+    }
+
+    /**
+     * Ambil versi cache saat ini.
+     */
+    private function currentVersion(): int
+    {
+        return (int) Cache::get(self::VERSION_KEY, 1);
     }
 }

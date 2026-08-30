@@ -4,9 +4,26 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="mt-6 space-y-6">
         @csrf
         @method('patch')
+
+        {{-- Upload Foto Profil Avatar --}}
+        <div x-data="{ avatarPreview: '{{ $user->avatar_url }}' }">
+            <x-input-label for="avatar" value="Foto Profil Avatar" />
+            <div class="mt-2 flex items-center gap-4">
+                <div class="relative w-16 h-16 rounded-full bg-gradient-to-br from-[#FF6B8A] to-[#FFB6C1] p-0.5 shadow-sm shrink-0 overflow-hidden">
+                    <img :src="avatarPreview" alt="Avatar Preview" class="w-full h-full object-cover rounded-full bg-white">
+                </div>
+                <div class="flex-1">
+                    <input type="file" id="avatar" name="avatar" accept="image/*"
+                           @change="const file = $event.target.files[0]; if (file) { avatarPreview = URL.createObjectURL(file); }"
+                           class="block w-full text-xs text-rose-950 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-rose-50 file:text-[#f45472] hover:file:bg-rose-100 cursor-pointer">
+                    <p class="text-xs text-gray-400 mt-1">Format: JPG, PNG, WEBP (Maks. 2MB)</p>
+                </div>
+            </div>
+            <x-input-error class="mt-2" :messages="$errors->get('avatar')" />
+        </div>
 
         <div>
             <x-input-label for="name" value="Nama Lengkap" />

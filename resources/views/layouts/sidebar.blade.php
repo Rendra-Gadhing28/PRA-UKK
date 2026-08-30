@@ -87,8 +87,17 @@
             {{-- Vouchers --}}
             <a href="{{ Route::has('admin.vouchers.index') ? route('admin.vouchers.index') : '#' }}" 
                class="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all {{ request()->routeIs('admin.vouchers.*') ? 'bg-[#f45472] text-white shadow-md shadow-rose-200 font-bold' : 'text-gray-600 hover:text-[#f45472] hover:bg-rose-50' }}">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 11h.01M7 15h.01M13 7h7m-7 4h7m-7 4h7M3 7h.01M3 11h.01M3 15h.01"/></svg>
-                Vouchers
+                <i class="fa-solid fa-ticket text-[#f45472] {{ request()->routeIs('admin.vouchers.*') ? 'text-white' : '' }} text-base"></i>
+                <span>Vouchers</span>
+            </a>
+
+            <div class="px-3 pt-4 py-2 text-[10px] font-bold uppercase tracking-wider text-gray-400">Pengaturan Akun</div>
+
+            {{-- Profil Admin --}}
+            <a href="{{ Route::has('admin.profile.edit') ? route('admin.profile.edit') : '#' }}" 
+               class="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all {{ request()->routeIs('admin.profile.*') ? 'bg-[#f45472] text-white shadow-md shadow-rose-200 font-bold' : 'text-gray-600 hover:text-[#f45472] hover:bg-rose-50' }}">
+                <i class="fa-solid fa-user-gear text-[#f45472] {{ request()->routeIs('admin.profile.*') ? 'text-white' : '' }} text-base"></i>
+                <span>Pengaturan Profil</span>
             </a>
 
             <div class="pt-4 border-t border-rose-50 my-2"></div>
@@ -96,25 +105,25 @@
             {{-- Switch to User Site --}}
             <a href="{{ route('user.dashboard') }}" 
                class="flex items-center gap-3 px-4 py-2.5 rounded-2xl text-xs font-semibold text-rose-600 bg-rose-50/70 hover:bg-rose-100 transition-all">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-                Lihat Tampilan Customer
+                <i class="fa-solid fa-arrow-left text-xs"></i>
+                <span>Lihat Tampilan Customer</span>
             </a>
         </nav>
 
         {{-- Footer User Profile --}}
         <div class="p-4 border-t border-rose-50 bg-rose-50/30 flex items-center justify-between">
-            <div class="flex items-center gap-3 min-w-0">
+            <a href="{{ route('admin.profile.edit') }}" class="flex items-center gap-3 min-w-0 group hover:opacity-80 transition-opacity">
                 <img src="{{ auth()->user()->avatar_url ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=f45472&color=fff' }}" 
                      alt="Avatar" class="w-9 h-9 rounded-full object-cover border border-rose-200 shrink-0">
                 <div class="min-w-0">
-                    <p class="text-xs font-bold text-gray-900 truncate">{{ auth()->user()->name }}</p>
+                    <p class="text-xs font-bold text-gray-900 truncate group-hover:text-[#f45472] transition-colors">{{ auth()->user()->name }}</p>
                     <p class="text-[10px] text-gray-500 truncate">{{ auth()->user()->email }}</p>
                 </div>
-            </div>
+            </a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" title="Logout" class="p-2 text-gray-400 hover:text-rose-600 rounded-lg hover:bg-white transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                    <i class="fa-solid fa-right-from-bracket text-base"></i>
                 </button>
             </form>
         </div>

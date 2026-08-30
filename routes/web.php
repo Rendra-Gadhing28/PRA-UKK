@@ -199,6 +199,13 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])
             Route::post('/', [\App\Http\Controllers\Admin\AdminFinanceController::class, 'store'])->name('store');
             Route::delete('/{finance}', [\App\Http\Controllers\Admin\AdminFinanceController::class, 'destroy'])->name('destroy');
         });
+
+        // Admin Profile Management
+        Route::prefix('profile')->name('profile.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\AdminProfileController::class, 'edit'])->name('edit');
+            Route::patch('/', [\App\Http\Controllers\Admin\AdminProfileController::class, 'update'])->name('update');
+            Route::put('/password', [\App\Http\Controllers\Admin\AdminProfileController::class, 'updatePassword'])->name('password.update');
+        });
     });
 
 
