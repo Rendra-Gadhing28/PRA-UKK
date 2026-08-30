@@ -11,6 +11,7 @@ use App\Http\Requests\CheckAvailabilityRequest;
 use App\Http\Requests\DailySlotsRequest;
 use App\Http\Requests\StoreBookingRequest;
 use App\Http\Requests\UploadPhotoAssignRequest;
+use App\Http\Requests\User\RescheduleBookingRequest;
 use App\Models\Bookings;
 use App\Models\Treatments;
 use App\Models\UserVouchers;
@@ -165,9 +166,10 @@ class BookingController extends Controller
         // (Cache::forget('treatments:active-with-category') atau lewat model
         // event) setiap kali treatment dibuat/diubah/dihapus/dinonaktifkan,
         // kalau tidak, treatment baru bisa tidak muncul selama 5 menit.
+        // AUDIT: daftar treatment aktif di-cache 1 jam dan otomatis di-clear saat treatment berubah di DB.
         $treatmentsData = Cache::remember(
             'treatments:active-with-category',
-            now()->addMinutes(5),
+            now()->addHours(1),
             fn () => Treatments::query()
                 ->active()
                 ->with('category')
@@ -198,29 +200,35 @@ class BookingController extends Controller
             'category' => $preselectedTreatment->category?->name,
         ] : null;
 
-        // Ambil voucher milik user yang aktif, belum kadaluarsa, dan belum terpakai
-        $userVouchers = UserVouchers::query()
-            ->with('voucher:id,code,name,description,type,value,min_purchase,max_discount')
-            ->where('user_id', auth()->id())
-            ->where('is_used', false)
-            ->whereHas('voucher', function ($q) {
-                $q->where('is_active', true)
-                    ->where('valid_until', '>=', now()->toDateString());
-            })
-            ->get();
-
-        $userVouchersData = $userVouchers->map(fn ($uv) => [
-            'id' => $uv->id,
-            'voucher_id' => $uv->voucher_id,
-            'code' => $uv->voucher?->code,
-            'name' => $uv->voucher?->name,
-            'description' => $uv->voucher?->description,
-            'type' => $uv->voucher?->type, // percentage, fixed, free_shipping
-            'value' => (float) ($uv->voucher?->value ?? 0),
-            'min_purchase' => (float) ($uv->voucher?->min_purchase ?? 0),
-            'max_discount' => $uv->voucher?->max_discount ? (float) $uv->voucher->max_discount : null,
-            'is_free_shipping' => ($uv->voucher?->type === 'free_shipping' || str_contains(strtolower($uv->voucher?->code ?? ''), 'freeship') || str_contains(strtolower($uv->voucher?->name ?? ''), 'ongkir')),
-        ])->values();
+        // Ambil voucher milik user yang aktif, belum kadaluarsa, dan belum terpakai (di-cache 10 menit per user)
+        $userId = auth()->id();
+        $userVouchersData = Cache::remember(
+            "user_vouchers:{$userId}",
+            now()->addMinutes(10),
+            fn () => UserVouchers::query()
+                ->with('voucher:id,code,name,description,type,value,min_purchase,max_discount')
+                ->where('user_id', $userId)
+                ->where('is_used', false)
+                ->whereHas('voucher', function ($q) {
+                    $q->where('is_active', true)
+                        ->where('valid_until', '>=', now()->toDateString());
+                })
+                ->get()
+                ->map(fn ($uv) => [
+                    'id' => $uv->id,
+                    'voucher_id' => $uv->voucher_id,
+                    'code' => $uv->voucher?->code,
+                    'name' => $uv->voucher?->name,
+                    'description' => $uv->voucher?->description,
+                    'type' => $uv->voucher?->type,
+                    'value' => (float) ($uv->voucher?->value ?? 0),
+                    'min_purchase' => (float) ($uv->voucher?->min_purchase ?? 0),
+                    'max_discount' => $uv->voucher?->max_discount ? (float) $uv->voucher->max_discount : null,
+                    'is_free_shipping' => ($uv->voucher?->type === 'free_shipping' || str_contains(strtolower($uv->voucher?->code ?? ''), 'freeship') || str_contains(strtolower($uv->voucher?->name ?? ''), 'ongkir')),
+                ])
+                ->values()
+                ->all()
+        );
 
         return view('user.bookings.create', [
             'treatmentsData' => $treatmentsData,
@@ -286,6 +294,7 @@ class BookingController extends Controller
                 timeEnd: $timeEnd,
                 notes: $request->validated('notes'),
                 userVoucherId: $request->filled('user_voucher_id') ? (int) $request->input('user_voucher_id') : null,
+                paymentType: $request->validated('payment_type') ?? 'cashless',
             );
         } catch (NoBeauticianAvailableException $e) {
             throw ValidationException::withMessages([
@@ -384,12 +393,12 @@ class BookingController extends Controller
     {
         $this->authorizeOwnership($booking);
 
-        if ($booking->payment_status !== 'paid') {
+        if ($booking->payment_status === 'pending' && ! request()->boolean('reschedule')) {
             return redirect()->route('user.bookings.payment', $booking);
         }
 
         $currentStatus = $booking->status instanceof BookingStatus ? $booking->status->value : $booking->status;
-        if ($currentStatus === 'pending') {
+        if ($currentStatus === 'pending' && $booking->payment_status === 'paid') {
             $booking->update(['status' => 'confirmed']);
             $booking->refresh();
         }
@@ -411,15 +420,24 @@ class BookingController extends Controller
         if (in_array($booking->status, ['completed', 'canceled'], true)) {
             return back()->with('error', 'Booking ini tidak bisa dibatalkan.');
         }
+        
+        $reason = $request->string('reason', 'Dibatalkan oleh customer.')->toString();
+        $refundNote = '';
+        
+        if ($booking->payment_status === 'paid' || $booking->payment_status === 'fullpayment') {
+            $refundNote = ' [Refund 100% untuk Full Payment]';
+        } elseif ($booking->payment_status === 'dp_paid') {
+            $refundNote = ' [DP Hangus]';
+        }
 
         $this->cancelBookingRecord(
             $booking,
-            $request->string('reason', 'Dibatalkan oleh customer.')->toString()
+            $reason . $refundNote
         );
 
         return redirect()
             ->route('user.bookings.index')
-            ->with('success', 'Booking berhasil dibatalkan.');
+            ->with('success', 'Booking berhasil dibatalkan.' . $refundNote);
     }
 
     /**
@@ -430,6 +448,59 @@ class BookingController extends Controller
      * (thin controller, fat service) + ditambah resize maks 1200px yang
      * sebelumnya tidak ada.
      */
+    /**
+     * Reschedule (Ganti Jadwal) booking yang berstatus pending atau confirmed.
+     */
+    public function reschedule(RescheduleBookingRequest $request, Bookings $booking): RedirectResponse
+    {
+        $this->authorizeOwnership($booking);
+
+        $currentStatus = $booking->status instanceof BookingStatus ? $booking->status->value : (string) $booking->status;
+
+        if (! in_array($currentStatus, ['pending', 'confirmed'], true)) {
+            return back()->with('error', 'Ganti jadwal hanya dapat dilakukan untuk reservasi berstatus Pending atau Terkonfirmasi.');
+        }
+
+        $bookingDate = Carbon::createFromFormat('Y-m-d', $request->validated('booking_date'));
+        $timeStart = $request->validated('time_start');
+
+        // Hitung total durasi dari treatments yang ada di booking
+        $totalDurationMinutes = $booking->treatments->sum('duration_minutes');
+        if ($totalDurationMinutes <= 0) {
+            $totalDurationMinutes = 60; // fallback default
+        }
+
+        $timeEnd = Carbon::createFromFormat('Y-m-d H:i', $request->validated('booking_date').' '.$timeStart)
+            ->addMinutes($totalDurationMinutes)
+            ->format('H:i');
+
+        try {
+            $beautician = $this->beauticianAssignment->findAvailable($bookingDate, $timeStart, $timeEnd, $booking->id);
+        } catch (NoBeauticianAvailableException $e) {
+            throw ValidationException::withMessages([
+                'time_start' => $e->getMessage(),
+            ]);
+        }
+
+        $reason = $request->validated('reason');
+        $rescheduleNote = "Jadwal diubah oleh customer ke " . $bookingDate->format('d-m-Y') . " " . $timeStart . ($reason ? " (Alasan: {$reason})" : "");
+        $existingNotes = $booking->notes ? $booking->notes . " | " . $rescheduleNote : $rescheduleNote;
+
+        $booking->update([
+            'booking_date' => $bookingDate->toDateString(),
+            'time_start' => $timeStart,
+            'time_end' => $timeEnd,
+            'beautician_id' => $beautician->id,
+            'notes' => $existingNotes,
+            'version' => $booking->version + 1,
+            'is_h24_reminded' => false,
+            'is_h1_reminded' => false,
+            'is_m30_reminded' => false,
+        ]);
+
+        return back()->with('success', 'Jadwal reservasi berhasil diubah ke tanggal ' . $bookingDate->format('d/m/Y') . ' jam ' . $timeStart . ' WIB.');
+    }
+
     public function uploadPhotoAssign(UploadPhotoAssignRequest $request, Bookings $booking): RedirectResponse
     {
         $this->authorizeOwnership($booking);
@@ -464,7 +535,7 @@ class BookingController extends Controller
         if (! $booking->points_added) {
             $earnedPoints = $booking->calculateEarnedPoints();
             if ($earnedPoints > 0 && $booking->user) {
-                $booking->user->increment('total_points', $earnedPoints);
+                $booking->user->addPoints($earnedPoints);
             }
             $booking->update(['points_added' => true]);
         }
@@ -479,6 +550,14 @@ class BookingController extends Controller
      */
     private function cancelBookingRecord(Bookings $booking, string $reason): void
     {
+        if ($booking->points_added && $booking->user) {
+            $earnedPoints = $booking->calculateEarnedPoints();
+            if ($earnedPoints > 0) {
+                $booking->user->subtractPoints($earnedPoints);
+            }
+            $booking->update(['points_added' => false]);
+        }
+
         $booking->update([
             'status' => 'canceled',
             'cancel_reason' => $reason,

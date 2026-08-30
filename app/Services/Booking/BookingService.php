@@ -38,13 +38,14 @@ class BookingService
         ?array $homeLocation,
         Carbon $bookingDate,
         string $timeStart,
-        string $timeEnd,
+        ?string $timeEnd = null,
         ?string $notes = null,
         ?int $userVoucherId = null,
+        ?string $paymentType = 'cashless',
     ): Bookings {
         return DB::transaction(function () use (
             $user, $treatmentItems, $bookingType, $homeLocation,
-            $bookingDate, $timeStart, $timeEnd, $notes, $userVoucherId,
+            $bookingDate, $timeStart, $timeEnd, $notes, $userVoucherId, $paymentType,
         ) {
             $treatments = Treatments::query()
                 ->whereIn('id', array_column($treatmentItems, 'treatment_id'))
@@ -79,6 +80,12 @@ class BookingService
             $totalDurationMinutes = collect($treatmentLines)->sum(
                 fn (array $line) => $treatments->get($line['treatment_id'])->duration_minutes * $line['quantity']
             );
+
+            if (! $timeEnd) {
+                $timeEnd = Carbon::createFromFormat('Y-m-d H:i', $bookingDate->format('Y-m-d').' '.$timeStart)
+                    ->addMinutes((int) $totalDurationMinutes)
+                    ->format('H:i');
+            }
 
             $transportFee = 0.0;
             $distanceKm = null;
@@ -153,6 +160,15 @@ class BookingService
 
             $totalAmount = max(0, ($subtotal + $transportFee) - $discountAmount);
 
+            $effectivePaymentType = ($bookingType === 'salon' && $paymentType === 'cash') ? 'cash' : 'cashless';
+            $dpAmount = 0.0;
+            $remainingAmount = 0.0;
+
+            if ($effectivePaymentType === 'cash') {
+                $dpAmount = (float) round($totalAmount * 0.35, 2);
+                $remainingAmount = max(0.0, $totalAmount - $dpAmount);
+            }
+
             $booking = Bookings::create([
                 'booking_code' => $this->generateBookingCode(),
                 'user_id' => $user->id,
@@ -171,6 +187,9 @@ class BookingService
                 'transport_fee' => $transportFee,
                 'total_amount' => $totalAmount,
                 'payment_method' => 'qris',
+                'payment_type' => $effectivePaymentType,
+                'dp_amount' => $dpAmount,
+                'remaining_amount' => $remainingAmount,
                 'payment_status' => 'unpaid',
                 'notes' => $notes,
                 'payment_expires_at' => now()->addMinutes((int) config('booking.payment_expiry_minutes')),

@@ -22,7 +22,7 @@
 @endpush
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-b from-[#fff5f7] via-[#fdf5f6] to-[#fff0f3] font-body py-32 px-4 relative overflow-hidden" x-data="bookingWizard()" x-init="init()">
+<div class="min-h-screen bg-transparent font-body py-32 px-4 relative overflow-hidden" x-data="bookingWizard()" x-init="init()">
 
     {{-- Luxury Ambient Glowing Particles & Orbs --}}
     <div class="absolute top-10 left-1/4 w-96 h-96 bg-[#f45472]/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -30,17 +30,18 @@
     <div class="absolute bottom-10 left-10 w-72 h-72 bg-[#f9c5cf]/30 rounded-full blur-3xl pointer-events-none"></div>
 
     {{-- Floating Beauty Sparkles --}}
-    <div class="absolute top-24 left-12 text-[#f45472]/30 text-2xl animate-particle-1 pointer-events-none">✦</div>
-    <div class="absolute top-40 right-20 text-[#d94060]/25 text-3xl animate-particle-2 pointer-events-none">✧</div>
-    <div class="absolute top-2/3 left-20 text-[#f45472]/30 text-2xl animate-particle-3 pointer-events-none">🌸</div>
-    <div class="absolute bottom-32 right-16 text-[#d94060]/30 text-2xl animate-particle-1 pointer-events-none">✨</div>
+    <div class="absolute top-24 left-12 text-[#f45472]/30 text-xl animate-particle-1 pointer-events-none"><i class="fa-solid fa-sparkles"></i></div>
+    <div class="absolute top-40 right-20 text-[#d94060]/25 text-2xl animate-particle-2 pointer-events-none"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+    <div class="absolute top-2/3 left-20 text-[#f45472]/30 text-xl animate-particle-3 pointer-events-none"><i class="fa-solid fa-spa"></i></div>
+    <div class="absolute bottom-32 right-16 text-[#d94060]/30 text-xl animate-particle-1 pointer-events-none"><i class="fa-solid fa-star"></i></div>
 
     <div class="max-w-3xl mx-auto relative z-10">
 
         {{-- Header Section --}}
         <div class="text-center mb-10">
             <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 border border-[#f45472]/20 shadow-sm text-xs font-semibold text-[#f45472] uppercase tracking-wider mb-3">
-                <span>✨ Reservasi Online Yalia Beauty</span>
+                <i class="fa-solid fa-[#f45472] fa-wand-magic-sparkles text-xs"></i>
+                <span>Reservasi Online Yalia Beauty</span>
             </div>
             <h1 class="font-display text-3xl md:text-5xl font-extrabold text-[#5b3a29] mb-3 tracking-tight">
                 Booking Perawatan
@@ -111,7 +112,7 @@
                                 <img :src="item.image_url || '/images/treatment-placeholder.webp'"
                                      :alt="item.name"
                                      class="w-full h-full object-cover"
-                                     @@error="$event.target.src='/images/treatment-placeholder.webp'">
+                                     x-on:error="$event.target.src='/images/treatment-placeholder.webp'">
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
                             </div>
                             <div class="flex-1 min-w-0">
@@ -130,7 +131,7 @@
                                 <button type="button" class="w-6 h-6 rounded-full bg-white text-[#5b3a29] font-bold text-sm shadow-xs hover:bg-rose-100 transition flex items-center justify-center" @click="changeQty(index, 1)">+</button>
                             </div>
                             <button type="button"
-                                class="w-8 h-8 rounded-full flex items-center justify-center text-gray-300 hover:text-red-400 hover:bg-red-50 transition shrink-0"
+                                class="w-8 h-8 rounded-full flex items-center justify-center text-rose-950 hover:text-rose-600 hover:bg-rose-100 transition shrink-0"
                                 @click="removeTreatment(index)" x-show="selectedTreatments.length > 1">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                             </button>
@@ -138,43 +139,43 @@
                     </template>
                 </div>
 
-                {{-- ── Add Extra Treatment — Luxury Photo Grid ── --}}
+                {{-- ── Add Extra Treatment — 2-Column Compact Grid ── --}}
                 <div class="mb-8" x-show="unselectedTreatments.length > 0">
-                    <div class="flex items-center justify-between mb-4">
-                        <p class="text-xs font-extrabold text-[#5b3a29] uppercase tracking-widest">Tambah Perawatan Lainnya</p>
-                        <span class="text-[10px] text-[#5b3a29]/50 font-semibold" x-text="unselectedTreatments.length + ' tersedia'"></span>
+                    <div class="flex items-center justify-between mb-3">
+                        <p class="text-xs font-extrabold text-[#5b3a29] uppercase tracking-widest flex items-center gap-2">
+                            <i class="fa-solid fa-square-plus text-[#f45472] text-xs"></i>
+                            <span>Tambah Perawatan Lainnya</span>
+                        </p>
+                        <span class="text-xs text-[#5b3a29]/60 font-semibold" x-text="unselectedTreatments.length + ' pilihan'"></span>
                     </div>
 
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-3.5 gap-y-0 max-h-[420px] overflow-y-auto pr-1 scrollbar-hide">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[380px] overflow-y-auto pr-1 scrollbar-hide">
                         <template x-for="t in unselectedTreatments" :key="t.id">
-                            <div class="relative rounded-2xl overflow-hidden border border-rose-100 bg-white shadow-xs hover:shadow-lg hover:border-[#f45472]/40 transition-all duration-200 cursor-pointer group flex flex-col mb-3.5"
+                            <div class="p-3.5 rounded-lg border border-rose-100 bg-white hover:bg-rose-50/50 hover:border-rose-200 transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 shadow-2xs group"
                                  @click="addTreatmentDirect(t)">
-                                {{-- Treatment Image — fixed height --}}
-                                <div class="h-36 overflow-hidden bg-rose-50 relative shrink-0">
-                                    <img :src="t.image_url || '/images/treatment-placeholder.webp'"
-                                         :alt="t.name"
-                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                         @@error="$event.target.src='/images/treatment-placeholder.webp'">
-                                    {{-- Overlay gradient --}}
-                                    <div class="absolute inset-0 bg-gradient-to-t from-[#5b3a29]/50 via-transparent to-transparent"></div>
-                                    {{-- Badge --}}
-                                    <div x-show="t.badge" class="absolute top-2 left-2">
-                                        <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-[#f45472] text-white shadow-sm" x-text="t.badge"></span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-1.5 flex-wrap mb-1">
+                                        <span class="font-bold text-[#5b3a29] text-sm group-hover:text-[#f45472] transition-colors truncate" x-text="t.name"></span>
+                                        <template x-if="t.badge && t.badge.toLowerCase() !== 'none'">
+                                            <span class="px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-100 text-[#f45472]"
+                                                  x-text="t.badge.replace(/_/g, ' ')"></span>
+                                        </template>
                                     </div>
-                                    {{-- Add Button overlay --}}
-                                    <div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                        <div class="w-8 h-8 rounded-full bg-white/95 shadow-md flex items-center justify-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#f45472]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-                                        </div>
+                                    <div class="flex items-center gap-2 text-xs text-[#5b3a29]/70 flex-wrap">
+                                        <span class="font-bold text-[#f45472]" x-text="formatRupiah(t.price)"></span>
+                                        <span>•</span>
+                                        <span class="flex items-center gap-1">
+                                            <i class="fa-solid fa-clock text-xs text-[#ff8fa4]"></i>
+                                            <span x-text="t.duration_minutes + ' mnt'"></span>
+                                        </span>
                                     </div>
                                 </div>
-                                {{-- Card Info — always at same height --}}
-                                <div class="p-3 flex flex-col flex-1">
-                                    <p class="text-xs font-bold text-[#5b3a29] leading-snug line-clamp-2 flex-1" x-text="t.name"></p>
-                                    <div class="flex items-center justify-between mt-2">
-                                        <p class="text-[11px] font-extrabold text-[#f45472]" x-text="formatRupiah(t.price)"></p>
-                                        <p class="text-[10px] text-[#5b3a29]/50 font-semibold" x-text="t.duration_minutes + ' mnt'"></p>
-                                    </div>
+
+                                {{-- Add Button Icon --}}
+                                <div class="shrink-0">
+                                    <button type="button" aria-label="Tambah perawatan" class="w-8 h-8 rounded-lg bg-rose-50 text-[#f45472] group-hover:bg-[#f45472] group-hover:text-white font-bold text-xs transition-all flex items-center justify-center shadow-2xs">
+                                        <i class="fa-solid fa-plus text-xs"></i>
+                                    </button>
                                 </div>
                             </div>
                         </template>
@@ -184,7 +185,7 @@
                 {{-- ── Subtotal Summary Bar ── --}}
                 <div class="flex justify-between items-center bg-gradient-to-r from-[#fdf5f6] to-[#fff0f3] p-5 rounded-2xl border border-rose-100 mb-8">
                     <div>
-                        <p class="text-[10px] uppercase font-extrabold text-[#5b3a29]/50 tracking-widest mb-0.5">Subtotal Treatment</p>
+                        <p class="text-xs uppercase font-extrabold text-[#5b3a29]/50 tracking-widest mb-0.5">Subtotal Treatment</p>
                         <p class="text-xs text-[#5b3a29]/70">Estimasi durasi: <span class="font-bold text-[#5b3a29]" x-text="totalDurationMinutes"></span> menit</p>
                     </div>
                     <p class="font-display text-2xl font-extrabold text-[#f45472]" x-text="formatRupiah(subtotal)"></p>
@@ -300,9 +301,9 @@
                             :class="selectedDate === day.date 
                                 ? 'border-[#f45472] bg-gradient-to-b from-[#f45472] to-[#e03e5c] text-white font-bold scale-105 shadow-md' 
                                 : 'border-gray-200 bg-white text-[#5b3a29] hover:border-rose-300'">
-                            <p class="text-[10px] uppercase font-semibold opacity-80" x-text="day.weekday"></p>
+                            <p class="text-xs uppercase font-semibold opacity-80" x-text="day.weekday"></p>
                             <p class="text-lg font-extrabold my-0.5" x-text="day.dateNum"></p>
-                            <p class="text-[10px] opacity-80" x-text="day.month"></p>
+                            <p class="text-xs opacity-80" x-text="day.month"></p>
                         </button>
                     </template>
                 </div>
@@ -311,38 +312,38 @@
                 <div class="mb-6">
                     <div class="flex items-center justify-between mb-2">
                         <label class="block text-xs font-bold text-[#5b3a29] uppercase tracking-wider">Pilih Jam Kedatangan (Langsung Klik)</label>
-                        <span class="text-[10px] text-[#5b3a29]/60 font-semibold">Jam Operasional 08:00 - 20:00 WIB</span>
+                        <span class="text-xs text-[#5b3a29]/60 font-semibold">Jam Operasional 08:00 - 20:00 WIB</span>
                     </div>
 
                     {{-- Skeleton Loading Slots Grid --}}
-                    <div x-show="loadingSlots" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-4">
-                        @for ($i = 0; $i < 10; $i++)
-                            <x-skeleton class="h-14 w-full rounded-2xl" />
+                    <div x-show="loadingSlots" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2.5 mb-4">
+                        @for ($i = 0; $i < 12; $i++)
+                            <x-skeleton class="aspect-[4/3] w-full rounded-lg" />
                         @endfor
                     </div>
 
-
                     {{-- All Time Slots Grid --}}
-                    <div x-show="!loadingSlots" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                    <div x-show="!loadingSlots" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2.5">
                         <template x-for="slot in dailySlots" :key="slot.time">
                             <button type="button" 
                                     @click="selectTimeSlot(slot.time)"
-                                    class="relative rounded-2xl py-3 px-3 border-2 transition-all flex flex-col items-center justify-center gap-1 group text-center"
+                                    class="relative rounded-xl p-2 min-h-[64px] border-2 transition-all flex flex-col items-center justify-center gap-1 group text-center overflow-hidden w-full"
                                     :class="{
                                         'border-[#f45472] bg-gradient-to-r from-[#f45472] to-[#e03e5c] text-white font-extrabold shadow-md scale-[1.02]': selectedTimeSlot === slot.time && slot.available,
                                         'border-rose-200 bg-white text-[#5b3a29] hover:border-[#f45472] hover:bg-rose-50 shadow-xs': selectedTimeSlot !== slot.time && slot.available,
-                                        'border-rose-300/80 bg-rose-100/70 text-rose-800 opacity-80': !slot.available
+                                        'border-rose-200/80 bg-rose-50/80 text-rose-800 opacity-80': !slot.available
                                     }">
-                                <div class="flex items-center gap-1">
-                                    <span class="text-sm font-extrabold" x-text="slot.formatted_time"></span>
-                                    <span x-show="selectedTimeSlot === slot.time && slot.available" class="text-xs">✓</span>
+                                <div class="flex items-center justify-center gap-1 w-full px-1">
+                                    <span class="text-xs sm:text-sm font-extrabold truncate" x-text="slot.formatted_time"></span>
+                                    <i x-show="selectedTimeSlot === slot.time && slot.available" class="fa-solid fa-check text-xs shrink-0"></i>
                                 </div>
 
-                                <span x-show="slot.available" class="text-[9px] uppercase font-bold tracking-wider" 
+                                <span x-show="slot.available" class="text-xs uppercase font-bold tracking-wider truncate w-full" 
                                       :class="selectedTimeSlot === slot.time ? 'text-white/90' : 'text-emerald-600'">Tersedia</span>
 
-                                <span x-show="!slot.available" class="text-[9px] uppercase font-bold tracking-wider text-rose-700 bg-rose-200/70 px-2 py-0.5 rounded-md flex items-center gap-0.5">
-                                    🌸 Terisi
+                                <span x-show="!slot.available" class="w-full text-xs uppercase font-bold tracking-wider text-rose-800 bg-rose-200/70 px-1 py-0.5 rounded flex items-center justify-center gap-1 truncate">
+                                    <i class="fa-solid fa-lock text-xs shrink-0"></i>
+                                    <span class="truncate">TUTUP</span>
                                 </span>
                             </button>
                         </template>
@@ -357,7 +358,10 @@
                     <p class="text-xs text-[#5b3a29]/80 font-semibold">
                         Status Slot Terpilih: <span class="font-bold text-[#5b3a29]" x-text="selectedDate && selectedTimeSlot ? formatSelectedDateTime() : 'Belum memilih jam'"></span>
                     </p>
-                    <p class="mt-1 text-xs text-[#5b3a29]/70" x-show="loadingSlots">⏳ Mengecek ketersediaan beautician...</p>
+                    <p class="mt-1 text-xs text-[#5b3a29]/70 flex items-center gap-1.5" x-show="loadingSlots">
+                        <i class="fa-solid fa-spinner fa-spin text-xs"></i>
+                        <span>Mengecek ketersediaan beautician...</span>
+                    </p>
                     <p class="mt-1 text-xs text-emerald-600 font-bold flex items-center gap-1.5" x-show="!loadingSlots && selectedTimeSlot && availability.available === true">
                         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                         <span>Beautician siap dan tersedia di jam ini!</span>
@@ -365,9 +369,9 @@
 
                     <div class="mt-2.5 p-3 rounded-xl bg-rose-200/60 border border-rose-300/80 text-rose-900 text-xs font-medium flex items-start gap-2.5" 
                          x-show="!loadingSlots && selectedTimeSlot && availability.available === false">
-                        <span class="text-rose-600 font-bold text-sm shrink-0">🌸</span>
+                        <i class="fa-solid fa-circle-exclamation text-rose-600 text-sm shrink-0 mt-0.5"></i>
                         <div>
-                            <span class="font-bold block text-rose-900 mb-0.5">Rentang Waktu Terisi (In-Progress)</span>
+                            <span class="font-bold block text-rose-900 mb-0.5">Slot Tidak Tersedia</span>
                             <span x-text="availability.message || 'Beautician sedang dalam pengerjaan perawatan lain pada jam ini.'"></span>
                         </div>
                     </div>
@@ -413,9 +417,9 @@
                                 <i class="fas fa-[#f45472] fa-ticket-alt"></i>
                                 <span>Voucher Promo / Gratis Ongkir:</span>
                             </label>
-                            <a href="{{ route('user.vouchers.index') }}" target="_blank" class="text-[10px] font-bold text-[#f45472] hover:underline flex items-center gap-1">
+                            <a href="{{ route('user.vouchers.index') }}" target="_blank" class="text-xs font-bold text-[#f45472] hover:underline flex items-center gap-1">
                                 <span>Klaim Voucher</span>
-                                <i class="fas fa-external-link-alt text-[8px]"></i>
+                                <i class="fas fa-external-link-alt text-xs"></i>
                             </a>
                         </div>
 
@@ -431,14 +435,14 @@
                         {{-- Active Voucher Alert / Validation Banner --}}
                         <template x-if="selectedVoucher">
                             <div>
-                                <div x-show="isVoucherValidForSubtotal" class="flex items-center justify-between text-[11px] font-bold bg-emerald-50 text-emerald-700 p-2.5 rounded-xl border border-emerald-200">
+                                <div x-show="isVoucherValidForSubtotal" class="flex items-center justify-between text-xs font-bold bg-emerald-50 text-emerald-700 p-2.5 rounded-xl border border-emerald-200">
                                     <div class="flex items-center gap-1.5 truncate">
                                         <i class="fas fa-circle-check text-emerald-500"></i>
                                         <span x-text="'Voucher applied: ' + selectedVoucher.code"></span>
                                     </div>
                                     <span class="font-mono text-emerald-800" x-text="'- ' + formatRupiah(discountAmount)"></span>
                                 </div>
-                                <div x-show="!isVoucherValidForSubtotal" class="flex items-center gap-1.5 text-[11px] font-bold bg-amber-50 text-amber-800 p-2.5 rounded-xl border border-amber-200">
+                                <div x-show="!isVoucherValidForSubtotal" class="flex items-center gap-1.5 text-xs font-bold bg-amber-50 text-amber-800 p-2.5 rounded-xl border border-amber-200">
                                     <i class="fas fa-triangle-exclamation text-amber-500"></i>
                                     <span x-text="'Min. transaksi ' + formatRupiah(selectedVoucher.min_purchase) + ' belum terpenuhi'"></span>
                                 </div>
@@ -458,6 +462,51 @@
                     </div>
                 </div>
 
+                {{-- ── OPSI METODE PEMBAYARAN (CASH DP 35% VS CASHLESS) ── --}}
+                <div class="mt-6 pt-4 border-t border-rose-100 space-y-3">
+                    <label class="block text-xs font-extrabold text-[#5b3a29] flex items-center gap-1.5">
+                        <i class="fas fa-wallet text-[#f45472]"></i>
+                        <span>Pilih Skema Pembayaran:</span>
+                    </label>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {{-- Opsi Cashless (Full Payment 100%) --}}
+                        <label class="relative flex flex-col p-3.5 rounded-2xl border-2 cursor-pointer transition-all duration-200"
+                               :class="paymentType === 'cashless' ? 'border-[#f45472] bg-rose-50/50 shadow-sm' : 'border-gray-200 bg-white hover:border-rose-200'">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-bold text-[#5b3a29]">Cashless (Full 100%)</span>
+                                <input type="radio" name="payment_type_radio" value="cashless" x-model="paymentType" class="text-[#f45472] focus:ring-[#f45472]">
+                            </div>
+                            <span class="text-xs text-gray-500">Bayar lunas 100% di awal via QRIS Midtrans</span>
+                        </label>
+
+                        {{-- Opsi Cash (DP 35%) --}}
+                        <label class="relative flex flex-col p-3.5 rounded-2xl border-2 transition-all duration-200"
+                               :class="bookingType === 'home' ? 'opacity-50 cursor-not-allowed bg-gray-50 border-gray-200' : (paymentType === 'cash' ? 'border-[#f45472] bg-rose-50/50 shadow-sm cursor-pointer' : 'border-gray-200 bg-white hover:border-rose-200 cursor-pointer')">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-bold text-[#5b3a29]">Cash di Salon (DP 35%)</span>
+                                <input type="radio" name="payment_type_radio" value="cash" x-model="paymentType" :disabled="bookingType === 'home'" class="text-[#f45472] focus:ring-[#f45472]">
+                            </div>
+                            <span class="text-xs text-gray-500" x-text="bookingType === 'home' ? 'Hanya untuk kunjungan salon' : 'DP 35% via QRIS, sisa 65% tunai di tempat'"></span>
+                        </label>
+                    </div>
+
+                    {{-- Breakdown Rincian DP jika memilih Cash --}}
+                    <template x-if="bookingType === 'salon' && paymentType === 'cash'">
+                        <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs space-y-1.5">
+                            <div class="flex justify-between font-extrabold text-amber-900">
+                                <span>DP 35% (Dibayar Sekarang via QRIS):</span>
+                                <span x-text="formatRupiah(Math.round(estimatedTotal * 0.35))"></span>
+                            </div>
+                            <div class="flex justify-between text-amber-800 font-semibold">
+                                <span>Sisa 65% (Pelunasan Tunai di Salon):</span>
+                                <span x-text="formatRupiah(estimatedTotal - Math.round(estimatedTotal * 0.35))"></span>
+                            </div>
+                            <p class="text-xs text-amber-700 italic pt-1 border-t border-amber-200/60">* Uang DP tidak dapat dikembalikan (hangus) jika pesanan dibatalkan.</p>
+                        </div>
+                    </template>
+                </div>
+
                 <div class="mt-6">
                     <label class="block text-xs font-bold text-[#5b3a29] mb-1.5">Catatan Tambahan (Opsional):</label>
                     <textarea x-model="notes" rows="2" class="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-xs text-[#333] focus:outline-none focus:ring-2 focus:ring-[#f45472]" placeholder="Tuliskan permintaan khusus untuk beautician..."></textarea>
@@ -471,6 +520,7 @@
                     </div>
                 </template>
                 <input type="hidden" name="booking_type" :value="bookingType">
+                <input type="hidden" name="payment_type" :value="paymentType">
                 <input type="hidden" name="booking_date" :value="selectedDate">
                 <input type="hidden" name="time_start" :value="pad(selectedHour)+':'+pad(selectedMinute)">
                 <input type="hidden" name="home_latitude" :value="gps.lat">
@@ -505,12 +555,14 @@ function bookingWizard() {
         treatmentToAdd: '',
 
         bookingType: 'salon',
+        paymentType: 'cashless',
         gps: { loading: false, error: null, lat: null, lng: null, address: '', distanceKm: null },
 
         salonLat: {{ config('booking.salon.latitude') }},
         salonLng: {{ config('booking.salon.longitude') }},
         serviceRadiusKm: {{ $serviceRadiusKm }},
         googleMapsKey: @json($googleMapsKey),
+        transportFeeConfig: @json(config('booking.transport_fee')),
 
         availableDays: [],
         selectedDate: null,
@@ -654,7 +706,9 @@ function bookingWizard() {
 
         estimateTransportFee(distanceKm) {
             if (distanceKm === null || distanceKm === undefined) return 0;
-            const firstKmFlat = 5000, perKmAfter = 3000, step = 0.5;
+            const firstKmFlat = Number(this.transportFeeConfig?.first_km_flat ?? 5000);
+            const perKmAfter = Number(this.transportFeeConfig?.per_km_after ?? 3000);
+            const step = Number(this.transportFeeConfig?.round_up_step_km ?? 0.5);
             if (distanceKm <= 1) return firstKmFlat;
             const remaining = Math.ceil((distanceKm - 1) / step) * step;
             return firstKmFlat + Math.round(remaining * perKmAfter);
@@ -737,7 +791,7 @@ function bookingWizard() {
                         this.selectedTimeSlot = null;
                         this.selectedHour = null;
                         this.selectedMinute = null;
-                        this.availability = { checking: false, available: false, message: 'Semua jam di tanggal ini sedang terisi (in-progress).' };
+                        this.availability = { checking: false, available: false, message: 'Semua slot di tanggal ini sudah penuh atau tidak tersedia.' };
                     }
                 }
             } catch (e) {
@@ -762,7 +816,7 @@ function bookingWizard() {
                 
                 if (notifyIfBusy) {
                     window.dispatchEvent(new CustomEvent('toast', {
-                        detail: { type: 'warning', message: `Jam ${slot.formatted_time} terisi (in-progress). Silakan pilih jam lainnya.` }
+                        detail: { type: 'warning', message: `Jam ${slot.formatted_time} tidak tersedia. Silakan pilih jam lainnya.` }
                     }));
                 }
                 return;

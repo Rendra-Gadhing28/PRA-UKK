@@ -27,13 +27,13 @@
             border-radius: 9999px;
             background: #b01f44;
             transform: scaleX(0);
-            transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: transform 0.28s ease-out;
             transform-origin: center;
         }
         .tab-pill.active::after { transform: scaleX(1); }
     </style>
 
-    <div class="booking-page pt-28 pb-24 min-h-screen bg-gray-100 relative overflow-hidden">
+    <div class="booking-page pt-28 pb-24 min-h-screen bg-transparent relative overflow-hidden">
 
         {{-- Ambient background removed per request --}}
 
@@ -52,8 +52,8 @@
                       <a href="{{ route('user.treatments.index') }}"
                    class="inline-flex items-center gap-2.5 px-6 py-2.5 rounded-md bg-primary text-on-primary text-xs font-bold shadow-sm
                           hover:bg-primary-container hover:shadow-md active:scale-95
-                          transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] shrink-0">
-                    <i class="fas fa-plus text-[9px]"></i>
+                          transition-all duration-300 ease-out shrink-0">
+                    <i class="fas fa-plus text-xs"></i>
                     <span>Booking Baru</span>
                 </a>
                 </div>
@@ -79,7 +79,7 @@
                               {{ $isActive
                                   ? 'bg-primary text-on-primary shadow-md'
                                   : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
-                        <i class="fas {{ $t['icon'] }} text-[10px]"></i>
+                        <i class="fas {{ $t['icon'] }} text-xs"></i>
                         <span>{{ $t['label'] }}</span>
                     </a>
                 @endforeach

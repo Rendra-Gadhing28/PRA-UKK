@@ -32,7 +32,7 @@
                         <h3 class="text-2xl font-black text-rose-600 mt-1 font-headline">
                             Rp {{ number_format($monthlyExpense, 0, ',', '.') }}
                         </h3>
-                        <span class="text-[10px] text-gray-400 font-medium">Bulan {{ now()->translatedFormat('F Y') }}</span>
+                        <span class="text-xs text-gray-400 font-medium">Bulan {{ now()->translatedFormat('F Y') }}</span>
                     </div>
                     <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center text-xl shrink-0">
                         <i class="fas fa-wallet"></i>
@@ -46,7 +46,7 @@
                         <h3 class="text-2xl font-black text-gray-900 mt-1 font-headline">
                             {{ $totalTransactionCount }} Transaksi
                         </h3>
-                        <span class="text-[10px] text-gray-400 font-medium">Pengeluaran terdaftar</span>
+                        <span class="text-xs text-gray-400 font-medium">Pengeluaran terdaftar</span>
                     </div>
                     <div class="w-12 h-12 rounded-2xl bg-gray-50 text-gray-600 flex items-center justify-center text-xl shrink-0">
                         <i class="fas fa-list-check"></i>
@@ -60,7 +60,7 @@
                         <h3 class="text-2xl font-black text-emerald-600 mt-1 font-headline">
                             {{ $totalScanStruk }} Struk
                         </h3>
-                        <span class="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">Bukti foto & OCR</span>
+                        <span class="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">Bukti foto & OCR</span>
                     </div>
                     <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-xl shrink-0">
                         <i class="fas fa-qrcode"></i>
@@ -74,7 +74,7 @@
                         <h3 class="text-2xl font-black text-gray-900 mt-1 font-headline">
                             Rp {{ number_format($monthlyIncome, 0, ',', '.') }}
                         </h3>
-                        <span class="text-[10px] text-gray-400 font-medium">Bulan {{ now()->translatedFormat('F Y') }}</span>
+                        <span class="text-xs text-gray-400 font-medium">Bulan {{ now()->translatedFormat('F Y') }}</span>
                     </div>
                     <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-400 flex items-center justify-center text-xl shrink-0">
                         <i class="fas fa-coins"></i>
@@ -141,7 +141,7 @@
                                 <i class="fas fa-filter text-xs"></i>
                                 <span>Filter</span>
                             </button>
-                            <a href="{{ route('admin.finances.index') }}" class="py-4 px-4 rounded-2xl bg-gray-100 text-gray-600 text-xs font-semibold hover:bg-rose-50 hover:text-rose-600 transition-all flex items-center justify-center" title="Reset Filter">
+                            <a href="{{ route('admin.finances.index') }}" class="py-4 px-4 rounded-2xl bg-rose-100 text-rose-950 text-xs font-semibold hover:bg-rose-200 transition-all flex items-center justify-center" title="Reset Filter">
                                 <i class="fas fa-rotate-left text-xs"></i>
                             </a>
                         </div>
@@ -156,7 +156,7 @@
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-rose-50/50 text-xs font-bold uppercase tracking-wider text-gray-500 border-b border-rose-100">
+                            <tr class="bg-rose-50/50 text-xs font-bold uppercase tracking-wider text-rose-950 border-b border-rose-100">
                                 <th class="py-4 px-4">Tanggal</th>
                                 <th class="py-4 px-4">Judul Pengeluaran</th>
                                 <th class="py-4 px-4">Kategori</th>
@@ -206,7 +206,7 @@
                                                 class="px-4 py-2 rounded-2xl bg-rose-50 hover:bg-rose-100 text-[#f45472] text-xs font-bold border border-rose-200 flex items-center gap-2 transition-all">
                                             <i class="fas fa-boxes-packing text-xs"></i>
                                             <span>{{ $itemCount }} Item Barang</span>
-                                            <i class="fas fa-chevron-down text-[10px] transition-transform duration-200" :class="showDetail ? 'rotate-180' : ''"></i>
+                                            <i class="fas fa-chevron-down text-xs transition-transform duration-200" :class="showDetail ? 'rotate-180' : ''"></i>
                                         </button>
 
                                         {{-- Inline Item Breakdown Modal / Popover --}}
@@ -214,14 +214,14 @@
                                              class="mt-2 bg-white rounded-2xl p-4 border border-rose-200 shadow-xl space-y-2 z-30">
                                             <div class="text-xs font-bold text-gray-900 border-b border-gray-100 pb-2 flex items-center justify-between">
                                                 <span>Detail Rincian Item Struk</span>
-                                                <span class="text-[10px] font-normal text-gray-400">Harga per PC & Total</span>
+                                                <span class="text-xs font-normal text-gray-400">Harga per PC & Total</span>
                                             </div>
                                             <div class="space-y-1.5 max-h-48 overflow-y-auto pr-1">
                                                 @foreach($itemsDetail as $it)
                                                     <div class="flex items-center justify-between text-xs bg-rose-50/50 p-2 rounded-xl border border-rose-100/60">
                                                         <div>
                                                             <strong class="text-gray-900 block">{{ $it['name'] }}</strong>
-                                                            <span class="text-[10px] text-gray-500">
+                                                            <span class="text-xs text-gray-500">
                                                                 {{ $it['qty'] }} pcs × Rp {{ number_format($it['unit_price'], 0, ',', '.') }}
                                                             </span>
                                                         </div>

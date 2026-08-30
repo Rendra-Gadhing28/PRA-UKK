@@ -32,7 +32,10 @@ class DashboardController extends Controller
         // (thin controller, fat service). Cache key & TTL tidak berubah.
         $stats = $this->dashboardStats->forUser($user->id);
 
-        $membership = Membership::progress($user->total_points);
+        // Pastikan tier poin disinkronisasi dulu
+        $user->syncTierReset();
+
+        $membership = Membership::progress($user->tier_points);
 
         // AUDIT: top-3-treatment-by-rating IDENTIK untuk semua user (bukan
         // data per-user), tapi sebelumnya query ORDER BY rating dijalankan
@@ -40,7 +43,7 @@ class DashboardController extends Controller
         // 10 menit karena rating tidak berubah tiap detik — sesuaikan TTL
         // kalau Anda butuh update lebih real-time.
         $topTreatments = Cache::remember(
-            'dashboard:top-treatments',
+            'dashboard:top-treatments-v6',
             now()->addMinutes(10),
             fn () => Treatments::query()
                 ->active()
@@ -49,6 +52,18 @@ class DashboardController extends Controller
                 ->orderByDesc('rating_count')
                 ->take(3)
                 ->get()
+                ->map(fn ($t) => [
+                    'id'               => $t->id,
+                    'name'             => $t->name,
+                    'description'      => $t->description,
+                    'price'            => (float) $t->price,
+                    'duration_minutes' => (int) $t->duration_minutes,
+                    'rating'           => (float) $t->rating,
+                    'rating_count'     => (int) $t->rating_count,
+                    'image_url'        => $t->image_url,
+                    'category_name'    => $t->category?->name ?? '',
+                ])
+                ->all()
         );
 
         // Render awal hanya tab "Upcoming" — hemat query di initial load.
@@ -72,7 +87,7 @@ class DashboardController extends Controller
     }
 
     /**
-     * Klaim poin check-in harian dan simpan ke database (total_points).
+     * Klaim poin check-in harian dan simpan ke database (total_points & tier_points).
      */
     public function dailyCheckin(Request $request): \Illuminate\Http\JsonResponse
     {
@@ -91,7 +106,7 @@ class DashboardController extends Controller
         $pointsAdded = 25;
 
         // Simpan peningkatan poin ke tabel users di database secara permanen
-        $user->increment('total_points', $pointsAdded);
+        $user->addPoints($pointsAdded);
         $user->update(['last_daily_checkin_at' => now()]);
         $user->refresh();
 

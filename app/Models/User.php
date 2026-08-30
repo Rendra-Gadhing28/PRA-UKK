@@ -29,6 +29,8 @@ class User extends Authenticatable
         'longitude',
         'membership_level',
         'total_points',
+        'tier_points',
+        'last_tier_reset_at',
         'last_daily_checkin_at',
         'total_bookings', 
         'total_spending', 
@@ -51,9 +53,11 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'last_daily_checkin_at' => 'datetime',
+        'last_tier_reset_at' => 'datetime',
         'password' => 'hashed',
         'is_active' => 'boolean',
         'total_points' => 'integer',
+        'tier_points' => 'integer',
         'total_bookings' => 'integer',
         'total_spending' => 'decimal:2',
         'latitude' => 'decimal:8',
@@ -113,10 +117,10 @@ class User extends Authenticatable
     }
 
     public function getDiscPercen(): int {
-        return match ($this->membership_level) {
-            'silver' => 2 ,
-            'gold' => 5 ,
-            'platinum' => 10,
+        return match (strtolower($this->membership_level)) {
+            'silver' => 5,
+            'gold' => 10,
+            'platinum', 'purple', 'royal purple' => 15,
             default => 0
         };
     }
@@ -178,5 +182,43 @@ class User extends Authenticatable
         return !is_null($this->google_id);
     }
 
+    /**
+     * Check if current quarter is newer than the quarter of last_tier_reset_at.
+     * If yes, reset tier_points to 0.
+     */
+    public function syncTierReset(): void
+    {
+        $now = now();
+        $currentQuarterStart = $now->copy()->firstOfQuarter()->startOfDay();
 
+        if (is_null($this->last_tier_reset_at) || $this->last_tier_reset_at->lt($currentQuarterStart)) {
+            $this->tier_points = 0;
+            // Also downgrade membership back to regular upon reset
+            $this->membership_level = 'regular';
+        }
+        
+        $this->last_tier_reset_at = $now;
+    }
+
+    /**
+     * Safely add points, ensuring both total_points and tier_points increment.
+     */
+    public function addPoints(int $points): void
+    {
+        $this->syncTierReset();
+        $this->total_points += $points;
+        $this->tier_points += $points;
+        $this->save();
+
+        // Also check if they need an upgrade based on tier_points (or bookings, depending on your logic)
+        // If membership was based on bookings, it is handled in upgradeMembership().
+    }
+
+    public function subtractPoints(int $points): void
+    {
+        $this->syncTierReset();
+        $this->total_points = max(0, $this->total_points - $points);
+        $this->tier_points = max(0, $this->tier_points - $points);
+        $this->save();
+    }
 }

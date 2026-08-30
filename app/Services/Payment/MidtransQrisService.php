@@ -48,6 +48,10 @@ class MidtransQrisService
     {
         $orderId = $booking->midtrans_order_id ?: $booking->booking_code;
 
+        $chargeAmount = ($booking->payment_type === 'cash' && (float) $booking->dp_amount > 0)
+            ? (float) $booking->dp_amount
+            : (float) $booking->total_amount;
+
         $response = Http::withBasicAuth($this->serverKey(), '')
             ->withHeaders(['Accept' => 'application/json'])
             ->timeout(15)
@@ -55,7 +59,7 @@ class MidtransQrisService
                 'payment_type' => 'qris',
                 'transaction_details' => [
                     'order_id' => $orderId,
-                    'gross_amount' => (int) round((float) $booking->total_amount),
+                    'gross_amount' => (int) round($chargeAmount),
                 ],
                 'qris' => [
                     'acquirer' => 'gopay',

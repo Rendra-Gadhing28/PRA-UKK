@@ -94,7 +94,7 @@
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-rose-50/50 text-xs font-bold uppercase tracking-wider text-gray-500 border-b border-rose-100">
+                            <tr class="bg-rose-50/50 text-xs font-bold uppercase tracking-wider text-rose-950 border-b border-rose-100">
                                 <th class="py-4 px-4">Kode & Tanggal</th>
                                 <th class="py-4 px-4">Pelanggan</th>
                                 <th class="py-4 px-4">Beautician</th>
@@ -149,12 +149,19 @@
                                     @php
                                         $payBg = match($b->payment_status) {
                                             'paid' => 'bg-emerald-100 text-emerald-700',
+                                            'dp_paid' => 'bg-blue-100 text-blue-700',
                                             'pending' => 'bg-amber-100 text-amber-700',
                                             default => 'bg-gray-100 text-gray-600',
                                         };
+                                        $payLabel = match($b->payment_status) {
+                                            'paid' => 'Lunas',
+                                            'dp_paid' => 'DP 35% (Sisa Rp ' . number_format($b->remaining_amount, 0, ',', '.') . ')',
+                                            'pending' => 'Menunggu Pembayaran',
+                                            default => ucfirst($b->payment_status),
+                                        };
                                     @endphp
                                     <span class="px-2.5 py-0.5 rounded-full text-xs font-bold {{ $payBg }}">
-                                        {{ ucfirst($b->payment_status) }}
+                                        {{ $payLabel }}
                                     </span>
                                 </td>
 

@@ -35,6 +35,9 @@ class Bookings extends Model
         'transport_fee', 
         'total_amount', 
         'payment_method',
+        'payment_type',
+        'dp_amount',
+        'remaining_amount',
         'payment_status',
         'qris_code', 
         'qris_image_url', 
@@ -53,6 +56,9 @@ class Bookings extends Model
         'version', 
         'points_added',
         'photo_assign',
+        'is_h24_reminded',
+        'is_h1_reminded',
+        'is_m30_reminded',
     ];
 
     protected $casts = [
@@ -68,6 +74,9 @@ class Bookings extends Model
         'payment_verified_at' => 'datetime',
         'payment_expires_at' => 'datetime',
         'canceled_at' => 'datetime',
+        'is_h24_reminded' => 'boolean',
+        'is_h1_reminded' => 'boolean',
+        'is_m30_reminded' => 'boolean',
     ];
 
     public function user(): BelongsTo

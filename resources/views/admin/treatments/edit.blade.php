@@ -1,7 +1,7 @@
 <x-admin-layout>
     <x-slot name="header">
         <div class="flex items-center gap-3">
-            <a href="{{ route('admin.treatments.index') }}" class="p-2 rounded-full bg-white border border-rose-200 text-gray-600 hover:text-rose-600 hover:bg-rose-50 transition-all">
+            <a href="{{ route('admin.treatments.index') }}" class="p-2 rounded-full bg-white border border-rose-200 text-rose-950 hover:text-rose-600 hover:bg-rose-50 transition-all">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
             </a>
             <div>
@@ -82,14 +82,14 @@
                                     <img src="{{ $treatment->image_url }}" alt="Preview" class="w-16 h-16 rounded-xl object-cover">
                                     <div>
                                         <p class="text-xs font-bold text-gray-800">Gambar Saat Ini</p>
-                                        <p class="text-[10px] text-gray-400 font-mono">{{ $treatment->image }}</p>
+                                        <p class="text-xs text-gray-400 font-mono">{{ $treatment->image }}</p>
                                     </div>
                                 </div>
                             @endif
 
                             <input type="file" name="image" accept="image/*" 
                                    class="w-full px-4 py-3 text-sm rounded-2xl border border-gray-200 bg-gray-50 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-rose-50 file:text-[#f45472]">
-                            <p class="text-[10px] text-gray-400 mt-1">Kosongkan jika tidak ingin mengubah gambar.</p>
+                            <p class="text-xs text-gray-400 mt-1">Kosongkan jika tidak ingin mengubah gambar.</p>
                             @error('image') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
                         </div>
 

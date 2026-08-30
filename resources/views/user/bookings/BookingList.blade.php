@@ -116,13 +116,7 @@
                 default                 => 'border-l-amber-400',
             };
 
-            /* ── Photo: prefer photo_assign, fallback to treatment image ── */
-            $heroPhoto = null;
-            if ($booking->photo_assign) {
-                $heroPhoto = asset('storage/' . $booking->photo_assign);
-            } elseif ($firstTreatment?->image) {
-                $heroPhoto = asset('storage/' . $firstTreatment->image);
-            }
+            $heroPhoto = \App\Support\ImageHelper::url($booking->photo_assign ?? $firstTreatment?->images, $firstTreatment?->image_url);
 
             $isPending   = $statusVal === 'pending' && $booking->payment_status !== 'paid';
             $isCompleted = $statusVal === 'completed';
@@ -262,6 +256,14 @@
 
                     {{-- Action buttons --}}
                     <div class="flex items-center gap-2">
+                        @if(in_array($statusVal, ['pending', 'confirmed']))
+                            <a href="{{ route('user.bookings.show', ['booking' => $booking, 'reschedule' => 1]) }}"
+                               class="px-3 py-2 rounded-xl text-[11px] font-bold border border-rose-200 text-rose-700 bg-rose-50 hover:bg-rose-100 transition-all"
+                               title="Ubah Tanggal/Jam Reservasi">
+                                <i class="fas fa-calendar-pen text-[10px] mr-1"></i>Ganti Jadwal
+                            </a>
+                        @endif
+
                         {{-- Detail --}}
                         <a href="{{ route('user.bookings.show', $booking) }}"
                            class="px-4 py-2 rounded-xl text-[11px] font-bold

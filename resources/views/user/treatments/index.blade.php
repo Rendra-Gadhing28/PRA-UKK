@@ -17,7 +17,7 @@
             --yalia-rose-dark:  #b5294a;
             --yalia-rose-mid:   #d94060;
             --yalia-brown:      #5b3a29;
-            --yalia-bg:         #fdf5f6;
+            --yalia-bg:         transparent;
             --yalia-surface:    #fff8f9;
         }
 
@@ -115,7 +115,7 @@
             top: 12px; right: 12px;
             padding: 3px 10px;
             border-radius: 999px;
-            font-size: 0.68rem;
+            font-size: 0.75rem;
             font-weight: 700;
             letter-spacing: .5px;
             text-transform: uppercase;
@@ -134,7 +134,7 @@
             border: 1px solid #fac8d2;
             border-radius: 999px;
             padding: 3px 10px;
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             font-weight: 600;
             letter-spacing: .3px;
         }
@@ -144,7 +144,7 @@
             display: inline-flex;
             align-items: center;
             gap: 3px;
-            font-size: 0.82rem;
+            font-size: 0.875rem;
             font-weight: 600;
             color: var(--yalia-rose-dark);
         }
@@ -153,7 +153,7 @@
             color: #9ca3af;
             border-radius: 999px;
             padding: 2px 8px;
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             font-weight: 600;
         }
 
@@ -167,7 +167,7 @@
             background: linear-gradient(135deg, var(--yalia-pink), var(--yalia-rose-mid));
             color: #fff;
             border-radius: 999px;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 700;
             letter-spacing: .5px;
             text-transform: uppercase;
@@ -184,7 +184,7 @@
         /* price text */
         .price-text {
             font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: var(--yalia-brown);
         }
@@ -228,9 +228,9 @@
             min-width: 38px;
             height: 38px;
             padding: 0 10px;
-            border-radius: 10px;
+            border-radius: 12px;
             font-family: 'Work Sans', sans-serif;
-            font-size: 0.82rem;
+            font-size: 0.875rem;
             font-weight: 600;
             text-decoration: none;
             transition: all .2s;
@@ -282,14 +282,14 @@
             {{-- ── Page header ── --}}
             <div class="text-center mb-8 mt-8">
                 <p class="text-xs font-semibold tracking-widest uppercase mb-3" style="color: var(--yalia-pink);">
-                    Our Services
+                    Layanan Perawatan Salon
                 </p>
                 <h1 class="yalia-heading text-4xl sm:text-5xl font-bold leading-tight mb-4">
-                    Discover Premium <br class="hidden sm:block">
-                    <span style="color: var(--yalia-pink);">Treatments</span>
+                    Jelajahi Perawatan <br class="hidden sm:block">
+                    <span style="color: var(--yalia-pink);">Eksklusif Yalia</span>
                 </h1>
                 <p class="max-w-xl mx-auto text-base" style="color: #9b6374; font-family: 'Work Sans', sans-serif;">
-                    Experience luxury and relaxation with our curated selection of beauty services.
+                    Nikmati pengalaman perawatan kecantikan dan relaksasi terbaik dari terapis profesional Yalia Beauty.
                 </p>
 
                 {{-- ── React Search & filter bar ── --}}
@@ -306,12 +306,12 @@
                             <input type="text" name="search" value="{{ request('search') }}"
                                    aria-label="Cari treatment"
                                    class="yalia-input w-full"
-                                   placeholder="Search treatments...">
+                                   placeholder="Cari perawatan kecantikan...">
                         </div>
                         <div class="flex-shrink-0">
                             <select @change="loading = true; $el.form.submit()" name="category" aria-label="Pilih kategori treatment" class="yalia-select w-full sm:w-auto">
                                 <option value="all" {{ request('category', 'all') === 'all' ? 'selected' : '' }}>
-                                    All Services
+                                    Semua Layanan
                                 </option>
                                 @foreach($categories as $cat)
                                     <option value="{{ $cat->slug }}"
@@ -321,8 +321,9 @@
                                 @endforeach
                             </select>
                         </div>
-                        <button type="submit" class="yalia-search-btn flex-shrink-0">
-                            Search
+                        <button type="submit" class="yalia-search-btn flex-shrink-0 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                            <span>Cari Perawatan</span>
                         </button>
                     </form>
                 </div>
@@ -331,22 +332,22 @@
             {{-- ── Active filter pill ── --}}
             @if(request('search') || (request('category') && request('category') !== 'all'))
                 <div class="flex items-center gap-2 mb-4 flex-wrap">
-                    <span class="text-xs font-medium" style="color:#9b6374;">Filtered by:</span>
+                    <span class="text-xs font-medium" style="color:#9b6374;">Filter Aktif:</span>
                     @if(request('search'))
                         <span class="category-pill">
-                            <i data-lucide="search" class="h-3 w-3"></i>
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
                             {{ request('search') }}
                         </span>
                     @endif
                     @if(request('category') && request('category') !== 'all')
                         <span class="category-pill">
-                            <i data-lucide="layers" class="h-3 w-3"></i>
+                            <i class="fa-solid fa-layer-group text-xs"></i>
                             {{ $categories->firstWhere('slug', request('category'))?->name }}
                         </span>
                     @endif
                     <a href="{{ route('user.treatments.index') }}"
                        class="text-xs font-semibold underline"
-                       style="color: var(--yalia-rose-dark);">Clear</a>
+                       style="color: var(--yalia-rose-dark);">Hapus Filter</a>
                 </div>
             @endif
 
@@ -403,7 +404,7 @@
                             @else
                                 <span class="new-chip shrink-0 inline-flex items-center gap-1">
                                     <i class="fas fa-star text-amber-400"></i>
-                                    <span>New</span>
+                                    <span>Baru</span>
                                 </span>
                             @endif
                         </div>
@@ -418,9 +419,8 @@
                         <div class="flex items-center gap-2 mb-5 flex-wrap">
                             <div class="flex items-center gap-1 text-xs font-medium"
                                  style="color:#9b6374;">
-                                <i data-lucide="clock" class="h-3.5 w-3.5"
-                                   style="color: var(--yalia-pink-soft);"></i>
-                                {{ $treatment->duration_minutes }} min
+                                <i class="fa-solid fa-clock text-xs text-[#ff8fa4]"></i>
+                                {{ $treatment->duration_minutes }} menit
                             </div>
 
                             {{-- Category pill badge --}}
@@ -428,7 +428,7 @@
                                 @if($treatment->category?->icon)
                                     <i class="{{ $treatment->category->icon }} text-xs"></i>
                                 @else
-                                    <i data-lucide="tag" class="h-3 w-3"></i>
+                                    <i class="fa-solid fa-tag text-xs"></i>
                                 @endif
                                 {{ $treatment->category?->name }}
                             </span>
@@ -442,8 +442,8 @@
 
                             <a href="{{ route('user.bookings.create', ['treatment' => $treatment->id]) }}"
                                class="btn-book">
-                                <i data-lucide="calendar-plus" class="h-3.5 w-3.5"></i>
-                                Book Now
+                                <i class="fa-solid fa-calendar-plus text-xs"></i>
+                                <span>Pesan Sekarang</span>
                             </a>
                         </div>
                     </div>
@@ -453,17 +453,17 @@
                 <div class="col-span-full empty-state">
                     <div class="inline-flex items-center justify-center w-14 h-14 rounded-full mb-4"
                          style="background: var(--yalia-pink-pale);">
-                        <i data-lucide="search-x" class="h-6 w-6" style="color: var(--yalia-pink);"></i>
+                        <i class="fa-solid fa-magnifying-glass text-2xl text-[#f45472]"></i>
                     </div>
-                    <h3 class="yalia-heading text-lg font-bold mb-1">No treatments found</h3>
+                    <h3 class="yalia-heading text-lg font-bold mb-1">Perawatan Tidak Ditemukan</h3>
                     <p class="text-sm mb-4" style="color:#9b6374;">
-                        Try adjusting your search or filter to find what you're looking for.
+                        Coba atur ulang kata kunci pencarian atau kategori filter Anda.
                     </p>
                     <a href="{{ route('user.treatments.index') }}"
                        class="inline-flex items-center gap-1 text-sm font-semibold"
                        style="color: var(--yalia-rose-dark);">
-                        <i data-lucide="x-circle" class="h-4 w-4"></i>
-                        Clear Filters
+                        <i class="fa-solid fa-circle-xmark text-xs"></i>
+                        <span>Reset Filter</span>
                     </a>
                 </div>
                 @endforelse

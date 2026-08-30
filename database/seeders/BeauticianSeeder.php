@@ -34,13 +34,13 @@ class BeauticianSeeder extends Seeder
                 'is_active' => true,
             ]);
 
-            // Buat jadwal kerja Senin(1) - Minggu(0), jam 09:00 - 17:00, kecuali hari libur
+            // Buat jadwal kerja Senin(1) - Minggu(0), jam 08:00 - 20:00, kecuali hari libur
             for ($day = 0; $day <= 6; $day++) {
                 BeauticiansSchedules::create([
                     'beautician_id' => $beautician->id,
                     'day_of_week' => $day,
-                    'start_time' => '09:00:00',
-                    'end_time' => '18:00:00',
+                    'start_time' => '08:00:00',
+                    'end_time' => '20:00:00',
                     'is_working' => $day !== $b['off_day'],
                 ]);
             }

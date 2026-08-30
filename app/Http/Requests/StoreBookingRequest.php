@@ -32,7 +32,17 @@ class StoreBookingRequest extends FormRequest
 
             'notes' => ['nullable', 'string', 'max:1000'],
             'user_voucher_id' => ['nullable', 'integer', 'exists:user_vouchers,id'],
+            'payment_type' => ['nullable', 'string', Rule::in(['cash', 'cashless'])],
         ];
+    }
+
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            if ($this->input('booking_type') === 'home' && $this->input('payment_type') === 'cash') {
+                $validator->errors()->add('payment_type', 'Layanan Home Service hanya mendukung pembayaran Cashless (Full Payment 100%).');
+            }
+        });
     }
 
     public function messages(): array
@@ -40,6 +50,7 @@ class StoreBookingRequest extends FormRequest
         return [
             'booking_type.required' => 'Pilih jenis layanan (Home Service atau At Salon).',
             'booking_type.in' => 'Pilihan jenis layanan tidak valid.',
+            'payment_type.in' => 'Pilihan metode pembayaran tidak valid.',
             'treatments.required' => 'Pilih minimal satu perawatan (treatment).',
             'treatments.min' => 'Pilih minimal satu perawatan (treatment).',
             'home_address.required_if' => 'Alamat lokasi wajib diisi untuk layanan Home Service.',

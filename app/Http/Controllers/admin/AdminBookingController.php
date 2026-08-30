@@ -118,7 +118,7 @@ class AdminBookingController extends Controller
         if ($newStatus === 'completed' && !$booking->points_added) {
             $totalPoints = $booking->calculateEarnedPoints();
             if ($totalPoints > 0 && $booking->user) {
-                $booking->user->increment('total_points', $totalPoints);
+                $booking->user->addPoints($totalPoints);
             }
             $booking->points_added = true;
             $booking->save();
@@ -135,6 +135,7 @@ class AdminBookingController extends Controller
     public function verifyPayment(Request $request, Bookings $booking)
     {
         $currStatus = is_object($booking->status) ? $booking->status->value : (string) $booking->status;
+        $isDpPaid = $booking->payment_status === 'dp_paid';
 
         $booking->update([
             'payment_status' => 'paid',
@@ -146,12 +147,16 @@ class AdminBookingController extends Controller
         if (!$booking->points_added) {
             $totalPoints = $booking->calculateEarnedPoints();
             if ($totalPoints > 0 && $booking->user) {
-                $booking->user->increment('total_points', $totalPoints);
+                $booking->user->addPoints($totalPoints);
             }
             $booking->update(['points_added' => true]);
         }
 
-        ToastHelper::success("Pembayaran untuk reservasi #{$booking->booking_code} berhasil diverifikasi!");
+        $successMsg = $isDpPaid
+            ? "Pelunasan tunai sisa Rp " . number_format((float)$booking->remaining_amount, 0, ',', '.') . " untuk reservasi #{$booking->booking_code} berhasil dicatat (Lunas)!"
+            : "Pembayaran untuk reservasi #{$booking->booking_code} berhasil diverifikasi!";
+
+        ToastHelper::success($successMsg);
 
         return redirect()->back();
     }
@@ -270,5 +275,27 @@ class AdminBookingController extends Controller
         }, $fileName, [
             'Content-Type' => 'text/csv; charset=UTF-8',
         ]);
+    }
+
+    public function replyReview(Request $request, Bookings $booking)
+    {
+        $request->validate([
+            'admin_reply' => 'required|string|max:1000'
+        ]);
+
+        $review = $booking->review;
+        if (!$review) {
+            return back()->with('error', 'Ulasan tidak ditemukan.');
+        }
+
+        \DB::table('reviews')
+            ->where('id', $review->id)
+            ->update([
+                'admin_reply' => $request->admin_reply,
+                'is_approved' => true,
+                'updated_at' => now(),
+            ]);
+
+        return back()->with('success', 'Balasan ulasan berhasil dikirim.');
     }
 }

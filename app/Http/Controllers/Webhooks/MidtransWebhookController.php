@@ -46,7 +46,9 @@ class MidtransWebhookController extends Controller
             return response()->json(['message' => 'Invalid signature.'], 403);
         }
 
-        $booking = Bookings::where('midtrans_order_id', $orderId)->first();
+        $booking = Bookings::where('midtrans_order_id', $orderId)
+            ->orWhere('booking_code', $orderId)
+            ->first();
 
         if (! $booking) {
             Log::warning('MidtransWebhookController: booking tidak ditemukan', ['order_id' => $orderId]);
@@ -62,7 +64,7 @@ class MidtransWebhookController extends Controller
         match (true) {
             in_array($transactionStatus, ['capture', 'settlement'], true)
                 && $fraudStatus !== 'deny' => $booking->update([
-                    'payment_status' => 'paid',
+                    'payment_status' => $booking->payment_type === 'cash' ? 'dp_paid' : 'paid',
                     'status' => 'confirmed',
                     'payment_verified_at' => now(),
                     'midtrans_transaction_id' => $payload['transaction_id'] ?? $booking->midtrans_transaction_id,

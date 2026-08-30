@@ -138,35 +138,39 @@
 
                         {{-- Employee Name & Role --}}
                         <div>
-                            <h3 class="font-headline font-black text-gray-900 text-xl tracking-tight leading-snug truncate" title="{{ $b->name }}">
-                                {{ $b->name }}
-                            </h3>
-                            <div class="flex items-center gap-4 mt-1">
-                                <span class="px-4 py-1 rounded-md bg-rose-50 text-[#f45472] text-xs font-bold border border-rose-100 uppercase tracking-wider inline-block">
-                                    Senior Beautician
-                                </span>
+                        <div class="flex items-center gap-4">
+                            <div class="relative shrink-0">
+                                <img src="{{ $b->photo_url }}" alt="{{ $b->name }}" class="w-16 h-16 rounded-2xl object-cover border-2 border-rose-200 shadow-md">
+                                <span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white {{ $b->is_active ? 'bg-emerald-500' : 'bg-gray-400' }}" title="{{ $b->is_active ? 'Aktif' : 'Nonaktif' }}"></span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg text-rose-950 leading-snug font-headline">{{ $b->name }}</h3>
+                                <p class="text-xs font-semibold text-rose-500 mt-0.5">{{ $b->specialization }}</p>
+                                <div class="flex items-center gap-1.5 mt-1 text-xs text-amber-500 font-bold">
+                                    <i class="fas fa-star text-xs"></i>
+                                    <span>{{ number_format($b->rating ?? 5.0, 1) }}</span>
+                                    <span class="text-gray-400 font-normal">({{ $b->rating_count ?? 0 }} Ulasan)</span>
+                                </div>
                             </div>
                         </div>
 
                         {{-- Contact Details --}}
-                        <div class="space-y-4 text-xs text-gray-600 bg-rose-50/40 p-4 rounded-2xl border border-rose-100/60">
-                            <div class="flex items-center gap-4 truncate">
-                                <i class="fas fa-phone text-rose-500 w-4 text-center"></i>
-                                <span class="font-semibold text-gray-800">{{ $b->phone ?: 'Tidak ada no HP' }}</span>
-                            </div>
-                            <div class="flex items-center gap-4 truncate">
-                                <i class="fas fa-envelope text-rose-500 w-4 text-center"></i>
-                                <span class="font-semibold text-gray-800">{{ $b->email ?: 'Tidak ada email' }}</span>
-                            </div>
-                            <div class="pt-2 border-t border-rose-100 text-xs text-gray-500 line-clamp-2 italic">
-                                "{{ $b->bio ?: 'Terapis profesional Yalia Beauty Salon & Spa' }}"
-                            </div>
+                        <div class="space-y-1.5 pt-2 border-t border-gray-100 text-xs text-rose-950">
+                            @if($b->phone)
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-phone text-rose-400 text-xs"></i>
+                                    <span>{{ $b->phone }}</span>
+                                </div>
+                            @endif
+                            @if($b->bio)
+                                <p class="text-xs text-gray-500 line-clamp-2 leading-relaxed italic">"{{ $b->bio }}"</p>
+                            @endif
                         </div>
 
                         {{-- Total Bookings & Security Barcode Strip --}}
                         <div class="flex items-center justify-between pt-2 border-t border-gray-100">
                             <div>
-                                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Total Penugasan:</span>
+                                <span class="text-xs text-gray-400 font-bold uppercase tracking-wider block">Total Penugasan:</span>
                                 <span class="font-black text-rose-600 text-sm font-headline">
                                     {{ number_format($b->bookings_count ?? $b->total_bookings) }} Layanan
                                 </span>
@@ -177,7 +181,7 @@
                                 <div class="font-mono text-gray-400 text-xs tracking-tighter opacity-80 select-none">
                                     ||| | |||| | || |||
                                 </div>
-                                <span class="text-[9px] text-gray-400 font-mono block">VERIFIED STAFF</span>
+                                <span class="text-xs text-gray-400 font-mono block">VERIFIED STAFF</span>
                             </div>
                         </div>
 
@@ -186,13 +190,13 @@
                     {{-- ID Card Actions Footer --}}
                     <div class="p-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between gap-4">
                         <a href="{{ route('admin.beauticians.show', $b->id) }}" 
-                           class="flex-1 py-4 rounded-2xl bg-white border border-gray-200 text-gray-800 text-xs font-bold hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all flex items-center justify-center gap-4 shadow-sm">
+                           class="flex-1 py-4 rounded-2xl bg-white border border-gray-200 text-rose-950 text-xs font-bold hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all flex items-center justify-center gap-4 shadow-sm">
                             <i class="fas fa-id-card text-xs"></i>
                             <span>Detail ID</span>
                         </a>
 
                         <a href="{{ route('admin.beauticians.edit', $b->id) }}" 
-                           class="flex-1 py-4 rounded-2xl bg-white border border-gray-200 text-gray-800 text-xs font-bold hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all flex items-center justify-center gap-4 shadow-sm">
+                           class="flex-1 py-4 rounded-2xl bg-white border border-gray-200 text-rose-950 text-xs font-bold hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all flex items-center justify-center gap-4 shadow-sm">
                             <i class="fas fa-pen text-xs"></i>
                             <span>Edit</span>
                         </a>

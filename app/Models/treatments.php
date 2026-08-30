@@ -35,6 +35,17 @@ class Treatments extends Model
 {
     use HasFactory;
 
+    protected static function booted(): void
+    {
+        $clearCache = static function (): void {
+            \Illuminate\Support\Facades\Cache::forget('treatments:active-with-category');
+            \Illuminate\Support\Facades\Cache::forget('dashboard:top-treatments-v5');
+        };
+
+        static::saved($clearCache);
+        static::deleted($clearCache);
+    }
+
     /**
      * Direktori penyimpanan gambar treatment di disk "public".
      */
@@ -120,48 +131,7 @@ class Treatments extends Model
     protected function imageUrl(): Attribute
     {
         return Attribute::make(
-            get: function (): string {
-                $defaultFallback = asset('logo/yalia-logos-trnsprnt.svg');
-
-                if (! $this->images) {
-                    return $defaultFallback;
-                }
-
-                if (str_starts_with($this->images, 'http://') || str_starts_with($this->images, 'https://')) {
-                    return $this->images;
-                }
-
-                $cleanPath = ltrim($this->images, '/');
-
-                if (Storage::disk('public')->exists($cleanPath)) {
-                    return Storage::disk('public')->url($cleanPath);
-                }
-
-                if (! str_starts_with($cleanPath, self::IMAGE_DIRECTORY . '/')) {
-                    $subPath = self::IMAGE_DIRECTORY . '/' . $cleanPath;
-                    if (Storage::disk('public')->exists($subPath)) {
-                        return Storage::disk('public')->url($subPath);
-                    }
-                }
-
-                if (file_exists(public_path('images/' . $cleanPath))) {
-                    return asset('images/' . $cleanPath);
-                }
-
-                // Fallback: check alternate extensions (e.g. .jpg instead of .webp)
-                $pathWithoutExt = preg_replace('/\.[^.]+$/', '', $cleanPath);
-                foreach (['jpg', 'jpeg', 'png', 'webp', 'svg'] as $ext) {
-                    $testPath = $pathWithoutExt . '.' . $ext;
-                    if (Storage::disk('public')->exists($testPath)) {
-                        return Storage::disk('public')->url($testPath);
-                    }
-                    if (file_exists(public_path('images/' . $testPath))) {
-                        return asset('images/' . $testPath);
-                    }
-                }
-
-                return $defaultFallback;
-            }
+            get: fn (): string => \App\Support\ImageHelper::url($this->images),
         );
     }
 

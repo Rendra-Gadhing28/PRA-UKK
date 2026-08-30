@@ -13,13 +13,13 @@
             <div class="flex items-center gap-3">
                 <a href="{{ route('admin.export.pdf') }}" 
                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-rose-200 text-rose-600 hover:bg-rose-50 text-sm font-semibold shadow-sm transition-all">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                    Export PDF
+                    <i class="fa-solid fa-file-pdf text-rose-600 text-sm"></i>
+                    <span>Export PDF</span>
                 </a>
                 <a href="{{ route('admin.export.excel') }}" 
                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#f45472] text-white hover:bg-[#d93856] text-sm font-semibold shadow-md hover:shadow-lg transition-all">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                    Export Excel (CSV)
+                    <i class="fa-solid fa-file-excel text-white text-sm"></i>
+                    <span>Export Excel (CSV)</span>
                 </a>
             </div>
         </div>
@@ -118,26 +118,36 @@
             {{-- 2. MONITORING CHART & DOUGHNUT SECTION --}}
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
-                {{-- Left: 7-Day Finance Line Chart (8 Cols / ~70% width) --}}
-                <div class="lg:col-span-8 bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-rose-100 flex flex-col justify-between">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                {{-- Left: 7-Day Finance Line Chart (Luxury Trading Platform Style) --}}
+                <div class="lg:col-span-8 bg-white/90 backdrop-blur-xl rounded-3xl p-6 md:p-8 shadow-[0_12px_40px_rgba(176,31,68,0.06)] border border-rose-100/90 flex flex-col justify-between relative overflow-hidden group">
+                    {{-- Ambient background glows --}}
+                    <div class="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-[#b01f44]/8 blur-3xl pointer-events-none"></div>
+                    <div class="absolute -bottom-20 -right-20 w-64 h-64 rounded-full bg-amber-400/10 blur-3xl pointer-events-none"></div>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 relative z-10">
                         <div>
-                            <h3 class="text-lg font-bold text-gray-900 font-headline">Grafik Monitoring Keuangan (7 Hari)</h3>
-                            <p class="text-xs text-gray-500 mt-0.5">Tren Pemasukan vs Pengeluaran 7 Hari Terakhir</p>
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-100/80 text-[#b01f44] border border-rose-200/80 text-xs font-bold shadow-2xs">
+                                    <span class="w-2 h-2 rounded-full bg-[#b01f44] animate-pulse"></span>
+                                    <span>Real-Time Financial Analytics</span>
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-extrabold text-[#2b1a1f] tracking-tight font-headline">Grafik Monitoring Keuangan (7 Hari)</h3>
+                            <p class="text-xs text-[#594043] font-medium mt-0.5">Tren Pemasukan vs Pengeluaran 7 Hari Terakhir</p>
                         </div>
-                        <div class="flex items-center gap-4 text-xs font-semibold">
+                        <div class="flex items-center gap-4 text-xs font-bold text-[#2b1a1f] bg-rose-50/90 border border-rose-200/70 px-4 py-2 rounded-full shadow-2xs backdrop-blur-md">
                             <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 rounded-full bg-[#b01f44]"></span>
+                                <span class="w-3 h-3 rounded-full bg-[#b01f44] shadow-2xs"></span>
                                 <span>Pemasukan</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+                                <span class="w-3 h-3 rounded-full bg-amber-400 shadow-2xs"></span>
                                 <span>Pengeluaran</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="relative w-full h-72">
+                    <div class="relative w-full h-72 z-10">
                         <canvas id="financeChart"></canvas>
                     </div>
                 </div>
@@ -154,7 +164,7 @@
                         {{-- Center Text overlay for total --}}
                         <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                             <span class="text-2xl font-black text-[#2b1a1f]">{{ $totalTreatmentBookings }}</span>
-                            <span class="text-[9px] uppercase font-bold text-gray-400">Total Booking</span>
+                            <span class="text-xs uppercase font-bold text-gray-400 tracking-wider">Total Booking</span>
                         </div>
                     </div>
 
@@ -189,18 +199,29 @@
                     </div>
 
                     <div class="space-y-4 flex-1">
+                        @php
+                            $maxCount = max(1, $topTreatments->first()?->bookings_count ?? 1);
+                        @endphp
                         @forelse($topTreatments as $index => $treatment)
-                        <div class="flex items-center gap-4 p-3 rounded-2xl hover:bg-rose-50/50 transition-colors">
-                            <div class="w-8 h-8 rounded-full bg-rose-100 font-bold text-rose-600 flex items-center justify-center text-sm shrink-0">
-                                #{{ $index + 1 }}
+                        @php
+                            $barWidth = min(100, max(8, round(($treatment->bookings_count / $maxCount) * 100)));
+                        @endphp
+                        <div class="p-3 rounded-2xl hover:bg-rose-50/50 transition-colors space-y-1.5">
+                            <div class="flex items-center gap-4">
+                                <div class="w-8 h-8 rounded-full bg-rose-100 font-bold text-rose-600 flex items-center justify-center text-sm shrink-0">
+                                    #{{ $index + 1 }}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-sm font-bold text-gray-900 truncate">{{ $treatment->name }}</h4>
+                                    <p class="text-xs text-gray-500">Rp {{ number_format($treatment->price, 0, ',', '.') }}</p>
+                                </div>
+                                <div class="text-right shrink-0">
+                                    <span class="text-sm font-black text-rose-600">{{ $treatment->bookings_count }}</span>
+                                    <span class="text-xs text-gray-400 block">booking</span>
+                                </div>
                             </div>
-                            <div class="flex-1 min-w-0">
-                                <h4 class="text-sm font-bold text-gray-900 truncate">{{ $treatment->name }}</h4>
-                                <p class="text-xs text-gray-500">Rp {{ number_format($treatment->price, 0, ',', '.') }}</p>
-                            </div>
-                            <div class="text-right shrink-0">
-                                <span class="text-sm font-black text-rose-600">{{ $treatment->bookings_count }}</span>
-                                <span class="text-xs text-gray-400 block">booking</span>
+                            <div class="w-full bg-rose-100/60 h-1.5 rounded-full overflow-hidden">
+                                <div class="bg-[#f45472] h-full rounded-full transition-all duration-500" style="width: {{ $barWidth }}%"></div>
                             </div>
                         </div>
                         @empty
@@ -256,9 +277,17 @@
                                                 'canceled' => 'bg-rose-100 text-rose-700',
                                                 default => 'bg-gray-100 text-gray-700',
                                             };
+                                            $badgeIcon = match($stVal) {
+                                                'completed' => 'fa-solid fa-circle-check',
+                                                'confirmed' => 'fa-solid fa-calendar-check',
+                                                'in_progress' => 'fa-solid fa-rotate fa-spin-pulse',
+                                                'canceled' => 'fa-solid fa-circle-xmark',
+                                                default => 'fa-solid fa-clock',
+                                            };
                                         @endphp
-                                        <span class="px-2.5 py-1 rounded-full text-xs font-bold {{ $badgeBg }}">
-                                            {{ is_object($booking->status) && method_exists($booking->status, 'badgeLabel') ? $booking->status->badgeLabel() : ucfirst($stVal) }}
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold {{ $badgeBg }}">
+                                            <i class="{{ $badgeIcon }} text-xs"></i>
+                                            <span>{{ is_object($booking->status) && method_exists($booking->status, 'badgeLabel') ? $booking->status->badgeLabel() : ucfirst($stVal) }}</span>
                                         </span>
                                     </td>
                                 </tr>
@@ -281,37 +310,64 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 1. Line Chart 7-Hari Monitoring Keuangan
+            // 1. Line Chart 7-Hari Monitoring Keuangan (TradingView / Binance Style)
             const ctxLine = document.getElementById('financeChart').getContext('2d');
             
-            // Soft Gradient background (Palette warna dari tailwind.config.js)
-            const incomeGradient = ctxLine.createLinearGradient(0, 0, 0, 280);
-            incomeGradient.addColorStop(0, 'rgba(176, 31, 68, 0.35)');  // Soft #b01f44 (primary)
-            incomeGradient.addColorStop(1, 'rgba(176, 31, 68, 0.01)');
+            // TradingView gradient fill: #9b4054 (Burgundy) fading down to transparent
+            const incomeGradient = ctxLine.createLinearGradient(0, 0, 0, 300);
+            incomeGradient.addColorStop(0, 'rgba(155, 64, 84, 0.45)');   // Burgundy glow (#9b4054)
+            incomeGradient.addColorStop(0.5, 'rgba(155, 64, 84, 0.12)'); 
+            incomeGradient.addColorStop(1, 'rgba(155, 64, 84, 0.00)');   // Transparent area fill
 
-            const expenseGradient = ctxLine.createLinearGradient(0, 0, 0, 280);
-            expenseGradient.addColorStop(0, 'rgba(251, 191, 36, 0.30)'); // Soft #fbbf24 (amber)
-            expenseGradient.addColorStop(1, 'rgba(251, 191, 36, 0.01)');
+            const expenseGradient = ctxLine.createLinearGradient(0, 0, 0, 300);
+            expenseGradient.addColorStop(0, 'rgba(251, 191, 36, 0.35)');  // Amber glow
+            expenseGradient.addColorStop(0.5, 'rgba(251, 191, 36, 0.08)');
+            expenseGradient.addColorStop(1, 'rgba(251, 191, 36, 0.00)');
+
+            // Custom Vertical Hairline Crosshair plugin
+            const crosshairPlugin = {
+                id: 'crosshair',
+                afterDraw: (chart) => {
+                    if (chart.tooltip?._active && chart.tooltip._active.length) {
+                        const activePoint = chart.tooltip._active[0];
+                        const ctx = chart.ctx;
+                        const x = activePoint.element.x;
+                        const topY = chart.scales.y.top;
+                        const bottomY = chart.scales.y.bottom;
+
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.setLineDash([4, 4]);
+                        ctx.moveTo(x, topY);
+                        ctx.lineTo(x, bottomY);
+                        ctx.lineWidth = 1;
+                        ctx.strokeStyle = 'rgba(176, 31, 68, 0.35)';
+                        ctx.stroke();
+                        ctx.restore();
+                    }
+                }
+            };
 
             new Chart(ctxLine, {
                 type: 'line',
+                plugins: [crosshairPlugin],
                 data: {
                     labels: @json($chartLabels),
                     datasets: [
                         {
                             label: 'Pemasukan (Rp)',
                             data: @json($chartIncome),
-                            borderColor: '#b01f44',
+                            borderColor: '#9b4054',
                             backgroundColor: incomeGradient,
                             fill: true,
-                            tension: 0.4,
-                            borderWidth: 2.5,
+                            tension: 0.42,
+                            borderWidth: 3,
                             pointRadius: 0,
                             pointHoverRadius: 6,
                             pointHoverBackgroundColor: '#ffffff',
-                            pointHoverBorderColor: '#b01f44',
-                            pointHoverBorderWidth: 3,
-                            pointHitRadius: 10
+                            pointHoverBorderColor: '#9b4054',
+                            pointHoverBorderWidth: 3.5,
+                            pointHitRadius: 16
                         },
                         {
                             label: 'Pengeluaran (Rp)',
@@ -319,21 +375,25 @@
                             borderColor: '#fbbf24',
                             backgroundColor: expenseGradient,
                             fill: true,
-                            tension: 0.4,
+                            tension: 0.42,
                             borderWidth: 2,
-                            borderDash: [4, 4],
+                            borderDash: [5, 5],
                             pointRadius: 0,
                             pointHoverRadius: 6,
                             pointHoverBackgroundColor: '#ffffff',
                             pointHoverBorderColor: '#fbbf24',
                             pointHoverBorderWidth: 3,
-                            pointHitRadius: 10
+                            pointHitRadius: 16
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: {
+                        duration: 1200,
+                        easing: 'easeOutQuart'
+                    },
                     interaction: {
                         mode: 'index',
                         intersect: false
@@ -341,26 +401,43 @@
                     plugins: {
                         legend: { display: false },
                         tooltip: {
+                            enabled: true,
                             backgroundColor: '#2b1a1f',
-                            padding: 12,
-                            titleFont: { size: 12, weight: 'bold' },
-                            bodyFont: { size: 12 },
+                            titleColor: '#ffd2e1',
+                            bodyColor: '#ffffff',
+                            borderColor: 'rgba(244, 84, 114, 0.3)',
+                            borderWidth: 1,
+                            padding: { top: 10, bottom: 10, left: 14, right: 14 },
+                            cornerRadius: 12,
+                            displayColors: true,
+                            boxWidth: 8,
+                            boxHeight: 8,
+                            boxPadding: 6,
+                            usePointStyle: true,
+                            titleFont: { family: 'Work Sans, sans-serif', size: 11, weight: '600' },
+                            bodyFont: { family: 'Work Sans, sans-serif', size: 13, weight: '700' },
                             callbacks: {
                                 label: function(context) {
-                                    return context.dataset.label + ': Rp ' + context.parsed.y.toLocaleString('id-ID');
+                                    return ' ' + context.dataset.label + ': Rp ' + context.parsed.y.toLocaleString('id-ID');
                                 }
                             }
                         }
                     },
                     scales: {
                         x: {
-                            grid: { display: false },
-                            ticks: { font: { size: 11, weight: '600' }, color: '#594043' }
+                            grid: { display: false, drawBorder: false },
+                            ticks: { 
+                                font: { family: 'Work Sans, sans-serif', size: 11, weight: '700' }, 
+                                color: '#594043' 
+                            }
                         },
                         y: {
-                            grid: { color: 'rgba(244, 221, 225, 0.5)' },
+                            grid: { 
+                                color: 'rgba(244, 221, 225, 0.6)',
+                                drawBorder: false 
+                            },
                             ticks: {
-                                font: { size: 10 },
+                                font: { family: 'Work Sans, sans-serif', size: 10, weight: '700' },
                                 color: '#594043',
                                 callback: function(value) {
                                     if (value >= 1000000) return 'Rp ' + (value / 1000000).toLocaleString('id-ID') + 'M';

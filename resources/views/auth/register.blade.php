@@ -18,15 +18,13 @@
     <link rel="alternate icon" href="{{ asset('logo/yalia-logos-trnsprnt.png') }}" type="image/png">
 
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-        body { background-color: #fff8f9; }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
+        body { background-color: #fff8f9; font-family: 'Work Sans', sans-serif; }
+        .font-display { font-family: 'Playfair Display', serif; }
         .glass-card {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(12px);
@@ -43,10 +41,10 @@
     </style>
 </head>
 <body class="min-h-screen font-sans text-on-surface antialiased overflow-x-hidden bg-[#fff8f9]">
-<main class="flex min-h-screen">
+<main class="min-h-screen w-full flex flex-col lg:flex-row relative overflow-hidden bg-[#fff8f9]">
 
     {{-- Sisi Kiri: Visual --}}
-    <section class="hidden lg:flex lg:w-2/5 xl:w-1/2 relative overflow-hidden bg-[#d23b5b]">
+    <section class="hidden lg:flex lg:w-2/5 xl:w-1/2 min-h-screen relative overflow-hidden bg-[#d23b5b]">
         <div class="absolute inset-0 z-0">
             <img
                 class="w-full h-full object-cover opacity-90"
@@ -66,14 +64,21 @@
     </section>
 
     {{-- Sisi Kanan: Form Registrasi --}}
-    <section class="w-full lg:w-3/5 xl:w-1/2 flex items-center justify-center p-4 md:p-6 relative">
+    <section class="w-full lg:w-3/5 xl:w-1/2 min-h-screen flex flex-col items-center justify-center p-6 md:p-10 relative">
         <div class="organic-blob bg-[#ffd2e1] w-48 h-48 top-[-10%] right-[-10%]"></div>
         <div class="organic-blob bg-[#ffb2ba] w-56 h-56 bottom-[-15%] left-[-10%]"></div>
 
-        <div class="w-full max-w-[380px] glass-card rounded-[24px] p-6 md:p-7 shadow-[0_20px_50px_rgba(43,26,31,0.08)]">
+        <div class="w-full max-w-[420px] glass-card rounded-[24px] p-6 sm:p-8 shadow-[0_20px_50px_rgba(43,26,31,0.08)] my-auto">
             <div class="mb-5 text-center lg:text-left">
                 <div class="lg:hidden flex justify-center mb-4">
-                    <span class="font-[Playfair_Display] text-xl font-bold text-[#b01f44]">Yalia Beauty</span>
+                    <a href="{{ route('home') }}" class="inline-flex items-center gap-2.5">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-[#FF6B8A] to-[#E91E63] p-0.5 shadow-md">
+                            <div class="w-full h-full rounded-full bg-white flex items-center justify-center">
+                                <img src="{{ asset('logo/yalia-logos-trnsprnt.svg') }}" alt="Yalia Beauty" class="w-7 h-7 object-contain">
+                            </div>
+                        </div>
+                        <span class="font-[Playfair_Display] text-xl font-bold text-[#b01f44]">Yalia Beauty</span>
+                    </a>
                 </div>
                 <h1 class="font-[Playfair_Display] text-2xl font-semibold text-[#2b1a1f] mb-1">Buat Akun Baru</h1>
                 <p class="text-xs text-[#594043]">Daftar sekarang untuk mulai perawatan.</p>
@@ -98,7 +103,7 @@
                 <div class="absolute inset-0 flex items-center">
                     <div class="w-full border-t border-[#e0bec1]"></div>
                 </div>
-                <div class="relative flex justify-center text-[9px] uppercase tracking-[0.2em] font-bold">
+                <div class="relative flex justify-center text-xs uppercase tracking-[0.2em] font-bold">
                     <span class="px-3 bg-transparent text-[#8d7072]">Atau Formulir</span>
                 </div>
             </div>
@@ -134,10 +139,10 @@
                             placeholder="Nama lengkap kamu"
                             class="w-full h-10 bg-white/60 border border-[#e0bec1] rounded-lg px-3.5 pr-10 text-sm font-sans focus:ring-2 focus:ring-[#f45472]/20 focus:border-[#f45472] transition-all duration-300 @error('name') border-red-400 @enderror"
                         >
-                        <span class="material-symbols-outlined absolute right-3 top-2.5 text-[18px] text-[#594043]">person</span>
+                        <i class="fa-solid fa-user absolute right-3 top-3 text-base text-[#594043]"></i>
                     </div>
                     @error('name')
-                        <p class="text-[11px] text-red-500 ml-0.5">{{ $message }}</p>
+                        <p class="text-xs text-red-500 ml-0.5">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -155,10 +160,10 @@
                             placeholder="email@contoh.com"
                             class="w-full h-10 bg-white/60 border border-[#e0bec1] rounded-lg px-3.5 pr-10 text-sm font-sans focus:ring-2 focus:ring-[#f45472]/20 focus:border-[#f45472] transition-all duration-300 @error('email') border-red-400 @enderror"
                         >
-                        <span class="material-symbols-outlined absolute right-3 top-2.5 text-[18px] text-[#594043]">mail</span>
+                        <i class="fa-solid fa-envelope absolute right-3 top-3 text-base text-[#594043]"></i>
                     </div>
                     @error('email')
-                        <p class="text-[11px] text-red-500 ml-0.5">{{ $message }}</p>
+                        <p class="text-xs text-red-500 ml-0.5">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -178,10 +183,10 @@
                             title="Gunakan format: 08xx, +628xx, atau 628xx"
                             class="w-full h-10 bg-white/60 border border-[#e0bec1] rounded-lg px-3.5 pr-10 text-sm font-sans focus:ring-2 focus:ring-[#f45472]/20 focus:border-[#f45472] transition-all duration-300 @error('phone') border-red-400 @enderror"
                         >
-                        <span class="material-symbols-outlined absolute right-3 top-2.5 text-[18px] text-[#594043]">call</span>
+                        <i class="fa-solid fa-phone absolute right-3 top-3 text-base text-[#594043]"></i>
                     </div>
                     @error('phone')
-                        <p class="text-[11px] text-red-500 ml-0.5">{{ $message }}</p>
+                        <p class="text-xs text-red-500 ml-0.5">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -198,13 +203,13 @@
                             placeholder="Minimal 8 karakter"
                             class="w-full h-10 bg-white/60 border border-[#e0bec1] rounded-lg px-3.5 pr-10 text-sm font-sans focus:ring-2 focus:ring-[#f45472]/20 focus:border-[#f45472] transition-all duration-300 @error('password') border-red-400 @enderror"
                         >
-                        <button type="button" @click="showPassword = !showPassword" class="absolute right-3 top-2.5 text-[#594043] hover:text-[#b01f44] transition-colors">
-                            <span class="material-symbols-outlined text-[18px]" x-text="showPassword ? 'visibility_off' : 'visibility'"></span>
+                        <button type="button" @click="showPassword = !showPassword" class="absolute right-3 top-3 text-[#594043] hover:text-[#b01f44] transition-colors">
+                            <i class="fa-solid" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
                         </button>
                     </div>
-                    <p class="text-[10px] text-[#8d7072] ml-0.5">Kombinasi huruf besar, kecil, &amp; angka.</p>
+                    <p class="text-xs text-[#8d7072] ml-0.5">Kombinasi huruf besar, kecil, &amp; angka.</p>
                     @error('password')
-                        <p class="text-[11px] text-red-500 ml-0.5">{{ $message }}</p>
+                        <p class="text-xs text-red-500 ml-0.5">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -221,8 +226,8 @@
                             placeholder="Ulangi password"
                             class="w-full h-10 bg-white/60 border border-[#e0bec1] rounded-lg px-3.5 pr-10 text-sm font-sans focus:ring-2 focus:ring-[#f45472]/20 focus:border-[#f45472] transition-all duration-300"
                         >
-                        <button type="button" @click="showPasswordConfirm = !showPasswordConfirm" class="absolute right-3 top-2.5 text-[#594043] hover:text-[#b01f44] transition-colors">
-                            <span class="material-symbols-outlined text-[18px]" x-text="showPasswordConfirm ? 'visibility_off' : 'visibility'"></span>
+                        <button type="button" @click="showPasswordConfirm = !showPasswordConfirm" class="absolute right-3 top-3 text-[#594043] hover:text-[#b01f44] transition-colors">
+                            <i class="fa-solid" :class="showPasswordConfirm ? 'fa-eye-slash' : 'fa-eye'"></i>
                         </button>
                     </div>
                 </div>

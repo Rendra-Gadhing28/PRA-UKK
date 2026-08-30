@@ -26,6 +26,8 @@ use App\Http\Controllers\Webhooks\MidtransWebhookController;
 // HALAMAN PUBLIK
 // =============================================================
 
+Route::post('/api/trigger-reminders', [\App\Http\Controllers\Api\ReminderController::class, 'trigger']);
+
     Route::get('/', function(){
         return view('welcome');
     })->name('home');
@@ -102,7 +104,12 @@ Route::middleware(['auth'])->prefix('dashboard')->name('user.')->group(function 
 
     Route::get('/booking/{booking}', [BookingController::class, 'show'])->name('bookings.show');
     Route::patch('/booking/{booking}/batalkan', [BookingController::class, 'cancel'])->name('bookings.cancel');
+    Route::patch('/booking/{booking}/ganti-jadwal', [BookingController::class, 'reschedule'])->name('bookings.reschedule');
     Route::post('/booking/{booking}/photo-assign', [BookingController::class, 'uploadPhotoAssign'])->name('bookings.photo-assign');
+    
+    // Reviews
+    Route::get('/booking/{booking}/treatments/{treatment}/review', [\App\Http\Controllers\User\ReviewController::class, 'create'])->name('treatments.review');
+    Route::post('/booking/{booking}/treatments/{treatment}/review', [\App\Http\Controllers\User\ReviewController::class, 'store'])->name('treatments.review.store');
 });
 
 // =============================================================
@@ -148,6 +155,7 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])
             Route::get('/{booking}/receipt', [\App\Http\Controllers\Admin\AdminBookingController::class, 'receipt'])->name('receipt');
             Route::patch('/{booking}/status', [\App\Http\Controllers\Admin\AdminBookingController::class, 'updateStatus'])->name('update-status');
             Route::patch('/{booking}/verify-payment', [\App\Http\Controllers\Admin\AdminBookingController::class, 'verifyPayment'])->name('verify-payment');
+            Route::post('/{booking}/reply-review', [\App\Http\Controllers\Admin\AdminBookingController::class, 'replyReview'])->name('reply-review');
         });
 
         // Admin Treatments Management

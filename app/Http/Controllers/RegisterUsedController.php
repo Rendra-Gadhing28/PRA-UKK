@@ -47,6 +47,7 @@ class RegisteredUsedController extends Controller
             'password' => Hash::make($validated['password']),
             'membership_level' => 'regular',
             'total_points' => 0,
+            'tier_points' => 0,
             'total_bookings' => 0,
             'total_spending' => 0,
             'is_active' => true,

@@ -25,7 +25,7 @@ class BeauticianAssignmentService
      *
      * @throws NoBeauticianAvailableException
      */
-    public function findAvailable(Carbon $bookingDate, string $timeStart, string $timeEnd): Beauticians
+    public function findAvailable(Carbon $bookingDate, string $timeStart, string $timeEnd, ?int $excludeBookingId = null): Beauticians
     {
         $dayOfWeek = $bookingDate->dayOfWeek; // 0 = Minggu ... 6 = Sabtu
 
@@ -58,7 +58,8 @@ class BeauticianAssignmentService
         $busyBeauticianIds = DB::table('bookings')
             ->whereIn('beautician_id', $scheduledBeauticianIds)
             ->whereDate('booking_date', $bookingDate->toDateString())
-            ->whereNotIn('status', ['canceled'])
+            ->whereNotIn('status', ['canceled', 'cancelled'])
+            ->when($excludeBookingId, fn ($q) => $q->where('id', '!=', $excludeBookingId))
             ->where('time_start', '<', $timeEnd)
             ->where('time_end', '>', $timeStart)
             ->pluck('beautician_id');

@@ -45,5 +45,21 @@
             </div>
 
         </div>
+        
+        <!-- Script Admin Polling untuk Auto Reminder WhatsApp -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Jalankan setiap 60 detik (60000 ms)
+                setInterval(function() {
+                    fetch('/api/trigger-reminders', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    }).catch(err => console.error('Reminder polling failed', err));
+                }, 60000);
+            });
+        </script>
     </body>
 </html>

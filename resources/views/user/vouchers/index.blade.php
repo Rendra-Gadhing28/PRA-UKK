@@ -13,6 +13,11 @@
     <div x-data="{ 
         activeTab: 'all', 
         loading: false,
+        toast: { show: false, message: '' },
+        showToast(msg) {
+            this.toast = { show: true, message: msg };
+            setTimeout(() => { this.toast.show = false; }, 2500);
+        },
         switchTab(tab) {
             if (this.activeTab === tab) return;
             this.loading = true;
@@ -20,6 +25,20 @@
             setTimeout(() => { this.loading = false; }, 400);
         }
     }" class="relative z-10 min-h-screen mt-36 pb-24">
+
+        {{-- Toast Notification --}}
+        <div x-show="toast.show" x-cloak
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 -translate-y-5"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 -translate-y-5"
+             class="fixed top-24 left-1/2 -translate-x-1/2 z-[600] bg-emerald-600 text-white px-6 py-3.5 rounded-full shadow-2xl font-semibold text-xs flex items-center gap-2.5 border border-emerald-400">
+            <i class="fa-solid fa-circle-check text-xs text-white"></i>
+            <span x-text="toast.message"></span>
+        </div>
+
         <main class="max-w-[1280px] mx-auto px-4 sm:px-8 space-y-8">
 
             {{-- HEADER TITLE & REWARD PTS BANNER --}}
@@ -39,7 +58,7 @@
                             <span>Yalia Beauty Loyalty & Promo Rewards</span>
                         </div>
                         <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#2e0e16] tracking-tight leading-tight" style="font-family:'Playfair Display',serif">
-                            Klaim Voucher & Tukar Poin PTS Kamu ✨
+                            Klaim Voucher & Tukar Poin PTS Kamu
                         </h1>
                         <p class="text-sm sm:text-base text-[#5c3740] font-semibold leading-relaxed">
                             Nikmati berbagai potongan harga eksklusif, voucher event special, dan tukarkan poin PTS dari setiap booking perawatanmu!
@@ -52,7 +71,7 @@
                             <i class="fas fa-coins"></i>
                         </div>
                         <div>
-                            <span class="text-[11px] uppercase tracking-wider text-slate-500 font-bold block mb-0.5">
+                            <span class="text-xs uppercase tracking-wider text-slate-500 font-bold block mb-0.5">
                                 Saldo Poin PTS Anda
                             </span>
                             <div class="flex items-baseline gap-2">
@@ -61,7 +80,7 @@
                                 </span>
                                 <span class="text-xs font-bold text-amber-700 uppercase tracking-widest">PTS</span>
                             </div>
-                            <p class="text-[11px] text-slate-600 mt-1 font-medium">
+                            <p class="text-xs text-slate-600 mt-1 font-medium">
                                 Level Membership: <strong class="uppercase text-slate-900 font-bold">{{ $user->membership_level ?? 'Regular' }}</strong>
                             </p>
                         </div>

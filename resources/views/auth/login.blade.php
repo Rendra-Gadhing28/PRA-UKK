@@ -14,7 +14,7 @@
     {{-- Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     {{-- Tailwind CSS (CDN — konsisten dengan desain asli) --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -27,18 +27,16 @@
             theme: {
                 extend: {
                     colors: {
-                        accent: '#f45472',
-                        'accent-soft': '#ff8fa4',
-                        'accent-clear': '#ffd2e1',
-                        'accent-deep': '#E91E63',
-                        dark: '#2b1a1f',
-                        brown: '#5b3a29',
-                        'bg-main': '#fdf5f6',
-                        'off-white': '#fff8f9',
+                        'brand-pink': '#f45472',
+                        'brand-pink-dark': '#b01f44',
+                        'accent-soft': '#ffd2e1',
+                        'accent-clear': '#ffe8ed',
+                        'bg-main': '#fff8f8',
+                        'dark': '#25181c',
                     },
                     fontFamily: {
-                        display: ['"Plus Jakarta Sans"', 'sans-serif'],
-                        sans: ['"DM Sans"', 'sans-serif'],
+                        display: ['Playfair Display', 'serif'],
+                        sans: ['Work Sans', 'sans-serif'],
                     },
                     borderRadius: {
                         'xl': '12px',
@@ -56,13 +54,13 @@
     <style>
         body {
             background-color: #fdf5f6;
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'Work Sans', sans-serif;
             overflow-x: hidden;
         }
         .glass-card {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(16px);
-            border: 1px solid rgba(91, 58, 41, 0.1);
+            border: 1px solid #e0bec1;
         }
         .input-focus:focus {
             border-color: #f45472;
@@ -72,7 +70,7 @@
 
         /* Panel hero kanan: gradasi brand + noise halus supaya tidak flat */
         .hero-panel {
-            background: linear-gradient(155deg, #FF6B8A 0%, #E91E63 55%, #b6134a 100%);
+            background: linear-gradient(155deg, #FF6B8A 0%, #E91E63 55%, #b01f44 100%);
         }
         .hero-panel::before {
             content: '';
@@ -157,7 +155,7 @@
                         <div class="absolute inset-0 flex items-center">
                             <div class="w-full border-t border-gray-200"></div>
                         </div>
-                        <div class="relative flex justify-center text-[10px] uppercase tracking-[0.2em] font-bold">
+                        <div class="relative flex justify-center text-xs uppercase tracking-[0.2em] font-bold">
                             <span class="px-4 bg-transparent text-gray-400">Atau Email</span>
                         </div>
                     </div>
@@ -197,7 +195,7 @@
                                     Password
                                 </label>
                                 <a href="{{ route('password.request') }}"
-                                   class="text-[11px] font-bold text-gray-400 hover:text-accent transition-colors uppercase tracking-wider">
+                                   class="text-xs font-bold text-gray-400 hover:text-accent transition-colors uppercase tracking-wider">
                                     Lupa password?
                                 </a>
                             </div>

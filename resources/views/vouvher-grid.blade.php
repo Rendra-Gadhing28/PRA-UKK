@@ -31,9 +31,8 @@
                 aria-label="Voucher {{ $voucher->code }}"
             >
                 {{-- Thumbnail — WebP, width/height eksplisit, lazy load --}}
-                @if ($voucher->image)
                     <img
-                        src="{{ asset('storage/' . $voucher->image) }}"
+                        src="{{ \App\Support\ImageHelper::url($voucher->image) }}"
                         alt="Banner voucher {{ $voucher->name }}"
                         width="400"
                         height="160"

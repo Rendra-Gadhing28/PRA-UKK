@@ -3,15 +3,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Vollkorn:wght@400;500;600&display=swap');
 
+:root {
+    --color-primary: #b01f44;
+    --color-primary-hover: #8f1735;
+    --color-primary-container: #d23b5b;
+    --color-secondary: #9b4054;
+    --color-tertiary: #785341;
+    --color-accent-clear: #ffd2e1;
+    --color-accent-amber: #f59e0b;
+    --color-surface-light: #fff8f9;
+    --color-surface-container: #ffe8ed;
+    --color-surface-container-low: #fff0f2;
+    --color-surface-container-high: #fae2e7;
+    --color-surface-container-highest: #f4dde1;
+    --color-text-heading: #2b1a1f;
+    --color-on-surface-variant: #594043;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 
 .glass-card {
-    background: rgba(255, 248, 248, 0.7);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(91, 58, 41, 0.08);
+    background: rgba(255, 248, 249, 0.85);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(224, 190, 193, 0.5);
+    box-shadow: 0 10px 30px -10px rgba(176, 31, 68, 0.08);
 }
 .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -20,11 +38,32 @@
 
 .blob-bg {
     position: fixed;
-    z-index: -10;
-    filter: blur(60px);
-    opacity: 0.4;
+    z-index: 0;
+    filter: blur(75px);
+    opacity: 0.55;
     border-radius: 9999px;
     pointer-events: none;
+}
+
+/* Yalia Beauty Brand VIP Card Gradients */
+.vip-card-regular {
+    background: linear-gradient(135deg, #380816 0%, #681028 45%, #911739 80%, #500a1d 100%);
+    border-color: rgba(255, 210, 225, 0.35);
+}
+
+.vip-card-silver {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #701a75 75%, #4c1d95 100%);
+    border-color: rgba(165, 243, 252, 0.4);
+}
+
+.vip-card-gold {
+    background: linear-gradient(135deg, #451a03 0%, #78350f 40%, #d97706 75%, #b45309 100%);
+    border-color: rgba(253, 224, 71, 0.5);
+}
+
+.vip-card-purple {
+    background: linear-gradient(135deg, #2e1065 0%, #581c87 40%, #a21caf 75%, #701a75 100%);
+    border-color: rgba(232, 121, 249, 0.6);
 }
 
 /* Heading Fonts */

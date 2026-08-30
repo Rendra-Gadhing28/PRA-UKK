@@ -8,7 +8,7 @@
     {{-- Design Tokens & Typography --}}
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <div class="pt-28 pb-16 bg-[#fdf5f6] min-h-screen relative overflow-hidden font-sans">
+    <div class="pt-28 pb-16 bg-transparent min-h-screen relative overflow-hidden font-sans">
         {{-- Background Ambient Blobs --}}
         <div class="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] bg-rose-200/30 rounded-full blur-[80px] pointer-events-none"></div>
         <div class="absolute bottom-[-10%] right-[-10%] w-[350px] h-[350px] bg-amber-200/20 rounded-full blur-[80px] pointer-events-none"></div>
@@ -34,10 +34,10 @@
                             {{ $user->email }}
                         </p>
                         <div class="flex items-center justify-center sm:justify-start gap-2 mt-2 flex-wrap">
-                            <span class="px-2.5 py-0.5 bg-rose-50 text-[#f45472] border border-rose-200 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                            <span class="px-2.5 py-0.5 bg-rose-50 text-[#f45472] border border-rose-200 rounded-full text-xs font-bold uppercase tracking-wider">
                                 Member Yalia
                             </span>
-                            <span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-full text-[10px] font-bold flex items-center gap-1">
+                            <span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-full text-xs font-bold flex items-center gap-1">
                                 <i class="fas fa-coins text-amber-500" aria-hidden="true"></i>
                                 {{ number_format($user->total_points ?? 0) }} PTS
                             </span>
@@ -57,7 +57,7 @@
                         </div>
                         <div>
                             <h2 class="font-display text-base font-bold text-[#5b3a29]">Informasi Profil</h2>
-                            <p class="text-[11px] text-gray-500">Perbarui nama lengkap dan alamat email utama Anda.</p>
+                            <p class="text-xs text-gray-500">Perbarui nama lengkap dan alamat email utama Anda.</p>
                         </div>
                     </div>
 
@@ -79,7 +79,7 @@
                         </div>
                         <div>
                             <h2 class="font-display text-base font-bold text-[#5b3a29]">Ubah Kata Sandi</h2>
-                            <p class="text-[11px] text-gray-500">Gunakan kata sandi kombinasi angka dan huruf demi keamanan akun.</p>
+                            <p class="text-xs text-gray-500">Gunakan kata sandi kombinasi angka dan huruf demi keamanan akun.</p>
                         </div>
                     </div>
 
@@ -100,8 +100,8 @@
                             <i class="fas fa-triangle-exclamation text-sm"></i>
                         </div>
                         <div>
-                            <h2 class="font-display text-base font-bold text-red-700">Zona Bahaya (Hapus Akun)</h2>
-                            <p class="text-[11px] text-red-500">Akun yang telah dihapus tidak dapat dipulihkan kembali.</p>
+                            <h2 class="font-display text-base font-bold text-red-900">Hapus Akun</h2>
+                            <p class="text-xs text-red-700">Hapus akun secara permanen beserta seluruh data riwayat booking.</p>
                         </div>
                     </div>
 

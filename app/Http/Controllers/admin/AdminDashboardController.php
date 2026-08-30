@@ -78,6 +78,23 @@ class AdminDashboardController extends Controller
         $chartIncome = [];
         $chartExpense = [];
 
+        $startDate7Days = $now->copy()->subDays(6)->startOfDay();
+        $endDate7Days = $now->copy()->endOfDay();
+
+        $transactionsGrouped = Transactions::query()
+            ->whereBetween('transaction_date', [$startDate7Days->toDateString(), $endDate7Days->toDateString()])
+            ->selectRaw('DATE(transaction_date) as date, type, SUM(amount) as total')
+            ->groupBy(DB::raw('DATE(transaction_date)'), 'type')
+            ->get()
+            ->groupBy('date');
+
+        $bookingsGrouped = Bookings::query()
+            ->whereIn('status', ['completed', 'confirmed'])
+            ->whereBetween('booking_date', [$startDate7Days->toDateString(), $endDate7Days->toDateString()])
+            ->selectRaw('DATE(booking_date) as date, SUM(total_amount) as total')
+            ->groupBy(DB::raw('DATE(booking_date)'))
+            ->pluck('total', 'date');
+
         for ($i = 6; $i >= 0; $i--) {
             $date = $now->copy()->subDays($i);
             $dateStr = $date->toDateString();
@@ -85,13 +102,14 @@ class AdminDashboardController extends Controller
             // Format label: "16 Agt", "17 Agt", ...
             $chartLabels[] = $date->format('j') . ' ' . $date->translatedFormat('M');
 
-            $dayInc = (float) Transactions::where('type', 'income')->whereDate('transaction_date', $dateStr)->sum('amount');
+            $txDay = $transactionsGrouped->get($dateStr);
+            $dayInc = (float) ($txDay?->where('type', 'income')->sum('total') ?? 0);
             if ($dayInc == 0) {
-                $dayInc = (float) Bookings::whereIn('status', ['completed', 'confirmed'])->whereDate('booking_date', $dateStr)->sum('total_amount');
+                $dayInc = (float) ($bookingsGrouped->get($dateStr) ?? 0);
             }
             $chartIncome[] = $dayInc;
 
-            $dayExp = (float) Transactions::where('type', 'expense')->whereDate('transaction_date', $dateStr)->sum('amount');
+            $dayExp = (float) ($txDay?->where('type', 'expense')->sum('total') ?? 0);
             $chartExpense[] = $dayExp;
         }
 

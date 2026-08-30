@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-30T12:58:25Z",
+  "title": "Design System: Yalia Beauty",
+  "extensions": {
+    "colorMeta": {
+      "primary": { "role": "primary", "displayName": "Deep Velvet Crimson", "canonical": "#b01f44", "tonalRamp": ["#3e0717", "#5c0b22", "#7e0f2d", "#9b1638", "#b01f44", "#c83b5e", "#db5e7c", "#eb879d"] },
+      "secondary": { "role": "secondary", "displayName": "Dusty Rose Burgundy", "canonical": "#9b4054", "tonalRamp": ["#33131b", "#4c1c28", "#662636", "#813144", "#9b4054", "#b25c6f", "#c87a8b", "#dd99a7"] },
+      "tertiary": { "role": "tertiary", "displayName": "Warm Bronze Earth", "canonical": "#785341", "tonalRamp": ["#271912", "#3b271b", "#513626", "#644433", "#785341", "#926b58", "#ac8470", "#c59e89"] },
+      "background": { "role": "neutral", "displayName": "Sanctuary Canvas", "canonical": "#fff8f8", "tonalRamp": ["#4a3a3d", "#6e595c", "#947b7f", "#baa0a4", "#dfc7cb", "#f4e4e7", "#faeff1", "#fff8f8"] },
+      "surface": { "role": "neutral", "displayName": "Main Surface", "canonical": "#fff8f8", "tonalRamp": ["#4a3a3d", "#6e595c", "#947b7f", "#baa0a4", "#dfc7cb", "#f4e4e7", "#faeff1", "#fff8f8"] },
+      "surface-container-low": { "role": "neutral", "displayName": "Surface Low", "canonical": "#fff0f2", "tonalRamp": ["#4a373b", "#6e5559", "#94767b", "#ba9a9f", "#dfc1c6", "#f4dbe0", "#fae9eb", "#fff0f2"] },
+      "on-surface": { "role": "neutral", "displayName": "On Surface Dark", "canonical": "#25181c", "tonalRamp": ["#080405", "#120a0d", "#1c1115", "#25181c", "#3d2a30", "#573f47", "#735760", "#90717a"] },
+      "accent-clear": { "role": "accent", "displayName": "Clear Accent Blush", "canonical": "#ffd2e1", "tonalRamp": ["#5c1a30", "#802745", "#a6375c", "#c94b75", "#e46590", "#f28fb1", "#f9b7cf", "#ffd2e1"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display Playfair", "purpose": "Hero headlines and marketing statements." },
+      "headline": { "displayName": "Headline Playfair", "purpose": "Section headings and page titles." },
+      "title": { "displayName": "Title Playfair", "purpose": "Card titles and group headings." },
+      "body": { "displayName": "Body Work Sans", "purpose": "Main paragraph and description text." },
+      "label": { "displayName": "Label Work Sans", "purpose": "Buttons, nav links, and captions." }
+    },
+    "shadows": [
+      { "name": "ambient-glow", "value": "0 4px 20px -2px rgba(176, 31, 68, 0.08)", "purpose": "Subtle red-pink halo around key interactive elements." },
+      { "name": "elevated-drop", "value": "0 10px 25px -5px rgba(37, 24, 28, 0.06)", "purpose": "Modals, sticky header navigation bar." }
+    ],
+    "motion": [
+      { "name": "ease-soft", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Smooth transition for hovers and state changes." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Pill-shaped crimson primary action CTA button.",
+      "html": "<button class=\"ds-btn-primary\">BOOK APPOINTMENT</button>",
+      "css": ".ds-btn-primary { background-color: #b01f44; color: #ffffff; padding: 14px 32px; font-family: 'Work Sans', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 0.05em; border-radius: 9999px; border: none; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 12px rgba(176, 31, 68, 0.2); } .ds-btn-primary:hover { background-color: #910030; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(176, 31, 68, 0.3); }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Soft blush secondary button for alternative actions.",
+      "html": "<button class=\"ds-btn-secondary\">VIEW DETAILS</button>",
+      "css": ".ds-btn-secondary { background-color: #ffd2e1; color: #b01f44; padding: 14px 32px; font-family: 'Work Sans', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 0.05em; border-radius: 9999px; border: none; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-secondary:hover { background-color: #ffb9d0; transform: translateY(-1px); }"
+    },
+    {
+      "name": "Treatment Card",
+      "kind": "card",
+      "refersTo": "card-container",
+      "description": "Elevated white card container with rounded 24px corners and subtle border.",
+      "html": "<div class=\"ds-card\"><h3 class=\"ds-card-title\">Hydrating Facial Therapy</h3><p class=\"ds-card-desc\">Deep skin hydration with premium organic serum.</p></div>",
+      "css": ".ds-card { background-color: #ffffff; border: 1px solid #e0bec1; border-radius: 24px; padding: 24px; box-shadow: 0 2px 8px rgba(37, 24, 28, 0.04); transition: transform 0.2s, box-shadow 0.2s; } .ds-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(37, 24, 28, 0.08); } .ds-card-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; color: #25181c; margin: 0 0 8px 0; } .ds-card-desc { font-family: 'Work Sans', sans-serif; font-size: 14px; color: #594043; margin: 0; line-height: 1.5; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Sanctuary of Soft Elegance",
+    "overview": "Yalia Beauty is designed as a serene digital sanctuary. The interface combines soft rose and blush palettes, warm off-white canvases, and organic rounded contours to create an inviting, high-end wellness environment.",
+    "keyCharacteristics": [
+      "Warm Canvas: Soft off-white and blush backgrounds (#fff8f8, #fdf5f6) replace sterile pure white.",
+      "Velvet Primary Accent: Crimson burgundy (#b01f44) used intentionally for primary CTAs.",
+      "Tactile Softness: Generous corner radii (24px / 1.5rem on cards, pill shapes on buttons).",
+      "Editorial Hierarchy: Serific display headers for warmth paired with legible sans-serif."
+    ],
+    "rules": [
+      { "name": "The 10% Crimson Rule", "body": "Primary velvet crimson (#b01f44) is reserved for ≤10% of any screen surface.", "section": "colors" },
+      { "name": "The Off-White Canvas Rule", "body": "Pure white (#ffffff) is never used as a global page background.", "section": "colors" },
+      { "name": "The Dual-Type Contrast Rule", "body": "Titles and section headings above 20px must use Playfair Display.", "section": "typography" },
+      { "name": "The Tonal Layering Rule", "body": "Separate nested containers using lighter/darker blush steps rather than harsh black drop shadows.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use soft off-white background colors (#fff8f8, #fdf5f6) as default page canvases.",
+      "Do pair Playfair Display headings with Work Sans body text for clear visual hierarchy.",
+      "Do use pill buttons (rounded-full) for CTAs and 24px (rounded-2xl) radii for content cards.",
+      "Do provide clear feedback states."
+    ],
+    "donts": [
+      "Don't use pure stark white (#ffffff) as a global page background.",
+      "Don't use sharp square corners (0px radius) on cards or primary action buttons.",
+      "Don't flood screens with primary crimson (#b01f44); keep accent usage under 10%.",
+      "Don't use heavy dark black box-shadows; use subtle rose/espresso tinted shadows instead."
+    ]
+  }
+}

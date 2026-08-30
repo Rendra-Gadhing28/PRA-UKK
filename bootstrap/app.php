@@ -16,6 +16,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->validateCsrfTokens(except: [
             'webhooks/midtrans',
+            'api/trigger-reminders',
+        ]);
+        $middleware->web(append: [
+            \App\Http\Middleware\CheckQuarterlyTierPoints::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

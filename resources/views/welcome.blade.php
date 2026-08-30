@@ -1,222 +1,883 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ config('app.name', 'Yalia Beauty') }} — Salon Kecantikan & Booking Online</title>
 
-        @fonts
+        <!-- Google Fonts: Playfair Display & Work Sans -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+        <!-- FontAwesome Icons 6.5.1 -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <!-- Leaflet JS Map CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+        <!-- Leaflet JS Map Script -->
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+        <!-- Alpine.js CDN -->
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
         <!-- Styles / Scripts -->
-            @vite(['resources/css/app.css', 'resources/js/app.js'])
-       
-            <style>
-                /*! tailwindcss v4.0.7 | MIT License | https://tailwindcss.com */ @layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-rotate-x:initial;--tw-rotate-y:initial;--tw-rotate-z:initial;--tw-skew-x:initial;--tw-skew-y:initial;--tw-space-x-reverse:0;--tw-border-style:solid;--tw-leading:initial;--tw-font-weight:initial;--tw-tracking:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-blur:initial;--tw-brightness:initial;--tw-contrast:initial;--tw-grayscale:initial;--tw-hue-rotate:initial;--tw-invert:initial;--tw-opacity:initial;--tw-saturate:initial;--tw-sepia:initial;--tw-drop-shadow:initial;--tw-drop-shadow-color:initial;--tw-drop-shadow-alpha:100%;--tw-drop-shadow-size:initial;--tw-duration:initial;--tw-ease:initial;--tw-content:""}}}@layer theme{:root,:host{--font-sans:"Instrument Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-serif:ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-red-50:oklch(97.1% .013 17.38);--color-red-100:oklch(93.6% .032 17.717);--color-red-200:oklch(88.5% .062 18.334);--color-red-300:oklch(80.8% .114 19.571);--color-red-400:oklch(70.4% .191 22.216);--color-red-500:oklch(63.7% .237 25.331);--color-red-600:oklch(57.7% .245 27.325);--color-red-700:oklch(50.5% .213 27.518);--color-red-800:oklch(44.4% .177 26.899);--color-red-900:oklch(39.6% .141 25.723);--color-red-950:oklch(25.8% .092 26.042);--color-orange-50:oklch(98% .016 73.684);--color-orange-100:oklch(95.4% .038 75.164);--color-orange-200:oklch(90.1% .076 70.697);--color-orange-300:oklch(83.7% .128 66.29);--color-orange-400:oklch(75% .183 55.934);--color-orange-500:oklch(70.5% .213 47.604);--color-orange-600:oklch(64.6% .222 41.116);--color-orange-700:oklch(55.3% .195 38.402);--color-orange-800:oklch(47% .157 37.304);--color-orange-900:oklch(40.8% .123 38.172);--color-orange-950:oklch(26.6% .079 36.259);--color-amber-50:oklch(98.7% .022 95.277);--color-amber-100:oklch(96.2% .059 95.617);--color-amber-200:oklch(92.4% .12 95.746);--color-amber-300:oklch(87.9% .169 91.605);--color-amber-400:oklch(82.8% .189 84.429);--color-amber-500:oklch(76.9% .188 70.08);--color-amber-600:oklch(66.6% .179 58.318);--color-amber-700:oklch(55.5% .163 48.998);--color-amber-800:oklch(47.3% .137 46.201);--color-amber-900:oklch(41.4% .112 45.904);--color-amber-950:oklch(27.9% .077 45.635);--color-yellow-50:oklch(98.7% .026 102.212);--color-yellow-100:oklch(97.3% .071 103.193);--color-yellow-200:oklch(94.5% .129 101.54);--color-yellow-300:oklch(90.5% .182 98.111);--color-yellow-400:oklch(85.2% .199 91.936);--color-yellow-500:oklch(79.5% .184 86.047);--color-yellow-600:oklch(68.1% .162 75.834);--color-yellow-700:oklch(55.4% .135 66.442);--color-yellow-800:oklch(47.6% .114 61.907);--color-yellow-900:oklch(42.1% .095 57.708);--color-yellow-950:oklch(28.6% .066 53.813);--color-lime-50:oklch(98.6% .031 120.757);--color-lime-100:oklch(96.7% .067 122.328);--color-lime-200:oklch(93.8% .127 124.321);--color-lime-300:oklch(89.7% .196 126.665);--color-lime-400:oklch(84.1% .238 128.85);--color-lime-500:oklch(76.8% .233 130.85);--color-lime-600:oklch(64.8% .2 131.684);--color-lime-700:oklch(53.2% .157 131.589);--color-lime-800:oklch(45.3% .124 130.933);--color-lime-900:oklch(40.5% .101 131.063);--color-lime-950:oklch(27.4% .072 132.109);--color-green-50:oklch(98.2% .018 155.826);--color-green-100:oklch(96.2% .044 156.743);--color-green-200:oklch(92.5% .084 155.995);--color-green-300:oklch(87.1% .15 154.449);--color-green-400:oklch(79.2% .209 151.711);--color-green-500:oklch(72.3% .219 149.579);--color-green-600:oklch(62.7% .194 149.214);--color-green-700:oklch(52.7% .154 150.069);--color-green-800:oklch(44.8% .119 151.328);--color-green-900:oklch(39.3% .095 152.535);--color-green-950:oklch(26.6% .065 152.934);--color-emerald-50:oklch(97.9% .021 166.113);--color-emerald-100:oklch(95% .052 163.051);--color-emerald-200:oklch(90.5% .093 164.15);--color-emerald-300:oklch(84.5% .143 164.978);--color-emerald-400:oklch(76.5% .177 163.223);--color-emerald-500:oklch(69.6% .17 162.48);--color-emerald-600:oklch(59.6% .145 163.225);--color-emerald-700:oklch(50.8% .118 165.612);--color-emerald-800:oklch(43.2% .095 166.913);--color-emerald-900:oklch(37.8% .077 168.94);--color-emerald-950:oklch(26.2% .051 172.552);--color-teal-50:oklch(98.4% .014 180.72);--color-teal-100:oklch(95.3% .051 180.801);--color-teal-200:oklch(91% .096 180.426);--color-teal-300:oklch(85.5% .138 181.071);--color-teal-400:oklch(77.7% .152 181.912);--color-teal-500:oklch(70.4% .14 182.503);--color-teal-600:oklch(60% .118 184.704);--color-teal-700:oklch(51.1% .096 186.391);--color-teal-800:oklch(43.7% .078 188.216);--color-teal-900:oklch(38.6% .063 188.416);--color-teal-950:oklch(27.7% .046 192.524);--color-cyan-50:oklch(98.4% .019 200.873);--color-cyan-100:oklch(95.6% .045 203.388);--color-cyan-200:oklch(91.7% .08 205.041);--color-cyan-300:oklch(86.5% .127 207.078);--color-cyan-400:oklch(78.9% .154 211.53);--color-cyan-500:oklch(71.5% .143 215.221);--color-cyan-600:oklch(60.9% .126 221.723);--color-cyan-700:oklch(52% .105 223.128);--color-cyan-800:oklch(45% .085 224.283);--color-cyan-900:oklch(39.8% .07 227.392);--color-cyan-950:oklch(30.2% .056 229.695);--color-sky-50:oklch(97.7% .013 236.62);--color-sky-100:oklch(95.1% .026 236.824);--color-sky-200:oklch(90.1% .058 230.902);--color-sky-300:oklch(82.8% .111 230.318);--color-sky-400:oklch(74.6% .16 232.661);--color-sky-500:oklch(68.5% .169 237.323);--color-sky-600:oklch(58.8% .158 241.966);--color-sky-700:oklch(50% .134 242.749);--color-sky-800:oklch(44.3% .11 240.79);--color-sky-900:oklch(39.1% .09 240.876);--color-sky-950:oklch(29.3% .066 243.157);--color-blue-50:oklch(97% .014 254.604);--color-blue-100:oklch(93.2% .032 255.585);--color-blue-200:oklch(88.2% .059 254.128);--color-blue-300:oklch(80.9% .105 251.813);--color-blue-400:oklch(70.7% .165 254.624);--color-blue-500:oklch(62.3% .214 259.815);--color-blue-600:oklch(54.6% .245 262.881);--color-blue-700:oklch(48.8% .243 264.376);--color-blue-800:oklch(42.4% .199 265.638);--color-blue-900:oklch(37.9% .146 265.522);--color-blue-950:oklch(28.2% .091 267.935);--color-indigo-50:oklch(96.2% .018 272.314);--color-indigo-100:oklch(93% .034 272.788);--color-indigo-200:oklch(87% .065 274.039);--color-indigo-300:oklch(78.5% .115 274.713);--color-indigo-400:oklch(67.3% .182 276.935);--color-indigo-500:oklch(58.5% .233 277.117);--color-indigo-600:oklch(51.1% .262 276.966);--color-indigo-700:oklch(45.7% .24 277.023);--color-indigo-800:oklch(39.8% .195 277.366);--color-indigo-900:oklch(35.9% .144 278.697);--color-indigo-950:oklch(25.7% .09 281.288);--color-violet-50:oklch(96.9% .016 293.756);--color-violet-100:oklch(94.3% .029 294.588);--color-violet-200:oklch(89.4% .057 293.283);--color-violet-300:oklch(81.1% .111 293.571);--color-violet-400:oklch(70.2% .183 293.541);--color-violet-500:oklch(60.6% .25 292.717);--color-violet-600:oklch(54.1% .281 293.009);--color-violet-700:oklch(49.1% .27 292.581);--color-violet-800:oklch(43.2% .232 292.759);--color-violet-900:oklch(38% .189 293.745);--color-violet-950:oklch(28.3% .141 291.089);--color-purple-50:oklch(97.7% .014 308.299);--color-purple-100:oklch(94.6% .033 307.174);--color-purple-200:oklch(90.2% .063 306.703);--color-purple-300:oklch(82.7% .119 306.383);--color-purple-400:oklch(71.4% .203 305.504);--color-purple-500:oklch(62.7% .265 303.9);--color-purple-600:oklch(55.8% .288 302.321);--color-purple-700:oklch(49.6% .265 301.924);--color-purple-800:oklch(43.8% .218 303.724);--color-purple-900:oklch(38.1% .176 304.987);--color-purple-950:oklch(29.1% .149 302.717);--color-fuchsia-50:oklch(97.7% .017 320.058);--color-fuchsia-100:oklch(95.2% .037 318.852);--color-fuchsia-200:oklch(90.3% .076 319.62);--color-fuchsia-300:oklch(83.3% .145 321.434);--color-fuchsia-400:oklch(74% .238 322.16);--color-fuchsia-500:oklch(66.7% .295 322.15);--color-fuchsia-600:oklch(59.1% .293 322.896);--color-fuchsia-700:oklch(51.8% .253 323.949);--color-fuchsia-800:oklch(45.2% .211 324.591);--color-fuchsia-900:oklch(40.1% .17 325.612);--color-fuchsia-950:oklch(29.3% .136 325.661);--color-pink-50:oklch(97.1% .014 343.198);--color-pink-100:oklch(94.8% .028 342.258);--color-pink-200:oklch(89.9% .061 343.231);--color-pink-300:oklch(82.3% .12 346.018);--color-pink-400:oklch(71.8% .202 349.761);--color-pink-500:oklch(65.6% .241 354.308);--color-pink-600:oklch(59.2% .249 .584);--color-pink-700:oklch(52.5% .223 3.958);--color-pink-800:oklch(45.9% .187 3.815);--color-pink-900:oklch(40.8% .153 2.432);--color-pink-950:oklch(28.4% .109 3.907);--color-rose-50:oklch(96.9% .015 12.422);--color-rose-100:oklch(94.1% .03 12.58);--color-rose-200:oklch(89.2% .058 10.001);--color-rose-300:oklch(81% .117 11.638);--color-rose-400:oklch(71.2% .194 13.428);--color-rose-500:oklch(64.5% .246 16.439);--color-rose-600:oklch(58.6% .253 17.585);--color-rose-700:oklch(51.4% .222 16.935);--color-rose-800:oklch(45.5% .188 13.697);--color-rose-900:oklch(41% .159 10.272);--color-rose-950:oklch(27.1% .105 12.094);--color-slate-50:oklch(98.4% .003 247.858);--color-slate-100:oklch(96.8% .007 247.896);--color-slate-200:oklch(92.9% .013 255.508);--color-slate-300:oklch(86.9% .022 252.894);--color-slate-400:oklch(70.4% .04 256.788);--color-slate-500:oklch(55.4% .046 257.417);--color-slate-600:oklch(44.6% .043 257.281);--color-slate-700:oklch(37.2% .044 257.287);--color-slate-800:oklch(27.9% .041 260.031);--color-slate-900:oklch(20.8% .042 265.755);--color-slate-950:oklch(12.9% .042 264.695);--color-gray-50:oklch(98.5% .002 247.839);--color-gray-100:oklch(96.7% .003 264.542);--color-gray-200:oklch(92.8% .006 264.531);--color-gray-300:oklch(87.2% .01 258.338);--color-gray-400:oklch(70.7% .022 261.325);--color-gray-500:oklch(55.1% .027 264.364);--color-gray-600:oklch(44.6% .03 256.802);--color-gray-700:oklch(37.3% .034 259.733);--color-gray-800:oklch(27.8% .033 256.848);--color-gray-900:oklch(21% .034 264.665);--color-gray-950:oklch(13% .028 261.692);--color-zinc-50:oklch(98.5% 0 0);--color-zinc-100:oklch(96.7% .001 286.375);--color-zinc-200:oklch(92% .004 286.32);--color-zinc-300:oklch(87.1% .006 286.286);--color-zinc-400:oklch(70.5% .015 286.067);--color-zinc-500:oklch(55.2% .016 285.938);--color-zinc-600:oklch(44.2% .017 285.786);--color-zinc-700:oklch(37% .013 285.805);--color-zinc-800:oklch(27.4% .006 286.033);--color-zinc-900:oklch(21% .006 285.885);--color-zinc-950:oklch(14.1% .005 285.823);--color-neutral-50:oklch(98.5% 0 0);--color-neutral-100:oklch(97% 0 0);--color-neutral-200:oklch(92.2% 0 0);--color-neutral-300:oklch(87% 0 0);--color-neutral-400:oklch(70.8% 0 0);--color-neutral-500:oklch(55.6% 0 0);--color-neutral-600:oklch(43.9% 0 0);--color-neutral-700:oklch(37.1% 0 0);--color-neutral-800:oklch(26.9% 0 0);--color-neutral-900:oklch(20.5% 0 0);--color-neutral-950:oklch(14.5% 0 0);--color-stone-50:oklch(98.5% .001 106.423);--color-stone-100:oklch(97% .001 106.424);--color-stone-200:oklch(92.3% .003 48.717);--color-stone-300:oklch(86.9% .005 56.366);--color-stone-400:oklch(70.9% .01 56.259);--color-stone-500:oklch(55.3% .013 58.071);--color-stone-600:oklch(44.4% .011 73.639);--color-stone-700:oklch(37.4% .01 67.558);--color-stone-800:oklch(26.8% .007 34.298);--color-stone-900:oklch(21.6% .006 56.043);--color-stone-950:oklch(14.7% .004 49.25);--color-black:#000;--color-white:#fff;--spacing:.25rem;--breakpoint-sm:40rem;--breakpoint-md:48rem;--breakpoint-lg:64rem;--breakpoint-xl:80rem;--breakpoint-2xl:96rem;--container-3xs:16rem;--container-2xs:18rem;--container-xs:20rem;--container-sm:24rem;--container-md:28rem;--container-lg:32rem;--container-xl:36rem;--container-2xl:42rem;--container-3xl:48rem;--container-4xl:56rem;--container-5xl:64rem;--container-6xl:72rem;--container-7xl:80rem;--text-xs:.75rem;--text-xs--line-height:calc(1 / .75);--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-base:1rem;--text-base--line-height: 1.5 ;--text-lg:1.125rem;--text-lg--line-height:calc(1.75 / 1.125);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--text-3xl:1.875rem;--text-3xl--line-height: 1.2 ;--text-4xl:2.25rem;--text-4xl--line-height:calc(2.5 / 2.25);--text-5xl:3rem;--text-5xl--line-height:1;--text-6xl:3.75rem;--text-6xl--line-height:1;--text-7xl:4.5rem;--text-7xl--line-height:1;--text-8xl:6rem;--text-8xl--line-height:1;--text-9xl:8rem;--text-9xl--line-height:1;--font-weight-thin:100;--font-weight-extralight:200;--font-weight-light:300;--font-weight-normal:400;--font-weight-medium:500;--font-weight-semibold:600;--font-weight-bold:700;--font-weight-extrabold:800;--font-weight-black:900;--tracking-tighter:-.05em;--tracking-tight:-.025em;--tracking-normal:0em;--tracking-wide:.025em;--tracking-wider:.05em;--tracking-widest:.1em;--leading-tight:1.25;--leading-snug:1.375;--leading-normal:1.5;--leading-relaxed:1.625;--leading-loose:2;--radius-xs:.125rem;--radius-sm:.25rem;--radius-md:.375rem;--radius-lg:.5rem;--radius-xl:.75rem;--radius-2xl:1rem;--radius-3xl:1.5rem;--radius-4xl:2rem;--shadow-2xs:0 1px #0000000d;--shadow-xs:0 1px 2px 0 #0000000d;--shadow-sm:0 1px 3px 0 #0000001a, 0 1px 2px -1px #0000001a;--shadow-md:0 4px 6px -1px #0000001a, 0 2px 4px -2px #0000001a;--shadow-lg:0 10px 15px -3px #0000001a, 0 4px 6px -4px #0000001a;--shadow-xl:0 20px 25px -5px #0000001a, 0 8px 10px -6px #0000001a;--shadow-2xl:0 25px 50px -12px #00000040;--inset-shadow-2xs:inset 0 1px #0000000d;--inset-shadow-xs:inset 0 1px 1px #0000000d;--inset-shadow-sm:inset 0 2px 4px #0000000d;--drop-shadow-xs:0 1px 1px #0000000d;--drop-shadow-sm:0 1px 2px #00000026;--drop-shadow-md:0 3px 3px #0000001f;--drop-shadow-lg:0 4px 4px #00000026;--drop-shadow-xl:0 9px 7px #0000001a;--drop-shadow-2xl:0 25px 25px #00000026;--ease-in:cubic-bezier(.4, 0, 1, 1);--ease-out:cubic-bezier(0, 0, .2, 1);--ease-in-out:cubic-bezier(.4, 0, .2, 1);--animate-spin:spin 1s linear infinite;--animate-ping:ping 1s cubic-bezier(0, 0, .2, 1) infinite;--animate-pulse:pulse 2s cubic-bezier(.4, 0, .6, 1) infinite;--animate-bounce:bounce 1s infinite;--blur-xs:4px;--blur-sm:8px;--blur-md:12px;--blur-lg:16px;--blur-xl:24px;--blur-2xl:40px;--blur-3xl:64px;--perspective-dramatic:100px;--perspective-near:300px;--perspective-normal:500px;--perspective-midrange:800px;--perspective-distant:1200px;--aspect-video:16 / 9;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring{outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab,red,red)){::placeholder{color:color-mix(in oklab,currentcolor 50%,transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.absolute{position:absolute}.fixed{position:fixed}.relative{position:relative}.static{position:static}.inset-0{inset:calc(var(--spacing) * 0)}.start{inset-inline-start:var(--spacing)}.top-0{top:calc(var(--spacing) * 0)}.right-0{right:calc(var(--spacing) * 0)}.container{width:100%}@media(min-width:40rem){.container{max-width:40rem}}@media(min-width:48rem){.container{max-width:48rem}}@media(min-width:64rem){.container{max-width:64rem}}@media(min-width:80rem){.container{max-width:80rem}}@media(min-width:96rem){.container{max-width:96rem}}.mx-auto{margin-inline:auto}.-mt-\[6\.6rem\]{margin-top:-6.6rem}.-mt-px{margin-top:-1px}.mt-2{margin-top:calc(var(--spacing) * 2)}.mt-4{margin-top:calc(var(--spacing) * 4)}.mt-6{margin-top:calc(var(--spacing) * 6)}.mt-8{margin-top:calc(var(--spacing) * 8)}.mr-2{margin-right:calc(var(--spacing) * 2)}.-mb-px{margin-bottom:-1px}.mb-1{margin-bottom:calc(var(--spacing) * 1)}.mb-2{margin-bottom:calc(var(--spacing) * 2)}.mb-4{margin-bottom:calc(var(--spacing) * 4)}.mb-6{margin-bottom:calc(var(--spacing) * 6)}.-ml-8{margin-left:calc(var(--spacing) * -8)}.-ml-px{margin-left:-1px}.ml-1{margin-left:calc(var(--spacing) * 1)}.ml-2{margin-left:calc(var(--spacing) * 2)}.ml-4{margin-left:calc(var(--spacing) * 4)}.ml-12{margin-left:calc(var(--spacing) * 12)}.contents{display:contents}.flex{display:flex}.grid{display:grid}.hidden{display:none}.inline-block{display:inline-block}.inline-flex{display:inline-flex}.table{display:table}.aspect-\[335\/364\]{aspect-ratio:335/364}.h-1{height:calc(var(--spacing) * 1)}.h-1\.5{height:calc(var(--spacing) * 1.5)}.h-2{height:calc(var(--spacing) * 2)}.h-2\.5{height:calc(var(--spacing) * 2.5)}.h-3{height:calc(var(--spacing) * 3)}.h-3\.5{height:calc(var(--spacing) * 3.5)}.h-5{height:calc(var(--spacing) * 5)}.h-8{height:calc(var(--spacing) * 8)}.h-14{height:calc(var(--spacing) * 14)}.h-14\.5{height:calc(var(--spacing) * 14.5)}.h-16{height:calc(var(--spacing) * 16)}.min-h-screen{min-height:100vh}.w-1{width:calc(var(--spacing) * 1)}.w-1\.5{width:calc(var(--spacing) * 1.5)}.w-2{width:calc(var(--spacing) * 2)}.w-2\.5{width:calc(var(--spacing) * 2.5)}.w-3{width:calc(var(--spacing) * 3)}.w-3\.5{width:calc(var(--spacing) * 3.5)}.w-5{width:calc(var(--spacing) * 5)}.w-8{width:calc(var(--spacing) * 8)}.w-\[438px\]{width:438px}.w-auto{width:auto}.w-full{width:100%}.max-w-6xl{max-width:var(--container-6xl)}.max-w-\[335px\]{max-width:335px}.max-w-none{max-width:none}.max-w-xl{max-width:var(--container-xl)}.flex-1{flex:1}.shrink-0{flex-shrink:0}.translate-y-0{--tw-translate-y:calc(var(--spacing) * 0);translate:var(--tw-translate-x) var(--tw-translate-y)}.transform{transform:var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,)}.cursor-default{cursor:default}.cursor-not-allowed{cursor:not-allowed}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.flex-col{flex-direction:column}.flex-col-reverse{flex-direction:column-reverse}.items-center{align-items:center}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.justify-end{justify-content:flex-end}.justify-items-center{justify-items:center}.gap-2{gap:calc(var(--spacing) * 2)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}:where(.space-x-1>:not(:last-child)){--tw-space-x-reverse:0;margin-inline-start:calc(calc(var(--spacing) * 1) * var(--tw-space-x-reverse));margin-inline-end:calc(calc(var(--spacing) * 1) * calc(1 - var(--tw-space-x-reverse)))}.overflow-hidden{overflow:hidden}.rounded-full{border-radius:3.40282e38px}.rounded-md{border-radius:var(--radius-md)}.rounded-sm{border-radius:var(--radius-sm)}.rounded-t-lg{border-top-left-radius:var(--radius-lg);border-top-right-radius:var(--radius-lg)}.rounded-l-md{border-top-left-radius:var(--radius-md);border-bottom-left-radius:var(--radius-md)}.rounded-r-md{border-top-right-radius:var(--radius-md);border-bottom-right-radius:var(--radius-md)}.rounded-br-lg{border-bottom-right-radius:var(--radius-lg)}.rounded-bl-lg{border-bottom-left-radius:var(--radius-lg)}.border{border-style:var(--tw-border-style);border-width:1px}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-r{border-right-style:var(--tw-border-style);border-right-width:1px}.border-\[\#19140035\]{border-color:#19140035}.border-\[\#e3e3e0\]{border-color:#e3e3e0}.border-black{border-color:var(--color-black)}.border-gray-200{border-color:var(--color-gray-200)}.border-gray-300{border-color:var(--color-gray-300)}.border-gray-400{border-color:var(--color-gray-400)}.border-transparent{border-color:#0000}.bg-\[\#1b1b18\]{background-color:#1b1b18}.bg-\[\#FDFDFC\]{background-color:#fdfdfc}.bg-\[\#dbdbd7\]{background-color:#dbdbd7}.bg-\[\#fff2f2\]{background-color:#fff2f2}.bg-gray-100{background-color:var(--color-gray-100)}.bg-gray-200{background-color:var(--color-gray-200)}.bg-white{background-color:var(--color-white)}.p-6{padding:calc(var(--spacing) * 6)}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-5{padding-inline:calc(var(--spacing) * 5)}.px-6{padding-inline:calc(var(--spacing) * 6)}.py-1{padding-block:calc(var(--spacing) * 1)}.py-1\.5{padding-block:calc(var(--spacing) * 1.5)}.py-2{padding-block:calc(var(--spacing) * 2)}.py-4{padding-block:calc(var(--spacing) * 4)}.pt-8{padding-top:calc(var(--spacing) * 8)}.pb-6{padding-bottom:calc(var(--spacing) * 6)}.pb-12{padding-bottom:calc(var(--spacing) * 12)}.text-center{text-align:center}.text-lg{font-size:var(--text-lg);line-height:var(--tw-leading,var(--text-lg--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-\[13px\]{font-size:13px}.leading-5{--tw-leading:calc(var(--spacing) * 5);line-height:calc(var(--spacing) * 5)}.leading-7{--tw-leading:calc(var(--spacing) * 7);line-height:calc(var(--spacing) * 7)}.leading-\[20px\]{--tw-leading:20px;line-height:20px}.leading-normal{--tw-leading:var(--leading-normal);line-height:var(--leading-normal)}.font-medium{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.tracking-wider{--tw-tracking:var(--tracking-wider);letter-spacing:var(--tracking-wider)}.text-\[\#1B1B18\],.text-\[\#1b1b18\]{color:#1b1b18}.text-\[\#706f6c\]{color:#706f6c}.text-\[\#F3BEC7\]{color:#f3bec7}.text-\[\#F8B803\]{color:#f8b803}.text-\[\#F53003\],.text-\[\#f53003\]{color:#f53003}.text-gray-200{color:var(--color-gray-200)}.text-gray-300{color:var(--color-gray-300)}.text-gray-400{color:var(--color-gray-400)}.text-gray-500{color:var(--color-gray-500)}.text-gray-600{color:var(--color-gray-600)}.text-gray-700{color:var(--color-gray-700)}.text-gray-800{color:var(--color-gray-800)}.text-gray-900{color:var(--color-gray-900)}.text-white{color:var(--color-white)}.uppercase{text-transform:uppercase}.underline{text-decoration-line:underline}.underline-offset-4{text-underline-offset:4px}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.opacity-100{opacity:1}.mix-blend-color{mix-blend-mode:color}.mix-blend-darken{mix-blend-mode:darken}.mix-blend-hard-light{mix-blend-mode:hard-light}.mix-blend-multiply{mix-blend-mode:multiply}.shadow{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-\[0px_0px_1px_0px_rgba\(0\,0\,0\,0\.03\)\,0px_1px_2px_0px_rgba\(0\,0\,0\,0\.06\)\]{--tw-shadow:0px 0px 1px 0px var(--tw-shadow-color,#00000008), 0px 1px 2px 0px var(--tw-shadow-color,#0000000f);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-\[inset_0px_0px_0px_1px_rgba\(26\,26\,0\,0\.16\)\]{--tw-shadow:inset 0px 0px 0px 1px var(--tw-shadow-color,#1a1a0029);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.ring-gray-300{--tw-ring-color:var(--color-gray-300)}.filter{filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.transition{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,opacity,box-shadow,transform,translate,scale,rotate,filter,-webkit-backdrop-filter,backdrop-filter,display,content-visibility,overlay,pointer-events;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-all{transition-property:all;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-opacity{transition-property:opacity;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.delay-200{transition-delay:.2s}.delay-300{transition-delay:.3s}.delay-400{transition-delay:.4s}.duration-150{--tw-duration:.15s;transition-duration:.15s}.duration-750{--tw-duration:.75s;transition-duration:.75s}.ease-in-out{--tw-ease:var(--ease-in-out);transition-timing-function:var(--ease-in-out)}.\[--stroke-color\:\#1B1B18\]{--stroke-color:#1b1b18}.not-has-\[nav\]\:hidden:not(:has(:is(nav))){display:none}.before\:absolute:before{content:var(--tw-content);position:absolute}.before\:top-0:before{content:var(--tw-content);top:calc(var(--spacing) * 0)}.before\:top-1\/2:before{content:var(--tw-content);top:50%}.before\:bottom-0:before{content:var(--tw-content);bottom:calc(var(--spacing) * 0)}.before\:bottom-1\/2:before{content:var(--tw-content);bottom:50%}.before\:left-\[0\.4rem\]:before{content:var(--tw-content);left:.4rem}.before\:border-l:before{content:var(--tw-content);border-left-style:var(--tw-border-style);border-left-width:1px}.before\:border-\[\#e3e3e0\]:before{content:var(--tw-content);border-color:#e3e3e0}@media(hover:hover){.hover\:border-\[\#1915014a\]:hover{border-color:#1915014a}.hover\:border-\[\#19140035\]:hover{border-color:#19140035}.hover\:border-black:hover{border-color:var(--color-black)}.hover\:bg-black:hover{background-color:var(--color-black)}.hover\:bg-gray-100:hover{background-color:var(--color-gray-100)}.hover\:text-gray-400:hover{color:var(--color-gray-400)}.hover\:text-gray-700:hover{color:var(--color-gray-700)}}.focus\:border-blue-300:focus{border-color:var(--color-blue-300)}.focus\:ring:focus{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.focus\:outline-none:focus{--tw-outline-style:none;outline-style:none}.active\:bg-gray-100:active{background-color:var(--color-gray-100)}.active\:text-gray-500:active{color:var(--color-gray-500)}.active\:text-gray-700:active{color:var(--color-gray-700)}.active\:text-gray-800:active{color:var(--color-gray-800)}@media(min-width:40rem){.sm\:flex{display:flex}.sm\:hidden{display:none}.sm\:flex-1{flex:1}.sm\:items-center{align-items:center}.sm\:justify-between{justify-content:space-between}.sm\:justify-start{justify-content:flex-start}.sm\:gap-2{gap:calc(var(--spacing) * 2)}.sm\:px-6{padding-inline:calc(var(--spacing) * 6)}.sm\:pt-0{padding-top:calc(var(--spacing) * 0)}}@media(min-width:64rem){.lg\:mt-10{margin-top:calc(var(--spacing) * 10)}.lg\:mb-0{margin-bottom:calc(var(--spacing) * 0)}.lg\:mb-6{margin-bottom:calc(var(--spacing) * 6)}.lg\:-ml-px{margin-left:-1px}.lg\:ml-0{margin-left:calc(var(--spacing) * 0)}.lg\:block{display:block}.lg\:aspect-auto{aspect-ratio:auto}.lg\:w-\[438px\]{width:438px}.lg\:max-w-4xl{max-width:var(--container-4xl)}.lg\:grow{flex-grow:1}.lg\:flex-row{flex-direction:row}.lg\:justify-center{justify-content:center}.lg\:rounded-t-none{border-top-left-radius:0;border-top-right-radius:0}.lg\:rounded-tl-lg{border-top-left-radius:var(--radius-lg)}.lg\:rounded-r-lg{border-top-right-radius:var(--radius-lg);border-bottom-right-radius:var(--radius-lg)}.lg\:rounded-br-none{border-bottom-right-radius:0}.lg\:p-8{padding:calc(var(--spacing) * 8)}.lg\:p-20{padding:calc(var(--spacing) * 20)}.lg\:px-8{padding-inline:calc(var(--spacing) * 8)}.lg\:pb-10{padding-bottom:calc(var(--spacing) * 10)}}.rtl\:flex-row-reverse:where(:dir(rtl),[dir=rtl],[dir=rtl] *){flex-direction:row-reverse}@media(prefers-color-scheme:dark){.dark\:border-\[\#3E3E3A\]{border-color:#3e3e3a}.dark\:border-\[\#eeeeec\]{border-color:#eeeeec}.dark\:border-gray-600{border-color:var(--color-gray-600)}.dark\:bg-\[\#0a0a0a\]{background-color:#0a0a0a}.dark\:bg-\[\#1D0002\]{background-color:#1d0002}.dark\:bg-\[\#3E3E3A\]{background-color:#3e3e3a}.dark\:bg-\[\#161615\]{background-color:#161615}.dark\:bg-\[\#eeeeec\]{background-color:#eeeeec}.dark\:bg-gray-700{background-color:var(--color-gray-700)}.dark\:bg-gray-800{background-color:var(--color-gray-800)}.dark\:bg-gray-900{background-color:var(--color-gray-900)}.dark\:text-\[\#1C1C1A\]{color:#1c1c1a}.dark\:text-\[\#4B0600\]{color:#4b0600}.dark\:text-\[\#391800\]{color:#391800}.dark\:text-\[\#733000\]{color:#733000}.dark\:text-\[\#A1A09A\]{color:#a1a09a}.dark\:text-\[\#EDEDEC\]{color:#ededec}.dark\:text-\[\#F61500\]{color:#f61500}.dark\:text-\[\#FF4433\]{color:#f43}.dark\:text-black{color:var(--color-black)}.dark\:text-gray-200{color:var(--color-gray-200)}.dark\:text-gray-300{color:var(--color-gray-300)}.dark\:text-gray-400{color:var(--color-gray-400)}.dark\:text-gray-600{color:var(--color-gray-600)}.dark\:mix-blend-hard-light{mix-blend-mode:hard-light}.dark\:mix-blend-normal{mix-blend-mode:normal}.dark\:shadow-\[inset_0px_0px_0px_1px_\#fffaed2d\]{--tw-shadow:inset 0px 0px 0px 1px var(--tw-shadow-color,#fffaed2d);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.dark\:\[--stroke-color\:\#FF750F\]{--stroke-color:#ff750f}.dark\:before\:border-\[\#3E3E3A\]:before{content:var(--tw-content);border-color:#3e3e3a}@media(hover:hover){.dark\:hover\:border-\[\#3E3E3A\]:hover{border-color:#3e3e3a}.dark\:hover\:border-\[\#62605b\]:hover{border-color:#62605b}.dark\:hover\:border-white:hover{border-color:var(--color-white)}.dark\:hover\:bg-gray-900:hover{background-color:var(--color-gray-900)}.dark\:hover\:bg-white:hover{background-color:var(--color-white)}.dark\:hover\:text-gray-200:hover{color:var(--color-gray-200)}.dark\:hover\:text-gray-300:hover{color:var(--color-gray-300)}}.dark\:focus\:border-blue-700:focus{border-color:var(--color-blue-700)}.dark\:focus\:border-blue-800:focus{border-color:var(--color-blue-800)}.dark\:active\:bg-gray-700:active{background-color:var(--color-gray-700)}.dark\:active\:text-gray-300:active{color:var(--color-gray-300)}}@starting-style{.starting\:opacity-0{opacity:0}}@media(prefers-reduced-motion:no-preference){@starting-style{.motion-safe\:starting\:-translate-x-\[26px\]{--tw-translate-x: -26px ;translate:var(--tw-translate-x) var(--tw-translate-y)}}@starting-style{.motion-safe\:starting\:-translate-x-\[51px\]{--tw-translate-x: -51px ;translate:var(--tw-translate-x) var(--tw-translate-y)}}@starting-style{.motion-safe\:starting\:-translate-x-\[78px\]{--tw-translate-x: -78px ;translate:var(--tw-translate-x) var(--tw-translate-y)}}@starting-style{.motion-safe\:starting\:-translate-x-\[102px\]{--tw-translate-x: -102px ;translate:var(--tw-translate-x) var(--tw-translate-y)}}@starting-style{.motion-safe\:starting\:translate-y-6{--tw-translate-y:calc(var(--spacing) * 6);translate:var(--tw-translate-x) var(--tw-translate-y)}}}}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-rotate-x{syntax:"*";inherits:false}@property --tw-rotate-y{syntax:"*";inherits:false}@property --tw-rotate-z{syntax:"*";inherits:false}@property --tw-skew-x{syntax:"*";inherits:false}@property --tw-skew-y{syntax:"*";inherits:false}@property --tw-space-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-leading{syntax:"*";inherits:false}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-tracking{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-blur{syntax:"*";inherits:false}@property --tw-brightness{syntax:"*";inherits:false}@property --tw-contrast{syntax:"*";inherits:false}@property --tw-grayscale{syntax:"*";inherits:false}@property --tw-hue-rotate{syntax:"*";inherits:false}@property --tw-invert{syntax:"*";inherits:false}@property --tw-opacity{syntax:"*";inherits:false}@property --tw-saturate{syntax:"*";inherits:false}@property --tw-sepia{syntax:"*";inherits:false}@property --tw-drop-shadow{syntax:"*";inherits:false}@property --tw-drop-shadow-color{syntax:"*";inherits:false}@property --tw-drop-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-drop-shadow-size{syntax:"*";inherits:false}@property --tw-duration{syntax:"*";inherits:false}@property --tw-ease{syntax:"*";inherits:false}@property --tw-content{syntax:"*";inherits:false;initial-value:""}@keyframes spin{to{transform:rotate(360deg)}}@keyframes ping{75%,to{opacity:0;transform:scale(2)}}@keyframes pulse{50%{opacity:.5}}@keyframes bounce{0%,to{animation-timing-function:cubic-bezier(.8,0,1,1);transform:translateY(-25%)}50%{animation-timing-function:cubic-bezier(0,0,.2,1);transform:none}}
-            </style>
-       
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <style>
+            body {
+                font-family: 'Work Sans', sans-serif;
+            }
+            .font-serif-heading {
+                font-family: 'Playfair Display', serif;
+            }
+            [x-cloak] { display: none !important; }
+        </style>
     </head>
-    <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] flex p-6 lg:p-8 items-center lg:justify-center min-h-screen flex-col">
-        <header class="w-full lg:max-w-4xl max-w-[335px] text-sm mb-6 not-has-[nav]:hidden">
-            @if (Route::has('login'))
-                <nav class="flex items-center justify-end gap-4">
-                    @auth
-                        <a
-                            href="{{ url('/dashboard') }}"
-                            class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal"
-                        >
-                            Dashboard
-                        </a>
-                    @else
-                        <a
-                            href="{{ route('login') }}"
-                            class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] text-[#1b1b18] border border-transparent hover:border-[#19140035] dark:hover:border-[#3E3E3A] rounded-sm text-sm leading-normal"
-                        >
-                            Log in
-                        </a>
+    <body x-data="{ mobileMenuOpen: false }" class="bg-[#fff8f8] text-[#25181c] antialiased selection:bg-[#ffd2e1] selection:text-[#b01f44] min-h-screen flex flex-col">
 
-                        @if (Route::has('register'))
-                            <a
-                                href="{{ route('register') }}"
-                                class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal">
-                                Register
-                            </a>
-                        @endif
-                    @endauth
+        <!-- 1. NAVBAR (STICKY + MOBILE HAMBURGER) -->
+        <header class="sticky top-0 z-50 bg-[#fff8f8]/95 backdrop-blur-md border-b border-[#e0bec1]/60 transition-all duration-300">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between w-full">
+                
+                <!-- BRAND LOGO WITH TRANSPARENT SVG -->
+                <a href="{{ route('home') }}" class="flex items-center gap-3 group shrink-0">
+                    <img src="{{ asset('logo/yalia-logos-trnsprnt.svg') }}" alt="Yalia Beauty Logo" class="h-10 sm:h-12 w-auto object-contain">
+                    <div class="flex flex-col">
+                        <span class="font-serif-heading font-bold text-xl tracking-tight text-[#25181c] group-hover:text-[#b01f44] transition-colors">
+                            Yalia Beauty
+                        </span>
+                        <span class="text-xs tracking-widest uppercase font-semibold text-[#9b4054] -mt-1">
+                            Salon & Nail Spa
+                        </span>
+                    </div>
+                </a>
+
+                <!-- DESKTOP NAV LINKS -->
+                <nav class="hidden xl:flex items-center space-x-6 font-medium text-sm text-[#594043]">
+                    <a href="#layanan" class="hover:text-[#b01f44] transition-colors whitespace-nowrap">Layanan</a>
+                    <a href="#keunggulan" class="hover:text-[#b01f44] transition-colors whitespace-nowrap">Kenapa Yalia</a>
+                    <a href="#galeri" class="hover:text-[#b01f44] transition-colors whitespace-nowrap">Galeri</a>
+                    <a href="#membership" class="hover:text-[#b01f44] transition-colors whitespace-nowrap">Membership VIP</a>
+                    <a href="#testimoni" class="hover:text-[#b01f44] transition-colors whitespace-nowrap">Testimoni</a>
+                    <a href="#lokasi" class="hover:text-[#b01f44] transition-colors whitespace-nowrap">Lokasi</a>
+                    <a href="#faq" class="hover:text-[#b01f44] transition-colors whitespace-nowrap">FAQ</a>
                 </nav>
-            @endif
-        </header>
-        <div class="flex items-center justify-center w-full transition-opacity opacity-100 duration-750 lg:grow starting:opacity-0">
-            <main class="flex max-w-[335px] w-full flex-col-reverse lg:max-w-4xl lg:flex-row">
-                <div class="text-[13px] leading-[20px] flex-1 p-6 pb-6 lg:p-20 lg:pb-10 bg-white dark:bg-[#161615] dark:text-[#EDEDEC] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d] rounded-bl-lg rounded-br-lg lg:rounded-tl-lg lg:rounded-br-none">
-                    <h1 class="mb-1 font-medium">Let's get started</h1>
-                    <p class="mb-2 text-[#706f6c] dark:text-[#A1A09A]">With so many options available to you,<br /> we suggest you start with the following:</p>
-                    <ul class="flex flex-col mb-4 lg:mb-6">
-                        <li class="flex items-center gap-4 py-2 relative before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A] before:top-1/2 before:bottom-0 before:left-[0.4rem] before:absolute">
-                            <span class="relative py-1 bg-white dark:bg-[#161615]">
-                                <span class="flex items-center justify-center rounded-full bg-[#FDFDFC] dark:bg-[#161615] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] w-3.5 h-3.5 border dark:border-[#3E3E3A] border-[#e3e3e0]">
-                                    <span class="rounded-full bg-[#dbdbd7] dark:bg-[#3E3E3A] w-1.5 h-1.5"></span>
-                                </span>
-                            </span>
-                            <span>
-                                Read the
-                                <a href="https://laravel.com/docs" target="_blank" class="inline-flex items-center space-x-1 font-medium underline underline-offset-4 text-[#f53003] dark:text-[#FF4433] ml-1">
-                                    <span>Documentation</span>
-                                    <svg
-                                        width="10"
-                                        height="11"
-                                        viewBox="0 0 10 11"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="w-2.5 h-2.5"
-                                    >
-                                        <path
-                                            d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001"
-                                            stroke="currentColor"
-                                            stroke-linecap="square"
-                                        />
-                                    </svg>
-                                </a>
-                            </span>
-                        </li>
-                        <li class="flex items-center gap-4 py-2 relative before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A] before:bottom-1/2 before:top-0 before:left-[0.4rem] before:absolute">
-                            <span class="relative py-1 bg-white dark:bg-[#161615]">
-                                <span class="flex items-center justify-center rounded-full bg-[#FDFDFC] dark:bg-[#161615] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] w-3.5 h-3.5 border dark:border-[#3E3E3A] border-[#e3e3e0]">
-                                    <span class="rounded-full bg-[#dbdbd7] dark:bg-[#3E3E3A] w-1.5 h-1.5"></span>
-                                </span>
-                            </span>
-                            <span>
-                                Watch video tutorials at
-                                <a href="https://laracasts.com" target="_blank" class="inline-flex items-center space-x-1 font-medium underline underline-offset-4 text-[#f53003] dark:text-[#FF4433] ml-1">
-                                    <span>Laracasts</span>
-                                    <svg
-                                        width="10"
-                                        height="11"
-                                        viewBox="0 0 10 11"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="w-2.5 h-2.5"
-                                    >
-                                        <path
-                                            d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001"
-                                            stroke="currentColor"
-                                            stroke-linecap="square"
-                                        />
-                                    </svg>
-                                </a>
-                            </span>
-                        </li>
-                    </ul>
-                    <ul class="flex gap-3 text-sm leading-normal">
-                        <li>
-                            <a href="https://cloud.laravel.com" target="_blank" class="inline-block dark:bg-[#eeeeec] dark:border-[#eeeeec] dark:text-[#1C1C1A] dark:hover:bg-white dark:hover:border-white hover:bg-black hover:border-black px-5 py-1.5 bg-[#1b1b18] rounded-sm border border-black text-white text-sm leading-normal">
-                                Deploy now
-                            </a>
-                        </li>
-                    </ul>
 
-                    <p class="mt-6 lg:mt-10 text-[#706f6c] dark:text-[#A1A09A]">
-                        v{{ app()->version() }}
-                        <a href="https://github.com/laravel/framework/blob/13.x/CHANGELOG.md" target="_blank" class="inline-flex items-center space-x-1 font-medium underline underline-offset-4 text-[#f53003] dark:text-[#FF4433] ml-1">
-                            <span>View changelog</span>
-                            <svg
-                                width="10"
-                                height="11"
-                                viewBox="0 0 10 11"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="w-2.5 h-2.5"
-                            >
-                                <path
-                                    d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001"
-                                    stroke="currentColor"
-                                    stroke-linecap="square"
-                                />
-                            </svg>
-                        </a>
+                <!-- RIGHT CONTAINER: AUTH/CTA BUTTONS + HAMBURGER ICON RIGHT NEXT TO EACH OTHER -->
+                <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                    <div class="hidden sm:flex items-center gap-2 sm:gap-3">
+                        @auth
+                            <a href="{{ route('user.dashboard') }}" 
+                               class="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#b01f44] text-white text-xs sm:text-sm font-semibold shadow-md hover:bg-[#910030] transition-all">
+                                Dashboard Saya
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}" 
+                               class="inline-flex items-center justify-center px-4 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-[#b01f44] hover:bg-[#ffd2e1]/50 transition-all">
+                                Masuk
+                            </a>
+                            <a href="{{ route('user.bookings.create') }}" 
+                               class="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#b01f44] text-white text-xs sm:text-sm font-semibold shadow-md hover:bg-[#910030] transition-all">
+                                Booking Sekarang
+                            </a>
+                        @endauth
+                    </div>
+
+                    <!-- HAMBURGER BUTTON (RIGHT NEXT TO BUTTONS) -->
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" 
+                            type="button" 
+                            class="xl:hidden p-2 rounded-xl text-[#594043] hover:text-[#b01f44] hover:bg-[#ffe8ed] focus:outline-none transition-colors"
+                            aria-label="Toggle Menu">
+                        <i x-show="!mobileMenuOpen" class="fa-solid fa-bars text-xl"></i>
+                        <i x-show="mobileMenuOpen" x-cloak class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- MOBILE MENU DROPDOWN -->
+            <div x-show="mobileMenuOpen" 
+                 x-cloak
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 -translate-y-2"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 -translate-y-2"
+                 class="xl:hidden bg-[#fff8f8] border-b border-[#e0bec1] px-4 pt-2 pb-6 space-y-3">
+                <a @click="mobileMenuOpen = false" href="#layanan" class="block py-2 text-sm font-medium text-[#594043] hover:text-[#b01f44]">Layanan Unggulan</a>
+                <a @click="mobileMenuOpen = false" href="#keunggulan" class="block py-2 text-sm font-medium text-[#594043] hover:text-[#b01f44]">Kenapa Yalia</a>
+                <a @click="mobileMenuOpen = false" href="#galeri" class="block py-2 text-sm font-medium text-[#594043] hover:text-[#b01f44]">Galeri & Hasil Kerja</a>
+                <a @click="mobileMenuOpen = false" href="#membership" class="block py-2 text-sm font-medium text-[#594043] hover:text-[#b01f44]">Membership VIP</a>
+                <a @click="mobileMenuOpen = false" href="#testimoni" class="block py-2 text-sm font-medium text-[#594043] hover:text-[#b01f44]">Ulasan Pelanggan</a>
+                <a @click="mobileMenuOpen = false" href="#lokasi" class="block py-2 text-sm font-medium text-[#594043] hover:text-[#b01f44]">Lokasi & Jam Operasional</a>
+                <a @click="mobileMenuOpen = false" href="#faq" class="block py-2 text-sm font-medium text-[#594043] hover:text-[#b01f44]">FAQ</a>
+                <div class="pt-4 border-t border-[#e0bec1]/60 flex flex-col gap-2">
+                    @auth
+                        <a href="{{ route('user.dashboard') }}" class="w-full py-3 text-center rounded-full bg-[#b01f44] text-white font-semibold text-sm">Dashboard Saya</a>
+                    @else
+                        <a href="{{ route('login') }}" class="w-full py-2.5 text-center rounded-full border border-[#b01f44] text-[#b01f44] font-semibold text-sm">Masuk</a>
+                        <a href="{{ route('user.bookings.create') }}" class="w-full py-3 text-center rounded-full bg-[#b01f44] text-white font-semibold text-sm shadow-md">Booking Sekarang</a>
+                    @endauth
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT -->
+        <main class="flex-grow">
+
+            <!-- 2. HERO SECTION -->
+            <section class="relative overflow-hidden py-12 lg:py-20 bg-gradient-to-b from-[#fff8f8] via-[#fdf5f6] to-[#fff8f8]">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
+                        
+                        <!-- HERO LEFT CONTENT -->
+                        <div class="flex flex-col items-start w-full">
+                            
+                            <!-- MINT COMPLEMENTARY TRUST BADGE -->
+                            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#d2fff0] border border-[#7e9990]/40 text-[#2a3330] text-xs font-semibold tracking-wide mb-6 shadow-xs">
+                                <i class="fa-solid fa-circle-check text-[#059669]"></i>
+                                <span>100% Higienis, Steril & Terapis Bersertifikasi</span>
+                            </div>
+
+                            <!-- HEADLINE -->
+                            <h1 class="font-serif-heading font-bold text-4xl sm:text-5xl lg:text-6xl text-[#25181c] leading-[1.15] mb-6">
+                                Perawatan Salon & Nail Art Elegance,<br>
+                                <span class="text-[#b01f44] italic">Tanpa Antri Online</span>
+                            </h1>
+
+                            <!-- SUBHEADLINE -->
+                            <p class="text-base sm:text-lg text-[#594043] leading-relaxed mb-8 max-w-2xl">
+                                Nikmati perawatan kecantikan profesional — mulai dari Facial Glow, Manicure Nail Art, Hair Spa, hingga Body Treatment. Bebas pilih datang ke Studio Salon atau dipanggil ke rumah Anda.
+                            </p>
+
+                            <!-- CTA BUTTON GROUP -->
+                            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full sm:w-auto mb-10">
+                                <a href="{{ route('user.bookings.create') }}" 
+                                   class="inline-flex items-center justify-center px-8 py-4 rounded-2xl bg-[#b01f44] text-white font-semibold text-base shadow-[0_4px_16px_rgba(176,31,68,0.25)] hover:bg-[#910030] hover:-translate-y-0.5 transition-all text-center">
+                                    <span>Booking Sekarang</span>
+                                    <i class="fa-solid fa-arrow-right ml-2"></i>
+                                </a>
+                                <a href="#layanan" 
+                                   class="inline-flex items-center justify-center px-8 py-4 rounded-2xl border-2 border-[#b01f44] text-[#b01f44] font-semibold text-base hover:bg-[#ffd2e1]/40 transition-all text-center">
+                                    Lihat Layanan
+                                </a>
+                            </div>
+
+                            <!-- TRUST STATS (HORIZONTAL SIDE-BY-SIDE WITH TOP BORDER ONLY) -->
+                            <div class="pt-6 border-t border-[#e0bec1]/60 w-full flex flex-row items-center justify-between gap-2 sm:gap-4 text-center">
+                                <div class="flex-1">
+                                    <span class="font-serif-heading font-bold text-xl sm:text-2xl lg:text-3xl text-[#b01f44] block">
+                                        4.9 <i class="fa-solid fa-star text-sm text-[#f59e0b]"></i>
+                                    </span>
+                                    <p class="text-xs text-[#594043] font-semibold mt-1">1,200+ Ulasan</p>
+                                </div>
+                                <div class="flex-1 border-l border-[#e0bec1]/40 px-2">
+                                    <span class="font-serif-heading font-bold text-xl sm:text-2xl lg:text-3xl text-[#b01f44] block">100%</span>
+                                    <p class="text-xs text-[#594043] font-semibold mt-1">Peralatan Steril</p>
+                                </div>
+                                <div class="flex-1 border-l border-[#e0bec1]/40 px-2">
+                                    <span class="font-serif-heading font-bold text-xl sm:text-2xl lg:text-3xl text-[#b01f44] block">Flexi</span>
+                                    <p class="text-xs text-[#594043] font-semibold mt-1">Salon & Home</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- HERO RIGHT VISUAL CARD SHOWCASE -->
+                        <div class="relative w-full">
+                            <div class="relative mx-auto max-w-md lg:max-w-none w-full">
+                                
+                                <!-- DECORATIVE GLOW -->
+                                <div class="absolute -inset-4 rounded-3xl bg-gradient-to-tr from-[#ffd2e1] to-[#f4dde1] blur-2xl opacity-60"></div>
+                                
+                                <!-- MAIN FEATURED CARD -->
+                                <div class="relative bg-white rounded-2xl p-6 sm:p-8 border border-[#e0bec1] shadow-[0_10px_30px_rgba(37,24,28,0.06)] w-full">
+                                    
+                                    <div class="flex items-center justify-between mb-6">
+                                        <div class="flex items-center gap-2">
+                                            <span class="px-3 py-1 rounded-full bg-[#ffe8ed] text-[#b01f44] text-xs font-semibold">Treatment Terpopuler</span>
+                                        </div>
+                                        <span class="text-xs font-semibold text-[#785341] bg-[#ffdbcb]/40 px-3 py-1 rounded-full flex items-center gap-1">
+                                            <i class="fa-solid fa-star text-[#f59e0b]"></i> 5.0 Rating
+                                        </span>
+                                    </div>
+
+                                    <!-- SERVICE CARD PREVIEW -->
+                                    <div class="p-5 rounded-2xl bg-[#fff8f8] border border-[#e0bec1]/60 mb-6">
+                                        <div class="flex items-start justify-between">
+                                            <div>
+                                                <h3 class="font-serif-heading font-bold text-lg text-[#25181c]">Hydrating Facial & Gel Nail Art</h3>
+                                                <p class="text-xs text-[#594043] mt-1">Serum Organik + Manicure Kuku Custom</p>
+                                            </div>
+                                            <span class="font-serif-heading font-bold text-lg text-[#b01f44]">Rp 250rb</span>
+                                        </div>
+                                        <div class="mt-4 flex items-center gap-4 text-xs font-medium text-[#594043]">
+                                            <span class="inline-flex items-center gap-1.5">
+                                                <i class="fa-regular fa-clock text-[#9b4054]"></i>
+                                                60 Menit
+                                            </span>
+                                            <span class="inline-flex items-center gap-1.5">
+                                                <i class="fa-solid fa-location-dot text-[#9b4054]"></i>
+                                                Salon / Dipanggil
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- REALTIME SLOT PREVIEW -->
+                                    <div class="space-y-3">
+                                        <p class="text-xs font-semibold uppercase tracking-wider text-[#594043]">Jadwal Ketersediaan Slot Hari Ini</p>
+                                        <div class="grid grid-cols-3 gap-2 text-center text-xs font-semibold">
+                                            <div class="py-2 rounded-xl bg-[#ffe8ed] text-[#b01f44] border border-[#b01f44]/20">10.00 WIB</div>
+                                            <div class="py-2 rounded-xl bg-[#ffe8ed] text-[#b01f44] border border-[#b01f44]/20">14.00 WIB</div>
+                                            <div class="py-2 rounded-xl bg-[#ffe8ed] text-[#b01f44] border border-[#b01f44]/20">16.30 WIB</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ACTION LINK -->
+                                    <div class="mt-6 text-center">
+                                        <a href="{{ route('user.bookings.create') }}" class="text-xs font-semibold text-[#b01f44] hover:underline inline-flex items-center gap-1">
+                                            <span>Pilih jadwal & beautician favorit Anda</span>
+                                            <i class="fa-solid fa-arrow-right"></i>
+                                        </a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. LAYANAN UNGGULAN -->
+            <section id="layanan" class="py-16 lg:py-24 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    
+                    <div class="text-center max-w-2xl mx-auto mb-16">
+                        <span class="text-xs uppercase tracking-widest font-semibold text-[#9b4054]">Katalog Treatment</span>
+                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c] mt-2 mb-4">
+                            Layanan Perawatan Favorit
+                        </h2>
+                        <p class="text-base text-[#594043]">
+                            Dirancang dengan produk medis bersertifikasi & formula organik untuk hasil kecantikan maksimal.
+                        </p>
+                    </div>
+
+                    <!-- GRID 4 KARTU LAYANAN -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full">
+                        
+                        <!-- CARD 1: FACIAL -->
+                        <div class="bg-[#fff8f8] rounded-2xl p-6 border border-[#e0bec1]/70 hover:shadow-[0_8px_24px_rgba(37,24,28,0.08)] hover:-translate-y-1 transition-all flex flex-col justify-between w-full">
+                            <div>
+                                <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-6">
+                                    <i class="fa-solid fa-spa text-xl"></i>
+                                </div>
+                                <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2">Facial & Skincare</h3>
+                                <p class="text-xs text-[#594043] leading-relaxed mb-4">Deep cleansing, detox jerawat, serum anti-aging, dan totok wajah pencerah alami.</p>
+                            </div>
+                            <div class="pt-4 border-t border-[#e0bec1]/50 flex items-center justify-between">
+                                <div>
+                                    <span class="text-xs text-[#594043] block">Mulai dari</span>
+                                    <span class="text-sm font-bold text-[#b01f44]">Rp 180.000</span>
+                                </div>
+                                <a href="{{ route('user.bookings.create') }}" class="px-4 py-2 rounded-xl bg-[#b01f44] text-white text-xs font-semibold hover:bg-[#910030] transition-colors">Booking</a>
+                            </div>
+                        </div>
+
+                        <!-- CARD 2: HAIR -->
+                        <div class="bg-[#fff8f8] rounded-2xl p-6 border border-[#e0bec1]/70 hover:shadow-[0_8px_24px_rgba(37,24,28,0.08)] hover:-translate-y-1 transition-all flex flex-col justify-between w-full">
+                            <div>
+                                <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-6">
+                                    <i class="fa-solid fa-scissors text-xl"></i>
+                                </div>
+                                <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2">Hair Treatment</h3>
+                                <p class="text-xs text-[#594043] leading-relaxed mb-4">Creambath buah, hair spa nutrisi tinggi, keratin smoothing, dan pewarnaan tren.</p>
+                            </div>
+                            <div class="pt-4 border-t border-[#e0bec1]/50 flex items-center justify-between">
+                                <div>
+                                    <span class="text-xs text-[#594043] block">Mulai dari</span>
+                                    <span class="text-sm font-bold text-[#b01f44]">Rp 150.000</span>
+                                </div>
+                                <a href="{{ route('user.bookings.create') }}" class="px-4 py-2 rounded-xl bg-[#b01f44] text-white text-xs font-semibold hover:bg-[#910030] transition-colors">Booking</a>
+                            </div>
+                        </div>
+
+                        <!-- CARD 3: NAIL ART -->
+                        <div class="bg-[#fff8f8] rounded-2xl p-6 border border-[#e0bec1]/70 hover:shadow-[0_8px_24px_rgba(37,24,28,0.08)] hover:-translate-y-1 transition-all flex flex-col justify-between w-full">
+                            <div>
+                                <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-6">
+                                    <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
+                                </div>
+                                <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2">Nail Art & Pedicure</h3>
+                                <p class="text-xs text-[#594043] leading-relaxed mb-4">Custom gel polish art, manicure spa, kuku palsu extension, dan vitamin kuku.</p>
+                            </div>
+                            <div class="pt-4 border-t border-[#e0bec1]/50 flex items-center justify-between">
+                                <div>
+                                    <span class="text-xs text-[#594043] block">Mulai dari</span>
+                                    <span class="text-sm font-bold text-[#b01f44]">Rp 120.000</span>
+                                </div>
+                                <a href="{{ route('user.bookings.create') }}" class="px-4 py-2 rounded-xl bg-[#b01f44] text-white text-xs font-semibold hover:bg-[#910030] transition-colors">Booking</a>
+                            </div>
+                        </div>
+
+                        <!-- CARD 4: BODY SPA -->
+                        <div class="bg-[#fff8f8] rounded-2xl p-6 border border-[#e0bec1]/70 hover:shadow-[0_8px_24px_rgba(37,24,28,0.08)] hover:-translate-y-1 transition-all flex flex-col justify-between w-full">
+                            <div>
+                                <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-6">
+                                    <i class="fa-solid fa-hot-tub-person text-xl"></i>
+                                </div>
+                                <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2">Body Treatment & Spa</h3>
+                                <p class="text-xs text-[#594043] leading-relaxed mb-4">Body scrub lulur rempah, pijat aromaterapi relaksasi, dan lulur susu murni.</p>
+                            </div>
+                            <div class="pt-4 border-t border-[#e0bec1]/50 flex items-center justify-between">
+                                <div>
+                                    <span class="text-xs text-[#594043] block">Mulai dari</span>
+                                    <span class="text-sm font-bold text-[#b01f44]">Rp 220.000</span>
+                                </div>
+                                <a href="{{ route('user.bookings.create') }}" class="px-4 py-2 rounded-xl bg-[#b01f44] text-white text-xs font-semibold hover:bg-[#910030] transition-colors">Booking</a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- 4. KENAPA PILIH YALIA (VALUE PROPOSITION) -->
+            <section id="keunggulan" class="py-16 lg:py-24 bg-[#fff8f8]">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    
+                    <div class="text-center max-w-2xl mx-auto mb-16">
+                        <span class="text-xs uppercase tracking-widest font-semibold text-[#9b4054]">Komitmen Kualitas</span>
+                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c] mt-2 mb-4">
+                            Kenapa Memilih Yalia Beauty?
+                        </h2>
+                        <p class="text-base text-[#594043]">
+                            Kami menggabungkan standar kesehatan tinggi dengan pelayanan ramah nan profesional.
+                        </p>
+                    </div>
+
+                    <!-- 4 VALUE PROPOSITIONS HORIZONTAL GRID -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 w-full">
+                        
+                        <div class="bg-white rounded-2xl p-6 border border-[#e0bec1] shadow-xs text-left w-full">
+                            <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-5">
+                                <i class="fa-solid fa-user-nurse text-xl"></i>
+                            </div>
+                            <h3 class="font-serif-heading font-bold text-lg text-[#25181c] mb-2">Terapis Bersertifikasi</h3>
+                            <p class="text-xs text-[#594043] leading-relaxed">Seluruh beautician berpengalaman min 3 tahun dan telah lulus ujian sertifikasi resmi.</p>
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-6 border border-[#e0bec1] shadow-xs text-left w-full">
+                            <div class="w-12 h-12 rounded-2xl bg-[#d2fff0] text-[#2a3330] flex items-center justify-center mb-5 border border-[#7e9990]/40">
+                                <i class="fa-solid fa-shield-virus text-xl text-[#059669]"></i>
+                            </div>
+                            <h3 class="font-serif-heading font-bold text-lg text-[#25181c] mb-2">100% Higienis & Steril</h3>
+                            <p class="text-xs text-[#594043] leading-relaxed">Peralatan kuku & jarum sekali pakai, disinfeksi UV instrumen sebelum & sesudah perawatan.</p>
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-6 border border-[#e0bec1] shadow-xs text-left w-full">
+                            <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-5">
+                                <i class="fa-solid fa-bottle-droplet text-xl"></i>
+                            </div>
+                            <h3 class="font-serif-heading font-bold text-lg text-[#25181c] mb-2">Produk Premium BPOM</h3>
+                            <p class="text-xs text-[#594043] leading-relaxed">Hanya menggunakan bahan skincare & kutek gel bersertifikasi BPOM yang aman bagi kulit.</p>
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-6 border border-[#e0bec1] shadow-xs text-left w-full">
+                            <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-5">
+                                <i class="fa-solid fa-calendar-check text-xl"></i>
+                            </div>
+                            <h3 class="font-serif-heading font-bold text-lg text-[#25181c] mb-2">Booking Online Tanpa Antri</h3>
+                            <p class="text-xs text-[#594043] leading-relaxed">Pilih jam & beautician favorit Anda dari HP, konfirmasi instan via WhatsApp & Midtrans.</p>
+                        </div>
+
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- 5. GALERI HASIL KERJA -->
+            <section id="galeri" class="py-16 lg:py-24 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    
+                    <div class="text-center max-w-2xl mx-auto mb-16">
+                        <span class="text-xs uppercase tracking-widest font-semibold text-[#9b4054]">Galeri Karya</span>
+                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c] mt-2 mb-4">
+                            Hasil Karya & Nail Art Custom
+                        </h2>
+                        <p class="text-base text-[#594043]">
+                            Intip beberapa kreasi manicure, facial glow, dan penataan rambut hasil beautician kami.
+                        </p>
+                    </div>
+
+                    <!-- GRID GALERI -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+                        
+                        <div class="relative overflow-hidden rounded-2xl bg-[#ffe8ed] aspect-square group border border-[#e0bec1]/50 w-full">
+                            <div class="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-[#25181c]/80 via-transparent to-transparent opacity-90 group-hover:opacity-100 transition-opacity">
+                                <span class="text-xs font-bold text-white">Soft Pastel Gel Nail Art</span>
+                                <span class="text-xs text-[#ffd2e1]">Manicure & Custom Painting</span>
+                            </div>
+                        </div>
+
+                        <div class="relative overflow-hidden rounded-2xl bg-[#ffdbcb] aspect-square group border border-[#e0bec1]/50 w-full">
+                            <div class="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-[#25181c]/80 via-transparent to-transparent opacity-90 group-hover:opacity-100 transition-opacity">
+                                <span class="text-xs font-bold text-white">Hydrating Facial Glow</span>
+                                <span class="text-xs text-[#ffd2e1]">Hasil Setelah 1x Treatment</span>
+                            </div>
+                        </div>
+
+                        <div class="relative overflow-hidden rounded-2xl bg-[#ffe8ed] aspect-square group border border-[#e0bec1]/50 w-full">
+                            <div class="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-[#25181c]/80 via-transparent to-transparent opacity-90 group-hover:opacity-100 transition-opacity">
+                                <span class="text-xs font-bold text-white">Keratin Smooth Hair Spa</span>
+                                <span class="text-xs text-[#ffd2e1]">Rambut Lembut & Berkilau</span>
+                            </div>
+                        </div>
+
+                        <div class="relative overflow-hidden rounded-2xl bg-[#ffdbcb] aspect-square group border border-[#e0bec1]/50 w-full">
+                            <div class="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-[#25181c]/80 via-transparent to-transparent opacity-90 group-hover:opacity-100 transition-opacity">
+                                <span class="text-xs font-bold text-white">Luxury Body Spa</span>
+                                <span class="text-xs text-[#ffd2e1]">Relaksasi Aromaterapi</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- 6. TESTIMONI PELANGGAN -->
+            <section id="testimoni" class="py-16 lg:py-24 bg-[#fff8f8]">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    
+                    <div class="text-center max-w-2xl mx-auto mb-16">
+                        <span class="text-xs uppercase tracking-widest font-semibold text-[#9b4054]">Ulasan Asli</span>
+                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c] mt-2 mb-4">
+                            Apa Kata Pelanggan Kami?
+                        </h2>
+                        <p class="text-base text-[#594043]">
+                            Pengalaman nyata pelanggan yang telah mencoba perawatan di salon maupun layanan panggilan rumah.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+                        
+                        <div class="bg-white rounded-2xl p-6 border border-[#e0bec1] shadow-xs flex flex-col justify-between w-full">
+                            <div>
+                                <div class="text-[#f59e0b] text-sm mb-3 space-x-1">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                                <p class="text-xs text-[#594043] leading-relaxed italic mb-4">
+                                    "Sangat puas dengan layanan Home Visit nya! Mbak beautician-nya ramah banget, alat-alatnya steril. Hasil facialnya langsung kelihatan glowing segar."
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-3 pt-4 border-t border-[#e0bec1]/50">
+                                <div class="w-9 h-9 rounded-full bg-[#ffd2e1] text-[#b01f44] font-bold text-xs flex items-center justify-center">SR</div>
+                                <div>
+                                    <span class="text-xs font-bold text-[#25181c] block">Siti Rahmawati</span>
+                                    <span class="text-xs text-[#594043]">Pelanggan Home Visit</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-6 border border-[#e0bec1] shadow-xs flex flex-col justify-between w-full">
+                            <div>
+                                <div class="text-[#f59e0b] text-sm mb-3 space-x-1">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                                <p class="text-xs text-[#594043] leading-relaxed italic mb-4">
+                                    "Tempat salonnya wangi, estetik, dan menenangkan. Creambath & massage-nya juara bikin pegal-pegal langsung hilang. Pasti langganan!"
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-3 pt-4 border-t border-[#e0bec1]/50">
+                                <div class="w-9 h-9 rounded-full bg-[#ffd2e1] text-[#b01f44] font-bold text-xs flex items-center justify-center">DP</div>
+                                <div>
+                                    <span class="text-xs font-bold text-[#25181c] block">Dian Permata</span>
+                                    <span class="text-xs text-[#594043]">Pelanggan Studio Salon</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-6 border border-[#e0bec1] shadow-xs flex flex-col justify-between w-full">
+                            <div>
+                                <div class="text-[#f59e0b] text-sm mb-3 space-x-1">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                                <p class="text-xs text-[#594043] leading-relaxed italic mb-4">
+                                    "Nail art nya rapi banget dan awet tahan 3 minggu lebih! Gak gampang mengelupas. Sistem booking online Midtrans juga praktis."
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-3 pt-4 border-t border-[#e0bec1]/50">
+                                <div class="w-9 h-9 rounded-full bg-[#ffd2e1] text-[#b01f44] font-bold text-xs flex items-center justify-center">AL</div>
+                                <div>
+                                    <span class="text-xs font-bold text-[#25181c] block">Anisa Larasati</span>
+                                    <span class="text-xs text-[#594043]">Gold Member VIP</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- 7. MEMBERSHIP / VIP TIER CARDS -->
+            <section id="membership" class="py-16 lg:py-24 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    
+                    <div class="text-center max-w-2xl mx-auto mb-16">
+                        <span class="text-xs uppercase tracking-widest font-semibold text-[#9b4054]">Loyalty Rewards</span>
+                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c] mt-2 mb-4">
+                            Keanggotaan VIP Membership
+                        </h2>
+                        <p class="text-base text-[#594043]">
+                            Kumpulkan poin setiap perawatan dan nikmati diskon khusus serta voucher gratis di setiap tier.
+                        </p>
+                    </div>
+
+                    <!-- 3 VIP TIER CARDS WITH GRADIENTS -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+                        
+                        <!-- SILVER TIER CARD -->
+                        <div class="rounded-2xl p-8 text-white shadow-lg flex flex-col justify-between relative overflow-hidden bg-[#0f172a] w-full" 
+                             style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #0369a1 70%, #0c4a6e 100%);">
+                            <div>
+                                <span class="text-xs uppercase tracking-widest text-[#e2e8f0] font-semibold">Tier Starter</span>
+                                <h3 class="font-serif-heading font-bold text-2xl mt-1 mb-4 text-white">Silver Badge</h3>
+                                <div class="text-2xl font-bold text-[#38bdf8] mb-6">Gratis saat daftar</div>
+                                <ul class="space-y-3 text-xs text-slate-200 mb-8">
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#38bdf8]"></i> Kumpulkan 1 Poin tiap transaksi Rp 10rb</li>
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#38bdf8]"></i> Diskon 5% di hari ulang tahun</li>
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#38bdf8]"></i> Voucher diskon Rp 20rb booking pertama</li>
+                                </ul>
+                            </div>
+                            <a href="{{ route('register') }}" class="w-full py-3 rounded-xl bg-white/20 hover:bg-white/30 text-white font-semibold text-xs text-center border border-white/30 transition-all">Daftar Akun Baru</a>
+                        </div>
+
+                        <!-- GOLD TIER CARD -->
+                        <div class="rounded-2xl p-8 text-white shadow-xl flex flex-col justify-between relative overflow-hidden transform md:-translate-y-2 border-2 border-[#f59e0b] bg-[#451a03] w-full" 
+                             style="background: linear-gradient(135deg, #451a03 0%, #78350f 40%, #b45309 70%, #78350f 100%);">
+                            <div class="absolute top-4 right-4 bg-[#f59e0b] text-[#451a03] text-xs font-bold uppercase px-3 py-1 rounded-full">Paling Populer</div>
+                            <div>
+                                <span class="text-xs uppercase tracking-widest text-[#fde68a] font-semibold">Tier Favorit</span>
+                                <h3 class="font-serif-heading font-bold text-2xl mt-1 mb-4 text-white">Gold VIP</h3>
+                                <div class="text-2xl font-bold text-[#fbbf24] mb-6">500 Poin Terkumpul</div>
+                                <ul class="space-y-3 text-xs text-amber-100 mb-8">
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#fbbf24]"></i> Diskon 10% untuk semua perawatan salon</li>
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#fbbf24]"></i> Prioritas bebas antri slot jam sibuk</li>
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#fbbf24]"></i> Gratis Creambath di bulan ulang tahun</li>
+                                </ul>
+                            </div>
+                            <a href="{{ route('register') }}" class="w-full py-3 rounded-xl bg-[#f59e0b] hover:bg-[#d97706] text-[#451a03] font-bold text-xs text-center shadow-md transition-all">Gabung Gold VIP</a>
+                        </div>
+
+                        <!-- PURPLE VIP TIER CARD -->
+                        <div class="rounded-2xl p-8 text-white shadow-lg flex flex-col justify-between relative overflow-hidden bg-[#1e1b4b] w-full" 
+                             style="background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 40%, #6b21a8 70%, #2e1065 100%);">
+                            <div>
+                                <span class="text-xs uppercase tracking-widest text-[#e9d5ff] font-semibold">Tier Eksklusif</span>
+                                <h3 class="font-serif-heading font-bold text-2xl mt-1 mb-4 text-white">Purple Elite VIP</h3>
+                                <div class="text-2xl font-bold text-[#c084fc] mb-6">1.500 Poin Terkumpul</div>
+                                <ul class="space-y-3 text-xs text-purple-200 mb-8">
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#c084fc]"></i> Diskon 15% tanpa minimum transaksi</li>
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#c084fc]"></i> Layanan panggil Home Visit tanpa ongkos jalan</li>
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#c084fc]"></i> Layanan VIP Room Privat khusus di Salon</li>
+                                </ul>
+                            </div>
+                            <a href="{{ route('register') }}" class="w-full py-3 rounded-xl bg-white/20 hover:bg-white/30 text-white font-semibold text-xs text-center border border-white/30 transition-all">Gabung Elite VIP</a>
+                        </div>
+
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- 8. CARA BOOKING -->
+            <section class="py-16 lg:py-24 bg-[#fff8f8]">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    
+                    <div class="text-center max-w-2xl mx-auto mb-16">
+                        <span class="text-xs uppercase tracking-widest font-semibold text-[#9b4054]">Alur Praktis</span>
+                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c] mt-2 mb-4">
+                            3 Langkah Mudah Booking Online
+                        </h2>
+                        <p class="text-base text-[#594043]">
+                            Pesan perawatan favorit Anda kurang dari 2 menit dari HP.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center w-full">
+                        
+                        <div class="bg-white rounded-2xl p-8 border border-[#e0bec1] shadow-xs w-full">
+                            <div class="w-12 h-12 rounded-full bg-[#b01f44] text-white font-bold text-lg flex items-center justify-center mx-auto mb-6 shadow-sm">1</div>
+                            <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2">Pilih Layanan & Lokasi</h3>
+                            <p class="text-xs text-[#594043] leading-relaxed">Tentukan jenis perawatan (Facial, Hair, Nail) serta pilih datang ke Salon atau Dipanggil ke Rumah.</p>
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-8 border border-[#e0bec1] shadow-xs w-full">
+                            <div class="w-12 h-12 rounded-full bg-[#b01f44] text-white font-bold text-lg flex items-center justify-center mx-auto mb-6 shadow-sm">2</div>
+                            <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2">Pilih Jadwal & Beautician</h3>
+                            <p class="text-xs text-[#594043] leading-relaxed">Lihat slot jam ketersediaan realtime dan pilih beautician favorit langganan Anda.</p>
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-8 border border-[#e0bec1] shadow-xs w-full">
+                            <div class="w-12 h-12 rounded-full bg-[#b01f44] text-white font-bold text-lg flex items-center justify-center mx-auto mb-6 shadow-sm">3</div>
+                            <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2">Konfirmasi & Pembayaran</h3>
+                            <p class="text-xs text-[#594043] leading-relaxed">Bayar praktis via QRIS/Transfer Midtrans atau pilih opsi Cash saat perawatan selesai.</p>
+                        </div>
+
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- 9. LOKASI & JAM OPERASIONAL -->
+            <section id="lokasi" class="py-16 lg:py-24 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
+                        
+                        <!-- LEFT COLUMN: LOKASI INFO -->
+                        <div class="w-full space-y-6">
+                            <span class="text-xs uppercase tracking-widest font-semibold text-[#9b4054]">Kunjungi Kami</span>
+                            <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c]">
+                                Lokasi Studio & Jam Operasional
+                            </h2>
+                            <p class="text-sm text-[#594043] leading-relaxed">
+                                Studio Salon Yalia Beauty berlokasi strategis di pusat kota dengan area parkir luas dan suasana interior nyaman.
+                            </p>
+
+                            <div class="space-y-4 pt-4 border-t border-[#e0bec1]/60 w-full">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center shrink-0">
+                                        <i class="fa-solid fa-location-dot text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-[#25181c]">Alamat Studio Salon</h4>
+                                        <p class="text-xs text-[#594043] mt-0.5">Jl. Beauty Beauty No. 88, Kota Beauty, Indonesia</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center shrink-0">
+                                        <i class="fa-solid fa-clock text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-[#25181c]">Jam Operasional</h4>
+                                        <p class="text-xs text-[#594043] mt-0.5">Senin – Minggu: 09.00 – 20.00 WIB (Buka Setiap Hari)</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-[#d2fff0] text-[#2a3330] flex items-center justify-center shrink-0 border border-[#7e9990]/40">
+                                        <i class="fa-brands fa-whatsapp text-lg text-[#059669]"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-[#25181c]">Bantuan WhatsApp Langsung</h4>
+                                        <p class="text-xs text-[#594043] mt-0.5">+62 822-2702-3362 (Customer Service Quick Response)</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="pt-4">
+                                <a href="https://wa.me/6282227023362" target="_blank" rel="noopener" 
+                                   class="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-[#059669] hover:bg-[#047857] text-white font-bold text-xs shadow-md transition-all"
+                                   style="background-color: #059669; color: #ffffff;">
+                                    <i class="fa-brands fa-whatsapp text-base"></i>
+                                    <span>Tanya Customer Service via WhatsApp</span>
+                                    <i class="fa-solid fa-arrow-right ml-1"></i>
+                                </a>
+                            </div>
+
+                        </div>
+
+                        <!-- RIGHT COLUMN: LEAFLET JS MAP CONTAINER -->
+                        <div class="w-full">
+                            <div class="bg-[#fff8f8] rounded-2xl p-4 sm:p-6 border border-[#e0bec1] shadow-md w-full relative">
+                                <div id="yalia-map" class="w-full h-80 lg:h-[420px] rounded-xl border border-[#e0bec1]/60 shadow-inner overflow-hidden z-0"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const lat = {{ (float) config('booking.salon.latitude', -7.4563287) }};
+                    const lng = {{ (float) config('booking.salon.longitude', 110.567513) }};
+                    const address = {{ \Illuminate\Support\Js::from(config('booking.salon.address', 'GHV9+F2 Candi, Kabupaten Boyolali, Jawa Tengah')) }};
+
+                    const map = L.map('yalia-map', {
+                        ariaLabel: 'Peta Lokasi Studio Salon Yalia Beauty',
+                        keyboard: true
+                    }).setView([lat, lng], 16);
+
+                    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 19,
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
+                    }).addTo(map);
+
+                    const customIcon = L.divIcon({
+                        className: 'custom-leaflet-marker',
+                        html: `<div class="w-10 h-10 rounded-full bg-[#b01f44] text-white flex items-center justify-center text-lg shadow-lg border-2 border-white transform -translate-x-1/2 -translate-y-1/2">
+                                <i class="fa-solid fa-location-dot"></i>
+                               </div>`,
+                        iconSize: [40, 40],
+                        iconAnchor: [20, 20],
+                        popupAnchor: [0, -20]
+                    });
+
+                    const marker = L.marker([lat, lng], {
+                        icon: customIcon,
+                        alt: "Studio Salon Yalia Beauty",
+                        title: "Studio Salon Yalia Beauty"
+                    }).addTo(map);
+
+                    const gmapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+
+                    marker.bindPopup(`
+                        <div class="p-2 text-center font-sans">
+                            <h4 class="font-serif-heading font-bold text-sm text-[#25181c] mb-1" style="color:#25181c; font-family:'Playfair Display',serif;">Studio Salon Yalia Beauty</h4>
+                            <p class="text-xs text-[#594043] leading-relaxed mb-2" style="color:#594043;">${address}</p>
+                            <a href="${gmapsUrl}" target="_blank" rel="noopener" class="inline-block px-3 py-1.5 rounded-lg bg-[#b01f44] text-white text-xs font-bold hover:bg-[#8f1937] transition-colors" style="background-color:#b01f44; color:#ffffff;">
+                                Buka Petunjuk Arah di Google Maps &rarr;
+                            </a>
+                        </div>
+                    `).openPopup();
+                });
+            </script>
+
+            <!-- 10. FAQ ACCORDION -->
+            <section id="faq" class="py-16 lg:py-24 bg-[#fff8f8]">
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    
+                    <div class="text-center max-w-2xl mx-auto mb-16">
+                        <span class="text-xs uppercase tracking-widest font-semibold text-[#9b4054]">Pertanyaan Umum</span>
+                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c] mt-2 mb-4">
+                            Pertanyaan Sering Diajukan
+                        </h2>
+                        <p class="text-base text-[#594043]">
+                            Temukan jawaban seputar layanan, jadwal, dan metode pembayaran kami.
+                        </p>
+                    </div>
+
+                    <!-- ACCORDION CONTAINER -->
+                    <div x-data="{ activeFaq: 1 }" class="space-y-4 w-full">
+                        
+                        <!-- FAQ ITEM 1 -->
+                        <div class="bg-white rounded-2xl border border-[#e0bec1] overflow-hidden shadow-xs w-full">
+                            <button @click="activeFaq = (activeFaq === 1 ? null : 1)" 
+                                    type="button"
+                                    class="w-full p-6 text-left font-serif-heading font-bold text-lg text-[#25181c] flex items-center justify-between focus:outline-none">
+                                <span>Bagaimana cara jadwal ulang (reschedule) booking saya?</span>
+                                <i class="fa-solid" :class="activeFaq === 1 ? 'fa-minus text-[#b01f44]' : 'fa-plus text-[#b01f44]'"></i>
+                            </button>
+                            <div x-show="activeFaq === 1" x-cloak class="px-6 pb-6 text-xs text-[#594043] leading-relaxed border-t border-[#e0bec1]/40 pt-4">
+                                Anda dapat melakukan reschedule jadwal minimal 3 jam sebelum jam perawatan melalui menu Dashboard Pengguna di bagian "Riwayat Booking" atau menghubungi Customer Service kami via WhatsApp.
+                            </div>
+                        </div>
+
+                        <!-- FAQ ITEM 2 -->
+                        <div class="bg-white rounded-2xl border border-[#e0bec1] overflow-hidden shadow-xs w-full">
+                            <button @click="activeFaq = (activeFaq === 2 ? null : 2)" 
+                                    type="button"
+                                    class="w-full p-6 text-left font-serif-heading font-bold text-lg text-[#25181c] flex items-center justify-between focus:outline-none">
+                                <span>Apakah peralatan kuku dan kecantikan dijamin steril?</span>
+                                <i class="fa-solid" :class="activeFaq === 2 ? 'fa-minus text-[#b01f44]' : 'fa-plus text-[#b01f44]'"></i>
+                            </button>
+                            <div x-show="activeFaq === 2" x-cloak class="px-6 pb-6 text-xs text-[#594043] leading-relaxed border-t border-[#e0bec1]/40 pt-4">
+                                Ya, 100%! Semua instrumen kuku logam melewati proses sterilisasi autoklaf & sinar UV medis. Handuk dan kuas yang digunakan selalu dicuci bersih dan dikemas steril per pelanggan.
+                            </div>
+                        </div>
+
+                        <!-- FAQ ITEM 3 -->
+                        <div class="bg-white rounded-2xl border border-[#e0bec1] overflow-hidden shadow-xs w-full">
+                            <button @click="activeFaq = (activeFaq === 3 ? null : 3)" 
+                                    type="button"
+                                    class="w-full p-6 text-left font-serif-heading font-bold text-lg text-[#25181c] flex items-center justify-between focus:outline-none">
+                                <span>Metode pembayaran apa saja yang didukung?</span>
+                                <i class="fa-solid" :class="activeFaq === 3 ? 'fa-minus text-[#b01f44]' : 'fa-plus text-[#b01f44]'"></i>
+                            </button>
+                            <div x-show="activeFaq === 3" x-cloak class="px-6 pb-6 text-xs text-[#594043] leading-relaxed border-t border-[#e0bec1]/40 pt-4">
+                                Kami mendukung pembayaran otomatis online melalui Midtrans (QRIS GoPay/OVO/ShopeePay, Transfer Bank BCA/Mandiri/BRI, Kartu Kredit) serta opsi bayar Cash langsung di salon/saat home visit.
+                            </div>
+                        </div>
+
+                        <!-- FAQ ITEM 4 -->
+                        <div class="bg-white rounded-2xl border border-[#e0bec1] overflow-hidden shadow-xs w-full">
+                            <button @click="activeFaq = (activeFaq === 4 ? null : 4)" 
+                                    type="button"
+                                    class="w-full p-6 text-left font-serif-heading font-bold text-lg text-[#25181c] flex items-center justify-between focus:outline-none">
+                                <span>Bagaimana syarat dan jangkauan area untuk Home Visit?</span>
+                                <i class="fa-solid" :class="activeFaq === 4 ? 'fa-minus text-[#b01f44]' : 'fa-plus text-[#b01f44]'"></i>
+                            </button>
+                            <div x-show="activeFaq === 4" x-cloak class="px-6 pb-6 text-xs text-[#594043] leading-relaxed border-t border-[#e0bec1]/40 pt-4">
+                                Layanan Home Visit mencakup area radius hingga 15 km dari Studio Salon. Beautician kami membawa seluruh peralatan lengkap termasuk lampu & alas steril, Anda tinggal duduk santai di rumah.
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="bg-[#25181c] text-[#fff8f8] py-12 border-t border-[#594043]" style="background-color: #25181c; color: #ffffff;">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8 w-full">
+                
+                <div class="md:col-span-2">
+                    <div class="flex items-center gap-3 mb-4">
+                        <img src="{{ asset('logo/yalia-logos.svg') }}" alt="Yalia Beauty Salon Logo" class="h-16 w-auto object-contain">
+                    </div>
+                    <p class="text-xs text-[#ffd2e1]/90 max-w-sm leading-relaxed mb-4" style="color: rgba(255, 210, 225, 0.9);">
+                        Platform booking perawatan kecantikan salon dan pemanggilan beautician ke rumah terpercaya.
+                    </p>
+                    <p class="text-xs text-white/70" style="color: rgba(255, 255, 255, 0.7);">
+                        © {{ date('Y') }} Yalia Beauty. All rights reserved.
                     </p>
                 </div>
-                <div class="bg-[#fff2f2] dark:bg-[#1D0002] relative lg:-ml-px -mb-px lg:mb-0 rounded-t-lg lg:rounded-t-none lg:rounded-r-lg aspect-[335/364] lg:aspect-auto w-full lg:w-[438px] shrink-0 overflow-hidden">
-                    {{-- Laravel Logo --}}
-                    <svg class="w-full text-[#F53003] dark:text-[#F61500] transition-all translate-y-0 opacity-100 max-w-none duration-750 starting:opacity-0 motion-safe:starting:translate-y-6" viewBox="0 0 438 104" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M17.2036 -3H0V102.197H49.5189V86.7187H17.2036V-3Z" fill="currentColor" />
-                        <path d="M110.256 41.6337C108.061 38.1275 104.945 35.3731 100.905 33.3681C96.8667 31.3647 92.8016 30.3618 88.7131 30.3618C83.4247 30.3618 78.5885 31.3389 74.201 33.2923C69.8111 35.2456 66.0474 37.928 62.9059 41.3333C59.7643 44.7401 57.3198 48.6726 55.5754 53.1293C53.8287 57.589 52.9572 62.274 52.9572 67.1813C52.9572 72.1925 53.8287 76.8995 55.5754 81.3069C57.3191 85.7173 59.7636 89.6241 62.9059 93.0293C66.0474 96.4361 69.8119 99.1155 74.201 101.069C78.5885 103.022 83.4247 103.999 88.7131 103.999C92.8016 103.999 96.8667 102.997 100.905 100.994C104.945 98.9911 108.061 96.2359 110.256 92.7282V102.195H126.563V32.1642H110.256V41.6337ZM108.76 75.7472C107.762 78.4531 106.366 80.8078 104.572 82.8112C102.776 84.8161 100.606 86.4183 98.0637 87.6206C95.5202 88.823 92.7004 89.4238 89.6103 89.4238C86.5178 89.4238 83.7252 88.823 81.2324 87.6206C78.7388 86.4183 76.5949 84.8161 74.7998 82.8112C73.004 80.8078 71.6319 78.4531 70.6856 75.7472C69.7356 73.0421 69.2644 70.1868 69.2644 67.1821C69.2644 64.1758 69.7356 61.3205 70.6856 58.6154C71.6319 55.9102 73.004 53.5571 74.7998 51.5522C76.5949 49.5495 78.738 47.9451 81.2324 46.7427C83.7252 45.5404 86.5178 44.9396 89.6103 44.9396C92.7012 44.9396 95.5202 45.5404 98.0637 46.7427C100.606 47.9451 102.776 49.5487 104.572 51.5522C106.367 53.5571 107.762 55.9102 108.76 58.6154C109.756 61.3205 110.256 64.1758 110.256 67.1821C110.256 70.1868 109.756 73.0421 108.76 75.7472Z" fill="currentColor" />
-                        <path d="M242.805 41.6337C240.611 38.1275 237.494 35.3731 233.455 33.3681C229.416 31.3647 225.351 30.3618 221.262 30.3618C215.974 30.3618 211.138 31.3389 206.75 33.2923C202.36 35.2456 198.597 37.928 195.455 41.3333C192.314 44.7401 189.869 48.6726 188.125 53.1293C186.378 57.589 185.507 62.274 185.507 67.1813C185.507 72.1925 186.378 76.8995 188.125 81.3069C189.868 85.7173 192.313 89.6241 195.455 93.0293C198.597 96.4361 202.361 99.1155 206.75 101.069C211.138 103.022 215.974 103.999 221.262 103.999C225.351 103.999 229.416 102.997 233.455 100.994C237.494 98.9911 240.611 96.2359 242.805 92.7282V102.195H259.112V32.1642H242.805V41.6337ZM241.31 75.7472C240.312 78.4531 238.916 80.8078 237.122 82.8112C235.326 84.8161 233.156 86.4183 230.614 87.6206C228.07 88.823 225.251 89.4238 222.16 89.4238C219.068 89.4238 216.275 88.823 213.782 87.6206C211.289 86.4183 209.145 84.8161 207.35 82.8112C205.554 80.8078 204.182 78.4531 203.236 75.7472C202.286 73.0421 201.814 70.1868 201.814 67.1821C201.814 64.1758 202.286 61.3205 203.236 58.6154C204.182 55.9102 205.554 53.5571 207.35 51.5522C209.145 49.5495 211.288 47.9451 213.782 46.7427C216.275 45.5404 219.068 44.9396 222.16 44.9396C225.251 44.9396 228.07 45.5404 230.614 46.7427C233.156 47.9451 235.326 49.5487 237.122 51.5522C238.917 53.5571 240.312 55.9102 241.31 58.6154C242.306 61.3205 242.806 64.1758 242.806 67.1821C242.805 70.1868 242.305 73.0421 241.31 75.7472Z" fill="currentColor" />
-                        <path d="M438 -3H421.694V102.197H438V-3Z" fill="currentColor" />
-                        <path d="M139.43 102.197H155.735V48.2834H183.712V32.1665H139.43V102.197Z" fill="currentColor" />
-                        <path d="M324.49 32.1665L303.995 85.794L283.498 32.1665H266.983L293.748 102.197H314.242L341.006 32.1665H324.49Z" fill="currentColor" />
-                        <path d="M376.571 30.3656C356.603 30.3656 340.797 46.8497 340.797 67.1828C340.797 89.6597 356.094 104 378.661 104C391.29 104 399.354 99.1488 409.206 88.5848L398.189 80.0226C398.183 80.031 389.874 90.9895 377.468 90.9895C363.048 90.9895 356.977 79.3111 356.977 73.269H411.075C413.917 50.1328 398.775 30.3656 376.571 30.3656ZM357.02 61.0967C357.145 59.7487 359.023 43.3761 376.442 43.3761C393.861 43.3761 395.978 59.7464 396.099 61.0967H357.02Z" fill="currentColor" />
-                    </svg>
 
-                    {{-- 13 --}}
-                    <svg class="w-[438px] max-w-none relative -mt-[6.6rem] -ml-8 lg:ml-0 [--stroke-color:#1B1B18] dark:[--stroke-color:#FF750F]" viewBox="0 0 440 392" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g class="mix-blend-darken dark:mix-blend-normal transition-all delay-300 opacity-100 duration-750 starting:opacity-0 text-[#1B1B18] dark:text-black">
-                            <mask id="path-1-mask" maskUnits="userSpaceOnUse" x="-0.328613" y="103" width="338" height="299" fill="black">
-                                <rect fill="white" x="-0.328613" y="103" width="338" height="299"/>
-                                <path d="M234.936 400.8C204.136 400.8 178.936 392.4 159.336 375.6C140.136 358.8 130.536 337 130.536 310.2H200.736C200.736 318.2 203.736 324.8 209.736 330C215.736 335.2 223.736 337.8 233.736 337.8C243.336 337.8 251.136 335 257.136 329.4C263.536 323.8 266.736 316.6 266.736 307.8C266.736 299.8 263.936 293.2 258.336 288C252.736 282.8 245.536 280.2 236.736 280.2H199.536V218.4H236.736C243.536 218.4 249.336 216 254.136 211.2C258.936 206.4 261.336 200.4 261.336 193.2C261.336 184.8 258.736 178.2 253.536 173.4C248.336 168.6 241.736 166.2 233.736 166.2C226.536 166.2 220.336 168.4 215.136 172.8C210.336 177.2 207.936 182.8 207.936 189.6H141.336C141.336 164.8 150.136 144.6 167.736 129C185.336 113 207.936 105 235.536 105C263.136 105 285.536 112.2 302.736 126.6C320.336 141 329.136 160 329.136 183.6C329.136 200.8 324.536 214.8 315.336 225.6C306.136 236 294.336 243.2 279.936 247.2C297.136 252 310.736 260.2 320.736 271.8C331.136 283.4 336.336 298 336.336 315.6C336.336 340.4 326.936 360.8 308.136 376.8C289.336 392.8 264.936 400.8 234.936 400.8Z"/>
-                                <path d="M26.8714 167.6H1.67139V105.2H94.6714V400.2H26.8714V167.6Z"/>
-                            </mask>
-                            <path d="M234.936 400.8C204.136 400.8 178.936 392.4 159.336 375.6C140.136 358.8 130.536 337 130.536 310.2H200.736C200.736 318.2 203.736 324.8 209.736 330C215.736 335.2 223.736 337.8 233.736 337.8C243.336 337.8 251.136 335 257.136 329.4C263.536 323.8 266.736 316.6 266.736 307.8C266.736 299.8 263.936 293.2 258.336 288C252.736 282.8 245.536 280.2 236.736 280.2H199.536V218.4H236.736C243.536 218.4 249.336 216 254.136 211.2C258.936 206.4 261.336 200.4 261.336 193.2C261.336 184.8 258.736 178.2 253.536 173.4C248.336 168.6 241.736 166.2 233.736 166.2C226.536 166.2 220.336 168.4 215.136 172.8C210.336 177.2 207.936 182.8 207.936 189.6H141.336C141.336 164.8 150.136 144.6 167.736 129C185.336 113 207.936 105 235.536 105C263.136 105 285.536 112.2 302.736 126.6C320.336 141 329.136 160 329.136 183.6C329.136 200.8 324.536 214.8 315.336 225.6C306.136 236 294.336 243.2 279.936 247.2C297.136 252 310.736 260.2 320.736 271.8C331.136 283.4 336.336 298 336.336 315.6C336.336 340.4 326.936 360.8 308.136 376.8C289.336 392.8 264.936 400.8 234.936 400.8Z" fill="currentColor"/>
-                            <path d="M26.8714 167.6H1.67139V105.2H94.6714V400.2H26.8714V167.6Z" fill="currentColor"/>
-                            <path d="M234.936 400.8C204.136 400.8 178.936 392.4 159.336 375.6C140.136 358.8 130.536 337 130.536 310.2H200.736C200.736 318.2 203.736 324.8 209.736 330C215.736 335.2 223.736 337.8 233.736 337.8C243.336 337.8 251.136 335 257.136 329.4C263.536 323.8 266.736 316.6 266.736 307.8C266.736 299.8 263.936 293.2 258.336 288C252.736 282.8 245.536 280.2 236.736 280.2H199.536V218.4H236.736C243.536 218.4 249.336 216 254.136 211.2C258.936 206.4 261.336 200.4 261.336 193.2C261.336 184.8 258.736 178.2 253.536 173.4C248.336 168.6 241.736 166.2 233.736 166.2C226.536 166.2 220.336 168.4 215.136 172.8C210.336 177.2 207.936 182.8 207.936 189.6H141.336C141.336 164.8 150.136 144.6 167.736 129C185.336 113 207.936 105 235.536 105C263.136 105 285.536 112.2 302.736 126.6C320.336 141 329.136 160 329.136 183.6C329.136 200.8 324.536 214.8 315.336 225.6C306.136 236 294.336 243.2 279.936 247.2C297.136 252 310.736 260.2 320.736 271.8C331.136 283.4 336.336 298 336.336 315.6C336.336 340.4 326.936 360.8 308.136 376.8C289.336 392.8 264.936 400.8 234.936 400.8Z" stroke="var(--stroke-color)" stroke-width="2.4" mask="url(#path-1-mask)"/>
-                            <path d="M26.8714 167.6H1.67139V105.2H94.6714V400.2H26.8714V167.6Z" stroke="var(--stroke-color)" stroke-width="2.4" mask="url(#path-1-mask)"/>
-                        </g>
-
-                        <g class="transition-all delay-400 opacity-100 duration-750 starting:opacity-0 motion-safe:starting:-translate-x-[26px] text-[#F3BEC7] dark:text-[#4B0600]">
-                            <mask id="path-2-mask" maskUnits="userSpaceOnUse" x="25.3357" y="103" width="338" height="299" fill="black">
-                                <rect fill="white" x="25.3357" y="103" width="338" height="299"/>
-                                <path d="M260.6 400.8C229.8 400.8 204.6 392.4 185 375.6C165.8 358.8 156.2 337 156.2 310.2H226.4C226.4 318.2 229.4 324.8 235.4 330C241.4 335.2 249.4 337.8 259.4 337.8C269 337.8 276.8 335 282.8 329.4C289.2 323.8 292.4 316.6 292.4 307.8C292.4 299.8 289.6 293.2 284 288C278.4 282.8 271.2 280.2 262.4 280.2H225.2V218.4H262.4C269.2 218.4 275 216 279.8 211.2C284.6 206.4 287 200.4 287 193.2C287 184.8 284.4 178.2 279.2 173.4C274 168.6 267.4 166.2 259.4 166.2C252.2 166.2 246 168.4 240.8 172.8C236 177.2 233.6 182.8 233.6 189.6H167C167 164.8 175.8 144.6 193.4 129C211 113 233.6 105 261.2 105C288.8 105 311.2 112.2 328.4 126.6C346 141 354.8 160 354.8 183.6C354.8 200.8 350.2 214.8 341 225.6C331.8 236 320 243.2 305.6 247.2C322.8 252 336.4 260.2 346.4 271.8C356.8 283.4 362 298 362 315.6C362 340.4 352.6 360.8 333.8 376.8C315 392.8 290.6 400.8 260.6 400.8Z"/>
-                                <path d="M52.5357 167.6H27.3357V105.2H120.336V400.2H52.5357V167.6Z"/>
-                            </mask>
-                            <path d="M260.6 400.8C229.8 400.8 204.6 392.4 185 375.6C165.8 358.8 156.2 337 156.2 310.2H226.4C226.4 318.2 229.4 324.8 235.4 330C241.4 335.2 249.4 337.8 259.4 337.8C269 337.8 276.8 335 282.8 329.4C289.2 323.8 292.4 316.6 292.4 307.8C292.4 299.8 289.6 293.2 284 288C278.4 282.8 271.2 280.2 262.4 280.2H225.2V218.4H262.4C269.2 218.4 275 216 279.8 211.2C284.6 206.4 287 200.4 287 193.2C287 184.8 284.4 178.2 279.2 173.4C274 168.6 267.4 166.2 259.4 166.2C252.2 166.2 246 168.4 240.8 172.8C236 177.2 233.6 182.8 233.6 189.6H167C167 164.8 175.8 144.6 193.4 129C211 113 233.6 105 261.2 105C288.8 105 311.2 112.2 328.4 126.6C346 141 354.8 160 354.8 183.6C354.8 200.8 350.2 214.8 341 225.6C331.8 236 320 243.2 305.6 247.2C322.8 252 336.4 260.2 346.4 271.8C356.8 283.4 362 298 362 315.6C362 340.4 352.6 360.8 333.8 376.8C315 392.8 290.6 400.8 260.6 400.8Z" fill="currentColor"/>
-                            <path d="M52.5357 167.6H27.3357V105.2H120.336V400.2H52.5357V167.6Z" fill="currentColor"/>
-                            <path d="M260.6 400.8C229.8 400.8 204.6 392.4 185 375.6C165.8 358.8 156.2 337 156.2 310.2H226.4C226.4 318.2 229.4 324.8 235.4 330C241.4 335.2 249.4 337.8 259.4 337.8C269 337.8 276.8 335 282.8 329.4C289.2 323.8 292.4 316.6 292.4 307.8C292.4 299.8 289.6 293.2 284 288C278.4 282.8 271.2 280.2 262.4 280.2H225.2V218.4H262.4C269.2 218.4 275 216 279.8 211.2C284.6 206.4 287 200.4 287 193.2C287 184.8 284.4 178.2 279.2 173.4C274 168.6 267.4 166.2 259.4 166.2C252.2 166.2 246 168.4 240.8 172.8C236 177.2 233.6 182.8 233.6 189.6H167C167 164.8 175.8 144.6 193.4 129C211 113 233.6 105 261.2 105C288.8 105 311.2 112.2 328.4 126.6C346 141 354.8 160 354.8 183.6C354.8 200.8 350.2 214.8 341 225.6C331.8 236 320 243.2 305.6 247.2C322.8 252 336.4 260.2 346.4 271.8C356.8 283.4 362 298 362 315.6C362 340.4 352.6 360.8 333.8 376.8C315 392.8 290.6 400.8 260.6 400.8Z" stroke="var(--stroke-color)" stroke-width="2.4" mask="url(#path-2-mask)"/>
-                            <path d="M52.5357 167.6H27.3357V105.2H120.336V400.2H52.5357V167.6Z" stroke="var(--stroke-color)" stroke-width="2.4" mask="url(#path-2-mask)"/>
-                        </g>
-                        
-                        <g class="mix-blend-color dark:mix-blend-hard-light transition-all delay-400 opacity-100 duration-750 starting:opacity-0 motion-safe:starting:-translate-x-[51px] text-[#F8B803] dark:text-[#391800]">
-                            <mask id="path-3-mask" maskUnits="userSpaceOnUse" x="51" y="103" width="338" height="299" fill="black">
-                                <rect fill="white" x="51" y="103" width="338" height="299"/>
-                                <path d="M286.264 400.8C255.464 400.8 230.264 392.4 210.664 375.6C191.464 358.8 181.864 337 181.864 310.2H252.064C252.064 318.2 255.064 324.8 261.064 330C267.064 335.2 275.064 337.8 285.064 337.8C294.664 337.8 302.464 335 308.464 329.4C314.864 323.8 318.064 316.6 318.064 307.8C318.064 299.8 315.264 293.2 309.664 288C304.064 282.8 296.864 280.2 288.064 280.2H250.864V218.4H288.064C294.864 218.4 300.664 216 305.464 211.2C310.264 206.4 312.664 200.4 312.664 193.2C312.664 184.8 310.064 178.2 304.864 173.4C299.664 168.6 293.064 166.2 285.064 166.2C277.864 166.2 271.664 168.4 266.464 172.8C261.664 177.2 259.264 182.8 259.264 189.6H192.664C192.664 164.8 201.464 144.6 219.064 129C236.664 113 259.264 105 286.864 105C314.464 105 336.864 112.2 354.064 126.6C371.664 141 380.464 160 380.464 183.6C380.464 200.8 375.864 214.8 366.664 225.6C357.464 236 345.664 243.2 331.264 247.2C348.464 252 362.064 260.2 372.064 271.8C382.464 283.4 387.664 298 387.664 315.6C387.664 340.4 378.264 360.8 359.464 376.8C340.664 392.8 316.264 400.8 286.264 400.8Z"/>
-                                <path d="M78.2 167.6H53V105.2H146V400.2H78.2V167.6Z"/>
-                            </mask>
-                            <path d="M286.264 400.8C255.464 400.8 230.264 392.4 210.664 375.6C191.464 358.8 181.864 337 181.864 310.2H252.064C252.064 318.2 255.064 324.8 261.064 330C267.064 335.2 275.064 337.8 285.064 337.8C294.664 337.8 302.464 335 308.464 329.4C314.864 323.8 318.064 316.6 318.064 307.8C318.064 299.8 315.264 293.2 309.664 288C304.064 282.8 296.864 280.2 288.064 280.2H250.864V218.4H288.064C294.864 218.4 300.664 216 305.464 211.2C310.264 206.4 312.664 200.4 312.664 193.2C312.664 184.8 310.064 178.2 304.864 173.4C299.664 168.6 293.064 166.2 285.064 166.2C277.864 166.2 271.664 168.4 266.464 172.8C261.664 177.2 259.264 182.8 259.264 189.6H192.664C192.664 164.8 201.464 144.6 219.064 129C236.664 113 259.264 105 286.864 105C314.464 105 336.864 112.2 354.064 126.6C371.664 141 380.464 160 380.464 183.6C380.464 200.8 375.864 214.8 366.664 225.6C357.464 236 345.664 243.2 331.264 247.2C348.464 252 362.064 260.2 372.064 271.8C382.464 283.4 387.664 298 387.664 315.6C387.664 340.4 378.264 360.8 359.464 376.8C340.664 392.8 316.264 400.8 286.264 400.8Z" fill="currentColor"/>
-                            <path d="M78.2 167.6H53V105.2H146V400.2H78.2V167.6Z" fill="currentColor"/>
-                            <path d="M286.264 400.8C255.464 400.8 230.264 392.4 210.664 375.6C191.464 358.8 181.864 337 181.864 310.2H252.064C252.064 318.2 255.064 324.8 261.064 330C267.064 335.2 275.064 337.8 285.064 337.8C294.664 337.8 302.464 335 308.464 329.4C314.864 323.8 318.064 316.6 318.064 307.8C318.064 299.8 315.264 293.2 309.664 288C304.064 282.8 296.864 280.2 288.064 280.2H250.864V218.4H288.064C294.864 218.4 300.664 216 305.464 211.2C310.264 206.4 312.664 200.4 312.664 193.2C312.664 184.8 310.064 178.2 304.864 173.4C299.664 168.6 293.064 166.2 285.064 166.2C277.864 166.2 271.664 168.4 266.464 172.8C261.664 177.2 259.264 182.8 259.264 189.6H192.664C192.664 164.8 201.464 144.6 219.064 129C236.664 113 259.264 105 286.864 105C314.464 105 336.864 112.2 354.064 126.6C371.664 141 380.464 160 380.464 183.6C380.464 200.8 375.864 214.8 366.664 225.6C357.464 236 345.664 243.2 331.264 247.2C348.464 252 362.064 260.2 372.064 271.8C382.464 283.4 387.664 298 387.664 315.6C387.664 340.4 378.264 360.8 359.464 376.8C340.664 392.8 316.264 400.8 286.264 400.8Z" stroke="var(--stroke-color)" stroke-width="2.4" mask="url(#path-3-mask)"/>
-                            <path d="M78.2 167.6H53V105.2H146V400.2H78.2V167.6Z" stroke="var(--stroke-color)" stroke-width="2.4" mask="url(#path-3-mask)"/>
-                        </g>
-                        
-                        <g class="mix-blend-multiply dark:mix-blend-normal transition-all delay-400 opacity-100 duration-750 starting:opacity-0 motion-safe:starting:-translate-x-[78px] text-[#F3BEC7] dark:text-[#733000]">
-                            <mask id="path-4-mask" maskUnits="userSpaceOnUse" x="76.6643" y="103" width="338" height="299" fill="black">
-                                <rect fill="white" x="76.6643" y="103" width="338" height="299"/>
-                                <path d="M311.929 400.8C281.129 400.8 255.929 392.4 236.329 375.6C217.129 358.8 207.529 337 207.529 310.2H277.729C277.729 318.2 280.729 324.8 286.729 330C292.729 335.2 300.729 337.8 310.729 337.8C320.329 337.8 328.129 335 334.129 329.4C340.529 323.8 343.729 316.6 343.729 307.8C343.729 299.8 340.929 293.2 335.329 288C329.729 282.8 322.529 280.2 313.729 280.2H276.529V218.4H313.729C320.529 218.4 326.329 216 331.129 211.2C335.929 206.4 338.329 200.4 338.329 193.2C338.329 184.8 335.729 178.2 330.529 173.4C325.329 168.6 318.729 166.2 310.729 166.2C303.529 166.2 297.329 168.4 292.129 172.8C287.329 177.2 284.929 182.8 284.929 189.6H218.329C218.329 164.8 227.129 144.6 244.729 129C262.329 113 284.929 105 312.529 105C340.129 105 362.529 112.2 379.729 126.6C397.329 141 406.129 160 406.129 183.6C406.129 200.8 401.529 214.8 392.329 225.6C383.129 236 371.329 243.2 356.929 247.2C374.129 252 387.729 260.2 397.729 271.8C408.129 283.4 413.329 298 413.329 315.6C413.329 340.4 403.929 360.8 385.129 376.8C366.329 392.8 341.929 400.8 311.929 400.8Z"/>
-                                <path d="M103.864 167.6H78.6643V105.2H171.664V400.2H103.864V167.6Z"/>
-                            </mask>
-                            <path d="M311.929 400.8C281.129 400.8 255.929 392.4 236.329 375.6C217.129 358.8 207.529 337 207.529 310.2H277.729C277.729 318.2 280.729 324.8 286.729 330C292.729 335.2 300.729 337.8 310.729 337.8C320.329 337.8 328.129 335 334.129 329.4C340.529 323.8 343.729 316.6 343.729 307.8C343.729 299.8 340.929 293.2 335.329 288C329.729 282.8 322.529 280.2 313.729 280.2H276.529V218.4H313.729C320.529 218.4 326.329 216 331.129 211.2C335.929 206.4 338.329 200.4 338.329 193.2C338.329 184.8 335.729 178.2 330.529 173.4C325.329 168.6 318.729 166.2 310.729 166.2C303.529 166.2 297.329 168.4 292.129 172.8C287.329 177.2 284.929 182.8 284.929 189.6H218.329C218.329 164.8 227.129 144.6 244.729 129C262.329 113 284.929 105 312.529 105C340.129 105 362.529 112.2 379.729 126.6C397.329 141 406.129 160 406.129 183.6C406.129 200.8 401.529 214.8 392.329 225.6C383.129 236 371.329 243.2 356.929 247.2C374.129 252 387.729 260.2 397.729 271.8C408.129 283.4 413.329 298 413.329 315.6C413.329 340.4 403.929 360.8 385.129 376.8C366.329 392.8 341.929 400.8 311.929 400.8Z" fill="currentColor"/>
-                            <path d="M103.864 167.6H78.6643V105.2H171.664V400.2H103.864V167.6Z" fill="currentColor"/>
-                            <path d="M311.929 400.8C281.129 400.8 255.929 392.4 236.329 375.6C217.129 358.8 207.529 337 207.529 310.2H277.729C277.729 318.2 280.729 324.8 286.729 330C292.729 335.2 300.729 337.8 310.729 337.8C320.329 337.8 328.129 335 334.129 329.4C340.529 323.8 343.729 316.6 343.729 307.8C343.729 299.8 340.929 293.2 335.329 288C329.729 282.8 322.529 280.2 313.729 280.2H276.529V218.4H313.729C320.529 218.4 326.329 216 331.129 211.2C335.929 206.4 338.329 200.4 338.329 193.2C338.329 184.8 335.729 178.2 330.529 173.4C325.329 168.6 318.729 166.2 310.729 166.2C303.529 166.2 297.329 168.4 292.129 172.8C287.329 177.2 284.929 182.8 284.929 189.6H218.329C218.329 164.8 227.129 144.6 244.729 129C262.329 113 284.929 105 312.529 105C340.129 105 362.529 112.2 379.729 126.6C397.329 141 406.129 160 406.129 183.6C406.129 200.8 401.529 214.8 392.329 225.6C383.129 236 371.329 243.2 356.929 247.2C374.129 252 387.729 260.2 397.729 271.8C408.129 283.4 413.329 298 413.329 315.6C413.329 340.4 403.929 360.8 385.129 376.8C366.329 392.8 341.929 400.8 311.929 400.8Z" stroke="var(--stroke-color)" stroke-width="2.4" mask="url(#path-4-mask)"/>
-                            <path d="M103.864 167.6H78.6643V105.2H171.664V400.2H103.864V167.6Z" stroke="var(--stroke-color)" stroke-width="2.4" mask="url(#path-4-mask)"/>
-                        </g>
-                        
-                        <g class="mix-blend-hard-light transition-all delay-400 opacity-100 duration-750 starting:opacity-0 motion-safe:starting:-translate-x-[102px] text-[#F3BEC7] dark:text-[#4B0600]">
-                            <mask id="path-5-mask" maskUnits="userSpaceOnUse" x="102.329" y="103" width="338" height="299" fill="black">
-                                <rect fill="white" x="102.329" y="103" width="338" height="299"/>
-                                <path d="M337.593 400.8C306.793 400.8 281.593 392.4 261.993 375.6C242.793 358.8 233.193 337 233.193 310.2H303.393C303.393 318.2 306.393 324.8 312.393 330C318.393 335.2 326.393 337.8 336.393 337.8C345.993 337.8 353.793 335 359.793 329.4C366.193 323.8 369.393 316.6 369.393 307.8C369.393 299.8 366.593 293.2 360.993 288C355.393 282.8 348.193 280.2 339.393 280.2H302.193V218.4H339.393C346.193 218.4 351.993 216 356.793 211.2C361.593 206.4 363.993 200.4 363.993 193.2C363.993 184.8 361.393 178.2 356.193 173.4C350.993 168.6 344.393 166.2 336.393 166.2C329.193 166.2 322.993 168.4 317.793 172.8C312.993 177.2 310.593 182.8 310.593 189.6H243.993C243.993 164.8 252.793 144.6 270.393 129C287.993 113 310.593 105 338.193 105C365.793 105 388.193 112.2 405.393 126.6C422.993 141 431.793 160 431.793 183.6C431.793 200.8 427.193 214.8 417.993 225.6C408.793 236 396.993 243.2 382.593 247.2C399.793 252 413.393 260.2 423.393 271.8C433.793 283.4 438.993 298 438.993 315.6C438.993 340.4 429.593 360.8 410.793 376.8C391.993 392.8 367.593 400.8 337.593 400.8Z"/>
-                                <path d="M129.529 167.6H104.329V105.2H197.329V400.2H129.529V167.6Z"/>
-                            </mask>
-                            <path d="M337.593 400.8C306.793 400.8 281.593 392.4 261.993 375.6C242.793 358.8 233.193 337 233.193 310.2H303.393C303.393 318.2 306.393 324.8 312.393 330C318.393 335.2 326.393 337.8 336.393 337.8C345.993 337.8 353.793 335 359.793 329.4C366.193 323.8 369.393 316.6 369.393 307.8C369.393 299.8 366.593 293.2 360.993 288C355.393 282.8 348.193 280.2 339.393 280.2H302.193V218.4H339.393C346.193 218.4 351.993 216 356.793 211.2C361.593 206.4 363.993 200.4 363.993 193.2C363.993 184.8 361.393 178.2 356.193 173.4C350.993 168.6 344.393 166.2 336.393 166.2C329.193 166.2 322.993 168.4 317.793 172.8C312.993 177.2 310.593 182.8 310.593 189.6H243.993C243.993 164.8 252.793 144.6 270.393 129C287.993 113 310.593 105 338.193 105C365.793 105 388.193 112.2 405.393 126.6C422.993 141 431.793 160 431.793 183.6C431.793 200.8 427.193 214.8 417.993 225.6C408.793 236 396.993 243.2 382.593 247.2C399.793 252 413.393 260.2 423.393 271.8C433.793 283.4 438.993 298 438.993 315.6C438.993 340.4 429.593 360.8 410.793 376.8C391.993 392.8 367.593 400.8 337.593 400.8Z" fill="currentColor"/>
-                            <path d="M129.529 167.6H104.329V105.2H197.329V400.2H129.529V167.6Z" fill="currentColor"/>
-                            <path d="M337.593 400.8C306.793 400.8 281.593 392.4 261.993 375.6C242.793 358.8 233.193 337 233.193 310.2H303.393C303.393 318.2 306.393 324.8 312.393 330C318.393 335.2 326.393 337.8 336.393 337.8C345.993 337.8 353.793 335 359.793 329.4C366.193 323.8 369.393 316.6 369.393 307.8C369.393 299.8 366.593 293.2 360.993 288C355.393 282.8 348.193 280.2 339.393 280.2H302.193V218.4H339.393C346.193 218.4 351.993 216 356.793 211.2C361.593 206.4 363.993 200.4 363.993 193.2C363.993 184.8 361.393 178.2 356.193 173.4C350.993 168.6 344.393 166.2 336.393 166.2C329.193 166.2 322.993 168.4 317.793 172.8C312.993 177.2 310.593 182.8 310.593 189.6H243.993C243.993 164.8 252.793 144.6 270.393 129C287.993 113 310.593 105 338.193 105C365.793 105 388.193 112.2 405.393 126.6C422.993 141 431.793 160 431.793 183.6C431.793 200.8 427.193 214.8 417.993 225.6C408.793 236 396.993 243.2 382.593 247.2C399.793 252 413.393 260.2 423.393 271.8C433.793 283.4 438.993 298 438.993 315.6C438.993 340.4 429.593 360.8 410.793 376.8C391.993 392.8 367.593 400.8 337.593 400.8Z" stroke="var(--stroke-color)" stroke-width="2.4" mask="url(#path-5-mask)"/>
-                            <path d="M129.529 167.6H104.329V105.2H197.329V400.2H129.529V167.6Z" stroke="var(--stroke-color)" stroke-width="2.4" mask="url(#path-5-mask)"/>
-                        </g>
-                    </svg>
-                    <div class="absolute inset-0 rounded-t-lg lg:rounded-t-none lg:rounded-r-lg shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]"></div>
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-[#ffd2e1] mb-4" style="color: #ffd2e1;">Tautan Pintas</h4>
+                    <ul class="space-y-2 text-xs text-white/90" style="color: rgba(255, 255, 255, 0.9);">
+                        <li><a href="#layanan" class="hover:text-white transition-colors">Menu Treatment</a></li>
+                        <li><a href="#keunggulan" class="hover:text-white transition-colors">Kenapa Yalia</a></li>
+                        <li><a href="#galeri" class="hover:text-white transition-colors">Galeri Karya</a></li>
+                        <li><a href="#membership" class="hover:text-white transition-colors">Membership VIP</a></li>
+                        <li><a href="#faq" class="hover:text-white transition-colors">FAQ Pertanyaan</a></li>
+                    </ul>
                 </div>
-            </main>
-        </div>
 
-        @if (Route::has('login'))
-            <div class="h-14.5 hidden lg:block"></div>
-        @endif
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-[#ffd2e1] mb-4" style="color: #ffd2e1;">Hubungi Kami</h4>
+                    <ul class="space-y-2 text-xs text-white/90" style="color: rgba(255, 255, 255, 0.9);">
+                        <li><i class="fa-solid fa-location-dot mr-2 text-[#ffd2e1]"></i> Studio Salon Yalia Beauty</li>
+                        <li><i class="fa-brands fa-whatsapp mr-2 text-[#ffd2e1]"></i> WhatsApp: +62 822-2702-3362</li>
+                        <li><i class="fa-solid fa-clock mr-2 text-[#ffd2e1]"></i> Operasional: 09.00 - 20.00 WIB</li>
+                    </ul>
+                </div>
+
+            </div>
+        </footer>
+
     </body>
 </html>

@@ -1,4 +1,4 @@
-<footer class="bg-surface-container-highest full-width mt-section-gap">
+<footer class="bg-surface-container-highest full-width mt-auto mb-0">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-desktop py-12 w-full max-w-container-max mx-auto">
         <div class="space-y-4">
             <div class="text-headline-sm font-headline-sm font-bold text-on-surface">Yalia Beauty</div>
@@ -24,12 +24,15 @@
         </div>
         <div class="space-y-4">
             <div class="text-label-lg font-label-lg text-primary">Connect</div>
-            <div class="flex gap-4">
-                <a class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-primary shadow-sm hover:scale-110 transition-transform" href="#" aria-label="Share">
-                    <span class="material-symbols-outlined">share</span>
+            <div class="flex gap-3">
+                <a class="w-10 h-10 rounded-full bg-white flex items-center justify-center p-2 shadow-sm hover:scale-110 transition-transform" href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                    <img src="{{ asset('images/ig.svg') }}" alt="Instagram" class="w-5 h-5 object-contain">
                 </a>
-                <a class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-primary shadow-sm hover:scale-110 transition-transform" href="{{ route('profile.edit') }}" aria-label="Profile">
-                    <span class="material-symbols-outlined">person</span>
+                <a class="w-10 h-10 rounded-full bg-white flex items-center justify-center p-2 shadow-sm hover:scale-110 transition-transform" href="https://tiktok.com" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                    <img src="{{ asset('images/tiktok.svg') }}" alt="TikTok" class="w-5 h-5 object-contain">
+                </a>
+                <a class="w-10 h-10 rounded-full bg-white flex items-center justify-center p-2 shadow-sm hover:scale-110 transition-transform" href="https://wa.me" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+                    <img src="{{ asset('images/wa.svg') }}" alt="WhatsApp" class="w-5 h-5 object-contain">
                 </a>
             </div>
         </div>

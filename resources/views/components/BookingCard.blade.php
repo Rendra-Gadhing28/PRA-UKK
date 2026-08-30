@@ -12,16 +12,13 @@
     $statusBadgeClass = $stVal === 'confirmed'
         ? 'bg-accent-clear text-on-secondary-container'
         : 'bg-surface-container-high text-on-secondary-container';
-    $thumbnail = optional($booking->treatments->first())->image;
+    $firstTr = $booking->treatments->first();
+    $imgUrl = $firstTr ? $firstTr->image_url : \App\Support\ImageHelper::url(null);
 @endphp
 
 <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-border-subtle flex flex-col lg:flex-row gap-8 items-center transition-all hover:shadow-md {{ $stVal === 'canceled' ? 'opacity-70' : '' }}">
     <div class="relative w-full lg:w-48 h-48 rounded-2xl overflow-hidden shrink-0 bg-surface-container-high">
-        @if($thumbnail)
-            <img class="w-full h-full object-cover" src="{{ asset('storage/' . $thumbnail) }}" alt="{{ $booking->treatments->first()->name }}">
-        @else
-            <div class="w-full h-full flex items-center justify-center text-4xl">💆</div>
-        @endif
+        <img class="w-full h-full object-cover" src="{{ $imgUrl }}" alt="{{ $firstTr?->name ?? 'Treatment' }}">
     </div>
 
     <div class="flex-1 w-full space-y-4">

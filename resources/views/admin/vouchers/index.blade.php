@@ -182,7 +182,7 @@
                                             <span class="font-mono font-black text-sm text-[#f45472]">
                                                 {{ $v->used_count }}/{{ $v->quota }}
                                             </span>
-                                            <span class="text-[10px] font-bold text-rose-600 bg-rose-100/80 px-1.5 py-0.5 rounded-md">
+                                            <span class="text-xs font-bold text-rose-600 bg-rose-100/80 px-1.5 py-0.5 rounded-md">
                                                 {{ $percentUsed }}%
                                             </span>
                                         </div>
@@ -194,14 +194,14 @@
                                              style="width: {{ $percentUsed }}%"></div>
                                     </div>
 
-                                    <div class="flex items-center justify-between text-[10px] text-gray-500">
+                                    <div class="flex items-center justify-between text-xs text-gray-500">
                                         <span>Terpakai: <strong class="text-gray-700">{{ $v->used_count }}</strong></span>
                                         <span>Sisa: <strong class="text-rose-600">{{ max(0, $v->quota - $v->used_count) }}</strong> kuota</span>
                                     </div>
                                 </div>
 
                                 {{-- Expiry Date --}}
-                                <div class="flex items-center justify-between text-[11px] text-gray-500 pt-0.5">
+                                <div class="flex items-center justify-between text-xs text-gray-500 pt-0.5">
                                     <span class="flex items-center gap-1 font-medium">
                                         <i class="far fa-calendar-alt text-rose-400"></i>
                                         Berlaku s/d {{ \Carbon\Carbon::parse($v->valid_until)->format('d M Y') }}
@@ -216,7 +216,7 @@
                                     @csrf
                                     @method('PATCH')
                                     <button type="submit" 
-                                            class="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all {{ $v->is_active ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' : 'bg-rose-50 text-rose-700 hover:bg-rose-100' }}">
+                                            class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all {{ $v->is_active ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' : 'bg-rose-50 text-rose-700 hover:bg-rose-100' }}">
                                         {{ $v->is_active ? 'Nonaktifkan' : 'Aktifkan' }}
                                     </button>
                                 </form>
@@ -224,7 +224,7 @@
                                 {{-- Edit & Delete --}}
                                 <div class="flex items-center gap-1.5">
                                     <a href="{{ route('admin.vouchers.edit', $v->id) }}" 
-                                       class="px-2.5 py-1 rounded-lg bg-gray-100 hover:bg-rose-50 hover:text-rose-600 text-gray-700 text-[11px] font-bold transition-colors">
+                                       class="px-2.5 py-1 rounded-lg bg-white border border-gray-200 hover:bg-rose-50 hover:text-rose-600 text-gray-800 text-xs font-bold transition-colors">
                                         Edit
                                     </a>
 
@@ -232,7 +232,7 @@
                                           onsubmit="return confirm('Yakin ingin menghapus voucher {{ $v->code }}?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-[11px] font-bold transition-colors">
+                                        <button type="submit" class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition-colors">
                                             Hapus
                                         </button>
                                     </form>

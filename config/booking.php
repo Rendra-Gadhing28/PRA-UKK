@@ -15,8 +15,8 @@ return [
     */
     'salon' => [
         'address' => env('SALON_ADDRESS', 'GHV9+F2 Candi, Kabupaten Boyolali, Jawa Tengah'),
-        'latitude' => (float) env('SALON_LATITUDE', -7.456389),
-        'longitude' => (float) env('SALON_LONGITUDE', 110.518611),
+        'latitude' => (float) env('SALON_LATITUDE', -7.4563287),
+        'longitude' => (float) env('SALON_LONGITUDE', 110.567513),
     ],
 
     /*

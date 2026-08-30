@@ -43,9 +43,9 @@ class DashboardStatsService
         $row = Bookings::query()
             ->ownedBy($userId)
             ->selectRaw("
-                COUNT(*) as total_bookings,
+                SUM(CASE WHEN status != 'canceled' AND status != 'cancelled' THEN 1 ELSE 0 END) as total_bookings,
                 SUM(CASE WHEN status IN ('pending','confirmed','in_progress') THEN 1 ELSE 0 END) as upcoming_count,
-                SUM(CASE WHEN payment_status = 'paid' OR status = 'completed' THEN total_amount ELSE 0 END) as total_spending
+                SUM(CASE WHEN (payment_status = 'paid' OR status = 'completed') AND (status != 'canceled' AND status != 'cancelled') THEN total_amount ELSE 0 END) as total_spending
             ")
             ->first();
 
