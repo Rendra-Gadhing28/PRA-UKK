@@ -174,11 +174,12 @@
                         @php
                             $pct = $treatmentChartPercentages[$index] ?? 0;
                             $color = $treatmentChartColors[$loop->index % count($treatmentChartColors)];
+                            $tName = is_object($t) ? ($t->name ?? '') : (is_array($t) ? ($t['name'] ?? '') : (string) $t);
                         @endphp
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2 min-w-0">
                                 <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: {{ $color }};"></span>
-                                <span class="font-medium text-gray-700 truncate">{{ $t->name }}</span>
+                                <span class="font-medium text-gray-700 truncate">{{ $tName }}</span>
                             </div>
                             <span class="font-bold text-gray-900 shrink-0 ml-2 tabular-nums">{{ $pct }}%</span>
                         </div>
@@ -200,11 +201,16 @@
 
                     <div class="space-y-4 flex-1">
                         @php
-                            $maxCount = max(1, $topTreatments->first()?->bookings_count ?? 1);
+                            $firstItem = is_object($topTreatments) && method_exists($topTreatments, 'first') ? $topTreatments->first() : (is_array($topTreatments) ? ($topTreatments[0] ?? null) : null);
+                            $firstCount = is_object($firstItem) ? ($firstItem->bookings_count ?? 1) : (is_array($firstItem) ? ($firstItem['bookings_count'] ?? 1) : 1);
+                            $maxCount = max(1, (int) $firstCount);
                         @endphp
                         @forelse($topTreatments as $index => $treatment)
                         @php
-                            $barWidth = min(100, max(8, round(($treatment->bookings_count / $maxCount) * 100)));
+                            $nameStr = is_object($treatment) ? ($treatment->name ?? '') : (is_array($treatment) ? ($treatment['name'] ?? '') : (string) $treatment);
+                            $priceNum = is_object($treatment) ? ($treatment->price ?? 0) : (is_array($treatment) ? ($treatment['price'] ?? 0) : 0);
+                            $countNum = is_object($treatment) ? ($treatment->bookings_count ?? 0) : (is_array($treatment) ? ($treatment['bookings_count'] ?? 0) : 0);
+                            $barWidth = min(100, max(8, round(($countNum / $maxCount) * 100)));
                         @endphp
                         <div class="p-3 rounded-2xl hover:bg-rose-50/50 transition-colors space-y-1.5">
                             <div class="flex items-center gap-4">
@@ -212,11 +218,11 @@
                                     #{{ $index + 1 }}
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <h4 class="text-sm font-bold text-gray-900 truncate font-headline">{{ $treatment->name }}</h4>
-                                    <p class="text-xs text-gray-500 tabular-nums">Rp {{ number_format($treatment->price, 0, ',', '.') }}</p>
+                                    <h4 class="text-sm font-bold text-gray-900 truncate font-headline">{{ $nameStr }}</h4>
+                                    <p class="text-xs text-gray-500 tabular-nums">Rp {{ number_format((float) $priceNum, 0, ',', '.') }}</p>
                                 </div>
                                 <div class="text-right shrink-0">
-                                    <span class="text-sm font-black text-rose-600 tabular-nums">{{ $treatment->bookings_count }}</span>
+                                    <span class="text-sm font-black text-rose-600 tabular-nums">{{ $countNum }}</span>
                                     <span class="text-xs text-gray-400 block">booking</span>
                                 </div>
                             </div>

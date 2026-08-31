@@ -28,6 +28,33 @@ use App\Http\Controllers\Webhooks\MidtransWebhookController;
 
 Route::post('/api/trigger-reminders', [\App\Http\Controllers\Api\ReminderController::class, 'trigger']);
 
+Route::get('/test-email', function () {
+    try {
+        // Ambil booking pertama dari database atau buat objek dummy jika kosong
+        $booking = \App\Models\Bookings::with(['user'])->first() ?? new \App\Models\Bookings([
+            'booking_code' => 'BK-YALIA-' . rand(1000, 9999),
+            'booking_date' => date('Y-m-d'),
+            'time_start' => '10:00:00',
+            'booking_type' => 'home_service',
+            'payment_status' => 'pending',
+            'total_amount' => 150000,
+        ]);
+
+        if (!$booking->user) {
+            $booking->setRelation('user', new \App\Models\User([
+                'name' => 'Kak Gadhing',
+                'email' => env('MAIL_USERNAME'),
+            ]));
+        }
+
+        \Illuminate\Support\Facades\Mail::to(env('MAIL_USERNAME'))->send(new \App\Mail\BookingReminderMail($booking, 'H-1 Hari'));
+        
+        return '<h2 style="color:#0d9488; font-family:sans-serif;">✨ Sukses! Email Template Yalia Beauty berhasil dikirim ke ' . env('MAIL_USERNAME') . '</h2><p style="font-family:sans-serif;">Silakan buka Inbox / Spam Gmail Anda untuk melihat tampilan barunya.</p>';
+    } catch (\Exception $e) {
+        return '<h2 style="color:red; font-family:sans-serif;">❌ Gagal mengirim email:</h2><p style="font-family:sans-serif;">' . $e->getMessage() . '</p>';
+    }
+});
+
     Route::get('/', function(){
         return view('welcome');
     })->name('home');

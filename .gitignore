@@ -31,7 +31,8 @@ DESIGN.md
 **/caddy
 frankenphp
 frankenphp-worker.php
-
+/.impeccable
+/.claude
 **/caddy
 frankenphp
 frankenphp-worker.php

@@ -248,3 +248,29 @@ User::lazy()->each(function ($user) {
     // Proses satu per satu dengan aman
 });
 ```
+
+---
+
+## 9. Pemetaan Optimalisasi pada Alur Pengguna End-to-End
+
+Berikut adalah integrasi langkah-langkah optimalisasi teknis dengan alur transaksi user dari login hingga logout:
+
+1. **Auth & Session (`/login`, `/register`, `/auth/google`)**:
+   - Penggunaan kompresi aset logo SVG (2.48 MB $\rightarrow$ 59 KB) memangkas FCP halaman login menjadi <1.2 detik.
+   - Non-blocking script loading (`defer`) mencegah hambatan rendering main-thread.
+
+2. **Katalog & Exploration (`/dashboard`, `/dashboard/treatments`)**:
+   - WebP image formatting & caching HTTP 1 tahun memotong payload dari 8.5 MB ke <300 KB.
+   - Database indexing pada `categories.sort_order`, `treatments.is_active`, dan `treatments.badge` mempercepat query pencarian catalog <10ms.
+
+3. **Booking Wizard & Slot Picker (`/dashboard/booking/buat`)**:
+   - **Pencegahan CLS 0.517**: Pemasangan `min-h-[480px]` mengunci tata letak wizard kalender sehingga bebas *layout shift*.
+   - **Debouncing AJAX Slot (150ms)**: Menekan beban CPU main-thread (TBT 380ms $\rightarrow$ <50ms) saat user memilih kuantitas atau tanggal secara beruntun.
+
+4. **Pembayaran QRIS Polling (`/dashboard/booking/{id}/pembayaran`)**:
+   - Endpoint status pembayaran diproteksi dengan rate-limiting (`throttle:120,1`) untuk mengamankan server dari polling berlebihan tiap 5 detik.
+
+5. **Pelaksanaan Treatment & Review (`/dashboard/booking/{id}`)**:
+   - Foto dokumentasi hasil perawatan (`photo_assign`) diunggah langsung dalam format WebP terkompresi.
+   - Perhitungan poin otomatis `calculateEarnedPoints()` dijalankan secara atomic transaction.
+

@@ -46,36 +46,39 @@ class BookingReminderService
             $diffInMinutes = $now->diffInMinutes($bookingTime);
             $diffInHours = $now->diffInHours($bookingTime);
 
-            $targetPhone = $booking->user->phone ?? null;
+            $targetEmail = $booking->user->email ?? null;
 
-            if (!$targetPhone) {
+            if (!$targetEmail) {
                 continue;
             }
 
             // --- 1. Reminder H-24 Jam (<= 24 jam & belum diingatkan) ---
             if ($diffInHours <= 24 && $diffInHours > 1 && !$booking->is_h24_reminded) {
-                $message = $this->formatMessage($booking, "H-1 Hari");
-                $sent = $this->fonnteService->sendMessage($targetPhone, $message);
-                if ($sent) {
+                try {
+                    \Illuminate\Support\Facades\Mail::to($targetEmail)->send(new \App\Mail\BookingReminderMail($booking, "H-1 Hari"));
                     $booking->update(["is_h24_reminded" => true]);
+                } catch (\Exception $e) {
+                    Log::error("Gagal mengirim email H-24", ["email" => $targetEmail, "error" => $e->getMessage()]);
                 }
             }
             
             // --- 2. Reminder H-1 Jam (<= 1 jam & belum diingatkan) ---
             if ($diffInHours <= 1 && $diffInMinutes > 30 && !$booking->is_h1_reminded) {
-                $message = $this->formatMessage($booking, "H-1 Jam");
-                $sent = $this->fonnteService->sendMessage($targetPhone, $message);
-                if ($sent) {
+                try {
+                    \Illuminate\Support\Facades\Mail::to($targetEmail)->send(new \App\Mail\BookingReminderMail($booking, "H-1 Jam"));
                     $booking->update(["is_h1_reminded" => true]);
+                } catch (\Exception $e) {
+                    Log::error("Gagal mengirim email H-1", ["email" => $targetEmail, "error" => $e->getMessage()]);
                 }
             }
             
             // --- 3. Reminder H-30 Menit (<= 30 menit & belum diingatkan) ---
             if ($diffInMinutes <= 30 && !$booking->is_m30_reminded) {
-                $message = $this->formatMessage($booking, "H-30 Menit");
-                $sent = $this->fonnteService->sendMessage($targetPhone, $message);
-                if ($sent) {
+                try {
+                    \Illuminate\Support\Facades\Mail::to($targetEmail)->send(new \App\Mail\BookingReminderMail($booking, "H-30 Menit"));
                     $booking->update(["is_m30_reminded" => true]);
+                } catch (\Exception $e) {
+                    Log::error("Gagal mengirim email H-30", ["email" => $targetEmail, "error" => $e->getMessage()]);
                 }
             }
         }

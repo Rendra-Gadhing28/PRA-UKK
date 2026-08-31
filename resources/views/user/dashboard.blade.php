@@ -34,7 +34,7 @@
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <div>
                                 <h1 class="font-headline-xl text-3xl md:text-4xl font-black text-[#2B0F23] mb-1">
-                                    Hello, <span class="text-[#E0247E] italic">{{ explode(' ', $user->name)[0] }}</span> ✨
+                                    Hello, <span class="text-[#E0247E] italic">{{ explode(' ', $user->name)[0] }}</span> 
                                 </h1>
                                 <p class="font-body-md text-[#5C1439]/80 font-medium">
                                     Ready for your glow up today? Jelajahi treatment & klaim reward harianmu!
@@ -96,11 +96,14 @@
                         {{-- Physical VIP Member Card (Aspect Ratio ~ 1.6 : 1) --}}
                         <div class="relative rounded-[24px] overflow-hidden p-5 md:p-6 text-white border shadow-2xl backdrop-blur-2xl flex flex-col justify-between min-h-[230px]" style="{{ $currentTier['style_bg'] ?? 'background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);' }} {{ $currentTier['border_style'] ?? 'border-color: #334155;' }}">
 
-                            {{-- 3D Faceted Gem Cutout at Top Right (gold -> magenta, bukan purple) --}}
-                            <div class="absolute top-0 right-4 transform -translate-y-1 z-20">
+                            {{-- Subtle Luxury Shimmer Overlay --}}
+                            <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-60 pointer-events-none"></div>
+
+                            {{-- 3D Faceted Gem Cutout at Top Right --}}
+                            <div class="absolute top-3 right-3 sm:right-4 z-20">
                                 <div class="relative flex items-center justify-center">
-                                    <div class="absolute w-14 h-14 rounded-full blur-md" style="background: {{ $currentTier['gem_glow'] ?? 'rgba(224,36,126,0.55)' }};"></div>
-                                    <div class="relative w-14 h-14 drop-shadow-[0_8px_16px_rgba(0,0,0,0.6)] transform group-hover:rotate-6 transition-transform duration-300">
+                                    <div class="absolute w-12 h-12 rounded-full blur-md" style="background: {{ $currentTier['gem_glow'] ?? 'rgba(224,36,126,0.55)' }};"></div>
+                                    <div class="relative w-12 h-12 drop-shadow-[0_8px_16px_rgba(0,0,0,0.6)] transform group-hover:rotate-12 group-hover:scale-110 transition-all duration-300">
                                         <svg viewBox="0 0 100 100" class="w-full h-full filter drop-shadow-md">
                                             <defs>
                                                 <linearGradient id="gemCardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -125,36 +128,38 @@
                                 </div>
                             </div>
 
-                            {{-- Card Header: Brand & Discount Pill --}}
-                            <div class="flex items-center justify-between pr-14 mb-3">
-                                <span class="text-xs font-black uppercase tracking-widest bg-white/10 text-white/90 px-2.5 py-1 rounded-full border border-white/20 backdrop-blur-md">
-                                    YALIA BEAUTY VIP
-                                </span>
-                                <span class="px-2.5 py-0.5 rounded-full text-xs font-black uppercase tracking-wider bg-gradient-to-r from-[#F4B942] to-[#E0247E] text-white border border-white/20 shadow-sm flex items-center gap-1">
-                                    <i class="fa-solid fa-percent text-xs"></i>
-                                    <span>DISKON {{ $currentTier['discount'] ?? '0%' }}</span>
-                                </span>
+                            {{-- Card Header: Brand & Discount Pill (No Collision Layout) --}}
+                            <div class="flex items-center justify-between pr-14 mb-3 relative z-10">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="text-[10px] sm:text-xs font-black uppercase tracking-widest bg-white/15 text-white/95 px-2.5 py-1 rounded-full border border-white/25 backdrop-blur-md shadow-sm">
+                                        YALIA BEAUTY VIP
+                                    </span>
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-gradient-to-r from-[#F4B942] to-[#E0247E] text-white border border-white/25 shadow-md flex items-center gap-1">
+                                        <i class="fa-solid fa-percent text-[10px]"></i>
+                                        <span>DISKON {{ $currentTier['discount'] ?? '0%' }}</span>
+                                    </span>
+                                </div>
                             </div>
 
                             {{-- Card Center: Tier Title & Member Details --}}
-                            <div class="my-2">
-                                <h3 class="text-xl md:text-2xl font-black tracking-wide text-white uppercase line-clamp-1">
+                            <div class="my-2 relative z-10">
+                                <h3 class="font-serif text-xl md:text-2xl font-extrabold tracking-wide text-white uppercase line-clamp-1 drop-shadow-md">
                                     {{ $currentTier['label'] ?? ucfirst($membership['current']) . ' Member' }}
                                 </h3>
-                                <div class="flex justify-between items-center text-xs text-white/70 font-semibold mt-1">
-                                    <span class="truncate max-w-[180px]">{{ $user->name }}</span>
-                                    <span class="font-mono text-xs text-[#FDE2ED] tracking-wider">YB-{{ str_pad($user->id, 6, '0', STR_PAD_LEFT) }}</span>
+                                <div class="flex justify-between items-center text-xs text-white/80 font-semibold mt-1">
+                                    <span class="truncate max-w-[180px] font-medium">{{ $user->name }}</span>
+                                    <span class="font-mono text-xs text-[#FDE2ED] tracking-wider font-bold bg-black/20 px-2 py-0.5 rounded border border-white/10">YB-{{ str_pad($user->id, 6, '0', STR_PAD_LEFT) }}</span>
                                 </div>
                             </div>
 
                             {{-- Card Bottom: Progress & Actions --}}
-                            <div class="space-y-3 pt-2.5 border-t border-white/10">
+                            <div class="space-y-3 pt-2.5 border-t border-white/15 relative z-10">
                                 <div>
-                                    <div class="flex justify-between items-center text-xs font-bold text-white/70 mb-1">
+                                    <div class="flex justify-between items-center text-xs font-bold text-white/80 mb-1">
                                         <span>Progress: {{ number_format($user->tier_points) }} Pts</span>
-                                        <span class="text-[#F4B942] font-extrabold">{{ $membership['percent'] }}%</span>
+                                        <span class="text-[#F4B942] font-black text-xs drop-shadow-sm">{{ $membership['percent'] }}%</span>
                                     </div>
-                                    <div class="w-full bg-black/40 rounded-full h-2.5 overflow-hidden border border-white/20 p-[1px]">
+                                    <div class="w-full bg-black/50 rounded-full h-2.5 overflow-hidden border border-white/20 p-[1px]">
                                         <div class="h-full rounded-full bg-amber-400 bg-gradient-to-r from-amber-400 via-pink-500 to-rose-500 shadow-[0_0_10px_rgba(244,185,66,0.8)] transition-all duration-500"
                                              style="width: {{ max(3, (int) $membership['percent']) }}%; background: linear-gradient(90deg, #F4B942 0%, #E0247E 50%, #FF6FB5 100%);">
                                         </div>
@@ -163,12 +168,12 @@
 
                                 {{-- Action Buttons Row --}}
                                 <div class="flex gap-2 pt-0.5">
-                                    <button @click="showQrModal = true" type="button" class="flex-1 flex items-center justify-center gap-1.5 bg-white/10 hover:bg-white/20 text-white py-2 px-3 rounded-xl border border-white/20 text-xs font-bold transition-all">
+                                    <button @click="showQrModal = true" type="button" class="flex-1 flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/25 text-white py-2 px-3 rounded-xl border border-white/25 text-xs font-bold transition-all shadow-sm">
                                         <span class="material-symbols-outlined text-sm">qr_code_scanner</span>
                                         <span>QR Member</span>
                                     </button>
-                                    <button @click="showTiersModal = true" type="button" class="flex-1 flex items-center justify-center gap-1.5 bg-gradient-to-r from-[#E0247E] to-[#7A1F52] hover:from-[#FF6FB5] hover:to-[#5C1439] text-white py-2 px-3 rounded-xl shadow-md border border-[#F4B942]/40 text-xs font-bold transition-all">
-                                        <span class="material-symbols-outlined text-sm">workspace_premium</span>
+                                    <button @click="showTiersModal = true" type="button" class="flex-1 flex items-center justify-center gap-1.5 bg-gradient-to-r from-[#E0247E] via-[#b01f44] to-[#7A1F52] hover:brightness-110 text-white py-2 px-3 rounded-xl shadow-md border border-[#F4B942]/50 text-xs font-bold transition-all">
+                                        <span class="material-symbols-outlined text-sm text-amber-300">workspace_premium</span>
                                         <span>4 Tier & Diskon</span>
                                     </button>
                                 </div>
@@ -529,7 +534,7 @@
 
                     <button @click="copyMemberId()" type="button" class="w-full py-3 bg-white hover:bg-gray-100 font-button text-sm rounded-full transition-colors flex items-center justify-center gap-2 shadow-lg font-black" style="color: #2B0F23 !important;">
                         <span class="material-symbols-outlined text-sm" style="color: #2B0F23 !important;">content_copy</span>
-                        <span x-text="copied ? '✨ Berhasil Disalin!' : 'Salin ID Member'" style="color: #2B0F23 !important;"></span>
+                        <span x-text="copied ? 'Berhasil Disalin!' : 'Salin ID Member'" style="color: #2B0F23 !important;"></span>
                     </button>
                 </div>
             </div>
@@ -637,44 +642,51 @@
             </div>
         </div>
 
-        {{-- Funny Reward Claim Modal Popup (Dark Glassmorphism) --}}
+        {{-- Funny Reward Claim Modal Popup (Velvet-Rose Luxury Dark Glassmorphism) --}}
         <div x-show="showRewardModal" x-cloak
              x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0 scale-90"
-             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:enter-start="opacity-0 scale-90 blur-sm"
+             x-transition:enter-end="opacity-100 scale-100 blur-0"
              x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100 scale-100"
-             x-transition:leave-end="opacity-0 scale-90"
-             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl">
-            <div class="bg-gray-900/90 backdrop-blur-2xl rounded-[32px] max-w-sm w-full p-6 shadow-[0_25px_60px_rgba(0,0,0,0.8)] border border-white/20 text-center space-y-4 relative overflow-hidden">
-                <div class="absolute -top-10 -right-10 w-36 h-36 bg-[#f45472]/30 rounded-full blur-2xl pointer-events-none"></div>
-                <div class="absolute -bottom-10 -left-10 w-36 h-36 bg-amber-500/20 rounded-full blur-2xl pointer-events-none"></div>
+             x-transition:leave-start="opacity-100 scale-100 blur-0"
+             x-transition:leave-end="opacity-0 scale-90 blur-sm"
+             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1e0a16]/85 backdrop-blur-2xl">
+            <div class="relative w-full max-w-sm overflow-hidden rounded-[32px] bg-gradient-to-b from-[#2e1022]/95 via-[#1d0a16]/95 to-[#12050e]/95 p-6 text-center space-y-5 shadow-[0_25px_70px_rgba(0,0,0,0.85)] border border-white/20 backdrop-blur-3xl ring-1 ring-white/10">
+                <div class="absolute -top-12 -right-12 w-44 h-44 bg-[#f45472]/30 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-12 -left-12 w-44 h-44 bg-amber-400/25 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 bg-purple-600/15 rounded-full blur-3xl pointer-events-none"></div>
 
-                <div class="text-5xl animate-pulse drop-shadow-lg">
-                    <span x-text="rewardModalData.icon">🎉</span>
+                <div class="relative z-10 mx-auto flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400/20 via-pink-500/20 to-purple-600/20 border border-amber-300/40 shadow-[0_0_25px_rgba(244,185,66,0.3)] animate-pulse">
+                    <span class="text-4xl filter drop-shadow-[0_4px_12px_rgba(244,185,66,0.5)]" x-text="rewardModalData.icon">✨</span>
                 </div>
 
-                <div>
-                    <span class="px-3.5 py-1 bg-amber-400/20 border border-amber-400/40 text-amber-300 rounded-full text-xs font-extrabold tracking-widest uppercase shadow-sm">
-                        AURA GLOW-UP MEMANCAR! ✨
-                    </span>
-                    <h3 class="font-headline-sm text-xl font-black text-white mt-3 drop-shadow-sm tracking-wide" x-text="rewardModalData.title"></h3>
+                <div class="relative z-10 space-y-2">
+                    <div class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-gradient-to-r from-amber-500/20 via-pink-500/20 to-amber-500/20 border border-amber-400/50 rounded-full shadow-[0_2px_12px_rgba(244,185,66,0.25)]">
+                        <span class="text-[11px] font-black tracking-widest uppercase text-amber-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                            AURA GLOW-UP MEMANCAR! ✨
+                        </span>
+                    </div>
+                    <h3 class="font-headline-sm text-2xl font-black text-white tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] font-serif" x-text="rewardModalData.title"></h3>
                 </div>
 
-                <div class="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 text-xs text-rose-100 leading-relaxed font-body-md shadow-inner">
+                <div class="relative z-10 p-4 bg-black/40 backdrop-blur-md rounded-2xl border border-white/15 text-xs text-rose-100/90 leading-relaxed font-medium shadow-[inner_0_2px_4px_rgba(0,0,0,0.6)]">
                     <p x-text="rewardModalData.message"></p>
                 </div>
 
-                <div class="bg-gradient-to-r from-[#f45472]/20 to-amber-500/20 p-3.5 rounded-xl border border-rose-400/40 flex items-center justify-center gap-2 text-rose-100 font-bold text-sm shadow-sm">
-                    <span class="material-symbols-outlined text-amber-300">stars</span>
-                    <span>HADIAH: <span class="text-amber-300 font-extrabold" x-text="rewardModalData.reward"></span></span>
+                <div class="relative z-10 bg-gradient-to-r from-amber-500/25 via-pink-500/20 to-amber-500/25 p-4 rounded-2xl border border-amber-400/50 flex items-center justify-center gap-2.5 text-white font-bold text-sm shadow-[0_4px_20px_rgba(244,185,66,0.2)]">
+                    <span class="material-symbols-outlined text-amber-300 text-xl filter drop-shadow-[0_0_8px_rgba(244,185,66,0.8)]">stars</span>
+                    <span class="tracking-wide text-xs uppercase text-amber-100/90 font-extrabold">HADIAH:</span>
+                    <span class="text-amber-300 text-base font-black tracking-wider drop-shadow-[0_2px_10px_rgba(244,185,66,0.8)]" x-text="rewardModalData.reward"></span>
                 </div>
 
-                <button @click="closeRewardModal()" type="button" class="w-full py-4 bg-gradient-to-r from-[#f45472] via-[#e0247e] to-[#b01f44] hover:brightness-110 text-white font-extrabold text-sm rounded-full shadow-[0_6px_25px_rgba(244,84,114,0.4)] transition-all transform hover:scale-105">
-                    SIAP GLOW-UP BANGET! 🚀
-                </button>
+                <div class="relative z-10 pt-1">
+                    <button @click="closeRewardModal()" type="button" class="shimmer-btn relative w-full py-4 bg-gradient-to-r from-[#b01f44] via-[#f45472] to-[#e0247e] hover:brightness-110 text-white font-black text-sm rounded-full shadow-[0_8px_30px_rgba(244,84,114,0.5)] transition-all transform hover:scale-[1.02] active:scale-95 border border-white/20 tracking-wider uppercase">
+                        SIAP GLOW-UP BANGET!
+                    </button>
+                </div>
             </div>
         </div>
+
 
     </div>
 
