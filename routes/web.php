@@ -207,7 +207,7 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])
             Route::get('/{treatment}/edit', [\App\Http\Controllers\Admin\AdminTreatmentController::class, 'edit'])->name('edit');
             Route::put('/{treatment}', [\App\Http\Controllers\Admin\AdminTreatmentController::class, 'update'])->name('update');
             Route::delete('/{treatment}', [\App\Http\Controllers\Admin\AdminTreatmentController::class, 'destroy'])->name('destroy');
-            Route::patch('/{treatment}/toggle-active', [\App\Http\Controllers\Admin\AdminTreatmentController::class, 'toggleActive'])->name('toggle-active');
+            Route::match(['POST', 'PATCH'], '/{treatment}/toggle-active', [\App\Http\Controllers\Admin\AdminTreatmentController::class, 'toggleActive'])->name('toggle-active');
         });
 
         // Admin Beauticians Management
@@ -219,7 +219,7 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])
             Route::get('/{beautician}/edit', [\App\Http\Controllers\Admin\AdminBeauticianController::class, 'edit'])->name('edit');
             Route::put('/{beautician}', [\App\Http\Controllers\Admin\AdminBeauticianController::class, 'update'])->name('update');
             Route::delete('/{beautician}', [\App\Http\Controllers\Admin\AdminBeauticianController::class, 'destroy'])->name('destroy');
-            Route::patch('/{beautician}/toggle-active', [\App\Http\Controllers\Admin\AdminBeauticianController::class, 'toggleActive'])->name('toggle-active');
+            Route::match(['POST', 'PATCH'], '/{beautician}/toggle-active', [\App\Http\Controllers\Admin\AdminBeauticianController::class, 'toggleActive'])->name('toggle-active');
         });
 
         // Admin Vouchers Management
@@ -230,7 +230,7 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])
             Route::get('/{voucher}/edit', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'edit'])->name('edit');
             Route::put('/{voucher}', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'update'])->name('update');
             Route::delete('/{voucher}', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'destroy'])->name('destroy');
-            Route::patch('/{voucher}/toggle-active', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'toggleActive'])->name('toggle-active');
+            Route::match(['POST', 'PATCH'], '/{voucher}/toggle-active', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'toggleActive'])->name('toggle-active');
         });
 
         // Admin Finances Management (Track Pengeluaran & Scan Struk)
