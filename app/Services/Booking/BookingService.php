@@ -128,8 +128,13 @@ class BookingService
 
             $beautician = $this->beauticianAssignment->findAvailable($bookingDate, $timeStart, $timeEnd);
 
-            // Calculate Voucher Discount
-            $discountAmount = 0.0;
+            // 1. Calculate Membership Discount (Tier: Regular 0%, Silver 5%, Gold 10%, Purple VIP 15%)
+            $membershipDiscountPercent = (float) $user->getDiscPercen();
+            $membershipDiscountAmount = (float) round($subtotal * ($membershipDiscountPercent / 100), 2);
+            $subtotalAfterMembership = max(0.0, $subtotal - $membershipDiscountAmount);
+
+            // 2. Calculate Voucher Discount (Cascading / Berjenjang pada sisa subtotal)
+            $voucherDiscountAmount = 0.0;
             $userVoucherRecord = null;
 
             if ($userVoucherId) {
@@ -142,23 +147,26 @@ class BookingService
                 if ($userVoucherRecord && $userVoucherRecord->voucher && $userVoucherRecord->voucher->is_active) {
                     $v = $userVoucherRecord->voucher;
 
-                    // Validate min_purchase against subtotal
+                    // Validate min_purchase against original subtotal
                     if (! $v->min_purchase || $subtotal >= (float) $v->min_purchase) {
-                        if ($v->type === 'free_shipping' || str_contains(strtolower($v->code), 'freeship') || str_contains(strtolower($v->name), 'ongkir')) {
+                        if ($v->type === 'free_shipping' || str_contains(strtolower($v->code ?? ''), 'freeship') || str_contains(strtolower($v->name ?? ''), 'ongkir')) {
                             // Discount applies to transport fee
                             $rawDiscount = $transportFee * ((float) $v->value / 100);
-                            $discountAmount = (float) $v->max_discount ? min($rawDiscount, (float) $v->max_discount) : $rawDiscount;
+                            $voucherDiscountAmount = (float) ($v->max_discount ? min($rawDiscount, (float) $v->max_discount) : $rawDiscount);
                         } elseif ($v->type === 'percentage') {
-                            $rawDiscount = $subtotal * ((float) $v->value / 100);
-                            $discountAmount = (float) $v->max_discount ? min($rawDiscount, (float) $v->max_discount) : $rawDiscount;
+                            // Option B: Percentage applied to subtotal after membership discount
+                            $rawDiscount = $subtotalAfterMembership * ((float) $v->value / 100);
+                            $voucherDiscountAmount = (float) ($v->max_discount ? min($rawDiscount, (float) $v->max_discount) : $rawDiscount);
                         } else { // fixed
-                            $discountAmount = min((float) $v->value, $subtotal);
+                            $voucherDiscountAmount = (float) min((float) $v->value, $subtotalAfterMembership);
                         }
                     }
                 }
             }
 
-            $totalAmount = max(0, ($subtotal + $transportFee) - $discountAmount);
+            // Total akumulasi diskon
+            $discountAmount = $membershipDiscountAmount + $voucherDiscountAmount;
+            $totalAmount = max(0.0, ($subtotalAfterMembership + $transportFee) - $voucherDiscountAmount);
 
             $effectivePaymentType = ($bookingType === 'salon' && $paymentType === 'cash') ? 'cash' : 'cashless';
             $dpAmount = 0.0;

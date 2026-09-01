@@ -299,7 +299,7 @@
                 </div>
                 @if(($booking->discount_amount ?? 0) > 0)
                 <div class="flex justify-between text-xs text-emerald-600">
-                    <span>Diskon Voucher</span>
+                    <span>Potongan Diskon</span>
                     <span class="receipt-mono font-semibold">– Rp {{ number_format($booking->discount_amount, 0, ',', '.') }}</span>
                 </div>
                 @endif

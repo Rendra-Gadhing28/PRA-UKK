@@ -410,6 +410,17 @@
                     <div class="flex justify-between"><span class="text-[#5b3a29]/70 font-semibold">Subtotal Treatment</span><span class="font-bold text-[#5b3a29]" x-text="formatRupiah(subtotal)"></span></div>
                     <div class="flex justify-between" x-show="bookingType === 'home'"><span class="text-[#5b3a29]/70 font-semibold">Ongkir Transport</span><span class="font-bold text-[#5b3a29]" x-text="formatRupiah(estimateTransportFee(gps.distanceKm))"></span></div>
                     
+                    {{-- ── MEMBERSHIP DISCOUNT LINE ── --}}
+                    <template x-if="membershipDiscountPercent > 0">
+                        <div class="flex justify-between items-center py-2.5 px-3.5 rounded-2xl bg-gradient-to-r from-rose-50/90 to-pink-50/70 border border-rose-200/80 text-xs my-1.5">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded-full text-xs font-black uppercase tracking-wider text-rose-700 bg-rose-200/80 border border-rose-300" x-text="userMembership.name + ' (' + userMembership.discount + ')'"></span>
+                                <span class="font-bold text-[#5b3a29]">Diskon Membership</span>
+                            </div>
+                            <span class="font-mono font-extrabold text-rose-600" x-text="'- ' + formatRupiah(membershipDiscountAmount)"></span>
+                        </div>
+                    </template>
+
                     {{-- ── CUSTOM VOUCHER DROPDOWN SELECTOR ── --}}
                     <div class="py-3 px-4 my-2 rounded-2xl bg-gradient-to-r from-rose-50/80 to-amber-50/60 border border-rose-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
@@ -440,7 +451,7 @@
                                         <i class="fas fa-circle-check text-emerald-500"></i>
                                         <span x-text="'Voucher applied: ' + selectedVoucher.code"></span>
                                     </div>
-                                    <span class="font-mono text-emerald-800" x-text="'- ' + formatRupiah(discountAmount)"></span>
+                                    <span class="font-mono text-emerald-800" x-text="'- ' + formatRupiah(voucherDiscountAmount)"></span>
                                 </div>
                                 <div x-show="!isVoucherValidForSubtotal" class="flex items-center gap-1.5 text-xs font-bold bg-amber-50 text-amber-800 p-2.5 rounded-xl border border-amber-200">
                                     <i class="fas fa-triangle-exclamation text-amber-500"></i>
@@ -451,9 +462,9 @@
                     </div>
 
                     {{-- Discount Line in Summary --}}
-                    <div class="flex justify-between text-emerald-600 font-bold" x-show="discountAmount > 0">
+                    <div class="flex justify-between text-emerald-600 font-bold" x-show="voucherDiscountAmount > 0">
                         <span>Diskon Voucher Applied</span>
-                        <span x-text="'- ' + formatRupiah(discountAmount)"></span>
+                        <span x-text="'- ' + formatRupiah(voucherDiscountAmount)"></span>
                     </div>
 
                     <div class="flex justify-between items-center text-base border-t border-rose-200/80 pt-3 mt-3">
@@ -574,10 +585,24 @@ function bookingWizard() {
         availability: { checking: false, available: null, message: '' },
         availabilityTimer: null,
 
+        userMembership: @json($membershipData ?? null),
         userVouchers: @json($userVouchersData),
         selectedUserVoucherId: null,
 
         notes: '',
+
+        get membershipDiscountPercent() {
+            return (this.userMembership && this.userMembership.discount_val) ? Number(this.userMembership.discount_val) : 0;
+        },
+
+        get membershipDiscountAmount() {
+            if (this.membershipDiscountPercent <= 0) return 0;
+            return Math.round(this.subtotal * (this.membershipDiscountPercent / 100));
+        },
+
+        get subtotalAfterMembership() {
+            return Math.max(0, this.subtotal - this.membershipDiscountAmount);
+        },
 
         get selectedVoucher() {
             if (!this.selectedUserVoucherId) return null;
@@ -592,7 +617,7 @@ function bookingWizard() {
             return true;
         },
 
-        get discountAmount() {
+        get voucherDiscountAmount() {
             const v = this.selectedVoucher;
             if (!v || !this.isVoucherValidForSubtotal) return 0;
 
@@ -602,11 +627,16 @@ function bookingWizard() {
                 const rawDiscount = transportFee * (v.value / 100);
                 return v.max_discount ? Math.min(rawDiscount, v.max_discount) : rawDiscount;
             } else if (v.type === 'percentage') {
-                const rawDiscount = this.subtotal * (v.value / 100);
+                // Option B: Percentage applied to subtotal after membership discount
+                const rawDiscount = this.subtotalAfterMembership * (v.value / 100);
                 return v.max_discount ? Math.min(rawDiscount, v.max_discount) : rawDiscount;
             } else { // fixed
-                return Math.min(v.value, this.subtotal);
+                return Math.min(v.value, this.subtotalAfterMembership);
             }
+        },
+
+        get discountAmount() {
+            return this.membershipDiscountAmount + this.voucherDiscountAmount;
         },
 
         init() {

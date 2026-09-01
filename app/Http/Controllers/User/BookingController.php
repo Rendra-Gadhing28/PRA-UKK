@@ -19,6 +19,7 @@ use App\Services\Booking\BeauticianAssignmentService;
 use App\Services\Booking\BookingService;
 use App\Services\Booking\PhotoAssignService;
 use App\Services\Payment\MidtransQrisService;
+use App\Support\Membership;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -230,12 +231,28 @@ class BookingController extends Controller
                 ->all()
         );
 
+        // Ambil data membership user
+        $user = auth()->user();
+        $membershipProgress = $user ? Membership::progress($user->tier_points ?? 0) : null;
+        $membershipDiscount = $user ? $user->getDiscPercen() : 0;
+        $membershipData = [
+            'level' => $membershipProgress['current'] ?? 'regular',
+            'name' => $membershipProgress['current_meta']['name'] ?? 'Regular',
+            'label' => $membershipProgress['current_meta']['label'] ?? 'Regular Member',
+            'discount_val' => $membershipDiscount,
+            'discount' => $membershipDiscount . '%',
+            'color' => $membershipProgress['current_meta']['color'] ?? 'rose',
+            'badge_cls' => $membershipProgress['current_meta']['badge_cls'] ?? 'bg-rose-950/80 text-rose-200 border-rose-500/50',
+            'tier_points' => $user->tier_points ?? 0,
+        ];
+
         return view('user.bookings.create', [
             'treatmentsData' => $treatmentsData,
             'selectedTreatment' => $preselectedTreatment,
             'preselectedTreatment' => $preselectedTreatment,
             'preselectedData' => $preselectedData,
             'userVouchersData' => $userVouchersData,
+            'membershipData' => $membershipData,
             'googleMapsKey' => config('booking.google_maps_key'),
             'serviceRadiusKm' => config('booking.service_radius_km'),
         ]);

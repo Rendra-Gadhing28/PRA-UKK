@@ -158,6 +158,12 @@
                         <span>Beautician:</span>
                         <span class="font-bold text-gray-800">{{ $booking->beautician?->name ?? 'Staff Salon' }}</span>
                     </div>
+                    @if(($booking->discount_amount ?? 0) > 0)
+                        <div class="flex justify-between text-emerald-600 font-sans text-xs font-semibold">
+                            <span>Potongan Diskon:</span>
+                            <span class="font-bold">- Rp {{ number_format($booking->discount_amount, 0, ',', '.') }}</span>
+                        </div>
+                    @endif
                     @if(($booking->transport_fee ?? 0) > 0)
                         <div class="flex justify-between text-gray-600 font-sans text-xs">
                             <span>Ongkir Transport:</span>

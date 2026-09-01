@@ -124,35 +124,43 @@ class User extends Authenticatable
 
 
     public function hasMinMembership(string $level): bool {
-        $levels = [
+        $order = [
             'regular' => 0,
             'silver' => 1, 
             'gold' => 2, 
+            'purple' => 3,
             'platinum' => 3,
+            'royal purple' => 3,
         ];
-        return ($level[$this->membership_level] ?? 0) >= ($level[$level] ?? 0);
+        $current = strtolower($this->membership_level ?? 'regular');
+        $target = strtolower($level);
+        return ($order[$current] ?? 0) >= ($order[$target] ?? 0);
     }
 
     public function getDiscPercen(): int {
-        return match (strtolower($this->membership_level)) {
-            'silver' => 5,
-            'gold' => 10,
-            'platinum', 'purple', 'royal purple' => 15,
-            default => 0
-        };
+        $level = strtolower($this->membership_level ?? 'regular');
+        if ($level === 'platinum' || $level === 'royal purple') {
+            $level = 'purple';
+        }
+
+        if (isset(\App\Support\Membership::TIERS[$level])) {
+            $val = (int) \App\Support\Membership::TIERS[$level]['discount_val'];
+            if ($val > 0) {
+                return $val;
+            }
+        }
+
+        $tier = \App\Support\Membership::progress($this->tier_points ?? 0);
+        return (int) ($tier['current_meta']['discount_val'] ?? 0);
     }
 
     public function upgradeMembership(){
-        $newLevel = match(true) {
-            $this->total_bookings > 20 => 'platinum',
-            $this->total_bookings > 10 => 'gold', 
-            $this->total_bookings > 5 => 'silver',
-            default => 'regular'
-        };
+        $tier = \App\Support\Membership::progress($this->tier_points ?? 0);
+        $newLevel = $tier['current'];
 
         if($this->membership_level !== $newLevel) {
             $this->update(['membership_level' => $newLevel]);
-        };
+        }
     }
 
     //Relationship
@@ -225,10 +233,11 @@ class User extends Authenticatable
         $this->syncTierReset();
         $this->total_points += $points;
         $this->tier_points += $points;
-        $this->save();
 
-        // Also check if they need an upgrade based on tier_points (or bookings, depending on your logic)
-        // If membership was based on bookings, it is handled in upgradeMembership().
+        $tier = \App\Support\Membership::progress($this->tier_points);
+        $this->membership_level = $tier['current'];
+
+        $this->save();
     }
 
     public function subtractPoints(int $points): void
@@ -236,6 +245,10 @@ class User extends Authenticatable
         $this->syncTierReset();
         $this->total_points = max(0, $this->total_points - $points);
         $this->tier_points = max(0, $this->tier_points - $points);
+
+        $tier = \App\Support\Membership::progress($this->tier_points);
+        $this->membership_level = $tier['current'];
+
         $this->save();
     }
 }
