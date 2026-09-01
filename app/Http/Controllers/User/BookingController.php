@@ -83,6 +83,43 @@ class BookingController extends Controller
     }
 
     /**
+     * Endpoint AJAX untuk mengambil daftar beautician yang aktif & tersedia
+     * pada tanggal dan rentang jam tertentu.
+     */
+    public function availableBeauticians(Request $request): JsonResponse
+    {
+        $dateStr = $request->input('booking_date');
+        $timeStart = $request->input('time_start');
+        $durationMinutes = (int) $request->input('duration_minutes', 30);
+
+        if (blank($dateStr) || blank($timeStart)) {
+            return response()->json(['beauticians' => []]);
+        }
+
+        try {
+            $date = Carbon::createFromFormat('Y-m-d', (string) $dateStr);
+            $timeEnd = Carbon::createFromFormat('Y-m-d H:i', $dateStr.' '.$timeStart)
+                ->addMinutes($durationMinutes)
+                ->format('H:i');
+
+            $beauticians = $this->beauticianAssignment->getAvailableBeauticians($date, $timeStart, $timeEnd);
+
+            return response()->json([
+                'beauticians' => $beauticians->map(fn ($b) => [
+                    'id' => $b->id,
+                    'name' => $b->name,
+                    'photo_url' => $b->photo_url,
+                    'bio' => $b->bio,
+                    'service_area' => $b->service_area,
+                    'total_bookings' => $b->total_bookings,
+                ])->values()->all(),
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json(['beauticians' => []]);
+        }
+    }
+
+    /**
      * Riwayat booking milik user (dipakai oleh route bookings.index / bookings.list).
      */
     public function index(Request $request): View
@@ -300,6 +337,8 @@ class BookingController extends Controller
             ];
         }
 
+        $beauticianId = $request->filled('beautician_id') ? (int) $request->input('beautician_id') : null;
+
         try {
             $booking = $this->bookingService->createBooking(
                 user: $request->user(),
@@ -312,6 +351,7 @@ class BookingController extends Controller
                 notes: $request->validated('notes'),
                 userVoucherId: $request->filled('user_voucher_id') ? (int) $request->input('user_voucher_id') : null,
                 paymentType: $request->validated('payment_type') ?? 'cashless',
+                beauticianId: $beauticianId,
             );
         } catch (NoBeauticianAvailableException $e) {
             throw ValidationException::withMessages([

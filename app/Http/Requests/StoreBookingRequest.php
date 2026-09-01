@@ -32,6 +32,7 @@ class StoreBookingRequest extends FormRequest
 
             'notes' => ['nullable', 'string', 'max:1000'],
             'user_voucher_id' => ['nullable', 'integer', 'exists:user_vouchers,id'],
+            'beautician_id' => ['nullable', 'integer', 'exists:beauticians,id'],
             'payment_type' => ['nullable', 'string', Rule::in(['cash', 'cashless'])],
         ];
     }

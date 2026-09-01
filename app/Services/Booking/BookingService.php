@@ -42,10 +42,11 @@ class BookingService
         ?string $notes = null,
         ?int $userVoucherId = null,
         ?string $paymentType = 'cashless',
+        ?int $beauticianId = null,
     ): Bookings {
         return DB::transaction(function () use (
             $user, $treatmentItems, $bookingType, $homeLocation,
-            $bookingDate, $timeStart, $timeEnd, $notes, $userVoucherId, $paymentType,
+            $bookingDate, $timeStart, $timeEnd, $notes, $userVoucherId, $paymentType, $beauticianId,
         ) {
             $treatments = Treatments::query()
                 ->whereIn('id', array_column($treatmentItems, 'treatment_id'))
@@ -126,7 +127,15 @@ class BookingService
                 }
             }
 
-            $beautician = $this->beauticianAssignment->findAvailable($bookingDate, $timeStart, $timeEnd);
+            $beautician = null;
+            if ($beauticianId) {
+                $availableList = $this->beauticianAssignment->getAvailableBeauticians($bookingDate, $timeStart, $timeEnd);
+                $beautician = $availableList->firstWhere('id', $beauticianId);
+            }
+
+            if (! $beautician) {
+                $beautician = $this->beauticianAssignment->findAvailable($bookingDate, $timeStart, $timeEnd);
+            }
 
             // 1. Calculate Membership Discount (Tier: Regular 0%, Silver 5%, Gold 10%, Purple VIP 15%)
             $membershipDiscountPercent = (float) $user->getDiscPercen();

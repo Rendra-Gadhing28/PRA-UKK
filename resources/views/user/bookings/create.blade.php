@@ -421,6 +421,46 @@
                         </div>
                     </template>
 
+                    {{-- ── BEAUTICIAN SELECTION SECTION ── --}}
+                    <div class="py-3.5 px-4 my-2.5 rounded-2xl bg-gradient-to-r from-rose-50/90 to-pink-50/50 border border-rose-200/80 space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <label class="text-xs font-extrabold text-[#5b3a29] flex items-center gap-2">
+                                <i class="fa-solid fa-user-sparkles text-[#f45472]"></i>
+                                <span>Pilih Beautician / Terapis:</span>
+                            </label>
+                            <span class="text-[11px] text-[#5b3a29]/60 font-semibold" x-text="loadingBeauticians ? 'Memuat staf...' : (availableBeauticians.length + ' terapis tersedia')"></span>
+                        </div>
+
+                        {{-- Radio Cards Grid for Beauticians --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {{-- Option: Auto / Rekomendasi Sistem --}}
+                            <label class="relative flex items-center gap-2.5 p-2.5 rounded-xl border cursor-pointer transition-all duration-200"
+                                   :class="selectedBeauticianId === '' ? 'border-[#f45472] bg-white shadow-2xs ring-1 ring-[#f45472]/30' : 'border-rose-100 bg-white/70 hover:border-rose-200'">
+                                <input type="radio" name="beautician_choice" value="" x-model="selectedBeauticianId" class="text-[#f45472] focus:ring-[#f45472] shrink-0">
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#f45472] to-[#e03e5c] text-white flex items-center justify-center text-xs shrink-0 shadow-2xs">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-bold text-[#5b3a29] text-xs leading-tight">Otomatis (Rekomendasi)</p>
+                                    <p class="text-[10px] text-[#5b3a29]/60 truncate">Sistem memilihkan staf paling siap</p>
+                                </div>
+                            </label>
+
+                            {{-- Option for Each Available Beautician --}}
+                            <template x-for="b in availableBeauticians" :key="b.id">
+                                <label class="relative flex items-center gap-2.5 p-2.5 rounded-xl border cursor-pointer transition-all duration-200"
+                                       :class="selectedBeauticianId == b.id ? 'border-[#f45472] bg-white shadow-2xs ring-1 ring-[#f45472]/30' : 'border-rose-100 bg-white/70 hover:border-rose-200'">
+                                    <input type="radio" name="beautician_choice" :value="b.id" x-model="selectedBeauticianId" class="text-[#f45472] focus:ring-[#f45472] shrink-0">
+                                    <img :src="b.photo_url" :alt="b.name" class="w-8 h-8 rounded-full object-cover shrink-0 border border-rose-200" x-on:error="$event.target.src='https://ui-avatars.com/api/?name='+encodeURIComponent(b.name)+'&background=f45472&color=fff'">
+                                    <div class="flex-1 min-w-0">
+                                        <p class="font-bold text-[#5b3a29] text-xs leading-tight truncate" x-text="b.name"></p>
+                                        <p class="text-[10px] text-[#5b3a29]/60 truncate" x-text="b.bio ? b.bio : (b.total_bookings + ' booking ditangani')"></p>
+                                    </div>
+                                </label>
+                            </template>
+                        </div>
+                    </div>
+
                     {{-- ── CUSTOM VOUCHER DROPDOWN SELECTOR ── --}}
                     <div class="py-3 px-4 my-2 rounded-2xl bg-gradient-to-r from-rose-50/80 to-amber-50/60 border border-rose-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
@@ -538,6 +578,7 @@
                 <input type="hidden" name="home_longitude" :value="gps.lng">
                 <input type="hidden" name="home_address" :value="gps.address">
                 <input type="hidden" name="user_voucher_id" :value="selectedUserVoucherId">
+                <input type="hidden" name="beautician_id" :value="selectedBeauticianId">
                 <input type="hidden" name="notes" :value="notes">
 
                 <div class="flex gap-4 mt-8">
@@ -584,6 +625,10 @@ function bookingWizard() {
         loadingSlots: false,
         availability: { checking: false, available: null, message: '' },
         availabilityTimer: null,
+
+        availableBeauticians: [],
+        loadingBeauticians: false,
+        selectedBeauticianId: '',
 
         userMembership: @json($membershipData ?? null),
         userVouchers: @json($userVouchersData),
@@ -822,6 +867,7 @@ function bookingWizard() {
                         this.selectedHour = null;
                         this.selectedMinute = null;
                         this.availability = { checking: false, available: false, message: 'Semua slot di tanggal ini sudah penuh atau tidak tersedia.' };
+                        this.availableBeauticians = [];
                     }
                 }
             } catch (e) {
@@ -843,6 +889,7 @@ function bookingWizard() {
                 this.selectedHour = parts[0];
                 this.selectedMinute = parts[1];
                 this.availability = { checking: false, available: false, message: slot.reason || 'Beautician sedang dalam pengerjaan perawatan lain pada jam ini.' };
+                this.availableBeauticians = [];
                 
                 if (notifyIfBusy) {
                     window.dispatchEvent(new CustomEvent('toast', {
@@ -857,6 +904,35 @@ function bookingWizard() {
             this.selectedHour = parts[0];
             this.selectedMinute = parts[1];
             this.availability = { checking: false, available: true, message: 'Beautician tersedia di jam ini!' };
+            this.fetchAvailableBeauticians();
+        },
+
+        async fetchAvailableBeauticians() {
+            if (!this.selectedDate || !this.selectedTimeSlot) {
+                this.availableBeauticians = [];
+                return;
+            }
+            this.loadingBeauticians = true;
+            try {
+                const params = new URLSearchParams({
+                    booking_date: this.selectedDate,
+                    time_start: this.selectedTimeSlot,
+                    duration_minutes: this.totalDurationMinutes,
+                });
+                const res = await fetch(`{{ route('user.bookings.available-beauticians') }}?${params}`, {
+                    headers: { 'Accept': 'application/json' }
+                });
+                const data = await res.json();
+                this.availableBeauticians = data.beauticians || [];
+                if (this.selectedBeauticianId && !this.availableBeauticians.some(b => b.id == this.selectedBeauticianId)) {
+                    this.selectedBeauticianId = '';
+                }
+            } catch (e) {
+                console.error('Fetch available beauticians error:', e);
+                this.availableBeauticians = [];
+            } finally {
+                this.loadingBeauticians = false;
+            }
         },
 
         formatSelectedDateTime() {

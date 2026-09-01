@@ -136,6 +136,11 @@ Route::middleware(['auth'])->prefix('dashboard')->name('user.')->group(function 
         ->middleware('throttle:60,1')
         ->name('bookings.daily-slots');
 
+    // Ambil daftar beautician tersedia untuk tanggal & jam tertentu
+    Route::get('/booking/beautician-tersedia', [BookingController::class, 'availableBeauticians'])
+        ->middleware('throttle:60,1')
+        ->name('bookings.available-beauticians');
+
 
     // Pembayaran QRIS
     Route::get('/booking/{booking}/pembayaran', [BookingController::class, 'payment'])->name('bookings.payment');

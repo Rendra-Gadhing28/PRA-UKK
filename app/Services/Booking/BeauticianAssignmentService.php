@@ -127,4 +127,56 @@ class BeauticianAssignmentService
 
         return $slots;
     }
+
+    /**
+     * Mengembalikan koleksi Beauticians yang tersedia (aktif, bertugas, dan belum terisi booking)
+     * pada tanggal dan rentang jam tertentu.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, Beauticians>
+     */
+    public function getAvailableBeauticians(Carbon $bookingDate, string $timeStart, string $timeEnd, ?int $excludeBookingId = null): \Illuminate\Database\Eloquent\Collection
+    {
+        $dayOfWeek = $bookingDate->dayOfWeek; // 0 = Minggu ... 6 = Sabtu
+
+        $scheduledBeauticianIds = BeauticiansSchedules::query()
+            ->where('day_of_week', $dayOfWeek)
+            ->where('is_working', true)
+            ->where('start_time', '<=', $timeStart)
+            ->where('end_time', '>=', $timeEnd)
+            ->pluck('beautician_id');
+
+        if ($scheduledBeauticianIds->isEmpty()) {
+            $hasDaySchedule = BeauticiansSchedules::query()->where('day_of_week', $dayOfWeek)->exists();
+            if (! $hasDaySchedule) {
+                $scheduledBeauticianIds = Beauticians::query()->where('is_active', true)->pluck('id');
+            } else {
+                return Beauticians::query()->whereRaw('1 = 0')->get();
+            }
+        }
+
+        if ($scheduledBeauticianIds->isEmpty()) {
+            return Beauticians::query()->whereRaw('1 = 0')->get();
+        }
+
+        $busyBeauticianIds = DB::table('bookings')
+            ->whereIn('beautician_id', $scheduledBeauticianIds)
+            ->whereDate('booking_date', $bookingDate->toDateString())
+            ->whereNotIn('status', ['canceled', 'cancelled'])
+            ->when($excludeBookingId, fn ($q) => $q->where('id', '!=', $excludeBookingId))
+            ->where('time_start', '<', $timeEnd)
+            ->where('time_end', '>', $timeStart)
+            ->pluck('beautician_id');
+
+        $availableBeauticianIds = $scheduledBeauticianIds->diff($busyBeauticianIds);
+
+        if ($availableBeauticianIds->isEmpty()) {
+            return Beauticians::query()->whereRaw('1 = 0')->get();
+        }
+
+        return Beauticians::query()
+            ->whereIn('id', $availableBeauticianIds)
+            ->where('is_active', true)
+            ->orderBy('total_bookings')
+            ->get();
+    }
 }
