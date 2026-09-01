@@ -19,77 +19,61 @@ class AdminBookingController extends Controller
      */
     public function index(Request $request)
     {
-        $version = $this->currentVersion();
-        $cacheKey = "admin.bookings.list.v{$version}." . md5(json_encode($request->all()));
+        $query = Bookings::with(['user', 'beautician', 'treatments']);
 
-        $bookings = Cache::remember($cacheKey, 300, function () use ($request) {
-            $query = Bookings::with(['user', 'beautician', 'treatments']);
+        // Filter: Tanggal Mulai & Tanggal Akhir
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('booking_date', [$request->start_date, $request->end_date]);
+        } elseif ($request->filled('start_date')) {
+            $query->whereDate('booking_date', '>=', $request->start_date);
+        } elseif ($request->filled('end_date')) {
+            $query->whereDate('booking_date', '<=', $request->end_date);
+        }
 
-            // Filter: Tanggal Mulai & Tanggal Akhir
-            if ($request->filled('start_date') && $request->filled('end_date')) {
-                $query->whereBetween('booking_date', [$request->start_date, $request->end_date]);
-            } elseif ($request->filled('start_date')) {
-                $query->whereDate('booking_date', '>=', $request->start_date);
-            } elseif ($request->filled('end_date')) {
-                $query->whereDate('booking_date', '<=', $request->end_date);
-            }
+        // Filter: Status Booking
+        if ($request->filled('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
 
-            // Filter: Status Booking
-            if ($request->filled('status') && $request->status !== 'all') {
-                $query->where('status', $request->status);
-            }
+        // Filter: Status Pembayaran
+        if ($request->filled('payment_status') && $request->payment_status !== 'all') {
+            $query->where('payment_status', $request->payment_status);
+        }
 
-            // Filter: Status Pembayaran
-            if ($request->filled('payment_status') && $request->payment_status !== 'all') {
-                $query->where('payment_status', $request->payment_status);
-            }
+        // Filter: Beautician
+        if ($request->filled('beautician_id') && $request->beautician_id !== 'all') {
+            $query->where('beautician_id', $request->beautician_id);
+        }
 
-            // Filter: Beautician
-            if ($request->filled('beautician_id') && $request->beautician_id !== 'all') {
-                $query->where('beautician_id', $request->beautician_id);
-            }
+        // Filter: Search Keyword (Kode Booking atau Nama Pelanggan)
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where(function ($q) use ($search) {
+                $q->where('booking_code', 'like', "%{$search}%")
+                  ->orWhereHas('user', function ($qu) use ($search) {
+                      $qu->where('name', 'like', "%{$search}%")
+                         ->orWhere('phone', 'like', "%{$search}%");
+                  });
+            });
+        }
 
-            // Filter: Search Keyword (Kode Booking atau Nama Pelanggan)
-            if ($request->filled('search')) {
-                $search = trim($request->search);
-                $query->where(function ($q) use ($search) {
-                    $q->where('booking_code', 'like', "%{$search}%")
-                      ->orWhereHas('user', function ($qu) use ($search) {
-                          $qu->where('name', 'like', "%{$search}%")
-                             ->orWhere('phone', 'like', "%{$search}%");
-                      });
-                });
-            }
+        $bookings = $query->orderBy('booking_date', 'desc')
+            ->orderBy('time_start', 'desc')
+            ->paginate(10)
+            ->withQueryString();
 
-            return $query->orderBy('booking_date', 'desc')
-                ->orderBy('time_start', 'desc')
-                ->paginate(10)
-                ->withQueryString();
-        });
-
-        $beauticians = Cache::remember("beauticians.all_list.v{$version}", 300, function () {
-            return Beauticians::orderBy('name')->get();
-        });
+        $beauticians = Beauticians::orderBy('name')->get();
 
         return view('admin.bookings.index', compact('bookings', 'beauticians'));
     }
 
     /**
-     * Detail lengkap reservasi & beautician bertugas (Cached).
+     * Detail lengkap reservasi & beautician bertugas.
      */
     public function show(Bookings $booking)
     {
-        $version = $this->currentVersion();
-        $cacheKey = "admin.bookings.show.v{$version}.{$booking->id}";
-
-        $booking = Cache::remember($cacheKey, 300, function () use ($booking) {
-            $booking->load(['user', 'beautician', 'treatments', 'bookingTreatments.Treatments', 'review']);
-            return $booking;
-        });
-
-        $beauticians = Cache::remember("beauticians.active_list.v{$version}", 300, function () {
-            return Beauticians::where('is_active', true)->orderBy('name')->get();
-        });
+        $booking->load(['user', 'beautician', 'treatments', 'bookingTreatments.Treatments', 'review']);
+        $beauticians = Beauticians::where('is_active', true)->orderBy('name')->get();
 
         return view('admin.bookings.show', compact('booking', 'beauticians'));
     }

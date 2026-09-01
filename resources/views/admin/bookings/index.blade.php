@@ -77,7 +77,11 @@
                             <select name="beautician_id" class="w-full px-3 py-2 text-xs font-semibold rounded-xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472] text-gray-800">
                                 <option value="all">Semua Beautician</option>
                                 @foreach($beauticians as $b)
-                                    <option value="{{ $b->id }}" {{ request('beautician_id') == $b->id ? 'selected' : '' }}>{{ $b->name }}</option>
+                                    @php
+                                        $bId = is_object($b) ? $b->id : (is_array($b) ? ($b['id'] ?? '') : $b);
+                                        $bName = is_object($b) ? $b->name : (is_array($b) ? ($b['name'] ?? '') : $b);
+                                    @endphp
+                                    <option value="{{ $bId }}" {{ request('beautician_id') == $bId ? 'selected' : '' }}>{{ $bName }}</option>
                                 @endforeach
                             </select>
                         </div>

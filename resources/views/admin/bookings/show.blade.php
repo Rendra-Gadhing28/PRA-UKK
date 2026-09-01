@@ -113,7 +113,11 @@
                             <select name="beautician_id" class="flex-1 text-xs font-semibold rounded-xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472] py-2 px-3">
                                 <option value="">-- Pilih Beautician --</option>
                                 @foreach($beauticians as $b)
-                                    <option value="{{ $b->id }}" {{ $booking->beautician_id == $b->id ? 'selected' : '' }}>{{ $b->name }}</option>
+                                    @php
+                                        $bId = is_object($b) ? $b->id : (is_array($b) ? ($b['id'] ?? '') : $b);
+                                        $bName = is_object($b) ? $b->name : (is_array($b) ? ($b['name'] ?? '') : $b);
+                                    @endphp
+                                    <option value="{{ $bId }}" {{ $booking->beautician_id == $bId ? 'selected' : '' }}>{{ $bName }}</option>
                                 @endforeach
                             </select>
                             <button type="submit" class="px-4 py-2 bg-[#f45472] text-white text-xs font-bold rounded-xl hover:bg-[#d93856] transition-colors shadow-xs">Simpan</button>
