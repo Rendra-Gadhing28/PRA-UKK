@@ -122,6 +122,14 @@ class AdminBeauticianController extends Controller
             'photo'     => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);
 
+        $updateData = [
+            'name'      => $validated['name'],
+            'phone'     => $validated['phone'] ?? null,
+            'email'     => $validated['email'] ?? null,
+            'bio'       => $validated['bio'],
+            'is_active' => $request->boolean('is_active', true),
+        ];
+
         if ($request->hasFile('photo')) {
             if ($beautician->photo) {
                 Storage::disk('public')->delete(Beauticians::PHOTO_DIRECTORY . '/' . $beautician->photo);
@@ -130,16 +138,10 @@ class AdminBeauticianController extends Controller
             $file = $request->file('photo');
             $photoName = time() . '_' . Str::slug($validated['name']) . '.' . $file->getClientOriginalExtension();
             $file->storeAs(Beauticians::PHOTO_DIRECTORY, $photoName, 'public');
-            $beautician->photo = $photoName;
+            $updateData['photo'] = $photoName;
         }
 
-        $beautician->update([
-            'name'      => $validated['name'],
-            'phone'     => $validated['phone'] ?? null,
-            'email'     => $validated['email'] ?? null,
-            'bio'       => $validated['bio'],
-            'is_active' => $request->boolean('is_active', true),
-        ]);
+        $beautician->update($updateData);
 
         ToastHelper::success("Profil beautician '{$beautician->name}' berhasil diperbarui! ✨");
 
