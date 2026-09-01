@@ -123,6 +123,11 @@
                         </thead>
                         <tbody class="divide-y divide-rose-50">
                             @forelse($treatments as $tr)
+                                @php
+                                    if (!is_object($tr)) {
+                                        continue;
+                                    }
+                                @endphp
                                 <tr class="hover:bg-rose-50/30 transition-colors">
                                     {{-- Info Treatment --}}
                                     <td class="py-3.5 px-5">

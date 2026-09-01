@@ -20,37 +20,32 @@ class AdminTreatmentController extends Controller
      */
     public function index(Request $request)
     {
-        $version = $this->currentVersion();
-        $cacheKey = "admin.treatments.list.v{$version}." . md5(json_encode($request->all()));
+        $query = Treatments::query()
+            ->select([
+                'id', 'category_id', 'name', 'slug', 'description',
+                'price', 'duration_minutes', 'images', 'badge',
+                'is_active', 'rating', 'rating_count', 'sort_order', 'created_at',
+            ])
+            ->with(['category:id,name,slug']);
 
-        $treatments = Cache::remember($cacheKey, 300, function () use ($request) {
-            $query = Treatments::query()
-                ->select([
-                    'id', 'category_id', 'name', 'slug', 'description',
-                    'price', 'duration_minutes', 'images', 'badge',
-                    'is_active', 'rating', 'rating_count', 'sort_order', 'created_at',
-                ])
-                ->with(['category:id,name,slug']);
+        // Filter berdasarkan kategori
+        if ($request->filled('category_id') && $request->category_id !== 'all') {
+            $query->where('category_id', $request->category_id);
+        }
 
-            // Filter berdasarkan kategori
-            if ($request->filled('category_id') && $request->category_id !== 'all') {
-                $query->where('category_id', $request->category_id);
-            }
+        // Filter berdasarkan kata kunci pencarian
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
 
-            // Filter berdasarkan kata kunci pencarian
-            if ($request->filled('search')) {
-                $search = trim($request->search);
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                      ->orWhere('description', 'like', "%{$search}%");
-                });
-            }
-
-            return $query->orderBy('sort_order', 'asc')
-                ->orderBy('id', 'desc')
-                ->paginate(9)
-                ->withQueryString();
-        });
+        $treatments = $query->orderBy('sort_order', 'asc')
+            ->orderBy('id', 'desc')
+            ->paginate(9)
+            ->withQueryString();
 
         $categories = Categories::where('is_active', true)->orderBy('sort_order', 'asc')->get();
 
