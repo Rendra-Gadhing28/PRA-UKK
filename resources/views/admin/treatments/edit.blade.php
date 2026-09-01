@@ -37,8 +37,13 @@
                             <select name="category_id" required class="w-full px-4 py-3 text-sm rounded-2xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472]">
                                 <option value="">-- Pilih Kategori --</option>
                                 @foreach($categories as $cat)
-                                    <option value="{{ $cat->id }}" {{ old('category_id', $treatment->category_id) == $cat->id ? 'selected' : '' }}>
-                                        {{ $cat->icon ?? '🌸' }} {{ $cat->name }}
+                                    @php
+                                        $catId = is_object($cat) ? $cat->id : (is_array($cat) ? ($cat['id'] ?? '') : $cat);
+                                        $catName = is_object($cat) ? $cat->name : (is_array($cat) ? ($cat['name'] ?? '') : $cat);
+                                        $catIcon = is_object($cat) ? ($cat->icon ?? '🌸') : (is_array($cat) ? ($cat['icon'] ?? '🌸') : '🌸');
+                                    @endphp
+                                    <option value="{{ $catId }}" {{ old('category_id', $treatment->category_id) == $catId ? 'selected' : '' }}>
+                                        {{ $catIcon }} {{ $catName }}
                                     </option>
                                 @endforeach
                             </select>

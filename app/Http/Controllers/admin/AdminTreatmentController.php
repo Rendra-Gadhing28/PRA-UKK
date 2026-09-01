@@ -52,9 +52,7 @@ class AdminTreatmentController extends Controller
                 ->withQueryString();
         });
 
-        $categories = Cache::remember("categories.active_list.v{$version}", 300, function () {
-            return Categories::where('is_active', true)->orderBy('sort_order', 'asc')->get();
-        });
+        $categories = Categories::where('is_active', true)->orderBy('sort_order', 'asc')->get();
 
         return view('admin.treatments.index', compact('treatments', 'categories'));
     }
@@ -65,9 +63,7 @@ class AdminTreatmentController extends Controller
     public function create()
     {
         $version = $this->currentVersion();
-        $categories = Cache::remember("categories.active_list.v{$version}", 300, function () {
-            return Categories::where('is_active', true)->orderBy('sort_order', 'asc')->get();
-        });
+        $categories = Categories::where('is_active', true)->orderBy('sort_order', 'asc')->get();
 
         return view('admin.treatments.create', compact('categories'));
     }
@@ -136,9 +132,7 @@ class AdminTreatmentController extends Controller
     public function edit(Treatments $treatment)
     {
         $version = $this->currentVersion();
-        $categories = Cache::remember("categories.active_list.v{$version}", 300, function () {
-            return Categories::where('is_active', true)->orderBy('sort_order', 'asc')->get();
-        });
+        $categories = Categories::where('is_active', true)->orderBy('sort_order', 'asc')->get();
 
         return view('admin.treatments.edit', compact('treatment', 'categories'));
     }

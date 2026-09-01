@@ -89,10 +89,15 @@
                         </a>
 
                         @foreach($categories as $cat)
-                            <a href="{{ route('admin.treatments.index', array_filter(['search' => request('search'), 'category_id' => $cat->id])) }}"
-                               class="px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 border {{ (string)request('category_id') === (string)$cat->id ? 'bg-rose-500 text-white border-rose-500 shadow-sm' : 'bg-white text-rose-950 border-gray-200 hover:bg-rose-50 hover:text-rose-600' }}">
-                                <i class="{{ $cat->icon ?? 'fa-solid fa-tag' }} text-xs"></i>
-                                <span>{{ $cat->name }}</span>
+                            @php
+                                $catId = is_object($cat) ? $cat->id : (is_array($cat) ? ($cat['id'] ?? '') : $cat);
+                                $catName = is_object($cat) ? $cat->name : (is_array($cat) ? ($cat['name'] ?? '') : $cat);
+                                $catIcon = is_object($cat) ? ($cat->icon ?? 'fa-solid fa-tag') : (is_array($cat) ? ($cat['icon'] ?? 'fa-solid fa-tag') : 'fa-solid fa-tag');
+                            @endphp
+                            <a href="{{ route('admin.treatments.index', array_filter(['search' => request('search'), 'category_id' => $catId])) }}"
+                               class="px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 border {{ (string)request('category_id') === (string)$catId ? 'bg-rose-500 text-white border-rose-500 shadow-sm' : 'bg-white text-rose-950 border-gray-200 hover:bg-rose-50 hover:text-rose-600' }}">
+                                <i class="{{ $catIcon }} text-xs"></i>
+                                <span>{{ $catName }}</span>
                             </a>
                         @endforeach
                     </div>
