@@ -415,37 +415,31 @@
                         </p>
                     </div>
 
-                    <!-- GRID GALERI -->
+                    <!-- GRID GALERI DINAMIS -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
-                        
+                        @forelse($galleryTreatments as $item)
                         <div class="relative overflow-hidden rounded-2xl bg-[#ffe8ed] aspect-square group border border-[#e0bec1]/50 w-full">
-                            <div class="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-[#25181c]/80 via-transparent to-transparent opacity-90 group-hover:opacity-100 transition-opacity">
-                                <span class="text-xs font-bold text-white">Soft Pastel Gel Nail Art</span>
-                                <span class="text-xs text-[#ffd2e1]">Manicure & Custom Painting</span>
+                            @if($item->images)
+                                <img src="{{ $item->image_url }}" alt="{{ $item->name }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            @else
+                                <div class="absolute inset-0 bg-gradient-to-br from-[#ffd2e1] via-[#ffe8ed] to-[#ffdbcb] flex flex-col items-center justify-center p-4 text-center">
+                                    <i class="fa-solid fa-sparkles text-3xl text-[#b01f44] mb-2 opacity-80"></i>
+                                    <span class="font-serif-heading font-bold text-sm text-[#25181c]">{{ $item->name }}</span>
+                                </div>
+                            @endif
+                            <div class="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-[#25181c]/90 via-[#25181c]/30 to-transparent opacity-90 group-hover:opacity-100 transition-opacity">
+                                <span class="text-xs font-bold text-white leading-tight font-serif-heading">{{ $item->name }}</span>
+                                <span class="text-[11px] text-[#ffd2e1] mt-0.5 font-medium flex items-center justify-between">
+                                    <span>{{ $item->category?->name ?? 'Treatment' }}</span>
+                                    <span class="font-bold text-white">Rp {{ number_format((float) $item->price, 0, ',', '.') }}</span>
+                                </span>
                             </div>
                         </div>
-
-                        <div class="relative overflow-hidden rounded-2xl bg-[#ffdbcb] aspect-square group border border-[#e0bec1]/50 w-full">
-                            <div class="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-[#25181c]/80 via-transparent to-transparent opacity-90 group-hover:opacity-100 transition-opacity">
-                                <span class="text-xs font-bold text-white">Hydrating Facial Glow</span>
-                                <span class="text-xs text-[#ffd2e1]">Hasil Setelah 1x Treatment</span>
-                            </div>
+                        @empty
+                        <div class="col-span-full py-8 text-center text-sm text-gray-500">
+                            Belum ada galeri treatment tersedia.
                         </div>
-
-                        <div class="relative overflow-hidden rounded-2xl bg-[#ffe8ed] aspect-square group border border-[#e0bec1]/50 w-full">
-                            <div class="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-[#25181c]/80 via-transparent to-transparent opacity-90 group-hover:opacity-100 transition-opacity">
-                                <span class="text-xs font-bold text-white">Keratin Smooth Hair Spa</span>
-                                <span class="text-xs text-[#ffd2e1]">Rambut Lembut & Berkilau</span>
-                            </div>
-                        </div>
-
-                        <div class="relative overflow-hidden rounded-2xl bg-[#ffdbcb] aspect-square group border border-[#e0bec1]/50 w-full">
-                            <div class="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-[#25181c]/80 via-transparent to-transparent opacity-90 group-hover:opacity-100 transition-opacity">
-                                <span class="text-xs font-bold text-white">Luxury Body Spa</span>
-                                <span class="text-xs text-[#ffd2e1]">Relaksasi Aromaterapi</span>
-                            </div>
-                        </div>
-
+                        @endforelse
                     </div>
 
                 </div>
@@ -466,7 +460,36 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
-                        
+                        @forelse($approvedReviews as $review)
+                        <div class="bg-white rounded-2xl p-6 border border-[#e0bec1] shadow-xs flex flex-col justify-between w-full">
+                            <div>
+                                <div class="text-[#f59e0b] text-sm mb-3 space-x-1">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <i class="{{ $i <= $review->rating ? 'fa-solid' : 'fa-regular' }} fa-star"></i>
+                                    @endfor
+                                </div>
+                                <p class="text-xs text-[#594043] leading-relaxed italic mb-4">
+                                    "{{ $review->comment }}"
+                                </p>
+                                @if($review->photo)
+                                    <div class="mb-4 rounded-xl overflow-hidden max-h-36">
+                                        <img src="{{ Storage::url($review->photo) }}" alt="Foto Ulasan" class="w-full h-full object-cover">
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="flex items-center gap-3 pt-4 border-t border-[#e0bec1]/50">
+                                <div class="w-9 h-9 rounded-full bg-[#ffd2e1] text-[#b01f44] font-bold text-xs flex items-center justify-center shrink-0 uppercase">
+                                    {{ substr($review->Users?->name ?? 'U', 0, 2) }}
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <span class="text-xs font-bold text-[#25181c] block truncate">{{ $review->Users?->name ?? 'Pelanggan Yalia' }}</span>
+                                    <span class="text-xs text-[#594043] truncate block">
+                                        {{ $review->Bookings?->treatments?->first()?->name ?? 'Pelanggan Salon' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        @empty
                         <div class="bg-white rounded-2xl p-6 border border-[#e0bec1] shadow-xs flex flex-col justify-between w-full">
                             <div>
                                 <div class="text-[#f59e0b] text-sm mb-3 space-x-1">
@@ -532,7 +555,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        @endforelse
                     </div>
 
                 </div>

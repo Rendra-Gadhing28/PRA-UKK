@@ -56,7 +56,21 @@ Route::get('/test-email', function () {
 });
 
     Route::get('/', function(){
-        return view('welcome');
+        $galleryTreatments = \App\Models\Treatments::query()
+            ->active()
+            ->with('category')
+            ->orderByDesc('rating')
+            ->take(8)
+            ->get();
+
+        $approvedReviews = \App\Models\Reviews::query()
+            ->with(['Users', 'Beauticians', 'Bookings.treatments'])
+            ->where('is_approved', true)
+            ->orderByDesc('created_at')
+            ->take(6)
+            ->get();
+
+        return view('welcome', compact('galleryTreatments', 'approvedReviews'));
     })->name('home');
 
     Route::get('/skeleton-demo', function() {
