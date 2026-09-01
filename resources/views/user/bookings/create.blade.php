@@ -421,44 +421,24 @@
                         </div>
                     </template>
 
-                    {{-- ── BEAUTICIAN SELECTION SECTION ── --}}
-                    <div class="py-3.5 px-4 my-2.5 rounded-2xl bg-gradient-to-r from-rose-50/90 to-pink-50/50 border border-rose-200/80 space-y-2.5">
+                    {{-- ── BEAUTICIAN DROPDOWN SELECTOR ── --}}
+                    <div class="py-3 px-4 my-2 rounded-2xl bg-gradient-to-r from-rose-50/80 to-amber-50/60 border border-rose-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <label class="text-xs font-extrabold text-[#5b3a29] flex items-center gap-2">
+                            <label class="text-xs font-extrabold text-[#5b3a29] flex items-center gap-1.5">
                                 <i class="fa-solid fa-user-sparkles text-[#f45472]"></i>
                                 <span>Pilih Beautician / Terapis:</span>
                             </label>
-                            <span class="text-[11px] text-[#5b3a29]/60 font-semibold" x-text="loadingBeauticians ? 'Memuat staf...' : (availableBeauticians.length + ' terapis tersedia')"></span>
+                            <span class="text-xs text-[#5b3a29]/60 font-semibold" x-text="loadingBeauticians ? 'Memuat staf...' : (availableBeauticians.length + ' terapis tersedia')"></span>
                         </div>
 
-                        {{-- Radio Cards Grid for Beauticians --}}
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            {{-- Option: Auto / Rekomendasi Sistem --}}
-                            <label class="relative flex items-center gap-2.5 p-2.5 rounded-xl border cursor-pointer transition-all duration-200"
-                                   :class="selectedBeauticianId === '' ? 'border-[#f45472] bg-white shadow-2xs ring-1 ring-[#f45472]/30' : 'border-rose-100 bg-white/70 hover:border-rose-200'">
-                                <input type="radio" name="beautician_choice" value="" x-model="selectedBeauticianId" class="text-[#f45472] focus:ring-[#f45472] shrink-0">
-                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#f45472] to-[#e03e5c] text-white flex items-center justify-center text-xs shrink-0 shadow-2xs">
-                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="font-bold text-[#5b3a29] text-xs leading-tight">Otomatis (Rekomendasi)</p>
-                                    <p class="text-[10px] text-[#5b3a29]/60 truncate">Sistem memilihkan staf paling siap</p>
-                                </div>
-                            </label>
-
-                            {{-- Option for Each Available Beautician --}}
+                        <select x-model="selectedBeauticianId"
+                                class="w-full rounded-xl border border-rose-300 bg-white px-3.5 py-2.5 text-xs text-[#333] font-semibold focus:outline-none focus:ring-2 focus:ring-[#f45472] shadow-sm">
+                            <option value="">-- Otomatis (Sistem Pilih Terapis Terbaik) --</option>
                             <template x-for="b in availableBeauticians" :key="b.id">
-                                <label class="relative flex items-center gap-2.5 p-2.5 rounded-xl border cursor-pointer transition-all duration-200"
-                                       :class="selectedBeauticianId == b.id ? 'border-[#f45472] bg-white shadow-2xs ring-1 ring-[#f45472]/30' : 'border-rose-100 bg-white/70 hover:border-rose-200'">
-                                    <input type="radio" name="beautician_choice" :value="b.id" x-model="selectedBeauticianId" class="text-[#f45472] focus:ring-[#f45472] shrink-0">
-                                    <img :src="b.photo_url" :alt="b.name" class="w-8 h-8 rounded-full object-cover shrink-0 border border-rose-200" x-on:error="$event.target.src='https://ui-avatars.com/api/?name='+encodeURIComponent(b.name)+'&background=f45472&color=fff'">
-                                    <div class="flex-1 min-w-0">
-                                        <p class="font-bold text-[#5b3a29] text-xs leading-tight truncate" x-text="b.name"></p>
-                                        <p class="text-[10px] text-[#5b3a29]/60 truncate" x-text="b.bio ? b.bio : (b.total_bookings + ' booking ditangani')"></p>
-                                    </div>
-                                </label>
+                                <option :value="b.id"
+                                        x-text="b.name + (b.bio ? ' - ' + b.bio : '')"></option>
                             </template>
-                        </div>
+                        </select>
                     </div>
 
                     {{-- ── CUSTOM VOUCHER DROPDOWN SELECTOR ── --}}

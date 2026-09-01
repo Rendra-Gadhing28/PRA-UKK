@@ -20,6 +20,37 @@ use Illuminate\Support\Facades\DB;
 class BeauticianAssignmentService
 {
     /**
+     * Helper privat untuk mengambil ID beautician aktif yang bertugas di jam tersebut.
+     *
+     * @return \Illuminate\Support\Collection<int, int>
+     */
+    private function getCandidateBeauticianIds(Carbon $bookingDate, string $timeStart, string $timeEnd): \Illuminate\Support\Collection
+    {
+        $dayOfWeek = $bookingDate->dayOfWeek; // 0 = Minggu ... 6 = Sabtu
+
+        $activeBeauticianIds = Beauticians::query()
+            ->where('is_active', true)
+            ->pluck('id');
+
+        if ($activeBeauticianIds->isEmpty()) {
+            return collect();
+        }
+
+        // Beautician yang secara spesifik punya jadwal libur / diluar jam kerja di hari tersebut
+        $offBeauticianIds = BeauticiansSchedules::query()
+            ->whereIn('beautician_id', $activeBeauticianIds)
+            ->where('day_of_week', $dayOfWeek)
+            ->where(function ($q) use ($timeStart, $timeEnd) {
+                $q->where('is_working', false)
+                  ->orWhere('start_time', '>', $timeStart)
+                  ->orWhere('end_time', '<', $timeEnd);
+            })
+            ->pluck('beautician_id');
+
+        return $activeBeauticianIds->diff($offBeauticianIds);
+    }
+
+    /**
      * Cari & kembalikan satu beautician yang available, atau lempar
      * exception kalau tidak ada sama sekali.
      *
@@ -27,36 +58,16 @@ class BeauticianAssignmentService
      */
     public function findAvailable(Carbon $bookingDate, string $timeStart, string $timeEnd, ?int $excludeBookingId = null): Beauticians
     {
-        $dayOfWeek = $bookingDate->dayOfWeek; // 0 = Minggu ... 6 = Sabtu
+        $candidateBeauticianIds = $this->getCandidateBeauticianIds($bookingDate, $timeStart, $timeEnd);
 
-        $scheduledBeauticianIds = BeauticiansSchedules::query()
-            ->where('day_of_week', $dayOfWeek)
-            ->where('is_working', true)
-            ->where('start_time', '<=', $timeStart)
-            ->where('end_time', '>=', $timeEnd)
-            ->pluck('beautician_id');
-
-        if ($scheduledBeauticianIds->isEmpty()) {
-            $hasDaySchedule = BeauticiansSchedules::query()->where('day_of_week', $dayOfWeek)->exists();
-            if (! $hasDaySchedule) {
-                $scheduledBeauticianIds = Beauticians::query()->where('is_active', true)->pluck('id');
-            } else {
-                throw new NoBeauticianAvailableException(
-                    'Tidak ada beautician yang bertugas di jam tersebut. Silakan pilih jam lain.'
-                );
-            }
-        }
-
-        if ($scheduledBeauticianIds->isEmpty()) {
+        if ($candidateBeauticianIds->isEmpty()) {
             throw new NoBeauticianAvailableException(
                 'Tidak ada beautician aktif yang bertugas di jam tersebut. Silakan pilih jam lain.'
             );
         }
 
-        // Beautician yang sudah punya booking lain (belum dibatalkan) yang
-        // jamnya overlap dengan slot yang diminta, pada tanggal yang sama.
         $busyBeauticianIds = DB::table('bookings')
-            ->whereIn('beautician_id', $scheduledBeauticianIds)
+            ->whereIn('beautician_id', $candidateBeauticianIds)
             ->whereDate('booking_date', $bookingDate->toDateString())
             ->whereNotIn('status', ['canceled', 'cancelled'])
             ->when($excludeBookingId, fn ($q) => $q->where('id', '!=', $excludeBookingId))
@@ -64,7 +75,7 @@ class BeauticianAssignmentService
             ->where('time_end', '>', $timeStart)
             ->pluck('beautician_id');
 
-        $availableBeauticianIds = $scheduledBeauticianIds->diff($busyBeauticianIds);
+        $availableBeauticianIds = $candidateBeauticianIds->diff($busyBeauticianIds);
 
         if ($availableBeauticianIds->isEmpty()) {
             throw new NoBeauticianAvailableException(
@@ -136,30 +147,14 @@ class BeauticianAssignmentService
      */
     public function getAvailableBeauticians(Carbon $bookingDate, string $timeStart, string $timeEnd, ?int $excludeBookingId = null): \Illuminate\Database\Eloquent\Collection
     {
-        $dayOfWeek = $bookingDate->dayOfWeek; // 0 = Minggu ... 6 = Sabtu
+        $candidateBeauticianIds = $this->getCandidateBeauticianIds($bookingDate, $timeStart, $timeEnd);
 
-        $scheduledBeauticianIds = BeauticiansSchedules::query()
-            ->where('day_of_week', $dayOfWeek)
-            ->where('is_working', true)
-            ->where('start_time', '<=', $timeStart)
-            ->where('end_time', '>=', $timeEnd)
-            ->pluck('beautician_id');
-
-        if ($scheduledBeauticianIds->isEmpty()) {
-            $hasDaySchedule = BeauticiansSchedules::query()->where('day_of_week', $dayOfWeek)->exists();
-            if (! $hasDaySchedule) {
-                $scheduledBeauticianIds = Beauticians::query()->where('is_active', true)->pluck('id');
-            } else {
-                return Beauticians::query()->whereRaw('1 = 0')->get();
-            }
-        }
-
-        if ($scheduledBeauticianIds->isEmpty()) {
+        if ($candidateBeauticianIds->isEmpty()) {
             return Beauticians::query()->whereRaw('1 = 0')->get();
         }
 
         $busyBeauticianIds = DB::table('bookings')
-            ->whereIn('beautician_id', $scheduledBeauticianIds)
+            ->whereIn('beautician_id', $candidateBeauticianIds)
             ->whereDate('booking_date', $bookingDate->toDateString())
             ->whereNotIn('status', ['canceled', 'cancelled'])
             ->when($excludeBookingId, fn ($q) => $q->where('id', '!=', $excludeBookingId))
@@ -167,7 +162,7 @@ class BeauticianAssignmentService
             ->where('time_end', '>', $timeStart)
             ->pluck('beautician_id');
 
-        $availableBeauticianIds = $scheduledBeauticianIds->diff($busyBeauticianIds);
+        $availableBeauticianIds = $candidateBeauticianIds->diff($busyBeauticianIds);
 
         if ($availableBeauticianIds->isEmpty()) {
             return Beauticians::query()->whereRaw('1 = 0')->get();
@@ -176,7 +171,7 @@ class BeauticianAssignmentService
         return Beauticians::query()
             ->whereIn('id', $availableBeauticianIds)
             ->where('is_active', true)
-            ->orderBy('total_bookings')
+            ->orderBy('name')
             ->get();
     }
 }
