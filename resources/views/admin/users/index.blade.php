@@ -82,11 +82,14 @@
                                             @method('PATCH')
                                             <button type="submit" 
                                                     @if(auth()->id() === $user->id) disabled @endif
-                                                    class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-[#f45472] focus:ring-offset-2 {{ auth()->id() === $user->id ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                                    role="switch" aria-checked="{{ $user->is_active ? 'true' : 'false' }}">
+                                                    class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#f45472] focus:ring-offset-2 {{ $user->is_active ? 'bg-[#f45472]' : 'bg-gray-200' }} {{ auth()->id() === $user->id ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                    role="switch" 
+                                                    aria-checked="{{ $user->is_active ? 'true' : 'false' }}"
+                                                    title="{{ auth()->id() === $user->id ? 'Akun Anda' : ($user->is_active ? 'Nonaktifkan User' : 'Aktifkan User') }}">
                                                 <span class="sr-only">Toggle active status</span>
-                                                <span aria-hidden="true" class="pointer-events-none absolute mx-auto h-4 w-8 rounded-full transition-colors duration-200 ease-in-out {{ $user->is_active ? 'bg-[#f45472]' : 'bg-gray-200' }}"></span>
-                                                <span aria-hidden="true" class="pointer-events-none absolute left-0 inline-block h-5 w-5 transform rounded-full border border-gray-200 bg-white shadow ring-0 transition-transform duration-200 ease-in-out {{ $user->is_active ? 'translate-x-4' : 'translate-x-0' }}"></span>
+                                                <span aria-hidden="true" 
+                                                      style="transform: translateX({{ $user->is_active ? '1.25rem' : '0rem' }});"
+                                                      class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-md ring-0 transition-transform duration-200 ease-in-out {{ $user->is_active ? 'translate-x-5' : 'translate-x-0' }}"></span>
                                             </button>
                                         </form>
                                     </td>

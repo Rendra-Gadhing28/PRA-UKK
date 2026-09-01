@@ -10,6 +10,14 @@ export default {
         './resources/js/**/*.{js,jsx,ts,tsx}',
     ],
 
+    safelist: [
+        'translate-x-0',
+        'translate-x-5',
+        'translate-x-4',
+        'bg-[#f45472]',
+        'bg-gray-200',
+    ],
+
     theme: {
         extend: {
             borderRadius: {
