@@ -422,7 +422,7 @@
                     </template>
 
                     {{-- ── BEAUTICIAN DROPDOWN SELECTOR ── --}}
-                    <div class="py-3 px-4 my-2 rounded-2xl bg-gradient-to-r from-rose-50/80 to-amber-50/60 border border-rose-200/80 space-y-2.5">
+                    <div class="py-3.5 px-4 my-2.5 rounded-2xl bg-gradient-to-r from-rose-50/80 to-amber-50/60 border border-rose-200/80 space-y-2.5">
                         <div class="flex items-center justify-between">
                             <label class="text-xs font-extrabold text-[#5b3a29] flex items-center gap-1.5">
                                 <i class="fa-solid fa-user-sparkles text-[#f45472]"></i>
@@ -439,6 +439,51 @@
                                         x-text="b.name + (b.bio ? ' - ' + b.bio : '')"></option>
                             </template>
                         </select>
+
+                        {{-- Beautician Profile Card Preview --}}
+                        <template x-if="selectedBeautician">
+                            <div class="mt-2.5 p-3 rounded-xl bg-white border border-rose-200/90 flex items-center gap-3.5 shadow-2xs transition-all">
+                                <div class="relative shrink-0">
+                                    <img :src="selectedBeautician.photo_url"
+                                         :alt="selectedBeautician.name"
+                                         class="w-12 h-12 rounded-full object-cover border-2 border-[#f45472]/30 shadow-2xs"
+                                         x-on:error="$event.target.src='https://ui-avatars.com/api/?name='+encodeURIComponent(selectedBeautician.name)+'&background=f45472&color=fff'">
+                                    <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full" title="Terapis Aktif & Ready"></span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        <p class="font-bold text-[#5b3a29] text-xs truncate" x-text="selectedBeautician.name"></p>
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-100 text-[#f45472] uppercase tracking-wider shrink-0">
+                                            <i class="fa-solid fa-star text-[9px] text-[#f45472] mr-0.5"></i>Terapis Terpilih
+                                        </span>
+                                    </div>
+                                    <p class="text-[11px] text-[#5b3a29]/75 mt-0.5 truncate" x-text="selectedBeautician.bio ? selectedBeautician.bio : 'Spesialis Perawatan Kecantikan Yalia Beauty'"></p>
+                                    <div class="flex items-center gap-2.5 text-[10px] text-[#5b3a29]/60 mt-1">
+                                        <span class="flex items-center gap-1">
+                                            <i class="fa-solid fa-circle-check text-emerald-500 text-[10px]"></i>
+                                            <span>Bertugas di Jam Pilihan</span>
+                                        </span>
+                                        <span>•</span>
+                                        <span class="flex items-center gap-1 font-semibold text-[#5b3a29]/80">
+                                            <i class="fa-solid fa-sparkles text-[#f45472] text-[10px]"></i>
+                                            <span x-text="(selectedBeautician.total_bookings || 0) + ' Booking Ditangani'"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <template x-if="!selectedBeautician">
+                            <div class="mt-2 p-2.5 rounded-xl bg-white/80 border border-rose-100 flex items-center gap-3 shadow-2xs">
+                                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#f45472] to-[#e03e5c] text-white flex items-center justify-center text-xs shrink-0 shadow-2xs">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-bold text-[#5b3a29] text-xs">Penugasan Otomatis (Rekomendasi)</p>
+                                    <p class="text-[10px] text-[#5b3a29]/70 truncate">Sistem akan otomatis menugaskan terapis terbaik & paling siap untuk Anda.</p>
+                                </div>
+                            </div>
+                        </template>
                     </div>
 
                     {{-- ── CUSTOM VOUCHER DROPDOWN SELECTOR ── --}}
@@ -627,6 +672,11 @@ function bookingWizard() {
 
         get subtotalAfterMembership() {
             return Math.max(0, this.subtotal - this.membershipDiscountAmount);
+        },
+
+        get selectedBeautician() {
+            if (!this.selectedBeauticianId) return null;
+            return this.availableBeauticians.find(b => b.id == this.selectedBeauticianId) || null;
         },
 
         get selectedVoucher() {
