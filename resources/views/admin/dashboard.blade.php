@@ -170,7 +170,11 @@
 
                     {{-- Percentage breakdown legend --}}
                     <div class="space-y-2 text-xs border-t border-rose-100 pt-3">
-                        @foreach($topTreatments as $index => $t)
+                        @php
+                            $isValidTopObjHead = is_object($topTreatments) && !($topTreatments instanceof \__PHP_Incomplete_Class);
+                            $topTreatmentsHeaderList = ($isValidTopObjHead || is_array($topTreatments)) ? $topTreatments : [];
+                        @endphp
+                        @foreach($topTreatmentsHeaderList as $index => $t)
                         @php
                             $pct = $treatmentChartPercentages[$index] ?? 0;
                             $color = $treatmentChartColors[$loop->index % count($treatmentChartColors)];
@@ -201,11 +205,13 @@
 
                     <div class="space-y-4 flex-1">
                         @php
-                            $firstItem = is_object($topTreatments) && method_exists($topTreatments, 'first') ? $topTreatments->first() : (is_array($topTreatments) ? ($topTreatments[0] ?? null) : null);
-                            $firstCount = is_object($firstItem) ? ($firstItem->bookings_count ?? 1) : (is_array($firstItem) ? ($firstItem['bookings_count'] ?? 1) : 1);
+                            $isValidTopObj = is_object($topTreatments) && !($topTreatments instanceof \__PHP_Incomplete_Class);
+                            $firstItem = ($isValidTopObj && method_exists($topTreatments, 'first')) ? $topTreatments->first() : (is_array($topTreatments) ? ($topTreatments[0] ?? null) : null);
+                            $firstCount = is_object($firstItem) && !($firstItem instanceof \__PHP_Incomplete_Class) ? ($firstItem->bookings_count ?? 1) : (is_array($firstItem) ? ($firstItem['bookings_count'] ?? 1) : 1);
                             $maxCount = max(1, (int) $firstCount);
+                            $topTreatmentsList = ($isValidTopObj || is_array($topTreatments)) ? $topTreatments : [];
                         @endphp
-                        @forelse($topTreatments as $index => $treatment)
+                        @forelse($topTreatmentsList as $index => $treatment)
                         @php
                             $nameStr = is_object($treatment) ? ($treatment->name ?? '') : (is_array($treatment) ? ($treatment['name'] ?? '') : (string) $treatment);
                             $priceNum = is_object($treatment) ? ($treatment->price ?? 0) : (is_array($treatment) ? ($treatment['price'] ?? 0) : 0);
@@ -261,7 +267,11 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-50 text-sm">
-                                @forelse($recentBookings as $booking)
+                                @php
+                                    $isValidRecentObj = is_object($recentBookings) && !($recentBookings instanceof \__PHP_Incomplete_Class);
+                                    $recentBookingsList = ($isValidRecentObj || is_array($recentBookings)) ? $recentBookings : [];
+                                @endphp
+                                @forelse($recentBookingsList as $booking)
                                 <tr class="hover:bg-rose-50/30 transition-colors">
                                     <td class="py-3 px-2 font-bold text-gray-900">
                                         {{ $booking->user?->name ?? 'Guest User' }}
