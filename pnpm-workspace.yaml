@@ -1,0 +1,4 @@
+allowBuilds:
+  9router: set this to true or false
+  '@github/keytar': set this to true or false
+  node-pty: set this to true or false
