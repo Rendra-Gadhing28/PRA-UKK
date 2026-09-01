@@ -36,10 +36,23 @@ class Beauticians extends Model
     protected function photoUrl(): Attribute
     {
         return Attribute::make(
-            get: fn (): string => \App\Support\ImageHelper::url(
-                $this->photo ? (self::PHOTO_DIRECTORY . '/' . ltrim($this->photo, '/')) : null,
-                'https://ui-avatars.com/api/?name=' . urlencode($this->name ?? 'Beautician') . '&background=f45472&color=fff'
-            ),
+            get: function (): string {
+                if (blank($this->photo)) {
+                    return 'https://ui-avatars.com/api/?name=' . urlencode($this->name ?? 'Beautician') . '&background=f45472&color=fff';
+                }
+
+                $path = $this->photo;
+                if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+                    return $path;
+                }
+
+                $cleanPath = ltrim($path, '/');
+                if (! str_starts_with($cleanPath, 'beauticians/')) {
+                    $cleanPath = self::PHOTO_DIRECTORY . '/' . $cleanPath;
+                }
+
+                return \App\Support\ImageHelper::url($cleanPath);
+            }
         );
     }
 
