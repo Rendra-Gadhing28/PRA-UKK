@@ -241,6 +241,13 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])
             Route::delete('/{finance}', [\App\Http\Controllers\Admin\AdminFinanceController::class, 'destroy'])->name('destroy');
         });
 
+        // Admin Users Management
+        Route::prefix('users')->name('users.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\AdminUserController::class, 'index'])->name('index');
+            Route::delete('/{user}', [\App\Http\Controllers\Admin\AdminUserController::class, 'destroy'])->name('destroy');
+            Route::match(['POST', 'PATCH'], '/{user}/toggle-active', [\App\Http\Controllers\Admin\AdminUserController::class, 'toggleActive'])->name('toggle-active');
+        });
+
         // Admin Profile Management
         Route::prefix('profile')->name('profile.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\AdminProfileController::class, 'edit'])->name('edit');

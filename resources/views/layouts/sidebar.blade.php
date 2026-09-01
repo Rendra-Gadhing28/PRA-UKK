@@ -93,6 +93,13 @@
 
             <div class="px-3 pt-4 py-2 text-[10px] font-bold uppercase tracking-wider text-gray-400">Pengaturan Akun</div>
 
+            {{-- Kelola User --}}
+            <a href="{{ Route::has('admin.users.index') ? route('admin.users.index') : '#' }}" 
+               class="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all {{ request()->routeIs('admin.users.*') ? 'bg-[#f45472] text-white shadow-md shadow-rose-200 font-bold' : 'text-gray-600 hover:text-[#f45472] hover:bg-rose-50' }}">
+                <i class="fa-solid fa-users-gear text-[#f45472] {{ request()->routeIs('admin.users.*') ? 'text-white' : '' }} text-base"></i>
+                <span>Kelola User</span>
+            </a>
+
             {{-- Profil Admin --}}
             <a href="{{ Route::has('admin.profile.edit') ? route('admin.profile.edit') : '#' }}" 
                class="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all {{ request()->routeIs('admin.profile.*') ? 'bg-[#f45472] text-white shadow-md shadow-rose-200 font-bold' : 'text-gray-600 hover:text-[#f45472] hover:bg-rose-50' }}">
