@@ -28,6 +28,7 @@ Thumbs.db
 PRD.md
 CLAUDE.md
 DESIGN.md
+<<<<<<< Updated upstream
 **/caddy
 frankenphp
 frankenphp-worker.php
@@ -36,3 +37,7 @@ frankenphp-worker.php
 **/caddy
 frankenphp
 frankenphp-worker.php
+=======
+Optimalisasi.md
+CLAUDE.md
+>>>>>>> Stashed changes
