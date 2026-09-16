@@ -191,7 +191,7 @@
                 {{-- Left Column: Treatment Catalog - Top 3 Rated (70% / 8 Cols) --}}
                 <div class="xl:col-span-8 space-y-4 flex flex-col h-fit">
                     <div>
-                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+                        <div class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4 pt-1">
                             <div>
                                 <div class="flex items-center gap-2">
                                     <h2 class="font-headline-md text-2xl md:text-3xl text-[#2B0F23] font-black">Treatment Catalog</h2>
@@ -202,10 +202,53 @@
                                 <p class="text-xs md:text-sm text-[#594043] mt-1 font-medium">Layanan favorit pilihan pelanggan Yalia Beauty dengan rating tertinggi.</p>
                             </div>
 
-                            {{-- Search Bar --}}
-                            <div class="relative w-full md:w-64">
-                                <input aria-label="Cari treatment" x-model="searchQuery" class="w-full pl-10 pr-4 py-2.5 rounded-full border border-[#F4DDE1] bg-white focus:ring-[#B01F44] focus:border-[#B01F44] text-xs font-medium text-[#2B0F23] placeholder-[#8D7072] shadow-sm transition-all" placeholder="Cari treatment..." type="text"/>
-                                <span class="material-symbols-outlined absolute left-3.5 top-3 text-[#B01F44] text-lg" aria-hidden="true">search</span>
+                            {{-- Search Bar: Memanjang & Menjalar Keluar --}}
+                            <div class="relative w-full sm:w-72 md:w-80 lg:focus-within:w-96 transition-all duration-300 shrink-0">
+                                <div class="relative">
+                                    <input aria-label="Cari treatment"
+                                           x-model="searchQuery"
+                                           @keydown.escape="searchQuery = ''"
+                                           class="w-full pl-10 pr-10 py-2.5 rounded-full border border-[#F4DDE1] bg-white focus:ring-2 focus:ring-[#B01F44]/25 focus:border-[#B01F44] text-xs font-medium text-[#2B0F23] placeholder-[#8D7072] shadow-sm transition-all"
+                                           placeholder="Cari treatment..."
+                                           type="text"/>
+                                    <span class="material-symbols-outlined absolute left-3.5 top-2.5 text-[#B01F44] text-lg pointer-events-none" aria-hidden="true">search</span>
+                                    <button x-show="searchQuery"
+                                            x-cloak
+                                            @click="searchQuery = ''"
+                                            type="button"
+                                            class="absolute right-3.5 top-2.5 text-[#8D7072] hover:text-[#B01F44] transition-colors"
+                                            aria-label="Hapus pencarian">
+                                        <span class="material-symbols-outlined text-base">close</span>
+                                    </button>
+                                </div>
+
+                                {{-- Live Search Dropdown Panel ("Menjalar Keluar") --}}
+                                <div x-show="searchQuery.trim().length > 0"
+                                     x-cloak
+                                     x-transition:enter="transition ease-out duration-200"
+                                     x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                                     x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                     x-transition:leave="transition ease-in duration-150"
+                                     x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                     x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                                     @click.away="searchQuery = ''"
+                                     class="absolute left-0 right-0 top-full mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-[#F4DDE1] p-3 z-30 space-y-2">
+                                    <div class="flex items-center justify-between px-1 pb-1 border-b border-[#F4DDE1]/60 text-[10px] font-bold text-[#8D7072] uppercase tracking-wider">
+                                        <span>Hasil Pencarian</span>
+                                        <span class="text-[#B01F44] font-black truncate max-w-[150px]" x-text="'Keyword: ' + searchQuery"></span>
+                                    </div>
+                                    <p class="text-xs text-[#594043] px-1 font-medium">
+                                        Memfilter kartu treatment di bawah secara real-time.
+                                    </p>
+                                    <a :href="'{{ route('user.treatments.index') }}?search=' + encodeURIComponent(searchQuery)"
+                                       class="flex items-center justify-between p-2.5 rounded-xl bg-[#FFF0F2] hover:bg-[#FFE0E6] text-[#B01F44] text-xs font-bold transition-colors">
+                                        <span class="flex items-center gap-1.5">
+                                            <span class="material-symbols-outlined text-sm">manage_search</span>
+                                            <span>Lihat di Katalog Lengkap</span>
+                                        </span>
+                                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
 
@@ -272,6 +315,25 @@
                             </div>
 
 
+                            <div x-show="isSearchEmpty()" x-cloak class="col-span-full py-10 px-4 text-center text-[#594043] bg-white/90 backdrop-blur-md rounded-3xl border border-dashed border-[#F4DDE1] space-y-3">
+                                <div class="w-12 h-12 rounded-2xl bg-rose-50 text-[#B01F44] mx-auto flex items-center justify-center shadow-sm">
+                                    <span class="material-symbols-outlined text-2xl">search_off</span>
+                                </div>
+                                <div>
+                                    <p class="font-black text-sm text-[#2B0F23]">Treatment tidak ditemukan di Top 3</p>
+                                    <p class="text-xs text-[#594043] mt-0.5 font-medium">Layanan yang kamu cari mungkin ada di katalog lengkap kami.</p>
+                                </div>
+                                <div class="flex items-center justify-center gap-2 pt-1 flex-wrap">
+                                    <button @click="searchQuery = ''; selectedCategory = 'all'" type="button" class="px-4 py-2 rounded-xl text-xs font-bold border border-[#F4DDE1] bg-white text-[#594043] hover:bg-rose-50 hover:text-[#B01F44] transition-colors shadow-sm">
+                                        Reset Filter
+                                    </button>
+                                    <a :href="'{{ route('user.treatments.index') }}?search=' + encodeURIComponent(searchQuery)" class="px-4 py-2 rounded-xl text-xs font-bold bg-[#B01F44] text-white hover:bg-[#9B4054] transition-colors shadow-sm flex items-center gap-1.5">
+                                        <span>Lihat di Katalog Lengkap</span>
+                                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                                    </a>
+                                </div>
+                            </div>
+
                         @empty
                             <div class="col-span-full py-12 text-center text-[#594043] bg-white/80 rounded-3xl border border-dashed border-[#F4DDE1]">
                                 <span class="material-symbols-outlined text-4xl mb-2 text-[#B01F44]">spa</span>
@@ -285,7 +347,7 @@
                 <div class="xl:col-span-4 flex flex-col h-fit">
                     
                     {{-- ── SECTION 2: GLOW REWARDS DAILY STREAK CARD ── --}}
-                    <div x-data="{ isCardCollapsed: false, ...dailyStreakApp() }" class="mb-8">
+                    <div class="mb-8">
                         <div class="bg-white/90 backdrop-blur-md rounded-3xl p-5 md:p-6 shadow-sm border border-[#e0bec1] transition-all hover:shadow-md">
                             
                             {{-- Card Header with Collapse Toggle --}}
@@ -294,6 +356,8 @@
                                     <div class="flex items-center gap-2">
                                         <h3 class="font-headline-sm text-lg font-black text-[#2B0F23]">Misi Harian</h3>
                                         <span class="animate-pulse text-base">✨</span>
+                                        <span x-show="hasClaimedToday && isCardCollapsed" x-cloak class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-700 border border-emerald-200">Klaim Berhasil</span>
+                                        <span x-show="!hasClaimedToday && isCardCollapsed" x-cloak class="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-800 border border-amber-200 animate-pulse">Ada Hadiah!</span>
                                     </div>
                                     <p class="text-xs text-[#594043] font-medium">Absen harian, raih hadiah glowing!</p>
                                 </div>
@@ -301,8 +365,8 @@
                                     <div style="background: linear-gradient(135deg, #B01F44, #9B4054);" class="w-9 h-9 rounded-xl text-white flex items-center justify-center shadow-sm shrink-0">
                                         <span class="material-symbols-outlined text-lg text-white">redeem</span>
                                     </div>
-                                    <button @click="isCardCollapsed = !isCardCollapsed" type="button" class="p-1.5 rounded-lg text-[#594043] hover:bg-rose-50 hover:text-[#B01F44] transition-colors" title="Lihat/Sembunyikan Misi">
-                                        <span class="material-symbols-outlined text-xl transition-transform duration-200" :class="isCardCollapsed ? '-rotate-180' : ''">keyboard_arrow_up</span>
+                                    <button @click="isCardCollapsed = !isCardCollapsed" type="button" class="p-1.5 rounded-lg text-[#594043] hover:bg-rose-50 hover:text-[#B01F44] transition-colors cursor-pointer" title="Lihat/Sembunyikan Misi">
+                                        <span class="material-symbols-outlined text-xl transition-transform duration-300" :class="isCardCollapsed ? 'rotate-180' : ''">keyboard_arrow_up</span>
                                     </button>
                                 </div>
                             </div>
@@ -364,12 +428,12 @@
                             </div>
 
                             {{-- Toggle Detail 7 Hari --}}
-                            <button @click="showAllMissions = !showAllMissions" type="button" class="w-full flex items-center justify-center gap-1 text-xs font-extrabold text-[#B01F44] mb-3 hover:underline">
+                            <button @click="showAllMissions = !showAllMissions" type="button" class="w-full flex items-center justify-center gap-1 text-xs font-extrabold text-[#B01F44] mb-3 hover:underline cursor-pointer">
                                 <span x-text="showAllMissions ? 'Sembunyikan Detail' : 'Lihat Semua Misi (7 Hari)'"></span>
-                                <span class="material-symbols-outlined text-sm transition-transform duration-200" :class="showAllMissions ? '-rotate-180' : ''">expand_more</span>
+                                <span class="material-symbols-outlined text-sm transition-transform duration-300" :class="showAllMissions ? 'rotate-180' : ''">expand_more</span>
                             </button>
 
-                            {{-- Expanded 7-Day List --}}
+                            {{-- Expanded 7-Day List ("Menjalar Keluar") --}}
                             <div x-show="showAllMissions" x-collapse x-cloak class="mt-2 mb-4 relative space-y-2">
                                 <div class="absolute left-4 top-4 bottom-4 w-1 rounded-full z-0" style="background: linear-gradient(to bottom, #B01F44, #F4DDE1);"></div>
                                 <template x-for="(mission, index) in missions" :key="'detail-'+index">
@@ -415,22 +479,24 @@
                                     </div>
                                 </template>
                             </div>
-                        </div>
 
-                        {{-- Claim CTA Button --}}
-                        <div class="pt-2">
-                            <button @click="claimTodayReward()"
-                                    :disabled="hasClaimedToday"
-                                    type="button"
-                                    class="relative w-full py-3.5 rounded-2xl font-button text-xs shadow-md transition-all duration-300 flex justify-center items-center gap-2 group transform active:scale-95 disabled:cursor-not-allowed overflow-hidden"
-                                    :style="hasClaimedToday ? 'background: #B01F44; color: white; opacity: 0.9; box-shadow: none;' : 'background: linear-gradient(to right, #B01F44, #C82D53, #9B4054); color: white;'">
-                                <span class="material-symbols-outlined text-lg text-white" :class="!hasClaimedToday ? 'group-hover:rotate-12 transition-transform' : ''">
-                                    <span x-text="hasClaimedToday ? 'task_alt' : 'celebration'"></span>
-                                </span>
-                                <span class="text-white font-black" x-text="hasClaimedToday ? 'Hadiah Hari Ini Sudah Diklaim' : 'Klaim Hadiah Hari Ini!'"></span>
-                            </button>
-                        </div>
+                            {{-- Claim CTA Button --}}
+                            <div class="pt-2">
+                                <button @click="claimTodayReward()"
+                                        :disabled="hasClaimedToday"
+                                        type="button"
+                                        class="relative w-full py-3.5 rounded-2xl font-button text-xs shadow-md transition-all duration-300 flex justify-center items-center gap-2 group transform active:scale-95 disabled:cursor-not-allowed overflow-hidden"
+                                        :style="hasClaimedToday ? 'background: #B01F44; color: white; opacity: 0.9; box-shadow: none;' : 'background: linear-gradient(to right, #B01F44, #C82D53, #9B4054); color: white;'">
+                                    <span class="material-symbols-outlined text-lg text-white" :class="!hasClaimedToday ? 'group-hover:rotate-12 transition-transform' : ''">
+                                        <span x-text="hasClaimedToday ? 'task_alt' : 'celebration'"></span>
+                                    </span>
+                                    <span class="text-white font-black" x-text="hasClaimedToday ? 'Hadiah Hari Ini Sudah Diklaim' : 'Klaim Hadiah Hari Ini!'"></span>
+                                </button>
+                            </div>
 
+                            </div>{{-- End x-show="!isCardCollapsed" --}}
+
+                        </div>
                     </div>
                 </div>
 
@@ -765,9 +831,11 @@
                 showTiersModal: false,
                 showRewardModal: false,
                 showAllMissions: false,
+                isCardCollapsed: false,
                 copied: false,
                 searchQuery: '',
                 selectedCategory: 'all',
+                topTreatments: @json($topTreatments),
 
                 // Dynamic Day of Week Calculation (Monday = 1 ... Friday = 5 ... Sunday = 7)
                 todayDayOfWeek: (new Date().getDay() === 0 ? 7 : new Date().getDay()),
@@ -829,6 +897,17 @@
                     const matchesSearch = !q || name.includes(q) || desc.includes(q);
                     const matchesCat = this.selectedCategory === 'all' || category.includes(this.selectedCategory);
                     return matchesSearch && matchesCat;
+                },
+
+                isSearchEmpty() {
+                    if (!this.topTreatments || this.topTreatments.length === 0) return false;
+                    const hasActiveFilter = this.searchQuery.trim().length > 0 || this.selectedCategory !== 'all';
+                    if (!hasActiveFilter) return false;
+                    return !this.topTreatments.some(t => this.matchesFilter(
+                        (t.name || '').toLowerCase(),
+                        (t.description || '').toLowerCase(),
+                        (t.category_name || '').toLowerCase()
+                    ));
                 },
 
                 async claimTodayReward() {
