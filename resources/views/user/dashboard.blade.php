@@ -202,8 +202,8 @@
                                 <p class="text-xs md:text-sm text-[#594043] mt-1 font-medium">Layanan favorit pilihan pelanggan Yalia Beauty dengan rating tertinggi.</p>
                             </div>
 
-                            {{-- Search Bar: Memanjang & Menjalar Keluar --}}
-                            <div class="relative w-full sm:w-72 md:w-80 lg:focus-within:w-96 transition-all duration-300 shrink-0">
+                            {{-- Search Bar: Memanjang Proporsional --}}
+                            <div class="relative w-full sm:w-64 md:w-72 lg:w-80 transition-all duration-300 shrink-0">
                                 <div class="relative">
                                     <input aria-label="Cari treatment"
                                            x-model="searchQuery"
@@ -233,7 +233,7 @@
                                      x-transition:leave-end="opacity-0 translate-y-1 scale-95"
                                      @click.away="searchQuery = ''"
                                      class="absolute left-0 right-0 top-full mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-[#F4DDE1] p-3 z-30 space-y-2">
-                                    <div class="flex items-center justify-between px-1 pb-1 border-b border-[#F4DDE1]/60 text-[10px] font-bold text-[#8D7072] uppercase tracking-wider">
+                                    <div class="flex items-center justify-between px-1 pb-1 border-b border-[#F4DDE1]/60 text-xs font-bold text-[#8D7072] uppercase tracking-wider">
                                         <span>Hasil Pencarian</span>
                                         <span class="text-[#B01F44] font-black truncate max-w-[150px]" x-text="'Keyword: ' + searchQuery"></span>
                                     </div>
@@ -356,8 +356,8 @@
                                     <div class="flex items-center gap-2">
                                         <h3 class="font-headline-sm text-lg font-black text-[#2B0F23]">Misi Harian</h3>
                                         <span class="animate-pulse text-base">✨</span>
-                                        <span x-show="hasClaimedToday && isCardCollapsed" x-cloak class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-700 border border-emerald-200">Klaim Berhasil</span>
-                                        <span x-show="!hasClaimedToday && isCardCollapsed" x-cloak class="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-800 border border-amber-200 animate-pulse">Ada Hadiah!</span>
+                                        <span x-show="hasClaimedToday && isCardCollapsed" x-cloak class="px-2 py-0.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-700 border border-emerald-200">Klaim Berhasil</span>
+                                        <span x-show="!hasClaimedToday && isCardCollapsed" x-cloak class="px-2 py-0.5 rounded-full text-xs font-black bg-amber-100 text-amber-800 border border-amber-200 animate-pulse">Ada Hadiah!</span>
                                     </div>
                                     <p class="text-xs text-[#594043] font-medium">Absen harian, raih hadiah glowing!</p>
                                 </div>
@@ -534,13 +534,13 @@
                     </div>
                 </div>
 
-                <div id="booking-list-container" aria-live="polite" class="relative">
-                    <div x-show="loading" class="space-y-4 py-2">
+                <div class="relative min-h-[140px]">
+                    <div x-show="loading" x-cloak class="space-y-4 py-2">
                         <x-skeleton.card />
                         <x-skeleton.card />
                     </div>
 
-                    <div x-show="!loading">
+                    <div x-show="!loading" id="booking-list-container" aria-live="polite">
                         @include('user.bookings.BookingList', ['bookings' => $upcomingBookings, 'tab' => 'upcoming', 'paginated' => false])
                     </div>
                 </div>
