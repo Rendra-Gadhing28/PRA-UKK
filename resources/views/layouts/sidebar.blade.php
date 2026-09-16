@@ -6,13 +6,13 @@
                 <div class="w-full h-full bg-white rounded-[14px] p-1 flex items-center justify-center overflow-hidden">
                     <img src="{{ asset('logo/yalia-logos-trnsprnt.svg') }}" alt="Yalia Admin" width="36" height="36" class="w-full h-full object-contain">
                 </div>
-                <div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-amber-400 border-2 border-white rounded-full flex items-center justify-center shadow-sm">
-                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                </div>
             </div>
             <div>
                 <span class="font-serif font-black text-gray-900 text-sm tracking-tight block leading-tight">Yalia Beauty</span>
-                <span class="text-xs font-black uppercase tracking-widest text-[#b01f44] font-mono">Admin Portal</span>
+                <span class="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-[#b01f44] font-mono">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Admin Portal
+                </span>
             </div>
         </div>
         <button @click="sidebarOpen = !sidebarOpen" type="button" aria-label="Toggle Sidebar" class="p-2 text-rose-950/70 hover:text-[#b01f44] hover:bg-rose-50 rounded-xl transition-colors focus:outline-none">
@@ -46,10 +46,6 @@
                     <div class="relative w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#f4b942] via-[#e0247e] to-[#b01f44] p-[2px] shadow-[0_6px_20px_rgba(176,31,68,0.22)] group-hover:scale-105 transition-transform duration-300">
                         <div class="w-full h-full bg-white rounded-[14px] p-1.5 flex items-center justify-center overflow-hidden shadow-inner">
                             <img src="{{ asset('logo/yalia-logos-trnsprnt.svg') }}" alt="Yalia Beauty" width="44" height="44" class="w-full h-full object-contain">
-                        </div>
-                        {{-- Floating Gem / Live Status Badge --}}
-                        <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-gradient-to-br from-amber-300 to-amber-500 border-2 border-white rounded-full flex items-center justify-center shadow-md">
-                            <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
                         </div>
                     </div>
 

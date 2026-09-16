@@ -131,11 +131,11 @@
                             {{-- Card Header: Brand & Discount Pill (No Collision Layout) --}}
                             <div class="flex items-center justify-between pr-14 mb-3 relative z-10">
                                 <div class="flex items-center gap-2 flex-wrap">
-                                    <span class="text-[10px] sm:text-xs font-black uppercase tracking-widest bg-white/15 text-white/95 px-2.5 py-1 rounded-full border border-white/25 backdrop-blur-md shadow-sm">
+                                    <span class="text-xs font-black uppercase tracking-widest bg-white/15 text-white/95 px-2.5 py-1 rounded-full border border-white/25 backdrop-blur-md shadow-sm">
                                         YALIA BEAUTY VIP
                                     </span>
-                                    <span class="px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-gradient-to-r from-[#F4B942] to-[#E0247E] text-white border border-white/25 shadow-md flex items-center gap-1">
-                                        <i class="fa-solid fa-percent text-[10px]"></i>
+                                    <span class="px-2.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-gradient-to-r from-[#F4B942] to-[#E0247E] text-white border border-white/25 shadow-md flex items-center gap-1">
+                                        <i class="fa-solid fa-percent text-xs"></i>
                                         <span>DISKON {{ $currentTier['discount'] ?? '0%' }}</span>
                                     </span>
                                 </div>
@@ -435,9 +435,10 @@
                 </div>
 
             </div>
+        </div>
 
-            {{-- Booking Management Section --}}
-            <section class="mt-12 pt-8 border-t border-[#E0247E]/20">
+        {{-- Booking Management Section --}}
+        <section class="mt-12 pt-8 border-t border-[#E0247E]/20">
                 <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
                     <div>
                         <h2 class="font-headline-md text-2xl font-black text-[#2B0F23]">Riwayat & Booking Saya</h2>
@@ -686,7 +687,7 @@
 
                 <div class="relative z-10 space-y-2">
                     <div class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-gradient-to-r from-amber-500/20 via-pink-500/20 to-amber-500/20 border border-amber-400/50 rounded-full shadow-[0_2px_12px_rgba(244,185,66,0.25)]">
-                        <span class="text-[11px] font-black tracking-widest uppercase text-amber-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                        <span class="text-xs font-black tracking-widest uppercase text-amber-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
                             AURA GLOW-UP MEMANCAR! ✨
                         </span>
                     </div>
