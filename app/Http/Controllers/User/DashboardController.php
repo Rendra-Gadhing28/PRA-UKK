@@ -5,8 +5,10 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Bookings;
 use App\Models\Treatments;
+use App\Models\User;
 use App\Services\Dashboard\DashboardStatsService;
 use App\Support\Membership;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -43,25 +45,25 @@ class DashboardController extends Controller
         // 10 menit karena rating tidak berubah tiap detik — sesuaikan TTL
         // kalau Anda butuh update lebih real-time.
         $topTreatments = Cache::remember(
-            'dashboard:top-treatments-v6',
+            'dashboard:top-treatments-v7',
             now()->addMinutes(10),
             fn () => Treatments::query()
                 ->active()
                 ->with('category')
                 ->orderByDesc('rating')
                 ->orderByDesc('rating_count')
-                ->take(3)
+                ->take(4)
                 ->get()
                 ->map(fn ($t) => [
-                    'id'               => $t->id,
-                    'name'             => $t->name,
-                    'description'      => $t->description,
-                    'price'            => (float) $t->price,
+                    'id' => $t->id,
+                    'name' => $t->name,
+                    'description' => $t->description,
+                    'price' => (float) $t->price,
                     'duration_minutes' => (int) $t->duration_minutes,
-                    'rating'           => (float) $t->rating,
-                    'rating_count'     => (int) $t->rating_count,
-                    'image_url'        => $t->image_url,
-                    'category_name'    => $t->category?->name ?? '',
+                    'rating' => (float) $t->rating,
+                    'rating_count' => (int) $t->rating_count,
+                    'image_url' => $t->image_url,
+                    'category_name' => $t->category?->name ?? '',
                 ])
                 ->all()
         );
@@ -78,10 +80,10 @@ class DashboardController extends Controller
             ->get();
 
         return view('user.dashboard', [
-            'user'             => $user,
-            'stats'            => $stats,
-            'membership'       => $membership,
-            'topTreatments'    => $topTreatments,
+            'user' => $user,
+            'stats' => $stats,
+            'membership' => $membership,
+            'topTreatments' => $topTreatments,
             'upcomingBookings' => $upcomingBookings,
         ]);
     }
@@ -89,16 +91,16 @@ class DashboardController extends Controller
     /**
      * Klaim poin check-in harian dan simpan ke database (total_points & tier_points).
      */
-    public function dailyCheckin(Request $request): \Illuminate\Http\JsonResponse
+    public function dailyCheckin(Request $request): JsonResponse
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         if ($user->last_daily_checkin_at && $user->last_daily_checkin_at->isToday()) {
             return response()->json([
-                'success'      => false,
+                'success' => false,
                 'already_claimed' => true,
-                'message'      => 'Anda sudah mengklaim poin hari ini!',
+                'message' => 'Anda sudah mengklaim poin hari ini!',
                 'total_points' => $user->total_points,
             ]);
         }
@@ -111,10 +113,10 @@ class DashboardController extends Controller
         $user->refresh();
 
         return response()->json([
-            'success'      => true,
+            'success' => true,
             'points_added' => $pointsAdded,
             'total_points' => $user->total_points,
-            'message'      => 'Berhasil mengklaim +25 Poin PTS ke akun Anda!',
+            'message' => 'Berhasil mengklaim +25 Poin PTS ke akun Anda!',
         ]);
     }
 }

@@ -188,7 +188,7 @@
             {{-- Main Content Grid: Catalog (7/8 Cols) & Missions (5/4 Cols) --}}
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
 
-                {{-- Left Column: Treatment Catalog - Top 3 Rated (7 Cols on lg, 8 on xl) --}}
+                {{-- Left Column: Treatment Catalog - Top 4 Rated (7 Cols on lg, 8 on xl) --}}
                 <div class="lg:col-span-7 xl:col-span-8 space-y-4 flex flex-col h-fit">
                     <div>
                         <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-4 pt-1">
@@ -196,7 +196,7 @@
                                 <div class="flex items-center gap-2">
                                     <h2 class="font-headline-md text-xl md:text-2xl text-[#2B0F23] font-black">Treatment Catalog</h2>
                                     <span class="px-2.5 py-0.5 bg-[#FFF0F2] text-[#B01F44] rounded-full text-xs font-extrabold border border-[#F4DDE1] flex items-center gap-1 shadow-sm">
-                                        <span class="material-symbols-outlined text-xs text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span> Top 3 Rating
+                                        <span class="material-symbols-outlined text-xs text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span> Top 4 Rating
                                     </span>
                                 </div>
                                 <p class="text-xs text-[#594043] mt-0.5 font-medium">Layanan favorit pilihan pelanggan Yalia Beauty dengan rating tertinggi.</p>
@@ -262,8 +262,8 @@
                         </div>
                     </div>
 
-                    {{-- Treatment Grid (Only Top 3 Rated) --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 flex-1">
+                    {{-- Treatment Grid (Top 4 Rated: 2x2 Grid) --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1">
                         @forelse($topTreatments as $treatment)
                             @php
                                 $tItem = is_array($treatment) ? $treatment : (is_object($treatment) ? get_object_vars($treatment) : []);
@@ -320,7 +320,7 @@
                                     <span class="material-symbols-outlined text-2xl">search_off</span>
                                 </div>
                                 <div>
-                                    <p class="font-black text-sm text-[#2B0F23]">Treatment tidak ditemukan di Top 3</p>
+                                    <p class="font-black text-sm text-[#2B0F23]">Treatment tidak ditemukan di Top 4</p>
                                     <p class="text-xs text-[#594043] mt-0.5 font-medium">Layanan yang kamu cari mungkin ada di katalog lengkap kami.</p>
                                 </div>
                                 <div class="flex items-center justify-center gap-2 pt-1 flex-wrap">
@@ -517,7 +517,7 @@
                                     @click="switchTab(t)"
                                     type="button"
                                     class="px-4 py-1.5 rounded-full text-xs font-bold transition-all"
-                                    :class="activeTab === t ? 'bg-[#B01F44] text-white shadow-sm' : 'text-[#5C1439]/70 hover:text-[#B01F44]'"
+                                    :class="activeTab === t ? 'bg-white text-[#2B0F23] font-black shadow-sm border border-[#E0247E]/25' : 'text-[#5C1439]/70 hover:text-[#2B0F23]'"
                                     x-text="t === 'upcoming' ? 'Mendatang' : (t === 'past' ? 'Selesai' : 'Dibatalkan')">
                                 </button>
                             </template>
