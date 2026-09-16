@@ -22,29 +22,29 @@
 
 {{-- ══════ EMPTY STATE ══════ --}}
 @if ($bookings->isEmpty())
-<div class="bk-card flex flex-col items-center gap-5 py-20 text-center
-            bg-surface-container-lowest rounded-3xl border border-outline-variant/30 shadow-sm">
-    <div class="w-20 h-20 rounded-full bg-primary-fixed flex items-center justify-center text-primary shadow-inner">
-        <i class="fas fa-calendar-xmark text-3xl"></i>
+<div class="bk-card flex flex-col items-center gap-4 py-10 md:py-12 px-6 text-center
+            bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-sm max-w-2xl mx-auto">
+    <div class="w-14 h-14 rounded-full bg-primary-fixed flex items-center justify-center text-primary shadow-inner">
+        <i class="fas fa-calendar-xmark text-xl"></i>
     </div>
-    <div>
-        <h3 class="text-lg font-extrabold text-text-heading" style="font-family:'Playfair Display',serif">
+    <div class="space-y-1">
+        <h3 class="text-base md:text-lg font-extrabold text-text-heading" style="font-family:'Playfair Display',serif">
             @switch($tab)
                 @case('past')      Belum Ada Riwayat Selesai     @break
                 @case('cancelled') Tidak Ada yang Dibatalkan      @break
                 @default           Belum Ada Jadwal Mendatang
             @endswitch
         </h3>
-        <p class="text-sm text-on-surface-variant mt-1.5 max-w-xs mx-auto">
+        <p class="text-xs md:text-sm text-on-surface-variant max-w-xs mx-auto leading-relaxed">
             Saatnya manjakan diri! Pilih treatment kecantikan dan buat reservasi sekarang.
         </p>
     </div>
     <a href="{{ route('user.treatments.index') }}"
-       class="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-primary text-on-primary text-xs font-bold shadow-md
-              hover:bg-primary-container hover:shadow-lg active:scale-95
-              transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]">
-        <i class="fas fa-sparkles text-[10px]"></i>
-        Eksplorasi Treatment
+       class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary text-on-primary text-xs font-bold shadow-sm
+              hover:bg-primary-container hover:shadow-md active:scale-95
+              transition-all duration-300 ease-out">
+        <i class="fas fa-sparkles text-xs"></i>
+        <span>Eksplorasi Treatment</span>
     </a>
 </div>
 

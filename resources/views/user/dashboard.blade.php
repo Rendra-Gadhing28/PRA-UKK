@@ -7,7 +7,7 @@
 
 
     <div x-data="dashboardPage()" class="relative z-10 min-h-screen pt-28 pb-24 text-[#2B0F23]">
-        <main class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop space-y-12">
+        <main class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop space-y-8 md:space-y-10">
 
             {{-- Top Header Section: Left = Welcome & Stats, Right = Compact VIP Member Card --}}
             @php
@@ -24,7 +24,7 @@
                 $allTiers = $membership['all_tiers'] ?? \App\Support\Membership::TIERS;
             @endphp
 
-            <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch mb-8">
+            <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
 
                 {{-- Left Column (7 Cols): Welcome Header & 3 Stats Cards --}}
                 <div class="lg:col-span-7 flex flex-col justify-between space-y-6">
@@ -185,40 +185,40 @@
 
             </section>
 
-            {{-- Main Content Grid: Catalog (70%) & Missions (30%) --}}
-            <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+            {{-- Main Content Grid: Catalog (7/8 Cols) & Missions (5/4 Cols) --}}
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
 
-                {{-- Left Column: Treatment Catalog - Top 3 Rated (70% / 8 Cols) --}}
-                <div class="xl:col-span-8 space-y-4 flex flex-col h-fit">
+                {{-- Left Column: Treatment Catalog - Top 3 Rated (7 Cols on lg, 8 on xl) --}}
+                <div class="lg:col-span-7 xl:col-span-8 space-y-4 flex flex-col h-fit">
                     <div>
-                        <div class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4 pt-1">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-4 pt-1">
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <h2 class="font-headline-md text-2xl md:text-3xl text-[#2B0F23] font-black">Treatment Catalog</h2>
-                                    <span class="px-3 py-1 bg-[#FFF0F2] text-[#B01F44] rounded-full text-xs font-extrabold border border-[#F4DDE1] flex items-center gap-1 shadow-sm">
-                                        <span class="material-symbols-outlined text-sm text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span> Top 3 Rating
+                                    <h2 class="font-headline-md text-xl md:text-2xl text-[#2B0F23] font-black">Treatment Catalog</h2>
+                                    <span class="px-2.5 py-0.5 bg-[#FFF0F2] text-[#B01F44] rounded-full text-xs font-extrabold border border-[#F4DDE1] flex items-center gap-1 shadow-sm">
+                                        <span class="material-symbols-outlined text-xs text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span> Top 3 Rating
                                     </span>
                                 </div>
-                                <p class="text-xs md:text-sm text-[#594043] mt-1 font-medium">Layanan favorit pilihan pelanggan Yalia Beauty dengan rating tertinggi.</p>
+                                <p class="text-xs text-[#594043] mt-0.5 font-medium">Layanan favorit pilihan pelanggan Yalia Beauty dengan rating tertinggi.</p>
                             </div>
 
-                            {{-- Search Bar: Memanjang Proporsional --}}
-                            <div class="relative w-full sm:w-64 md:w-72 lg:w-80 transition-all duration-300 shrink-0">
+                            {{-- Search Bar: Proporsional & Berjarak Aman dari Misi Harian --}}
+                            <div class="relative w-full sm:w-56 md:w-64 transition-all duration-300 shrink-0">
                                 <div class="relative">
                                     <input aria-label="Cari treatment"
                                            x-model="searchQuery"
                                            @keydown.escape="searchQuery = ''"
-                                           class="w-full pl-10 pr-10 py-2.5 rounded-full border border-[#F4DDE1] bg-white focus:ring-2 focus:ring-[#B01F44]/25 focus:border-[#B01F44] text-xs font-medium text-[#2B0F23] placeholder-[#8D7072] shadow-sm transition-all"
+                                           class="w-full pl-9 pr-8 py-2 rounded-full border border-[#F4DDE1] bg-white focus:ring-2 focus:ring-[#B01F44]/25 focus:border-[#B01F44] text-xs font-medium text-[#2B0F23] placeholder-[#8D7072] shadow-sm transition-all"
                                            placeholder="Cari treatment..."
                                            type="text"/>
-                                    <span class="material-symbols-outlined absolute left-3.5 top-2.5 text-[#B01F44] text-lg pointer-events-none" aria-hidden="true">search</span>
+                                    <span class="material-symbols-outlined absolute left-3 top-2 text-[#B01F44] text-base pointer-events-none" aria-hidden="true">search</span>
                                     <button x-show="searchQuery"
                                             x-cloak
                                             @click="searchQuery = ''"
                                             type="button"
-                                            class="absolute right-3.5 top-2.5 text-[#8D7072] hover:text-[#B01F44] transition-colors"
+                                            class="absolute right-2.5 top-2 text-[#8D7072] hover:text-[#B01F44] transition-colors"
                                             aria-label="Hapus pencarian">
-                                        <span class="material-symbols-outlined text-base">close</span>
+                                        <span class="material-symbols-outlined text-sm">close</span>
                                     </button>
                                 </div>
 
@@ -235,7 +235,7 @@
                                      class="absolute left-0 right-0 top-full mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-[#F4DDE1] p-3 z-30 space-y-2">
                                     <div class="flex items-center justify-between px-1 pb-1 border-b border-[#F4DDE1]/60 text-xs font-bold text-[#8D7072] uppercase tracking-wider">
                                         <span>Hasil Pencarian</span>
-                                        <span class="text-[#B01F44] font-black truncate max-w-[150px]" x-text="'Keyword: ' + searchQuery"></span>
+                                        <span class="text-[#B01F44] font-black truncate max-w-[140px]" x-text="'Keyword: ' + searchQuery"></span>
                                     </div>
                                     <p class="text-xs text-[#594043] px-1 font-medium">
                                         Memfilter kartu treatment di bawah secara real-time.
@@ -253,17 +253,17 @@
                         </div>
 
                         {{-- Filter Chips --}}
-                        <div class="flex gap-2 overflow-x-auto pb-3 no-scrollbar">
-                            <button type="button" @click="selectedCategory = 'all'" :style="selectedCategory === 'all' ? 'background: linear-gradient(to right, #B01F44, #9B4054); color: white; border-color: #B01F44;' : 'background: white; color: #2B1A1F; border-color: #F4DDE1;'" class="px-5 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all shadow-sm">Semua</button>
-                            <button type="button" @click="selectedCategory = 'facial'" :style="selectedCategory === 'facial' ? 'background: linear-gradient(to right, #B01F44, #9B4054); color: white; border-color: #B01F44;' : 'background: white; color: #2B1A1F; border-color: #F4DDE1;'" class="px-5 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all shadow-sm">Facial</button>
-                            <button type="button" @click="selectedCategory = 'hair'" :style="selectedCategory === 'hair' ? 'background: linear-gradient(to right, #B01F44, #9B4054); color: white; border-color: #B01F44;' : 'background: white; color: #2B1A1F; border-color: #F4DDE1;'" class="px-5 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all shadow-sm">Hair</button>
-                            <button type="button" @click="selectedCategory = 'nails'" :style="selectedCategory === 'nails' ? 'background: linear-gradient(to right, #B01F44, #9B4054); color: white; border-color: #B01F44;' : 'background: white; color: #2B1A1F; border-color: #F4DDE1;'" class="px-5 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all shadow-sm">Nails</button>
-                            <button type="button" @click="selectedCategory = 'massage'" :style="selectedCategory === 'massage' ? 'background: linear-gradient(to right, #B01F44, #9B4054); color: white; border-color: #B01F44;' : 'background: white; color: #2B1A1F; border-color: #F4DDE1;'" class="px-5 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all shadow-sm">Massage</button>
+                        <div class="flex gap-2 overflow-x-auto pb-2.5 no-scrollbar">
+                            <button type="button" @click="selectedCategory = 'all'" :style="selectedCategory === 'all' ? 'background: linear-gradient(to right, #B01F44, #9B4054); color: white; border-color: #B01F44;' : 'background: white; color: #2B1A1F; border-color: #F4DDE1;'" class="px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all shadow-sm">Semua</button>
+                            <button type="button" @click="selectedCategory = 'facial'" :style="selectedCategory === 'facial' ? 'background: linear-gradient(to right, #B01F44, #9B4054); color: white; border-color: #B01F44;' : 'background: white; color: #2B1A1F; border-color: #F4DDE1;'" class="px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all shadow-sm">Facial</button>
+                            <button type="button" @click="selectedCategory = 'hair'" :style="selectedCategory === 'hair' ? 'background: linear-gradient(to right, #B01F44, #9B4054); color: white; border-color: #B01F44;' : 'background: white; color: #2B1A1F; border-color: #F4DDE1;'" class="px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all shadow-sm">Hair</button>
+                            <button type="button" @click="selectedCategory = 'nails'" :style="selectedCategory === 'nails' ? 'background: linear-gradient(to right, #B01F44, #9B4054); color: white; border-color: #B01F44;' : 'background: white; color: #2B1A1F; border-color: #F4DDE1;'" class="px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all shadow-sm">Nails</button>
+                            <button type="button" @click="selectedCategory = 'massage'" :style="selectedCategory === 'massage' ? 'background: linear-gradient(to right, #B01F44, #9B4054); color: white; border-color: #B01F44;' : 'background: white; color: #2B1A1F; border-color: #F4DDE1;'" class="px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all shadow-sm">Massage</button>
                         </div>
                     </div>
 
                     {{-- Treatment Grid (Only Top 3 Rated) --}}
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 flex-1">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 flex-1">
                         @forelse($topTreatments as $treatment)
                             @php
                                 $tItem = is_array($treatment) ? $treatment : (is_object($treatment) ? get_object_vars($treatment) : []);
@@ -343,11 +343,11 @@
                     </div>
                 </div>
 
-                {{-- Right Column: Daily Reward — Natural Height --}}
-                <div class="xl:col-span-4 flex flex-col h-fit">
+                {{-- Right Column: Daily Reward — Natural Height (5 Cols on lg, 4 on xl) --}}
+                <div class="lg:col-span-5 xl:col-span-4 flex flex-col h-fit">
                     
                     {{-- ── SECTION 2: GLOW REWARDS DAILY STREAK CARD ── --}}
-                    <div class="mb-8">
+                    <div>
                         <div class="bg-white/90 backdrop-blur-md rounded-3xl p-5 md:p-6 shadow-sm border border-[#e0bec1] transition-all hover:shadow-md">
                             
                             {{-- Card Header with Collapse Toggle --}}
@@ -501,24 +501,24 @@
                 </div>
 
             </div>
-        </div>
 
-        {{-- Booking Management Section --}}
-        <section class="mt-12 pt-8 border-t border-[#E0247E]/20">
-                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+            {{-- Booking Management Section --}}
+            <section class="mt-8 pt-6 border-t border-[#E0247E]/15">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                     <div>
-                        <h2 class="font-headline-md text-2xl font-black text-[#2B0F23]">Riwayat & Booking Saya</h2>
-                        <p class="text-body-sm text-[#5C1439]/80 font-medium">Kelola janji temu dan periksa status jadwal perawatan Anda.</p>
+                        <h2 class="font-headline-md text-xl md:text-2xl font-black text-[#2B0F23]">Riwayat & Booking Saya</h2>
+                        <p class="text-body-sm text-xs md:text-sm text-[#5C1439]/80 font-medium">Kelola janji temu dan periksa status jadwal perawatan Anda.</p>
                     </div>
 
-                    <div class="flex items-center gap-4">
-                        <div class="flex gap-4 overflow-x-auto no-scrollbar border-b border-[#E0247E]/20 pb-2">
+                    <div class="flex items-center gap-3">
+                        <div class="flex gap-1.5 bg-[#FFF0F2] p-1 rounded-full border border-[#E0247E]/15">
                             <template x-for="t in tabs" :key="t">
                                 <button
                                     @click="switchTab(t)"
-                                    class="pb-2 text-label-lg font-label-lg whitespace-nowrap transition-colors font-bold"
-                                    :class="activeTab === t ? 'text-[#E0247E] border-b-2 border-[#E0247E]' : 'text-[#5C1439]/70 hover:text-[#E0247E]'"
-                                    x-text="t.charAt(0).toUpperCase() + t.slice(1)">
+                                    type="button"
+                                    class="px-4 py-1.5 rounded-full text-xs font-bold transition-all"
+                                    :class="activeTab === t ? 'bg-[#B01F44] text-white shadow-sm' : 'text-[#5C1439]/70 hover:text-[#B01F44]'"
+                                    x-text="t === 'upcoming' ? 'Mendatang' : (t === 'past' ? 'Selesai' : 'Dibatalkan')">
                                 </button>
                             </template>
                         </div>
@@ -526,7 +526,7 @@
                         <button
                             type="button"
                             @click="toggleSort()"
-                            class="flex items-center gap-1 px-3 py-2 rounded-full border border-[#E0247E]/25 bg-[#FFF6FA] text-xs font-bold text-[#5C1439] hover:border-[#E0247E] hover:text-[#E0247E] transition-colors shadow-sm"
+                            class="flex items-center gap-1 px-3 py-1.5 rounded-full border border-[#E0247E]/20 bg-[#FFF6FA] text-xs font-bold text-[#5C1439] hover:border-[#B01F44] hover:text-[#B01F44] transition-colors shadow-sm"
                         >
                             <span class="material-symbols-outlined text-sm">filter_list</span>
                             <span x-text="sort === 'asc' ? 'Urutkan: Lama' : 'Urutkan: Baru'"></span>
