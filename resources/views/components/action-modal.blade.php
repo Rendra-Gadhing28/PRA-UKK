@@ -29,6 +29,7 @@
     "
     x-show="showModal"
     x-cloak
+    @keydown.escape.window="closeModal()"
     class="fixed inset-0 z-[500] flex items-center justify-center p-4 sm:p-6 overflow-y-auto"
     aria-labelledby="modal-title"
     role="dialog"
@@ -50,6 +51,7 @@
     {{-- Modal Content --}}
     <div
         x-show="showModal"
+        x-trap.noscroll="showModal"
         x-transition:enter="ease-out duration-300"
         x-transition:enter-start="opacity-0 scale-95 translate-y-4"
         x-transition:enter-end="opacity-100 scale-100 translate-y-0"

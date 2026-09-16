@@ -1,5 +1,5 @@
 {{-- ============================================================
-     _partials/voucher-grid.blade.php
+     voucher-grid.blade.php
      Dipakai oleh tab: Semua, Tukar PTS, Event
      Variables:
        $vouchers          — Collection<Vouchers>
@@ -31,6 +31,7 @@
                 aria-label="Voucher {{ $voucher->code }}"
             >
                 {{-- Thumbnail — WebP, width/height eksplisit, lazy load --}}
+                @if ($voucher->image)
                     <img
                         src="{{ \App\Support\ImageHelper::url($voucher->image) }}"
                         alt="Banner voucher {{ $voucher->name }}"

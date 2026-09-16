@@ -285,11 +285,11 @@
                 <div class="xl:col-span-4 flex flex-col h-fit">
                     
                     {{-- ── SECTION 2: GLOW REWARDS DAILY STREAK CARD ── --}}
-                    <div x-data="dailyStreakApp()" class="mb-8">
-                        <div class="bg-white/85 backdrop-blur-md rounded-3xl p-6 shadow-sm border border-[#e0bec1] transition-all hover:shadow-md">
+                    <div x-data="{ isCardCollapsed: false, ...dailyStreakApp() }" class="mb-8">
+                        <div class="bg-white/90 backdrop-blur-md rounded-3xl p-5 md:p-6 shadow-sm border border-[#e0bec1] transition-all hover:shadow-md">
                             
-                            {{-- Card Header --}}
-                            <div class="flex justify-between items-center mb-4">
+                            {{-- Card Header with Collapse Toggle --}}
+                            <div class="flex justify-between items-center mb-3">
                                 <div>
                                     <div class="flex items-center gap-2">
                                         <h3 class="font-headline-sm text-lg font-black text-[#2B0F23]">Misi Harian</h3>
@@ -297,10 +297,17 @@
                                     </div>
                                     <p class="text-xs text-[#594043] font-medium">Absen harian, raih hadiah glowing!</p>
                                 </div>
-                                <div style="background: linear-gradient(135deg, #B01F44, #9B4054);" class="w-10 h-10 rounded-2xl text-white flex items-center justify-center shadow-md transform rotate-6 shrink-0">
-                                    <span class="material-symbols-outlined text-xl text-white">redeem</span>
+                                <div class="flex items-center gap-2">
+                                    <div style="background: linear-gradient(135deg, #B01F44, #9B4054);" class="w-9 h-9 rounded-xl text-white flex items-center justify-center shadow-sm shrink-0">
+                                        <span class="material-symbols-outlined text-lg text-white">redeem</span>
+                                    </div>
+                                    <button @click="isCardCollapsed = !isCardCollapsed" type="button" class="p-1.5 rounded-lg text-[#594043] hover:bg-rose-50 hover:text-[#B01F44] transition-colors" title="Lihat/Sembunyikan Misi">
+                                        <span class="material-symbols-outlined text-xl transition-transform duration-200" :class="isCardCollapsed ? '-rotate-180' : ''">keyboard_arrow_up</span>
+                                    </button>
                                 </div>
                             </div>
+
+                            <div x-show="!isCardCollapsed" x-collapse>
 
                             {{-- Streak Status Banner --}}
                             <div style="background: linear-gradient(to right, #B01F44, #9B4054);" class="text-white rounded-2xl p-4 mb-4 flex items-center justify-between shadow-md">
@@ -477,6 +484,10 @@
 
         {{-- Member QR Modal --}}
         <div x-show="showQrModal" x-cloak
+             @keydown.escape.window="showQrModal = false"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="qr-modal-title"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0"
              x-transition:enter-end="opacity-100"
@@ -486,6 +497,7 @@
              class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#2B0F23]/70 backdrop-blur-sm">
             {{-- Modal Content (QR Code) --}}
             <div @click.away="showQrModal = false"
+                 x-trap.noscroll="showQrModal"
                  class="backdrop-blur-xl rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative border border-white/20 text-white"
                  style="{{ $currentTier['style_bg'] ?? 'background: linear-gradient(135deg, #B01F44, #5C1439);' }}"
                  x-transition:enter="transition ease-out duration-300 transform"
@@ -495,7 +507,7 @@
                  x-transition:leave-start="opacity-100 scale-100 translate-y-0"
                  x-transition:leave-end="opacity-0 scale-90 translate-y-4">
 
-                <button @click.stop="showQrModal = false" type="button" class="absolute top-4 right-4 text-white hover:text-white transition-colors z-[100] bg-black/40 p-2.5 rounded-full backdrop-blur-md shadow-lg cursor-pointer">
+                <button @click.stop="showQrModal = false" type="button" aria-label="Tutup modal QR" class="absolute top-4 right-4 text-white hover:text-white transition-colors z-[100] bg-black/40 p-2.5 rounded-full backdrop-blur-md shadow-lg cursor-pointer">
                     <span class="material-symbols-outlined font-black pointer-events-none text-xl block">close</span>
                 </button>
 
@@ -503,7 +515,7 @@
                     <div class="w-12 h-12 bg-white/20 rounded-2xl mx-auto flex items-center justify-center mb-3 shadow-inner text-white">
                         <span class="material-symbols-outlined text-2xl">qr_code_scanner</span>
                     </div>
-                    <h3 class="font-headline-sm text-xl font-bold text-white mb-1">Kode QR Member Yalia</h3>
+                    <h3 id="qr-modal-title" class="font-headline-sm text-xl font-bold text-white mb-1">Kode QR Member Yalia</h3>
                     <p class="text-xs text-white/80">Tunjukkan QR code ini ke kasir salon untuk klaim poin & benefit member.</p>
                 </div>
 
@@ -542,6 +554,10 @@
 
         {{-- Modern Tier Showcase Modal (dark plum-magenta-gold, kontras premium dari background pink) --}}
         <div x-show="showTiersModal" x-cloak
+             @keydown.escape.window="showTiersModal = false"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="tiers-modal-title"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 scale-95"
              x-transition:enter-end="opacity-100 scale-100"
@@ -549,10 +565,12 @@
              x-transition:leave-start="opacity-100 scale-100"
              x-transition:leave-end="opacity-0 scale-95"
              class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md overflow-y-auto">
-            <div @click.away="showTiersModal = false" class="bg-slate-900 rounded-[32px] max-w-5xl w-full p-6 md:p-8 shadow-2xl border border-slate-700/80 relative space-y-6 my-8 max-h-[90vh] overflow-y-auto no-scrollbar text-white">
+            <div @click.away="showTiersModal = false"
+                 x-trap.noscroll="showTiersModal"
+                 class="bg-slate-900 rounded-[32px] max-w-5xl w-full p-6 md:p-8 shadow-2xl border border-slate-700/80 relative space-y-6 my-8 max-h-[90vh] overflow-y-auto no-scrollbar text-white">
 
                 {{-- Close Button --}}
-                <button type="button" @click="showTiersModal = false" aria-label="Tutup modal tiers" class="absolute top-6 right-6 text-slate-400 hover:text-white transition-colors bg-white/10 p-2.5 rounded-full backdrop-blur-md">
+                <button type="button" @click="showTiersModal = false" aria-label="Tutup modal tiers" class="absolute top-6 right-6 text-slate-400 hover:text-white transition-colors bg-white/10 p-2.5 rounded-full backdrop-blur-md cursor-pointer">
                     <span class="material-symbols-outlined text-xl">close</span>
                 </button>
 
@@ -562,7 +580,7 @@
                         <span class="material-symbols-outlined text-sm">workspace_premium</span>
                         YALIA BEAUTY TIER SYSTEM
                     </span>
-                    <h3 class="text-2xl md:text-3xl font-black text-white tracking-tight">Level Membership & Benefit Diskon</h3>
+                    <h3 id="tiers-modal-title" class="text-2xl md:text-3xl font-black text-white tracking-tight">Level Membership & Benefit Diskon</h3>
                     <p class="text-xs md:text-sm text-slate-300 font-medium">Tingkatkan poin perawatan Anda untuk membuka diskon otomatis di setiap transaksi!</p>
                 </div>
 
@@ -644,6 +662,10 @@
 
         {{-- Funny Reward Claim Modal Popup (Velvet-Rose Luxury Dark Glassmorphism) --}}
         <div x-show="showRewardModal" x-cloak
+             @keydown.escape.window="showRewardModal = false"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="reward-modal-title"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 scale-90 blur-sm"
              x-transition:enter-end="opacity-100 scale-100 blur-0"
@@ -651,7 +673,9 @@
              x-transition:leave-start="opacity-100 scale-100 blur-0"
              x-transition:leave-end="opacity-0 scale-90 blur-sm"
              class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1e0a16]/85 backdrop-blur-2xl">
-            <div class="relative w-full max-w-sm overflow-hidden rounded-[32px] bg-gradient-to-b from-[#2e1022]/95 via-[#1d0a16]/95 to-[#12050e]/95 p-6 text-center space-y-5 shadow-[0_25px_70px_rgba(0,0,0,0.85)] border border-white/20 backdrop-blur-3xl ring-1 ring-white/10">
+            <div @click.away="showRewardModal = false"
+                 x-trap.noscroll="showRewardModal"
+                 class="relative w-full max-w-sm overflow-hidden rounded-[32px] bg-gradient-to-b from-[#2e1022]/95 via-[#1d0a16]/95 to-[#12050e]/95 p-6 text-center space-y-5 shadow-[0_25px_70px_rgba(0,0,0,0.85)] border border-white/20 backdrop-blur-3xl ring-1 ring-white/10">
                 <div class="absolute -top-12 -right-12 w-44 h-44 bg-[#f45472]/30 rounded-full blur-3xl pointer-events-none"></div>
                 <div class="absolute -bottom-12 -left-12 w-44 h-44 bg-amber-400/25 rounded-full blur-3xl pointer-events-none"></div>
                 <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 bg-purple-600/15 rounded-full blur-3xl pointer-events-none"></div>

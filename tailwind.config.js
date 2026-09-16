@@ -27,6 +27,11 @@ export default {
                 '2xl': '1.5rem',
             },
             colors: {
+                'brand-pink': '#f45472',
+                'brand-pink-dark': '#b01f44',
+                'brand-gold': '#f4b942',
+                'brand-plum': '#25181c',
+                'brand-blush': '#fff8f8',
                 'primary': '#b01f44',
                 'on-primary': '#ffffff',
                 'primary-container': '#d23b5b',
