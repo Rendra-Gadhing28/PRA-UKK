@@ -1,0 +1,289 @@
+/* public/css/beautician-profile-card.css
+   Komponen Profil Card Beautician Yalia Beauty.
+   - Siluet card serba rounded mewah (--card-radius: 28px).
+   - Foto potret elegan (--img-radius: 22px) dengan hover zoom halus.
+   - Floating badge spesialisasi & indikator status ketersediaan realtime.
+   - Tipografi editorial Playfair Display (nama) & Work Sans (deskripsi & stats).
+   - Tombol aksi Booking pill-shaped (border-radius: 9999px) khas Yalia Beauty.
+*/
+
+.beauty-card {
+    --card-bg: #ffffff;
+    --card-border: #f4dde1;
+    --card-radius: 28px;
+    --img-radius: 22px;
+    --text-main: #25181c;
+    --text-muted: #594043;
+    --primary-crimson: #b01f44;
+    --primary-hover: #910030;
+    --pill-bg: #fff0f2;
+    --pill-border: #f4dde1;
+    --verified-green: #14a879;
+
+    position: relative;
+    width: 100%;
+    max-width: 270px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--card-radius);
+    padding: 10px 10px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 10px 28px -6px rgba(37, 24, 28, 0.07);
+    font-family: 'Work Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    box-sizing: border-box;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s ease;
+}
+
+.beauty-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 36px -8px rgba(176, 31, 68, 0.12);
+    border-color: #e0bec1;
+}
+
+/* ===== Media / Foto Potret ===== */
+.beauty-card__media {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    border-radius: var(--img-radius);
+    overflow: hidden;
+    background: #ffe8ed;
+}
+
+.beauty-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+}
+
+.beauty-card:hover .beauty-card__img {
+    transform: scale(1.04);
+}
+
+/* Fallback Monogram Placeholder */
+.beauty-card__img-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(145deg, #fff0f2 0%, #ffe8ed 60%, #ffd2e1 100%);
+    color: var(--primary-crimson);
+}
+
+.beauty-card__placeholder-initials {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+.beauty-card__placeholder-sub {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+}
+
+/* Floating Badge Spesialisasi & Status */
+.beauty-card__badge-specialty {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+    padding: 4px 10px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(224, 190, 193, 0.6);
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary-crimson);
+    letter-spacing: 0.02em;
+    box-shadow: 0 2px 8px rgba(37, 24, 28, 0.08);
+}
+
+.beauty-card__badge-status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 9px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(224, 190, 193, 0.6);
+    border-radius: 9999px;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--text-main);
+    box-shadow: 0 2px 8px rgba(37, 24, 28, 0.08);
+}
+
+.beauty-card__status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--verified-green);
+    box-shadow: 0 0 0 2px rgba(20, 168, 121, 0.25);
+}
+
+.beauty-card__status-dot.is-pulse {
+    animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.15); }
+}
+
+/* ===== Name + Verified Badge ===== */
+.beauty-card__header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px 0;
+}
+
+.beauty-card__name {
+    margin: 0;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--text-main);
+    letter-spacing: -0.01em;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.beauty-card__verified {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+    flex-shrink: 0;
+}
+
+/* ===== Description / Bio ===== */
+.beauty-card__desc {
+    margin: 0;
+    padding: 0 8px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 38px;
+}
+
+/* ===== Footer: Stats + Booking Button ===== */
+.beauty-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 8px 0;
+    margin-top: 2px;
+    border-top: 1px solid #fdf0f3;
+}
+
+.beauty-card__stats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.beauty-card__stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.beauty-card__stat svg {
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.beauty-card__stat--rating svg {
+    color: #f59e0b;
+}
+
+/* Booking Pill CTA */
+.beauty-card__booking {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 8px 16px;
+    background: var(--pill-bg);
+    color: var(--primary-crimson);
+    border: 1px solid var(--pill-border);
+    border-radius: 9999px;
+    font-size: 12.5px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.22s ease,
+                color 0.22s ease,
+                transform 0.15s ease,
+                box-shadow 0.22s ease,
+                border-color 0.22s ease;
+}
+
+.beauty-card__booking svg {
+    transition: transform 0.2s ease;
+}
+
+.beauty-card__booking:hover {
+    background: var(--primary-crimson);
+    color: #ffffff;
+    border-color: var(--primary-crimson);
+    box-shadow: 0 4px 14px -2px rgba(176, 31, 68, 0.35);
+    transform: translateY(-1px);
+}
+
+.beauty-card__booking:hover svg {
+    transform: translateX(2px);
+    color: #ffffff;
+}
+
+.beauty-card__booking:active {
+    background: var(--primary-hover);
+    transform: translateY(0) scale(0.97);
+}
+
+.beauty-card__booking:focus-visible {
+    outline: 2px solid var(--primary-crimson);
+    outline-offset: 2px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 360px) {
+    .beauty-card {
+        max-width: 100%;
+    }
+}
