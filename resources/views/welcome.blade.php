@@ -50,7 +50,7 @@
                             Yalia Beauty
                         </span>
                         <span class="text-xs tracking-widest uppercase font-semibold text-[#9b4054] -mt-1">
-                            Salon & Nail Spa
+                            Salon & Nail Care
                         </span>
                     </div>
                 </a>

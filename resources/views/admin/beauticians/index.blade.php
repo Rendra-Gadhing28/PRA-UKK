@@ -105,128 +105,40 @@
                 </form>
             </div>
 
-            {{-- BEAUTICIANS PROFESSIONAL ID CARD GRID SECTION --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {{-- BEAUTICIANS PROFILE CARDS GRID (MATCHING SARAH SWIFT DESIGN REFERENCE) --}}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
                 @forelse($beauticians as $b)
                 
-                {{-- PROFESSIONAL EMPLOYEE ID CARD ITEM --}}
-                <div class="bg-white rounded-3xl border border-rose-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between overflow-hidden relative group">
+                {{-- SARAH SWIFT STYLE BEAUTICIAN PROFILE CARD --}}
+                <div class="bg-white rounded-[28px] p-2.5 pb-4 shadow-[0_12px_30px_rgba(20,20,20,0.06)] hover:shadow-[0_18px_40px_rgba(176,31,68,0.12)] border border-[#f4dde1]/70 transition-all duration-300 flex flex-col justify-between group">
                     
-                    {{-- ID Card Lanyard Hole Top Bar --}}
-                    <div class="bg-rose-50/60 py-2 border-b border-rose-100 flex justify-center items-center">
-                        <div class="w-12 h-2.5 bg-rose-200/80 rounded-full border border-rose-300/60 shadow-inner flex items-center justify-center">
-                            <div class="w-8 h-1 bg-rose-300 rounded-full"></div>
-                        </div>
-                    </div>
+                    {{-- 1. Full-Bleed Photo Media with Rounded Corners (r: 22px) --}}
+                    <div class="relative w-full h-72 sm:h-80 rounded-[22px] overflow-hidden bg-rose-50 shrink-0">
+                        <img src="{{ $b->photo_url }}" alt="{{ $b->name }}" 
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                             loading="lazy" decoding="async">
 
-                    {{-- ID Card Header Banner --}}
-                    <div class="bg-gradient-to-r from-gray-900 via-rose-950 to-gray-900 px-6 py-3 text-white flex items-center justify-between border-b-2 border-[#f45472] relative">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-7 h-7 rounded-full bg-white/10 p-1 border border-white/20 flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-spa text-rose-300 text-xs"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-xs uppercase tracking-widest text-rose-300 font-headline">Yalia Beauty</h4>
-                                <p class="text-xs text-gray-300 uppercase tracking-wider font-mono">Official Staff Card</p>
-                            </div>
-                        </div>
-
-                        {{-- Employee Badge ID --}}
-                        <div class="text-right">
-                            <span class="font-mono text-xs font-bold text-rose-300 tracking-wider">#STAFF-{{ sprintf('%03d', $b->id) }}</span>
-                            <span class="block text-xs text-gray-400 font-semibold uppercase">ID Number</span>
-                        </div>
-                    </div>
-
-                    {{-- Card Body --}}
-                    <div class="p-6 space-y-4">
-                        
-                        {{-- Photo Avatar with Status Ring & Main Info --}}
-                        <div class="flex items-center gap-4">
-                            <div class="relative shrink-0">
-                                <div class="w-16 h-16 rounded-2xl p-0.5 bg-gradient-to-br from-[#f45472] via-rose-300 to-amber-300 shadow-sm">
-                                    <img src="{{ $b->photo_url }}" alt="{{ $b->name }}" 
-                                         class="w-full h-full rounded-xl object-cover border border-white bg-white">
-                                </div>
-                                <span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white {{ $b->is_active ? 'bg-emerald-500' : 'bg-gray-400' }}"
-                                      title="{{ $b->is_active ? 'Status: Aktif' : 'Status: Off' }}"></span>
-                            </div>
-
-                            <div class="min-w-0 flex-1">
-                                <h3 class="font-bold text-base text-gray-900 leading-snug truncate font-headline">{{ $b->name }}</h3>
-                                <p class="text-xs font-semibold text-[#f45472] truncate mt-0.5">{{ $b->specialization }}</p>
-                                
-                                <div class="flex items-center gap-1.5 mt-1 text-xs text-amber-500 font-bold">
-                                    <i class="fa-solid fa-star text-amber-400 text-xs"></i>
-                                    <span class="tabular-nums">{{ number_format($b->rating ?? 5.0, 1) }}</span>
-                                    <span class="text-gray-400 font-normal text-xs">({{ $b->rating_count ?? 0 }} Ulasan)</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- Contact Details & Bio --}}
-                        <div class="space-y-1.5 pt-3 border-t border-rose-50 text-xs text-gray-600">
-                            @if($b->phone)
-                                <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-phone text-rose-400 text-xs w-4"></i>
-                                    <span class="font-medium text-gray-800">{{ $b->phone }}</span>
-                                </div>
-                            @endif
-                            @if($b->bio)
-                                <p class="text-xs text-gray-500 line-clamp-2 leading-relaxed italic">"{{ $b->bio }}"</p>
-                            @endif
-                        </div>
-
-                        {{-- Total Bookings & Status Badge --}}
-                        <div class="flex items-center justify-between pt-3 border-t border-rose-50">
-                            <div>
-                                <span class="text-xs text-gray-400 font-bold uppercase tracking-wider block">Total Penugasan</span>
-                                <span class="font-extrabold text-[#f45472] text-sm tabular-nums">
-                                    {{ number_format($b->bookings_count ?? $b->total_bookings) }} Layanan
-                                </span>
-                            </div>
-
-                            <div class="text-right">
-                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold {{ $b->is_active ? 'bg-emerald-100 text-emerald-950 border border-emerald-200' : 'bg-rose-50 text-rose-950 border border-rose-200' }}">
-                                    <i class="fa-solid {{ $b->is_active ? 'fa-circle-check text-emerald-600' : 'fa-circle-pause text-rose-400' }} text-xs"></i>
+                        {{-- Floating Status Badge & Toggle Button (Top-Left) --}}
+                        <div class="absolute top-3 left-3 z-10">
+                            <form method="POST" action="{{ route('admin.beauticians.toggle-active', $b->id) }}">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit"
+                                        class="px-3 py-1 rounded-full text-xs font-bold transition-all backdrop-blur-md shadow-sm flex items-center gap-1.5 border {{ $b->is_active ? 'bg-white/90 text-emerald-700 border-emerald-200 hover:bg-emerald-50' : 'bg-white/90 text-rose-700 border-rose-200 hover:bg-rose-50' }}"
+                                        title="{{ $b->is_active ? 'Klik untuk Nonaktifkan Penugasan' : 'Klik untuk Aktifkan Penugasan' }}">
+                                    <span class="w-2 h-2 rounded-full {{ $b->is_active ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400' }}"></span>
                                     <span>{{ $b->is_active ? 'Aktif' : 'Off' }}</span>
-                                </span>
-                            </div>
+                                </button>
+                            </form>
                         </div>
 
-                    </div>
-
-                    {{-- ID Card Actions Footer --}}
-                    <div class="p-4 bg-rose-50/40 border-t border-rose-100 flex items-center justify-between gap-2">
-                        
-                        {{-- Status Toggle Button --}}
-                        <form method="POST" action="{{ route('admin.beauticians.toggle-active', $b->id) }}">
-                            @csrf
-                            @method('PATCH')
-                            <button type="submit" 
-                                    class="py-2 px-3 rounded-full text-xs font-bold transition-all border flex items-center gap-1.5 shadow-2xs {{ $b->is_active ? 'bg-emerald-50 text-emerald-950 border-emerald-200 hover:bg-emerald-100' : 'bg-rose-50 text-rose-950 border border-rose-200 hover:bg-rose-100' }}"
-                                    title="{{ $b->is_active ? 'Nonaktifkan Staf' : 'Aktifkan Staf' }}"
-                                    aria-label="{{ $b->is_active ? 'Nonaktifkan staf ' . $b->name : 'Aktifkan staf ' . $b->name }}">
-                                <i class="fa-solid {{ $b->is_active ? 'fa-toggle-on text-emerald-600' : 'fa-toggle-off text-gray-400' }} text-xs"></i>
-                                <span>{{ $b->is_active ? 'Aktif' : 'Off' }}</span>
-                            </button>
-                        </form>
-
-                        <div class="flex items-center gap-1.5">
-                            <a href="{{ route('admin.beauticians.show', $b->id) }}" 
-                               class="py-2 px-3 rounded-full bg-white border border-rose-200 text-rose-950 text-xs font-bold hover:bg-rose-50 hover:text-rose-600 transition-all flex items-center gap-1 shadow-2xs"
-                               title="Lihat Detail ID Staf"
-                               aria-label="Lihat detail ID {{ $b->name }}">
-                                <i class="fa-solid fa-id-card text-xs"></i>
-                                <span>Detail</span>
-                            </a>
-
-                            <a href="{{ route('admin.beauticians.edit', $b->id) }}" 
-                               class="py-2 px-3 rounded-full bg-white border border-rose-200 text-rose-950 text-xs font-bold hover:bg-rose-50 hover:text-rose-600 transition-all flex items-center gap-1 shadow-2xs"
-                               title="Edit Staf"
+                        {{-- Floating Quick Action Buttons: Edit & Delete (Top-Right) --}}
+                        <div class="absolute top-3 right-3 z-10 flex items-center gap-1.5">
+                            <a href="{{ route('admin.beauticians.edit', $b->id) }}"
+                               class="w-8 h-8 rounded-full bg-white/90 hover:bg-[#fff0f2] text-[#25181c] hover:text-[#b01f44] transition-all backdrop-blur-md shadow-sm border border-[#f4dde1] flex items-center justify-center"
+                               title="Edit Profil Beautician"
                                aria-label="Edit {{ $b->name }}">
                                 <i class="fa-solid fa-pen-to-square text-xs"></i>
-                                <span>Edit</span>
                             </a>
 
                             <form method="POST" action="{{ route('admin.beauticians.destroy', $b->id) }}" 
@@ -235,7 +147,7 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" 
-                                        class="p-2 rounded-full bg-rose-50 text-rose-600 text-xs font-bold hover:bg-rose-100 transition-all border border-rose-200" 
+                                        class="w-8 h-8 rounded-full bg-white/90 hover:bg-[#fff0f2] text-[#25181c] hover:text-[#b01f44] transition-all backdrop-blur-md shadow-sm border border-[#f4dde1] flex items-center justify-center"
                                         title="Hapus Staf"
                                         aria-label="Hapus {{ $b->name }}">
                                     <i class="fa-solid fa-trash-can text-xs"></i>
@@ -276,6 +188,59 @@
                                 </template>
                             </form>
                         </div>
+
+                    </div>
+
+                    {{-- 2. Name + Verified Badge --}}
+                    <div class="flex items-center gap-1.5 px-2 pt-3">
+                        <h3 class="font-bold text-lg text-[#17181a] truncate" title="{{ $b->name }}">{{ $b->name }}</h3>
+
+                        @if($b->is_active)
+                            <span class="inline-flex items-center justify-center shrink-0" title="Beautician Terverifikasi">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                                    <path d="M12 2l2.2 1.3 2.5-.4 1.2 2.2 2.3 1.1-.3 2.6 1.6 2-1.6 2 .3 2.6-2.3 1.1-1.2 2.2-2.5-.4L12 22l-2.2-1.3-2.5.4-1.2-2.2-2.3-1.1.3-2.6L2.5 13l1.6-2-.3-2.6 2.3-1.1 1.2-2.2 2.5.4L12 2Z" fill="#22C55E"/>
+                                    <path d="M8.5 12.2l2.2 2.2 4.3-4.6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                        @endif
+                    </div>
+
+                    {{-- 3. Profession / Description (2 lines max) --}}
+                    <p class="px-2 text-xs text-[#8a8f98] line-clamp-2 leading-relaxed mt-1 mb-2" title="{{ $b->bio ?: $b->specialization }}">
+                        {{ $b->bio ?: ($b->specialization ?: 'Beautician & Terapis Resmi Yalia Beauty') }}
+                    </p>
+
+                    {{-- 4. Footer: Stats (Clients & Works/Rating) + Pill Button (Detail) --}}
+                    <div class="flex items-center justify-between px-2 pt-2.5 border-t border-rose-50/80 mt-auto">
+                        <div class="flex items-center gap-3 text-xs font-bold text-[#17181a]">
+                            {{-- Client count --}}
+                            <span class="inline-flex items-center gap-1 text-[#17181a]" title="{{ number_format($b->bookings_count ?? $b->total_bookings) }} Layanan Selesai">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" class="text-[#8a8f98]">
+                                    <circle cx="12" cy="8" r="3.2"/>
+                                    <path d="M5 20c1-3.5 4-5.5 7-5.5s6 2 7 5.5"/>
+                                </svg>
+                                <span>{{ number_format($b->bookings_count ?? $b->total_bookings) }}</span>
+                            </span>
+
+                            {{-- Works / Rating count --}}
+                            <span class="inline-flex items-center gap-1 text-[#17181a]" title="Rating {{ number_format($b->rating ?? 5.0, 1) }}">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" class="text-[#8a8f98]">
+                                    <rect x="4" y="4" width="12" height="14" rx="1.5"/>
+                                    <path d="M8 20h12V8"/>
+                                </svg>
+                                <span>{{ number_format($b->rating ?? 5.0, 1) }}</span>
+                            </span>
+                        </div>
+
+                        {{-- Pill Button (Matches Reference) --}}
+                        <a href="{{ route('admin.beauticians.show', $b->id) }}"
+                           class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#f0f1f3] hover:bg-[#b01f44] hover:text-white text-[#17181a] font-bold text-xs transition-all shadow-xs"
+                           title="Lihat Detail Profil">
+                            <span>Detail</span>
+                            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </a>
                     </div>
 
                 </div>

@@ -373,11 +373,11 @@
 
                             <div x-show="!isCardCollapsed" x-collapse>
 
-                            {{-- 7-Day Clean Horizontal Strip --}}
+                            {{-- 7-Day Clean Horizontal Strip (Guaranteed Flexbox Row) --}}
                             <div class="mb-4">
-                                <div class="grid grid-cols-7 gap-1.5 p-2 rounded-2xl bg-[#fff0f2]/60 border border-[#f4dde1]">
+                                <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: stretch; gap: 4px; width: 100%;" class="p-2 rounded-2xl bg-[#fff0f2]/60 border border-[#f4dde1]">
                                     <template x-for="(mission, index) in missions" :key="'strip-'+index">
-                                        <div class="flex flex-col items-center text-center gap-1">
+                                        <div style="flex: 1 1 0%; min-width: 0;" class="flex flex-col items-center text-center gap-1">
                                             <span class="text-xs font-bold uppercase tracking-wider text-[#594043]"
                                                   :class="mission.status === 'active' ? 'text-[#B01F44]' : 'text-[#594043]'"
                                                   x-text="mission.dayLabel"></span>
