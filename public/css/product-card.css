@@ -1,0 +1,284 @@
+/* public/css/product-card.css
+   Komponen Kartu Produk Yalia / Editorial Modern.
+   - Bodi kartu tegas (border-radius: 0) sesuai design brief.
+   - Elemen aksi CTA pill-shaped (border-radius: 9999px).
+   - Indikator swatch warna bulat interaktif dengan ring status aktif.
+*/
+
+.product-card {
+    --card-bg: #ffffff;
+    --card-border: #e8eaed;
+    --card-border-hover: #d1d5db;
+    --text-main: #18181b;
+    --text-muted: #71717a;
+    --accent: #21c17c;
+    --accent-hover: #1ca86b;
+    --accent-active: #178f5a;
+    --fav-active: #e11d48;
+    --fav-bg: #ffffff;
+
+    position: relative;
+    width: 100%;
+    max-width: 280px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 0;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    box-sizing: border-box;
+    transition: border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.product-card:hover {
+    border-color: var(--card-border-hover);
+    box-shadow: 0 14px 28px -10px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+/* ===== Media / image area ===== */
+.product-card__media {
+    position: relative;
+    width: 100%;
+    height: 164px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fafafa;
+    overflow: hidden;
+}
+
+.product-card__badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 2;
+    padding: 3px 8px;
+    background: #18181b;
+    color: #ffffff;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-radius: 0;
+    line-height: 1.2;
+}
+
+.product-card__img {
+    max-width: 88%;
+    max-height: 88%;
+    object-fit: contain;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+}
+
+.product-card:hover .product-card__img {
+    transform: scale(1.05);
+}
+
+.product-card__img-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f4f4f5;
+    color: var(--text-muted);
+}
+
+.product-card__fav {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--card-border);
+    border-radius: 0;
+    background: var(--fav-bg);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease, transform 0.15s ease, background 0.2s ease;
+}
+
+.product-card__fav:hover {
+    color: var(--fav-active);
+    border-color: #fecdd3;
+    background: #fff1f2;
+}
+
+.product-card__fav.is-active {
+    color: var(--fav-active);
+    border-color: var(--fav-active);
+    background: #fff1f2;
+}
+
+.product-card__fav:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.product-card__fav:active {
+    transform: scale(0.92);
+}
+
+/* ===== Text area ===== */
+.product-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-height: 64px;
+}
+
+.product-card__name {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--text-main);
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.product-card__desc {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ===== Color swatches ===== */
+.product-card__swatches-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.product-card__swatches {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.product-card__swatch-btn {
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.product-card__swatch-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.product-card__swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    display: inline-block;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+
+.product-card__swatch-btn:hover .product-card__swatch {
+    transform: scale(1.15);
+}
+
+.product-card__swatch-btn.is-selected .product-card__swatch {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 2px #ffffff, 0 0 0 3.5px var(--text-main);
+}
+
+.product-card__color-count {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* ===== Footer ===== */
+.product-card__footer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 4px;
+    margin-top: auto;
+    border-top: 1px solid #f4f4f5;
+}
+
+.product-card__pricing {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.product-card__price-original {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    text-decoration: line-through;
+    line-height: 1;
+}
+
+.product-card__price {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text-main);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+}
+
+.product-card__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 8px 14px;
+    background: var(--accent);
+    color: #ffffff;
+    border: none;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 6px -1px rgba(33, 193, 124, 0.35);
+}
+
+.product-card__cta:hover {
+    background: var(--accent-hover);
+    box-shadow: 0 4px 10px -2px rgba(33, 193, 124, 0.45);
+    transform: translateY(-1px);
+}
+
+.product-card__cta:active {
+    background: var(--accent-active);
+    transform: translateY(0) scale(0.97);
+}
+
+.product-card__cta:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
