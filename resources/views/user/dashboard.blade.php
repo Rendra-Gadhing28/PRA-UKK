@@ -281,36 +281,77 @@
                                  x-transition:enter="transition ease-out duration-300"
                                  x-transition:enter-start="opacity-0 transform scale-95"
                                  x-transition:enter-end="opacity-100 transform scale-100"
-                                 class="bg-gradient-to-b from-white via-[#FFF5F7] to-[#FFE8ED]/60 rounded-3xl overflow-hidden flex flex-col group hover:-translate-y-1 hover:shadow-xl transition-all duration-300 border border-[#F4DDE1] shadow-[0_8px_25px_rgba(176,31,68,0.06)] h-full justify-between">
+                                 class="bg-white rounded-[24px] p-3.5 pb-4 shadow-[0_12px_32px_-8px_rgba(176,31,68,0.08)] hover:shadow-[0_18px_40px_-8px_rgba(176,31,68,0.16)] border border-[#F4DDE1] hover:border-[#E0BEC1] transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
 
-                                <div class="h-44 overflow-hidden relative aspect-video bg-[#FFE5EC]/50">
-                                    <img alt="{{ $tName }}" width="300" height="176" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="{{ $tImage }}"/>
-                                    <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-black text-[#B01F44] shadow-sm flex items-center gap-1.5 border border-[#F4DDE1]">
+                                {{-- Media Area (Floating Image + Top Left Badge + Top Right Circular Heart) --}}
+                                <div class="relative w-full h-44 rounded-[18px] overflow-hidden bg-[#fafafa] flex items-center justify-center p-2 mb-3">
+                                    <img alt="{{ $tName }}" width="300" height="176" loading="lazy" decoding="async" class="w-full h-full object-cover rounded-[14px] group-hover:scale-105 transition-transform duration-500" src="{{ $tImage }}"/>
+                                    
+                                    {{-- Top Left Ranking Pill --}}
+                                    <div class="absolute top-2.5 left-2.5 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-black text-[#B01F44] shadow-xs flex items-center gap-1 border border-[#F4DDE1]">
                                         <span class="material-symbols-outlined text-xs text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span>
                                         <span>Top {{ $loop->iteration }}</span>
                                     </div>
+
+                                    {{-- Top Right Circular Wishlist / Favorite Button --}}
+                                    <button type="button"
+                                            x-data="{ fav: false }"
+                                            @click.stop="fav = !fav"
+                                            class="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-white/95 backdrop-blur-md border border-[#F4DDE1] shadow-xs flex items-center justify-center transition-colors"
+                                            :class="fav ? 'text-rose-600 bg-rose-50' : 'text-[#8D7072] hover:text-[#B01F44]'"
+                                            aria-label="Simpan ke favorit">
+                                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path :fill="fav ? 'currentColor' : 'none'" d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                                        </svg>
+                                    </button>
                                 </div>
-                                <div class="p-5 flex flex-col flex-1 justify-between">
+
+                                {{-- Body Area (Title, Rating, Description, Tags) --}}
+                                <div class="px-1 flex flex-col flex-1 justify-between">
                                     <div>
-                                        <div class="flex justify-between items-start mb-2 gap-2">
-                                            <h3 class="font-headline-sm text-base text-[#2B0F23] line-clamp-1 font-black">{{ $tName }}</h3>
-                                            <div class="flex items-center gap-1 text-amber-800 bg-amber-50 px-2.5 py-1 rounded-xl border border-amber-200/80 shrink-0">
+                                        <div class="flex justify-between items-start mb-1.5 gap-2">
+                                            <h3 class="font-bold text-base text-[#111827] line-clamp-1 font-headline" title="{{ $tName }}">{{ $tName }}</h3>
+                                            <div class="flex items-center gap-1 text-amber-800 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-200/80 shrink-0">
                                                 <span class="material-symbols-outlined text-xs text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span>
                                                 <span class="font-label-md text-xs font-extrabold">{{ number_format($tRating, 1) }}</span>
                                             </div>
                                         </div>
-                                        <div class="flex items-center gap-2 text-[#594043] font-body-sm text-xs mb-3">
-                                            <span class="flex items-center gap-1 font-bold bg-[#FFF0F2] text-[#B01F44] border border-[#F4DDE1] px-2.5 py-1 rounded-xl"><span class="material-symbols-outlined text-xs text-[#B01F44]">schedule</span> {{ $tDuration }} min</span>
-                                            <span class="flex items-center gap-1 font-black text-[#B01F44] text-xs bg-[#FFF0F2] border border-[#F4DDE1] px-2.5 py-1 rounded-xl"><span class="material-symbols-outlined text-xs text-[#B01F44]">payments</span> Rp {{ number_format($tPrice, 0, ',', '.') }}</span>
+
+                                        <p class="font-body-sm text-xs text-[#594043] mb-3 line-clamp-2 leading-relaxed" title="{{ $tDesc }}">{{ $tDesc }}</p>
+
+                                        {{-- Chips Row (Duration & Category) --}}
+                                        <div class="flex items-center gap-2 mb-4 flex-wrap">
+                                            <span class="inline-flex items-center gap-1 text-xs font-bold text-[#594043] bg-[#FFF0F2] border border-[#F4DDE1] px-2 py-0.5 rounded-md">
+                                                <span class="material-symbols-outlined text-xs text-[#B01F44]">schedule</span>
+                                                <span>{{ $tDuration }} min</span>
+                                            </span>
+                                            @if($catName)
+                                                <span class="inline-flex items-center gap-1 text-xs font-bold text-[#B01F44] bg-[#FFF0F2] border border-[#F4DDE1] px-2 py-0.5 rounded-md">
+                                                    <span class="material-symbols-outlined text-xs">category</span>
+                                                    <span>{{ $catName }}</span>
+                                                </span>
+                                            @endif
                                         </div>
-                                        <p class="font-body-sm text-xs text-[#594043] mb-4 line-clamp-2 leading-relaxed">{{ $tDesc }}</p>
                                     </div>
 
-                                    {{-- Smooth Rose Crimson Book Now Button --}}
-                                    <a href="{{ route('user.bookings.create', ['treatment_id' => $tId]) }}" style="background: linear-gradient(to right, #B01F44, #C82D53, #9B4054);" class="mt-auto w-full py-3 text-white rounded-2xl font-button text-xs text-center shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 group-hover:scale-[1.01] font-bold tracking-wide hover:opacity-90">
-                                        <span class="text-white">Book Now</span>
-                                        <span class="material-symbols-outlined text-sm text-white transition-transform group-hover:translate-x-1">arrow_forward</span>
-                                    </a>
+                                    {{-- Footer (Price on Left, Pill CTA on Right - Sony Headphone Reference) --}}
+                                    <div class="flex items-center justify-between pt-3 border-t border-[#F4DDE1]/70 mt-auto">
+                                        <div class="flex flex-col">
+                                            <span class="text-xs uppercase tracking-wider font-bold text-[#8D7072]">Harga</span>
+                                            <span class="font-black text-base text-[#111827] tracking-tight">
+                                                Rp {{ number_format($tPrice, 0, ',', '.') }}
+                                            </span>
+                                        </div>
+
+                                        <a href="{{ route('user.bookings.create', ['treatment_id' => $tId]) }}"
+                                           class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-white font-bold text-xs shadow-xs hover:shadow-md transition-all group-hover:scale-[1.02]"
+                                           style="background: linear-gradient(135deg, #14a879 0%, #059669 100%);">
+                                            <span>Book Now</span>
+                                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="m9 18 6-6-6-6"/>
+                                            </svg>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
 

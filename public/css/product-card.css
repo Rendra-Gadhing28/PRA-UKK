@@ -1,19 +1,22 @@
 /* public/css/product-card.css
-   Komponen Kartu Produk Yalia / Editorial Modern.
-   - Bodi kartu tegas (border-radius: 0) sesuai design brief.
-   - Elemen aksi CTA pill-shaped (border-radius: 9999px).
-   - Indikator swatch warna bulat interaktif dengan ring status aktif.
+   Komponen Kartu Produk Modern / Sony Headphone Reference.
+   - Bodi kartu rounded elegan (--card-radius: 24px) dengan soft elevation shadow.
+   - Media area bersih dengan circular favorite/wishlist button di pojok kanan atas.
+   - Foto produk melayang (floating product image) dengan hover scale halus.
+   - Swatch pilihan warna bulat dengan ring indikator aktif.
+   - Footer: Harga di sebelah kiri, Tombol CTA Pill di sebelah kanan.
 */
 
 .product-card {
     --card-bg: #ffffff;
-    --card-border: #e8eaed;
-    --card-border-hover: #d1d5db;
-    --text-main: #18181b;
-    --text-muted: #71717a;
-    --accent: #21c17c;
-    --accent-hover: #1ca86b;
-    --accent-active: #178f5a;
+    --card-border: #f1f3f5;
+    --card-border-hover: #e5e7eb;
+    --card-radius: 24px;
+    --text-main: #111827;
+    --text-muted: #6b7280;
+    --accent: #10b981;
+    --accent-hover: #059669;
+    --accent-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
     --fav-active: #e11d48;
     --fav-bg: #ffffff;
 
@@ -22,49 +25,53 @@
     max-width: 280px;
     background: var(--card-bg);
     border: 1px solid var(--card-border);
-    border-radius: 0;
-    padding: 18px;
+    border-radius: var(--card-radius);
+    padding: 16px 16px 20px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 12px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     box-sizing: border-box;
-    transition: border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-                box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 14px 34px -10px rgba(0, 0, 0, 0.07), 0 4px 12px -2px rgba(0, 0, 0, 0.02);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s ease;
 }
 
 .product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 42px -12px rgba(0, 0, 0, 0.12), 0 6px 16px -2px rgba(0, 0, 0, 0.04);
     border-color: var(--card-border-hover);
-    box-shadow: 0 14px 28px -10px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
 }
 
-/* ===== Media / image area ===== */
+/* ===== Media Area ===== */
 .product-card__media {
     position: relative;
     width: 100%;
-    height: 164px;
+    height: 170px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 18px;
     background: #fafafa;
     overflow: hidden;
+    padding: 12px;
+    box-sizing: border-box;
 }
 
 .product-card__badge {
     position: absolute;
-    top: 8px;
-    left: 8px;
+    top: 10px;
+    left: 10px;
     z-index: 2;
-    padding: 3px 8px;
-    background: #18181b;
+    padding: 3px 9px;
+    background: #111827;
     color: #ffffff;
-    font-size: 10.5px;
+    font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    border-radius: 0;
+    border-radius: 9999px;
     line-height: 1.2;
 }
 
@@ -74,10 +81,11 @@
     object-fit: contain;
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: transform;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.08));
 }
 
 .product-card:hover .product-card__img {
-    transform: scale(1.05);
+    transform: scale(1.06);
 }
 
 .product-card__img-placeholder {
@@ -90,21 +98,23 @@
     color: var(--text-muted);
 }
 
+/* Circular Wishlist/Favorite Button (Top-Right) */
 .product-card__fav {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 10px;
+    right: 10px;
     z-index: 2;
     width: 32px;
     height: 32px;
-    border: 1px solid var(--card-border);
-    border-radius: 0;
+    border-radius: 50%;
+    border: 1px solid #e5e7eb;
     background: var(--fav-bg);
-    color: var(--text-muted);
+    color: #9ca3af;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
     transition: color 0.2s ease, border-color 0.2s ease, transform 0.15s ease, background 0.2s ease;
 }
 
@@ -112,12 +122,17 @@
     color: var(--fav-active);
     border-color: #fecdd3;
     background: #fff1f2;
+    transform: scale(1.08);
 }
 
 .product-card__fav.is-active {
     color: var(--fav-active);
-    border-color: var(--fav-active);
+    border-color: #f43f5e;
     background: #fff1f2;
+}
+
+.product-card__fav:active {
+    transform: scale(0.92);
 }
 
 .product-card__fav:focus-visible {
@@ -125,21 +140,17 @@
     outline-offset: 2px;
 }
 
-.product-card__fav:active {
-    transform: scale(0.92);
-}
-
-/* ===== Text area ===== */
+/* ===== Text / Body Area ===== */
 .product-card__body {
     display: flex;
     flex-direction: column;
-    gap: 5px;
-    min-height: 64px;
+    gap: 4px;
+    min-height: 60px;
 }
 
 .product-card__name {
     margin: 0;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 700;
     line-height: 1.35;
     color: var(--text-main);
@@ -148,12 +159,13 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+    letter-spacing: -0.01em;
 }
 
 .product-card__desc {
     margin: 0;
-    font-size: 12px;
-    line-height: 1.5;
+    font-size: 11.5px;
+    line-height: 1.45;
     color: var(--text-muted);
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -162,18 +174,19 @@
     text-overflow: ellipsis;
 }
 
-/* ===== Color swatches ===== */
+/* ===== Color Swatches ===== */
 .product-card__swatches-wrapper {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
+    padding: 2px 0;
 }
 
 .product-card__swatches {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
 }
 
 .product-card__swatch-btn {
@@ -185,11 +198,6 @@
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-}
-
-.product-card__swatch-btn:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
 }
 
 .product-card__swatch {
@@ -206,7 +214,7 @@
 }
 
 .product-card__swatch-btn.is-selected .product-card__swatch {
-    transform: scale(1.15);
+    transform: scale(1.1);
     box-shadow: 0 0 0 2px #ffffff, 0 0 0 3.5px var(--text-main);
 }
 
@@ -219,42 +227,42 @@
 /* ===== Footer ===== */
 .product-card__footer {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-between;
     gap: 8px;
-    padding-top: 4px;
+    padding-top: 6px;
     margin-top: auto;
-    border-top: 1px solid #f4f4f5;
 }
 
 .product-card__pricing {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 1px;
 }
 
 .product-card__price-original {
-    font-size: 11.5px;
+    font-size: 11px;
     color: var(--text-muted);
     text-decoration: line-through;
     line-height: 1;
 }
 
 .product-card__price {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 800;
     color: var(--text-main);
-    line-height: 1.1;
+    line-height: 1.15;
     letter-spacing: -0.01em;
 }
 
+/* Pill CTA Button (Add to cart >) */
 .product-card__cta {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 5px;
-    padding: 8px 14px;
-    background: var(--accent);
+    padding: 9px 18px;
+    background: var(--accent-gradient);
     color: #ffffff;
     border: none;
     border-radius: 9999px;
@@ -263,22 +271,29 @@
     cursor: pointer;
     text-decoration: none;
     white-space: nowrap;
-    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-    box-shadow: 0 2px 6px -1px rgba(33, 193, 124, 0.35);
+    box-shadow: 0 4px 14px -2px rgba(16, 185, 129, 0.38);
+    transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 
 .product-card__cta:hover {
-    background: var(--accent-hover);
-    box-shadow: 0 4px 10px -2px rgba(33, 193, 124, 0.45);
+    filter: brightness(1.05);
+    box-shadow: 0 6px 18px -2px rgba(16, 185, 129, 0.48);
     transform: translateY(-1px);
 }
 
 .product-card__cta:active {
-    background: var(--accent-active);
     transform: translateY(0) scale(0.97);
 }
 
 .product-card__cta:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
+}
+
+.product-card__cta svg {
+    transition: transform 0.2s ease;
+}
+
+.product-card__cta:hover svg {
+    transform: translateX(2px);
 }

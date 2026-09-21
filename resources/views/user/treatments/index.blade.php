@@ -83,42 +83,49 @@
 
         /* ── Treatment card ── */
         .treatment-card {
-            background: var(--yalia-surface);
-            border: 1px solid #fce4e9;
+            background: #ffffff;
+            border: 1px solid #f4dde1;
             border-radius: 24px;
+            padding: 12px 12px 18px;
             overflow: hidden;
-            transition: transform .3s, box-shadow .3s;
+            transition: transform .3s, box-shadow .3s, border-color .3s;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 12px 30px -8px rgba(176,31,68,.08);
         }
         .treatment-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 40px rgba(180,40,70,.12);
+            transform: translateY(-3px);
+            box-shadow: 0 18px 40px -8px rgba(176,31,68,.16);
+            border-color: #e0bec1;
         }
 
         .card-img-wrapper {
             position: relative;
-            height: 200px;
+            height: 190px;
+            border-radius: 1rem;
             overflow: hidden;
-            background: linear-gradient(135deg, #fce4e9, #fff0f3);
+            background: #fafafa;
         }
         .card-img-wrapper img {
             width: 100%; height: 100%;
             object-fit: cover;
+            border-radius: 1rem;
             transition: transform .5s;
         }
-        .treatment-card:hover .card-img-wrapper img { transform: scale(1.07); }
+        .treatment-card:hover .card-img-wrapper img { transform: scale(1.06); }
 
         /* badge overlay (best seller, new, promo) */
         .overlay-badge {
             position: absolute;
-            top: 12px; right: 12px;
+            top: 10px; left: 10px;
             padding: 3px 10px;
             border-radius: 999px;
             font-size: 0.75rem;
             font-weight: 700;
             letter-spacing: .5px;
             text-transform: uppercase;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            z-index: 2;
         }
         .badge-best-seller { background: #b5294a; color: #fff; }
         .badge-new         { background: #14a879; color: #fff; }
@@ -164,7 +171,7 @@
             justify-content: center;
             gap: 5px;
             padding: 0.5rem 1.25rem;
-            background: linear-gradient(135deg, var(--yalia-pink), var(--yalia-rose-mid));
+            background: linear-gradient(135deg, #14a879 0%, #059669 100%);
             color: #fff;
             border-radius: 999px;
             font-size: 0.75rem;
@@ -172,13 +179,13 @@
             letter-spacing: .5px;
             text-transform: uppercase;
             text-decoration: none;
-            box-shadow: 0 4px 14px rgba(244,84,114,.35);
+            box-shadow: 0 4px 14px rgba(20,168,121,.35);
             transition: transform .2s, box-shadow .2s;
             white-space: nowrap;
         }
         .btn-book:hover {
             transform: translateY(-2px);
-            box-shadow: 0 7px 22px rgba(244,84,114,.45);
+            box-shadow: 0 7px 22px rgba(20,168,121,.45);
         }
 
         /* price text */
@@ -383,6 +390,18 @@
                                 {{ str_replace('_', ' ', $treatment->badge) }}
                             </span>
                         @endif
+
+                        {{-- Circular Favorite / Wishlist Button (Sony Headphone Reference) --}}
+                        <button type="button"
+                                x-data="{ fav: false }"
+                                @click.stop="fav = !fav"
+                                class="absolute top-2.5 right-2.5 z-10 w-7 h-7 rounded-full bg-white/95 backdrop-blur-md border border-[#F4DDE1] shadow-xs flex items-center justify-center transition-colors"
+                                :class="fav ? 'text-rose-600 bg-rose-50' : 'text-[#8D7072] hover:text-[#B01F44]'"
+                                aria-label="Simpan ke favorit">
+                            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path :fill="fav ? 'currentColor' : 'none'" d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                            </svg>
+                        </button>
                     </div>
 
                     {{-- Body --}}
