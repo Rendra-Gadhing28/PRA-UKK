@@ -1,0 +1,305 @@
+/* public/css/daily-reward-card.css
+   Komponen Kartu Daily Reward Yalia Beauty — Sanctuary of Soft Elegance.
+   Warna disesuaikan penuh dengan palet brand: Velvet Crimson (#b01f44),
+   Rose Burgundy (#9b4054), Soft Blush (#fff0f2, #ffe8ed), Dark Espresso (#25181c),
+   dan Warm Gold PTS (#f4b942).
+*/
+
+.reward-card {
+    --card-radius: 28px;
+    --accent-from: #b01f44;
+    --accent-to: #c82d53;
+    --accent-gold: #f4b942;
+    --text-main: #25181c;
+    --text-muted: #594043;
+    --track-bg: #fff0f2;
+    --card-border: #f4dde1;
+    --card-bg: #ffffff;
+
+    position: relative;
+    width: 100%;
+    max-width: 290px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    box-shadow: 0 14px 32px -8px rgba(176, 31, 68, 0.1);
+    font-family: 'Work Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    box-sizing: border-box;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+}
+
+.reward-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 36px -8px rgba(176, 31, 68, 0.14);
+}
+
+/* ===== Header ===== */
+.reward-card__header {
+    position: relative;
+    height: 92px;
+    background: linear-gradient(160deg, #fff0f2 0%, #ffe8ed 60%, #ffd2e1 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.reward-card__icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background: linear-gradient(145deg, var(--accent-from), var(--accent-to));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 20px rgba(176, 31, 68, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.reward-card__spark {
+    position: absolute;
+    color: var(--accent-from);
+    opacity: 0.75;
+    font-size: 14px;
+    user-select: none;
+}
+
+.reward-card__spark--1 { top: 16px; left: 28px; }
+.reward-card__spark--2 { bottom: 14px; right: 30px; font-size: 11px; }
+
+/* ===== Body ===== */
+.reward-card__body {
+    padding: 16px 18px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.reward-card__badge {
+    align-self: flex-start;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    background: #fff0f2;
+    border: 1px solid var(--card-border);
+    color: var(--accent-from);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.reward-card__title {
+    margin: 0;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.35;
+    font-weight: 700;
+    color: var(--text-main);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ===== Day strip ===== */
+.reward-card__days {
+    display: flex;
+    justify-content: space-between;
+    gap: 4px;
+    padding: 2px 0;
+}
+
+.reward-card__day {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.reward-card__day-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.reward-card__day-mark {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--track-bg);
+    border: 1px solid var(--card-border);
+    color: #cca8b4;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.reward-card__day--done .reward-card__day-mark {
+    background: #e6f7f0;
+    border-color: #bbf0dc;
+    color: #14a879;
+}
+
+.reward-card__day--today .reward-card__day-mark {
+    background: linear-gradient(145deg, var(--accent-from), var(--accent-to));
+    border-color: var(--accent-from);
+    color: #ffffff;
+    box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px rgba(176, 31, 68, 0.25);
+    transform: scale(1.05);
+}
+
+.reward-card__day--today .reward-card__day-label {
+    color: var(--accent-from);
+    font-weight: 800;
+}
+
+/* ===== Message ===== */
+.reward-card__message {
+    margin: 0;
+    padding: 10px 12px;
+    background: #fff0f2;
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text-muted);
+}
+
+/* ===== Reward row ===== */
+.reward-card__reward {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border-radius: 14px;
+    background: linear-gradient(to right, #fff7e8, #fff0f2);
+    border: 1px solid rgba(244, 185, 66, 0.4);
+    color: var(--text-main);
+}
+
+.reward-card__reward-icon {
+    display: flex;
+    align-items: center;
+    color: var(--accent-gold);
+}
+
+.reward-card__reward-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #785341;
+}
+
+.reward-card__reward-value {
+    margin-left: auto;
+    font-size: 13.5px;
+    font-weight: 800;
+    color: var(--accent-from);
+    letter-spacing: -0.01em;
+}
+
+/* ===== CTA ===== */
+.reward-card__cta {
+    margin: 4px 0 14px;
+    padding: 12px;
+    border: none;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, var(--accent-from), var(--accent-to));
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    box-shadow: 0 4px 14px -2px rgba(176, 31, 68, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.reward-card__cta:hover {
+    filter: brightness(1.05);
+    box-shadow: 0 6px 18px -2px rgba(176, 31, 68, 0.45);
+    transform: translateY(-1px);
+}
+
+.reward-card__cta:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.reward-card__cta:disabled {
+    background: #e0bec1;
+    color: #ffffff;
+    box-shadow: none;
+    cursor: not-allowed;
+    filter: none;
+    transform: none;
+}
+
+/* ===== Streak footer ===== */
+.reward-card__streak {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
+    border-top: 1px dashed var(--card-border);
+    background: #fffdfd;
+}
+
+.reward-card__streak-icon {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: linear-gradient(145deg, #f4b942, #d97706);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(244, 185, 66, 0.3);
+}
+
+.reward-card__streak-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.reward-card__streak-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.2;
+}
+
+.reward-card__streak-days {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.reward-card__progress {
+    height: 5px;
+    border-radius: 9999px;
+    background: var(--track-bg);
+    overflow: hidden;
+    margin-top: 2px;
+    border: 1px solid rgba(244, 221, 225, 0.6);
+}
+
+.reward-card__progress-bar {
+    height: 100%;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, var(--accent-from), var(--accent-to));
+    transition: width 0.4s ease;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 340px) {
+    .reward-card {
+        max-width: 100%;
+    }
+}

@@ -373,31 +373,105 @@
 
                             <div x-show="!isCardCollapsed" x-collapse>
 
-                            {{-- Streak Status Banner --}}
-                            <div style="background: linear-gradient(to right, #B01F44, #9B4054);" class="text-white rounded-2xl p-4 mb-4 flex items-center justify-between shadow-md">
-                                <div class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-amber-300 text-xl">local_fire_department</span>
-                                    <span class="text-xs font-bold text-white">Streak Kamu:</span>
+                            {{-- 7-Day Clean Horizontal Strip --}}
+                            <div class="mb-4">
+                                <div class="grid grid-cols-7 gap-1.5 p-2 rounded-2xl bg-[#fff0f2]/60 border border-[#f4dde1]">
+                                    <template x-for="(mission, index) in missions" :key="'strip-'+index">
+                                        <div class="flex flex-col items-center text-center gap-1">
+                                            <span class="text-xs font-bold uppercase tracking-wider text-[#594043]"
+                                                  :class="mission.status === 'active' ? 'text-[#B01F44]' : 'text-[#594043]'"
+                                                  x-text="mission.dayLabel"></span>
+                                            
+                                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all relative shadow-xs"
+                                                 :style="{
+                                                     'background': mission.status === 'completed' ? '#14A879' : (mission.status === 'active' ? 'linear-gradient(135deg, #B01F44, #C82D53)' : '#FFFFFF'),
+                                                     'color': mission.status === 'locked' ? '#8D7072' : '#FFFFFF',
+                                                     'border': mission.status === 'locked' ? '1px solid #F4DDE1' : 'none',
+                                                     'box-shadow': mission.status === 'active' ? '0 0 0 2px #FFFFFF, 0 0 0 4px rgba(176, 31, 68, 0.25)' : 'none'
+                                                 }"
+                                                 :title="mission.dayTitle">
+                                                <template x-if="mission.status === 'completed'">
+                                                    <span class="material-symbols-outlined text-sm font-black text-white">check</span>
+                                                </template>
+                                                <template x-if="mission.status === 'active'">
+                                                    <span x-text="index + 1"></span>
+                                                </template>
+                                                <template x-if="mission.status === 'locked'">
+                                                    <span>
+                                                        <template x-if="mission.isGrand">
+                                                            <span class="material-symbols-outlined text-xs text-[#F4B942]">crown</span>
+                                                        </template>
+                                                        <template x-if="!mission.isGrand">
+                                                            <span class="material-symbols-outlined text-xs opacity-50">lock</span>
+                                                        </template>
+                                                    </span>
+                                                </template>
+                                            </div>
+
+                                            <span class="text-xs font-bold leading-none truncate max-w-[40px]"
+                                                  :class="mission.status === 'active' ? 'text-[#B01F44]' : (mission.status === 'completed' ? 'text-emerald-700' : 'text-[#8D7072]')"
+                                                  x-text="mission.reward.replace(' pts', 'p').replace('Gratis Ongkir', 'Ongkir').replace('Diskon 5% + 100 Pts', '5% Off')">
+                                            </span>
+                                        </div>
+                                    </template>
                                 </div>
-                                <span class="text-xs font-black text-amber-950 bg-amber-300 px-3.5 py-1 rounded-full shadow-sm">
-                                    <span x-text="currentStreak">3</span> / 7 Hari 🔥
-                                </span>
                             </div>
 
-                            {{-- Inline Stepper --}}
-                            <div class="flex items-center justify-between mb-4 w-full px-1">
-                                <template x-for="(mission, index) in missions" :key="'step-'+index">
-                                    <div class="flex items-center flex-1 last:flex-none">
-                                        {{-- Step Circles --}}
-                                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black border-2 transition-all shrink-0 shadow-sm"
+                            {{-- Spotlight "Misi Hari Ini" --}}
+                            <div class="rounded-2xl p-4 bg-gradient-to-r from-[#fff0f2] to-[#fff8f8] border border-[#F4DDE1] shadow-xs mb-3.5">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <span class="text-xs font-black uppercase tracking-wider text-[#B01F44] flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-sm text-[#F4B942]" style="font-variation-settings: 'FILL' 1;">stars</span>
+                                        <span>Misi Hari Ini</span>
+                                    </span>
+                                    <span class="text-xs font-black px-2.5 py-0.5 rounded-full text-white shadow-xs" style="background: linear-gradient(to right, #B01F44, #9B4054);" x-text="activeMission.reward"></span>
+                                </div>
+                                <h4 class="font-headline-sm font-bold text-sm text-[#2B0F23] mb-0.5" x-text="activeMission.dayTitle"></h4>
+                                <p class="text-xs text-[#594043] italic font-medium leading-relaxed" x-text="activeMission.funnyText"></p>
+                            </div>
+
+                            {{-- Streak Progress Summary Bar --}}
+                            <div class="mb-3.5 p-3 rounded-2xl bg-white border border-[#F4DDE1] shadow-2xs flex items-center justify-between gap-3">
+                                <div class="flex items-center gap-2 shrink-0">
+                                    <span class="w-7 h-7 rounded-xl bg-gradient-to-br from-[#F4B942] to-[#D97706] text-white flex items-center justify-center shadow-xs">
+                                        <span class="material-symbols-outlined text-sm">local_fire_department</span>
+                                    </span>
+                                    <div>
+                                        <p class="text-xs font-bold text-[#2B0F23] leading-none">Streak Kamu</p>
+                                        <p class="text-xs font-black text-[#B01F44] mt-0.5 leading-none"><span x-text="currentStreak"></span> / 7 Hari 🔥</p>
+                                    </div>
+                                </div>
+                                <div class="flex-1 max-w-[140px]">
+                                    <div class="w-full bg-[#FFF0F2] rounded-full h-2 overflow-hidden border border-[#F4DDE1]">
+                                        <div class="h-full rounded-full transition-all duration-500"
+                                             :style="`width: ${Math.min(100, Math.round((currentStreak / 7) * 100))}%; background: linear-gradient(to right, #F4B942, #B01F44);`"></div>
+                                    </div>
+                                    <p class="text-xs text-right font-medium text-[#594043] mt-0.5" x-text="(7 - currentStreak) > 0 ? (7 - currentStreak) + ' hari ke Diskon 5%' : 'Streak komplit!'"></p>
+                                </div>
+                            </div>
+
+                            {{-- Toggle Detail 7 Hari --}}
+                            <button @click="showAllMissions = !showAllMissions" type="button" class="w-full flex items-center justify-center gap-1 text-xs font-extrabold text-[#B01F44] mb-3 hover:underline cursor-pointer">
+                                <span x-text="showAllMissions ? 'Sembunyikan Detail Misi' : 'Lihat Detail Semua Misi (7 Hari)'"></span>
+                                <span class="material-symbols-outlined text-sm transition-transform duration-300" :class="showAllMissions ? 'rotate-180' : ''">expand_more</span>
+                            </button>
+
+                            {{-- Expanded 7-Day List ("Menjalar Keluar") --}}
+                            <div x-show="showAllMissions" x-collapse x-cloak class="mt-2 mb-3.5 space-y-2">
+                                <template x-for="(mission, index) in missions" :key="'detail-'+index">
+                                    <div class="flex items-center gap-2 p-2 rounded-xl border transition-all"
+                                         :style="{
+                                             'background-color': mission.status === 'completed' ? '#FFF0F2' : (mission.status === 'active' ? '#FFFFFF' : 'rgba(255, 245, 247, 0.4)'),
+                                             'border-color': mission.status === 'completed' ? '#F4DDE1' : (mission.status === 'active' ? '#B01F44' : '#F4DDE1'),
+                                             'opacity': mission.status === 'locked' ? '0.7' : '1'
+                                         }">
+                                        <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black shrink-0"
                                              :style="{
-                                                 'background-color': mission.status === 'completed' ? '#B01F44' : (mission.status === 'active' ? '#fbbf24' : '#FFF0F2'),
-                                                 'color': mission.status === 'completed' ? 'white' : (mission.status === 'active' ? '#020617' : '#8D7072'),
-                                                 'border-color': mission.status === 'completed' ? '#B01F44' : (mission.status === 'active' ? '#fcd34d' : '#F4DDE1')
-                                             }"
-                                             :title="mission.dayTitle">
+                                                 'background-color': mission.status === 'completed' ? '#14A879' : (mission.status === 'active' ? '#B01F44' : '#F4DDE1'),
+                                                 'color': mission.status === 'locked' ? '#8D7072' : '#FFFFFF'
+                                             }">
                                             <template x-if="mission.status === 'completed'">
-                                                <span class="material-symbols-outlined text-sm font-black text-white">check</span>
+                                                <span class="material-symbols-outlined text-xs text-white">check</span>
                                             </template>
                                             <template x-if="mission.status === 'active'">
                                                 <span x-text="index + 1"></span>
@@ -406,91 +480,33 @@
                                                 <span class="material-symbols-outlined text-xs opacity-60">lock</span>
                                             </template>
                                         </div>
-
-                                        {{-- Connecting Line --}}
-                                        <template x-if="index < missions.length - 1">
-                                            <div class="flex-1 h-1 mx-1 rounded-full transition-all duration-300"
-                                                 :style="{ 'background-color': index < (currentStreak - 1) ? '#B01F44' : '#F4DDE1' }">
-                                            </div>
-                                        </template>
-                                    </div>
-                                </template>
-                            </div>
-
-                            {{-- Kartu "Misi Hari Ini" --}}
-                            <div class="rounded-2xl py-4 px-4 bg-white/80 backdrop-blur-md border border-[#F4DDE1] shadow-sm mb-4">
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="text-xs font-black uppercase tracking-wider text-[#B01F44]">✨ Misi Hari Ini</span>
-                                    <span class="text-xs font-black px-3 py-1 rounded-full text-white shadow-sm" style="background: linear-gradient(to right, #B01F44, #9B4054);" x-text="activeMission.reward"></span>
-                                </div>
-                                <h4 class="font-black text-sm text-[#2B0F23] mb-1" x-text="activeMission.dayTitle"></h4>
-                                <p class="text-xs text-[#594043] italic font-medium" x-text="activeMission.funnyText"></p>
-                            </div>
-
-                            {{-- Toggle Detail 7 Hari --}}
-                            <button @click="showAllMissions = !showAllMissions" type="button" class="w-full flex items-center justify-center gap-1 text-xs font-extrabold text-[#B01F44] mb-3 hover:underline cursor-pointer">
-                                <span x-text="showAllMissions ? 'Sembunyikan Detail' : 'Lihat Semua Misi (7 Hari)'"></span>
-                                <span class="material-symbols-outlined text-sm transition-transform duration-300" :class="showAllMissions ? 'rotate-180' : ''">expand_more</span>
-                            </button>
-
-                            {{-- Expanded 7-Day List ("Menjalar Keluar") --}}
-                            <div x-show="showAllMissions" x-collapse x-cloak class="mt-2 mb-4 relative space-y-2">
-                                <div class="absolute left-4 top-4 bottom-4 w-1 rounded-full z-0" style="background: linear-gradient(to bottom, #B01F44, #F4DDE1);"></div>
-                                <template x-for="(mission, index) in missions" :key="'detail-'+index">
-                                    <div class="relative z-10 flex items-center gap-2 transition-all duration-300 transform"
-                                         :style="{ 'transform': mission.status === 'active' ? 'scale(1.02)' : 'none' }">
-                                         
-                                        <div class="w-8 h-8 rounded-full flex items-center justify-center shadow-md shrink-0 border-2 transition-all"
-                                             :style="{
-                                                 'background-color': mission.status === 'completed' ? '#B01F44' : (mission.status === 'active' ? '#fbbf24' : '#FFF0F2'),
-                                                 'color': mission.status === 'completed' ? 'white' : (mission.status === 'active' ? '#020617' : '#8D7072'),
-                                                 'border-color': mission.status === 'completed' ? '#B01F44' : (mission.status === 'active' ? '#fcd34d' : '#F4DDE1')
-                                             }">
-                                            <template x-if="mission.status === 'completed'">
-                                                <span class="material-symbols-outlined text-sm font-black text-white">check</span>
-                                            </template>
-                                            <template x-if="mission.status === 'active'">
-                                                <span class="font-bold text-xs" x-text="index + 1"></span>
-                                            </template>
-                                            <template x-if="mission.status === 'locked'">
-                                                <span class="material-symbols-outlined text-sm opacity-60">lock</span>
-                                            </template>
-                                        </div>
-
-                                        <div class="flex-1 p-2 rounded-xl border transition-all"
-                                             :style="{
-                                                 'background-color': mission.status === 'completed' ? '#FFF0F2' : (mission.status === 'active' ? 'white' : 'rgba(255, 245, 247, 0.5)'),
-                                                 'border-color': mission.status === 'completed' ? 'rgba(244, 221, 225, 0.5)' : (mission.status === 'active' ? '#B01F44' : 'transparent'),
-                                                 'opacity': mission.status === 'completed' ? '0.8' : (mission.status === 'active' ? '1' : '0.6'),
-                                                 'box-shadow': mission.status === 'active' ? '0 4px 6px -1px rgba(176, 31, 68, 0.1), 0 2px 4px -1px rgba(176, 31, 68, 0.06)' : 'none'
-                                             }">
-                                            <div class="flex justify-between items-center mb-1">
-                                                <span class="font-bold text-xs" :style="{ 'color': mission.status === 'active' ? '#B01F44' : '#2B0F23' }" x-text="mission.dayTitle"></span>
-                                                <span class="text-xs font-bold px-2 py-0.5 rounded-full"
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex justify-between items-center mb-0.5">
+                                                <span class="font-bold text-xs truncate" :style="{ 'color': mission.status === 'active' ? '#B01F44' : '#2B0F23' }" x-text="mission.dayTitle"></span>
+                                                <span class="text-xs font-bold px-2 py-0.5 rounded-full shrink-0 ml-1"
                                                       :style="{
                                                           'background-color': mission.status === 'active' ? '#B01F44' : '#FFF0F2',
-                                                          'color': mission.status === 'active' ? 'white' : '#594043',
-                                                          'border': mission.status === 'active' ? 'none' : '1px solid #F4DDE1'
+                                                          'color': mission.status === 'active' ? '#FFFFFF' : '#594043'
                                                       }"
                                                       x-text="mission.reward"></span>
                                             </div>
-                                            <p class="text-xs text-[#594043]/90 line-clamp-1 italic font-medium" x-text="mission.funnyText"></p>
+                                            <p class="text-xs text-[#594043]/90 truncate italic font-medium" x-text="mission.funnyText"></p>
                                         </div>
                                     </div>
                                 </template>
                             </div>
 
                             {{-- Claim CTA Button --}}
-                            <div class="pt-2">
+                            <div class="pt-1">
                                 <button @click="claimTodayReward()"
                                         :disabled="hasClaimedToday"
                                         type="button"
-                                        class="relative w-full py-3.5 rounded-2xl font-button text-xs shadow-md transition-all duration-300 flex justify-center items-center gap-2 group transform active:scale-95 disabled:cursor-not-allowed overflow-hidden"
-                                        :style="hasClaimedToday ? 'background: #B01F44; color: white; opacity: 0.9; box-shadow: none;' : 'background: linear-gradient(to right, #B01F44, #C82D53, #9B4054); color: white;'">
-                                    <span class="material-symbols-outlined text-lg text-white" :class="!hasClaimedToday ? 'group-hover:rotate-12 transition-transform' : ''">
+                                        class="shimmer-btn relative w-full py-3.5 rounded-full font-button text-xs shadow-md transition-all duration-300 flex justify-center items-center gap-2 group transform active:scale-95 disabled:cursor-not-allowed overflow-hidden"
+                                        :style="hasClaimedToday ? 'background: #FFF0F2; color: #B01F44; border: 1px solid #F4DDE1; box-shadow: none;' : 'background: linear-gradient(to right, #B01F44, #C82D53, #9B4054); color: white;'">
+                                    <span class="material-symbols-outlined text-lg" :class="!hasClaimedToday ? 'group-hover:rotate-12 transition-transform text-white' : 'text-[#B01F44]'">
                                         <span x-text="hasClaimedToday ? 'task_alt' : 'celebration'"></span>
                                     </span>
-                                    <span class="text-white font-black" x-text="hasClaimedToday ? 'Hadiah Hari Ini Sudah Diklaim' : 'Klaim Hadiah Hari Ini!'"></span>
+                                    <span class="font-black" :class="hasClaimedToday ? 'text-[#B01F44]' : 'text-white'" x-text="hasClaimedToday ? 'Hadiah Hari Ini Sudah Diklaim' : 'Klaim Hadiah Hari Ini!'"></span>
                                 </button>
                             </div>
 
@@ -727,7 +743,7 @@
             </div>
         </div>
 
-        {{-- Funny Reward Claim Modal Popup (Velvet-Rose Luxury Dark Glassmorphism) --}}
+        {{-- Funny Reward Claim Modal Popup (Yalia Beauty Sanctuary of Soft Elegance) --}}
         <div x-show="showRewardModal" x-cloak
              @keydown.escape.window="showRewardModal = false"
              role="dialog"
@@ -739,39 +755,50 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 scale-100 blur-0"
              x-transition:leave-end="opacity-0 scale-90 blur-sm"
-             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1e0a16]/85 backdrop-blur-2xl">
+             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#25181c]/65 backdrop-blur-md">
             <div @click.away="showRewardModal = false"
                  x-trap.noscroll="showRewardModal"
-                 class="relative w-full max-w-sm overflow-hidden rounded-[32px] bg-gradient-to-b from-[#2e1022]/95 via-[#1d0a16]/95 to-[#12050e]/95 p-6 text-center space-y-5 shadow-[0_25px_70px_rgba(0,0,0,0.85)] border border-white/20 backdrop-blur-3xl ring-1 ring-white/10">
-                <div class="absolute -top-12 -right-12 w-44 h-44 bg-[#f45472]/30 rounded-full blur-3xl pointer-events-none"></div>
-                <div class="absolute -bottom-12 -left-12 w-44 h-44 bg-amber-400/25 rounded-full blur-3xl pointer-events-none"></div>
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 bg-purple-600/15 rounded-full blur-3xl pointer-events-none"></div>
+                 class="relative w-full max-w-sm overflow-hidden rounded-[32px] bg-white p-6 sm:p-7 text-center space-y-4.5 shadow-[0_25px_60px_-15px_rgba(176,31,68,0.22)] border border-[#f4dde1]">
 
-                <div class="relative z-10 mx-auto flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400/20 via-pink-500/20 to-purple-600/20 border border-amber-300/40 shadow-[0_0_25px_rgba(244,185,66,0.3)] animate-pulse">
-                    <span class="text-4xl filter drop-shadow-[0_4px_12px_rgba(244,185,66,0.5)]" x-text="rewardModalData.icon">✨</span>
+                {{-- Close Button --}}
+                <button type="button" @click="closeRewardModal()" aria-label="Tutup modal hadiah" class="absolute top-4 right-4 text-[#594043] hover:text-[#b01f44] transition-colors p-2 rounded-full hover:bg-rose-50 cursor-pointer z-20">
+                    <span class="material-symbols-outlined text-lg">close</span>
+                </button>
+
+                {{-- Soft Ambient Glow Orbs --}}
+                <div class="absolute -top-12 -right-12 w-36 h-36 bg-[#ffd2e1]/50 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="absolute -bottom-10 -left-10 w-36 h-36 bg-[#ffe8ed]/60 rounded-full blur-2xl pointer-events-none"></div>
+
+                {{-- Icon Header --}}
+                <div class="relative z-10 mx-auto flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[#ffd2e1] via-[#fff0f2] to-[#ffe8ed] border border-[#f4dde1] shadow-xs">
+                    <span class="text-3xl filter drop-shadow-xs" x-text="rewardModalData.icon">✨</span>
                 </div>
 
-                <div class="relative z-10 space-y-2">
-                    <div class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-gradient-to-r from-amber-500/20 via-pink-500/20 to-amber-500/20 border border-amber-400/50 rounded-full shadow-[0_2px_12px_rgba(244,185,66,0.25)]">
-                        <span class="text-xs font-black tracking-widest uppercase text-amber-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                {{-- Badge & Title --}}
+                <div class="relative z-10 space-y-1.5">
+                    <div class="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#fff0f2] border border-[#f4dde1] rounded-full shadow-2xs">
+                        <span class="text-xs font-black tracking-widest uppercase text-[#b01f44]">
                             AURA GLOW-UP MEMANCAR! ✨
                         </span>
                     </div>
-                    <h3 class="font-headline-sm text-2xl font-black text-white tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] font-serif" x-text="rewardModalData.title"></h3>
+                    <h3 id="reward-modal-title" class="font-headline-sm text-2xl font-black text-[#25181c] tracking-tight font-serif" x-text="rewardModalData.title"></h3>
                 </div>
 
-                <div class="relative z-10 p-4 bg-black/40 backdrop-blur-md rounded-2xl border border-white/15 text-xs text-rose-100/90 leading-relaxed font-medium shadow-[inner_0_2px_4px_rgba(0,0,0,0.6)]">
+                {{-- Message --}}
+                <div class="relative z-10 p-3.5 bg-[#fff0f2]/75 rounded-2xl border border-[#f4dde1] text-xs text-[#594043] leading-relaxed font-medium">
                     <p x-text="rewardModalData.message"></p>
                 </div>
 
-                <div class="relative z-10 bg-gradient-to-r from-amber-500/25 via-pink-500/20 to-amber-500/25 p-4 rounded-2xl border border-amber-400/50 flex items-center justify-center gap-2.5 text-white font-bold text-sm shadow-[0_4px_20px_rgba(244,185,66,0.2)]">
-                    <span class="material-symbols-outlined text-amber-300 text-xl filter drop-shadow-[0_0_8px_rgba(244,185,66,0.8)]">stars</span>
-                    <span class="tracking-wide text-xs uppercase text-amber-100/90 font-extrabold">HADIAH:</span>
-                    <span class="text-amber-300 text-base font-black tracking-wider drop-shadow-[0_2px_10px_rgba(244,185,66,0.8)]" x-text="rewardModalData.reward"></span>
+                {{-- Reward Box --}}
+                <div class="relative z-10 bg-gradient-to-r from-[#fff7e8] via-[#fff0f2] to-[#fff7e8] p-3.5 rounded-2xl border border-[#f4b942]/40 flex items-center justify-center gap-2 text-[#25181c] font-bold shadow-2xs">
+                    <span class="material-symbols-outlined text-[#f4b942] text-xl" style="font-variation-settings: 'FILL' 1;">stars</span>
+                    <span class="tracking-wider text-xs uppercase text-[#785341] font-extrabold">HADIAH:</span>
+                    <span class="text-[#b01f44] text-base font-black tracking-wider" x-text="rewardModalData.reward"></span>
                 </div>
 
+                {{-- CTA Button --}}
                 <div class="relative z-10 pt-1">
-                    <button @click="closeRewardModal()" type="button" class="shimmer-btn relative w-full py-4 bg-gradient-to-r from-[#b01f44] via-[#f45472] to-[#e0247e] hover:brightness-110 text-white font-black text-sm rounded-full shadow-[0_8px_30px_rgba(244,84,114,0.5)] transition-all transform hover:scale-[1.02] active:scale-95 border border-white/20 tracking-wider uppercase">
+                    <button @click="closeRewardModal()" type="button" class="shimmer-btn relative w-full py-3.5 bg-gradient-to-r from-[#b01f44] via-[#c82d53] to-[#9b4054] hover:brightness-105 text-white font-black text-xs rounded-full shadow-md hover:shadow-lg transition-all transform active:scale-95 tracking-wider uppercase">
                         SIAP GLOW-UP BANGET!
                     </button>
                 </div>
@@ -855,13 +882,13 @@
                 },
 
                 missions: [
-                    { dayNum: 1, dayTitle: 'Day 1: Muka Bantal Eradication', reward: '+5 pts', funnyText: 'Membasmi jejak bantal di pipi saat bangun jam 11 siang.', status: 'completed' },
-                    { dayNum: 2, dayTitle: 'Day 2: Bebas Kusam Anti-Galau', reward: '+10 pts', funnyText: 'Eksfoliasi pikiran negatif & mantan yang bikin kusam.', status: 'completed' },
-                    { dayNum: 3, dayTitle: 'Day 3: Glow Up Striking Back', reward: '+15 pts', funnyText: 'Aura cantik memancar 1000 watt. Siap bikin pangling!', status: 'completed' },
-                    { dayNum: 4, dayTitle: 'Day 4: Keindahan Hakiki Level 4', reward: '+20 pts', funnyText: 'Kuku manja & kulit selembut sutra menanti.', status: 'completed' },
-                    { dayNum: 5, dayTitle: 'Day 5: Ratu Skincare Masuk Vibe', reward: '+25 pts', funnyText: 'Darah sultan mengalir, siap perawatan ala putri.', status: 'active' },
-                    { dayNum: 6, dayTitle: 'Day 6: Gratis Ongkir Auto-Sultan', reward: 'Gratis Ongkir', funnyText: 'Penghargaan khusus untuk ratu yang malas bayar ongkir!', status: 'locked' },
-                    { dayNum: 7, dayTitle: 'Day 7: Mahkota Glowing 5% Off', reward: 'Diskon 5% + 100 Pts', funnyText: 'Puncak komedi & kecantikan! Diskon Ratu Beauty milikmu!', status: 'locked' }
+                    { dayNum: 1, dayLabel: 'Sen', dayTitle: 'Day 1: Muka Bantal Eradication', reward: '+5 pts', funnyText: 'Membasmi jejak bantal di pipi saat bangun jam 11 siang.', status: 'completed' },
+                    { dayNum: 2, dayLabel: 'Sel', dayTitle: 'Day 2: Bebas Kusam Anti-Galau', reward: '+10 pts', funnyText: 'Eksfoliasi pikiran negatif & mantan yang bikin kusam.', status: 'completed' },
+                    { dayNum: 3, dayLabel: 'Rab', dayTitle: 'Day 3: Glow Up Striking Back', reward: '+15 pts', funnyText: 'Aura cantik memancar 1000 watt. Siap bikin pangling!', status: 'completed' },
+                    { dayNum: 4, dayLabel: 'Kam', dayTitle: 'Day 4: Keindahan Hakiki Level 4', reward: '+20 pts', funnyText: 'Kuku manja & kulit selembut sutra menanti.', status: 'completed' },
+                    { dayNum: 5, dayLabel: 'Jum', dayTitle: 'Day 5: Ratu Skincare Masuk Vibe', reward: '+25 pts', funnyText: 'Darah sultan mengalir, siap perawatan ala putri.', status: 'active' },
+                    { dayNum: 6, dayLabel: 'Sab', dayTitle: 'Day 6: Gratis Ongkir Auto-Sultan', reward: 'Gratis Ongkir', funnyText: 'Penghargaan khusus untuk ratu yang malas bayar ongkir!', status: 'locked' },
+                    { dayNum: 7, dayLabel: 'Min', dayTitle: 'Day 7: Mahkota Glowing 5% Off', reward: 'Diskon 5% + 100 Pts', funnyText: 'Puncak komedi & kecantikan! Diskon Ratu Beauty milikmu!', status: 'locked', isGrand: true }
                 ],
 
                 get activeMission() {
