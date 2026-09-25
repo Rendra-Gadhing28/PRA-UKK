@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\BookingStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,14 +16,14 @@ class Bookings extends Model
     use HasFactory;
 
     protected $fillable = [
-        'booking_code', 
-        'user_id', 
-        'beautician_id', 
-        'booking_type', 
-        'status', 
-        'booking_date', 
-        'time_start', 
-        'time_end', 
+        'booking_code',
+        'user_id',
+        'beautician_id',
+        'booking_type',
+        'status',
+        'booking_date',
+        'time_start',
+        'time_end',
 
         // Home Service: alamat & koordinat
         'home_address',
@@ -30,30 +31,30 @@ class Bookings extends Model
         'home_longitude',
         'distance_km',
 
-        'subtotal', 
-        'discount_amount', 
-        'transport_fee', 
-        'total_amount', 
+        'subtotal',
+        'discount_amount',
+        'transport_fee',
+        'total_amount',
         'payment_method',
         'payment_type',
         'dp_amount',
         'remaining_amount',
         'payment_status',
-        'qris_code', 
-        'qris_image_url', 
-        'payment_proof', 
+        'qris_code',
+        'qris_image_url',
+        'payment_proof',
         'payment_verified_at',
-        'payment_verified_by', 
+        'payment_verified_by',
 
         // Midtrans tracking
         'midtrans_order_id',
         'midtrans_transaction_id',
         'payment_expires_at',
 
-        'notes', 
-        'cancel_reason', 
-        'canceled_at', 
-        'version', 
+        'notes',
+        'cancel_reason',
+        'canceled_at',
+        'version',
         'points_added',
         'photo_assign',
         'is_h24_reminded',
@@ -62,7 +63,7 @@ class Bookings extends Model
     ];
 
     protected $casts = [
-        'status' => \App\Enums\BookingStatus::class,
+        'status' => BookingStatus::class,
         'booking_date' => 'date',
         'total_amount' => 'decimal:2',
         'subtotal' => 'decimal:2',
@@ -158,7 +159,7 @@ class Bookings extends Model
      */
     public function getFormattedTotalAttribute(): string
     {
-        return 'Rp ' . number_format((float) $this->total_amount, 0, ',', '.');
+        return 'Rp '.number_format((float) $this->total_amount, 0, ',', '.');
     }
 
     /**
@@ -201,6 +202,7 @@ class Bookings extends Model
         if ($amount >= 50000) {
             return 50;
         }
+
         return 15;
     }
 }

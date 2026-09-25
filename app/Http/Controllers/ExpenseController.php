@@ -59,34 +59,34 @@ class ExpenseController extends Controller
             'receipt' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'], // Max 5MB
         ], [
             'receipt.required' => 'Silakan pilih file foto struk belanja.',
-            'receipt.image'    => 'File harus berupa gambar.',
-            'receipt.mimes'    => 'Format gambar harus berupa JPG, JPEG, PNG, atau WEBP.',
-            'receipt.max'      => 'Ukuran gambar maksimal adalah 5 MB.',
+            'receipt.image' => 'File harus berupa gambar.',
+            'receipt.mimes' => 'Format gambar harus berupa JPG, JPEG, PNG, atau WEBP.',
+            'receipt.max' => 'Ukuran gambar maksimal adalah 5 MB.',
         ]);
 
         try {
             $file = $request->file('receipt');
-            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            
+            $filename = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+
             // Simpan gambar di folder temporary
             $tempRelativePath = $file->storeAs('temp/receipts', $filename, 'public');
-            $absolutePath = storage_path('app/public/' . $tempRelativePath);
+            $absolutePath = storage_path('app/public/'.$tempRelativePath);
 
             // Ekstrak data struk menggunakan LLM Gemini
             $parsedData = $this->scannerService->parseReceipt($absolutePath);
 
             return response()->json([
-                'success'   => true,
-                'message'   => 'Struk belanja berhasil di-scan oleh AI.',
+                'success' => true,
+                'message' => 'Struk belanja berhasil di-scan oleh AI.',
                 'temp_path' => $tempRelativePath,
-                'image_url' => asset('storage/' . $tempRelativePath),
-                'data'      => $parsedData,
+                'image_url' => asset('storage/'.$tempRelativePath),
+                'data' => $parsedData,
             ]);
 
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal memproses struk belanja: ' . $e->getMessage(),
+                'message' => 'Gagal memproses struk belanja: '.$e->getMessage(),
             ], 422);
         }
     }
@@ -97,18 +97,18 @@ class ExpenseController extends Controller
     public function store(Request $request): JsonResponse|RedirectResponse
     {
         $validated = $request->validate([
-            'merchant'         => ['required', 'string', 'max:255'],
-            'branch'           => ['nullable', 'string', 'max:255'],
+            'merchant' => ['required', 'string', 'max:255'],
+            'branch' => ['nullable', 'string', 'max:255'],
             'transaction_date' => ['required', 'date'],
-            'total_amount'     => ['required', 'numeric', 'min:0'],
-            'payment_method'   => ['nullable', 'string', 'max:100'],
-            'temp_path'        => ['nullable', 'string'],
-            'items'            => ['required', 'array', 'min:1'],
-            'items.*.item_name'  => ['required', 'string', 'max:255'],
-            'items.*.qty'        => ['required', 'integer', 'min:1'],
+            'total_amount' => ['required', 'numeric', 'min:0'],
+            'payment_method' => ['nullable', 'string', 'max:100'],
+            'temp_path' => ['nullable', 'string'],
+            'items' => ['required', 'array', 'min:1'],
+            'items.*.item_name' => ['required', 'string', 'max:255'],
+            'items.*.qty' => ['required', 'integer', 'min:1'],
             'items.*.unit_price' => ['required', 'numeric', 'min:0'],
-            'items.*.subtotal'   => ['required', 'numeric', 'min:0'],
-            'items.*.category'   => ['required', 'string', 'max:100'],
+            'items.*.subtotal' => ['required', 'numeric', 'min:0'],
+            'items.*.category' => ['required', 'string', 'max:100'],
         ]);
 
         try {
@@ -117,30 +117,30 @@ class ExpenseController extends Controller
             // Pindahkan file temporary ke folder permanen jika ada
             if (! empty($validated['temp_path']) && Storage::disk('public')->exists($validated['temp_path'])) {
                 $filename = basename($validated['temp_path']);
-                $permanentPath = 'expenses/receipts/' . $filename;
+                $permanentPath = 'expenses/receipts/'.$filename;
                 Storage::disk('public')->move($validated['temp_path'], $permanentPath);
             }
 
             DB::transaction(function () use ($validated, $permanentPath) {
                 /** @var Expense $expense */
                 $expense = Expense::create([
-                    'user_id'            => Auth::id(),
-                    'merchant'           => $validated['merchant'],
-                    'branch'             => $validated['branch'] ?? null,
+                    'user_id' => Auth::id(),
+                    'merchant' => $validated['merchant'],
+                    'branch' => $validated['branch'] ?? null,
                     'receipt_image_path' => $permanentPath,
-                    'transaction_date'   => $validated['transaction_date'],
-                    'total_amount'       => $validated['total_amount'],
-                    'payment_method'     => $validated['payment_method'] ?? 'Cash',
+                    'transaction_date' => $validated['transaction_date'],
+                    'total_amount' => $validated['total_amount'],
+                    'payment_method' => $validated['payment_method'] ?? 'Cash',
                 ]);
 
                 foreach ($validated['items'] as $item) {
                     ExpenseItem::create([
                         'expense_id' => $expense->id,
-                        'item_name'  => $item['item_name'],
-                        'qty'        => $item['qty'],
+                        'item_name' => $item['item_name'],
+                        'qty' => $item['qty'],
                         'unit_price' => $item['unit_price'],
-                        'subtotal'   => $item['subtotal'],
-                        'category'   => $item['category'] ?? 'Kebutuhan',
+                        'subtotal' => $item['subtotal'],
+                        'category' => $item['category'] ?? 'Kebutuhan',
                     ]);
                 }
             });
@@ -154,17 +154,19 @@ class ExpenseController extends Controller
             }
 
             ToastHelper::success('Transaksi pengeluaran berhasil disimpan.');
+
             return redirect()->route('expenses.index');
 
         } catch (Exception $e) {
             if ($request->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Gagal menyimpan transaksi: ' . $e->getMessage(),
+                    'message' => 'Gagal menyimpan transaksi: '.$e->getMessage(),
                 ], 500);
             }
 
-            ToastHelper::error('Gagal menyimpan transaksi: ' . $e->getMessage());
+            ToastHelper::error('Gagal menyimpan transaksi: '.$e->getMessage());
+
             return back()->withInput();
         }
     }

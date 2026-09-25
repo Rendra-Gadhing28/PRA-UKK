@@ -19,7 +19,7 @@ class ToastHelper
     /**
      * Tampilkan toast sukses (hijau).
      *
-     * @param  string  $pesan   Teks yang ditampilkan dalam toast.
+     * @param  string  $pesan  Teks yang ditampilkan dalam toast.
      */
     public static function success(string $pesan): void
     {
@@ -29,7 +29,7 @@ class ToastHelper
     /**
      * Tampilkan toast error (merah).
      *
-     * @param  string  $pesan   Teks yang ditampilkan dalam toast.
+     * @param  string  $pesan  Teks yang ditampilkan dalam toast.
      */
     public static function error(string $pesan): void
     {
@@ -39,7 +39,7 @@ class ToastHelper
     /**
      * Tampilkan toast peringatan (kuning).
      *
-     * @param  string  $pesan   Teks yang ditampilkan dalam toast.
+     * @param  string  $pesan  Teks yang ditampilkan dalam toast.
      */
     public static function warning(string $pesan): void
     {
@@ -49,7 +49,7 @@ class ToastHelper
     /**
      * Tampilkan toast informasi (biru).
      *
-     * @param  string  $pesan   Teks yang ditampilkan dalam toast.
+     * @param  string  $pesan  Teks yang ditampilkan dalam toast.
      */
     public static function info(string $pesan): void
     {
@@ -61,13 +61,13 @@ class ToastHelper
      *
      * Format data: ['type' => 'success', 'message' => 'Pesan...']
      *
-     * @param  string  $tipe   Tipe toast: success|error|warning|info
+     * @param  string  $tipe  Tipe toast: success|error|warning|info
      * @param  string  $pesan  Teks pesan toast
      */
     private static function flash(string $tipe, string $pesan): void
     {
         Session::flash('toast', [
-            'type'    => $tipe,
+            'type' => $tipe,
             'message' => $pesan,
         ]);
     }

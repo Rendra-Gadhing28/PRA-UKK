@@ -22,9 +22,9 @@ class AdminBeauticianController extends Controller
             $search = trim($request->search);
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('bio', 'like', "%{$search}%");
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('bio', 'like', "%{$search}%");
             });
         }
 
@@ -53,28 +53,28 @@ class AdminBeauticianController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'      => ['required', 'string', 'max:255'],
-            'phone'     => ['nullable', 'string', 'max:30'],
-            'email'     => ['nullable', 'email', 'max:255', 'unique:beauticians,email'],
-            'bio'       => ['required', 'string'],
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'email' => ['nullable', 'email', 'max:255', 'unique:beauticians,email'],
+            'bio' => ['required', 'string'],
             'is_active' => ['nullable', 'boolean'],
-            'photo'     => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);
 
         $photoName = null;
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
-            $photoName = time() . '_' . Str::slug($validated['name']) . '.' . $file->getClientOriginalExtension();
+            $photoName = time().'_'.Str::slug($validated['name']).'.'.$file->getClientOriginalExtension();
             $file->storeAs(Beauticians::PHOTO_DIRECTORY, $photoName, 'public');
         }
 
         Beauticians::create([
-            'name'           => $validated['name'],
-            'phone'          => $validated['phone'] ?? null,
-            'email'          => $validated['email'] ?? null,
-            'bio'            => $validated['bio'],
-            'photo'          => $photoName,
-            'is_active'      => $request->boolean('is_active', true),
+            'name' => $validated['name'],
+            'phone' => $validated['phone'] ?? null,
+            'email' => $validated['email'] ?? null,
+            'bio' => $validated['bio'],
+            'photo' => $photoName,
+            'is_active' => $request->boolean('is_active', true),
             'total_bookings' => 0,
         ]);
 
@@ -114,29 +114,29 @@ class AdminBeauticianController extends Controller
     public function update(Request $request, Beauticians $beautician)
     {
         $validated = $request->validate([
-            'name'      => ['required', 'string', 'max:255'],
-            'phone'     => ['nullable', 'string', 'max:30'],
-            'email'     => ['nullable', 'email', 'max:255', 'unique:beauticians,email,' . $beautician->id],
-            'bio'       => ['required', 'string'],
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'email' => ['nullable', 'email', 'max:255', 'unique:beauticians,email,'.$beautician->id],
+            'bio' => ['required', 'string'],
             'is_active' => ['nullable', 'boolean'],
-            'photo'     => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);
 
         $updateData = [
-            'name'      => $validated['name'],
-            'phone'     => $validated['phone'] ?? null,
-            'email'     => $validated['email'] ?? null,
-            'bio'       => $validated['bio'],
+            'name' => $validated['name'],
+            'phone' => $validated['phone'] ?? null,
+            'email' => $validated['email'] ?? null,
+            'bio' => $validated['bio'],
             'is_active' => $request->boolean('is_active', true),
         ];
 
         if ($request->hasFile('photo')) {
             if ($beautician->photo) {
-                Storage::disk('public')->delete(Beauticians::PHOTO_DIRECTORY . '/' . $beautician->photo);
+                Storage::disk('public')->delete(Beauticians::PHOTO_DIRECTORY.'/'.$beautician->photo);
             }
 
             $file = $request->file('photo');
-            $photoName = time() . '_' . Str::slug($validated['name']) . '.' . $file->getClientOriginalExtension();
+            $photoName = time().'_'.Str::slug($validated['name']).'.'.$file->getClientOriginalExtension();
             $file->storeAs(Beauticians::PHOTO_DIRECTORY, $photoName, 'public');
             $updateData['photo'] = $photoName;
         }
@@ -156,7 +156,7 @@ class AdminBeauticianController extends Controller
         $name = $beautician->name;
 
         if ($beautician->photo) {
-            Storage::disk('public')->delete(Beauticians::PHOTO_DIRECTORY . '/' . $beautician->photo);
+            Storage::disk('public')->delete(Beauticians::PHOTO_DIRECTORY.'/'.$beautician->photo);
         }
 
         $beautician->delete();

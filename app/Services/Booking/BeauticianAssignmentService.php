@@ -8,6 +8,7 @@ use App\Exceptions\NoBeauticianAvailableException;
 use App\Models\Beauticians;
 use App\Models\BeauticiansSchedules;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -22,9 +23,9 @@ class BeauticianAssignmentService
     /**
      * Helper privat untuk mengambil ID beautician aktif yang bertugas di jam tersebut.
      *
-     * @return \Illuminate\Support\Collection<int, int>
+     * @return Collection<int, int>
      */
-    private function getCandidateBeauticianIds(Carbon $bookingDate, string $timeStart, string $timeEnd): \Illuminate\Support\Collection
+    private function getCandidateBeauticianIds(Carbon $bookingDate, string $timeStart, string $timeEnd): Collection
     {
         $dayOfWeek = $bookingDate->dayOfWeek; // 0 = Minggu ... 6 = Sabtu
 
@@ -42,8 +43,8 @@ class BeauticianAssignmentService
             ->where('day_of_week', $dayOfWeek)
             ->where(function ($q) use ($timeStart, $timeEnd) {
                 $q->where('is_working', false)
-                  ->orWhere('start_time', '>', $timeStart)
-                  ->orWhere('end_time', '<', $timeEnd);
+                    ->orWhere('start_time', '>', $timeStart)
+                    ->orWhere('end_time', '<', $timeEnd);
             })
             ->pluck('beautician_id');
 
@@ -107,8 +108,8 @@ class BeauticianAssignmentService
     public function getDailySlotsAvailability(Carbon $bookingDate, int $durationMinutes, int $intervalMinutes = 30): array
     {
         $slots = [];
-        $start = Carbon::createFromFormat('Y-m-d H:i', $bookingDate->format('Y-m-d') . ' 08:00');
-        $end = Carbon::createFromFormat('Y-m-d H:i', $bookingDate->format('Y-m-d') . ' 20:00');
+        $start = Carbon::createFromFormat('Y-m-d H:i', $bookingDate->format('Y-m-d').' 08:00');
+        $end = Carbon::createFromFormat('Y-m-d H:i', $bookingDate->format('Y-m-d').' 20:00');
 
         $current = $start->copy();
         while ($current->lte($end)) {
@@ -128,7 +129,7 @@ class BeauticianAssignmentService
 
             $slots[] = [
                 'time' => $timeStartStr,
-                'formatted_time' => $current->format('H:i') . ' WIB',
+                'formatted_time' => $current->format('H:i').' WIB',
                 'available' => $isAvailable,
                 'reason' => $reason,
             ];

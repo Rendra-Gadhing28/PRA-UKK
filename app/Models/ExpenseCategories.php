@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class ExpenseCategories extends Model
 {
     protected $fillable = [
-        'name', 
-        'icon', 
-        'description', 
-        'is_active', 
+        'name',
+        'icon',
+        'description',
+        'is_active',
     ];
 }

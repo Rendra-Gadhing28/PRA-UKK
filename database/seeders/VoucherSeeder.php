@@ -37,7 +37,7 @@ class VoucherSeeder extends Seeder
                 'event_name' => null,
                 'quota' => 50,
             ],
-            
+
             // Point Exchange Vouchers (Tukar PTS)
             [
                 'code' => 'PTSDISC15K',

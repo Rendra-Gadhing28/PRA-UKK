@@ -50,19 +50,19 @@ class Vouchers extends Model
 
     protected $casts = [
         // Boolean
-        'is_active'       => 'boolean',
-        'is_event'        => 'boolean',
+        'is_active' => 'boolean',
+        'is_event' => 'boolean',
         // Integer
         'points_required' => 'integer',
-        'quota'           => 'integer',
-        'used_count'      => 'integer',
+        'quota' => 'integer',
+        'used_count' => 'integer',
         // Decimal — cast ke string agar tidak hilang presisi float PHP
-        'value'           => 'decimal:2',
-        'min_purchase'    => 'decimal:2',
-        'max_discount'    => 'decimal:2',
+        'value' => 'decimal:2',
+        'min_purchase' => 'decimal:2',
+        'max_discount' => 'decimal:2',
         // Date
-        'valid_from'      => 'date',
-        'valid_until'     => 'date',
+        'valid_from' => 'date',
+        'valid_until' => 'date',
     ];
 
     // -------------------------------------------------------------------------
@@ -84,7 +84,7 @@ class Vouchers extends Model
     public function scopeActive(Builder $query): void
     {
         $query->where('is_active', true)
-              ->where('valid_until', '>=', now()->toDateString());
+            ->where('valid_until', '>=', now()->toDateString());
     }
 
     /**
@@ -112,13 +112,13 @@ class Vouchers extends Model
             return;
         }
 
-        $like = '%' . trim($term) . '%';
+        $like = '%'.trim($term).'%';
 
         $query->where(function (Builder $q) use ($like) {
-            $q->where('code',        'like', $like)
-              ->orWhere('name',       'like', $like)
-              ->orWhere('description','like', $like)
-              ->orWhere('event_name', 'like', $like);
+            $q->where('code', 'like', $like)
+                ->orWhere('name', 'like', $like)
+                ->orWhere('description', 'like', $like)
+                ->orWhere('event_name', 'like', $like);
         });
     }
 
@@ -149,7 +149,7 @@ class Vouchers extends Model
      * Pemakaian di checkout: $voucher->calculateDiscount($subtotal)
      *
      * @param  float|int  $purchaseAmount  Nilai pembelian sebelum diskon
-     * @return float  Nilai diskon yang akan dikurangi dari total
+     * @return float Nilai diskon yang akan dikurangi dari total
      */
     public function calculateDiscount(float $purchaseAmount): float
     {
@@ -181,8 +181,8 @@ class Vouchers extends Model
     {
         return match ($this->type) {
             'percentage' => "Diskon {$this->value}%",
-            'fixed'      => 'Potongan Rp ' . number_format((float) $this->value, 0, ',', '.'),
-            default      => $this->type,
+            'fixed' => 'Potongan Rp '.number_format((float) $this->value, 0, ',', '.'),
+            default => $this->type,
         };
     }
 }

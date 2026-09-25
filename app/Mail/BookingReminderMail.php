@@ -16,6 +16,7 @@ class BookingReminderMail extends Mailable
     use Queueable, SerializesModels;
 
     public Bookings $booking;
+
     public string $reminderType;
 
     public function __construct(Bookings $booking, string $reminderType)
@@ -34,10 +35,10 @@ class BookingReminderMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: "emails.booking_reminder",
+            view: 'emails.booking_reminder',
             with: [
-                "booking" => $this->booking,
-                "reminderType" => $this->reminderType,
+                'booking' => $this->booking,
+                'reminderType' => $this->reminderType,
             ],
         );
     }

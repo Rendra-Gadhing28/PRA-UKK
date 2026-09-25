@@ -7,16 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class Transactions extends Model
 {
     protected $fillable = [
-        'type', 
+        'type',
         'booking_id',
-        'category', 
-        'icon', 
-        'title', 
-        'description', 
-        'amount', 
-        'receipt_image', 
+        'category',
+        'icon',
+        'title',
+        'description',
+        'amount',
+        'receipt_image',
         'transaction_date',
-        'metadata', 
+        'metadata',
         'created_by',
     ];
 

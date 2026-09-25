@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('treatments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('category_id')
-            ->constrained('categories')
-            ->onDelete('cascade')
-            ->comment('Foreign key ke categories');
+                ->constrained('categories')
+                ->onDelete('cascade')
+                ->comment('Foreign key ke categories');
             $table->string('name', 255);
             $table->string('slug')->unique();
             $table->string('description', 255)->nullable();
@@ -27,7 +27,7 @@ return new class extends Migration
             $table->enum('badge', ['none', 'best_seller', 'new']);
             $table->boolean('is_active')->default(true);
             $table->integer('sort_order')->default(0);
-            $table->decimal('rating', 5,2)->default(0.00);
+            $table->decimal('rating', 5, 2)->default(0.00);
             $table->integer('rating_count')->default(0);
             $table->integer('points')->default(0)->comment('Jumlah poin yang didapatkan user ketika membeli treatment ini');
             $table->timestamps();

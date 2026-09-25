@@ -13,7 +13,7 @@ enum BookingStatus: string
 
     public function badgeClasses(): string
     {
-        return match($this) {
+        return match ($this) {
             self::PENDING => 'bg-amber-100 text-amber-800 border border-amber-200',
             self::CONFIRMED => 'bg-emerald-100 text-emerald-800 border border-emerald-200',
             self::IN_PROGRESS => 'bg-blue-100 text-blue-800 border border-blue-200',
@@ -24,7 +24,7 @@ enum BookingStatus: string
 
     public function badgeLabel(): string
     {
-        return match($this) {
+        return match ($this) {
             self::PENDING => 'Menunggu Pembayaran',
             self::CONFIRMED => 'Terkonfirmasi',
             self::IN_PROGRESS => 'Sedang Berlangsung',

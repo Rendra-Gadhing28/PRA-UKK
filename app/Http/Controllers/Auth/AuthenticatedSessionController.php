@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Helpers\ToastHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Http\Auth\RegisteredRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -77,7 +76,6 @@ class AuthenticatedSessionController extends Controller
         return redirect()->intended(route('user.dashboard'));
     }
 
-
     /**
      * Proses registrasi pengguna baru.
      *
@@ -87,13 +85,13 @@ class AuthenticatedSessionController extends Controller
     public function register(RegisterRequest $request): RedirectResponse
     {
         $user = User::create([
-            'name'             => $request->name,
-            'email'            => $request->email,
-            'phone'            => $request->phone,
-            'password'         => Hash::make($request->password),
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'password' => Hash::make($request->password),
             'membership_level' => 'regular',
-            'is_active'        => true,
-            'role'         => 'user',
+            'is_active' => true,
+            'role' => 'user',
         ]);
 
         // Login otomatis setelah registrasi berhasil

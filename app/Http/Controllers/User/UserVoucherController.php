@@ -9,6 +9,7 @@ use App\Models\Vouchers;
 use App\Services\User\UserVoucherService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 /**
  * Thin Controller — hanya menangani Request & Response.
@@ -26,7 +27,7 @@ class UserVoucherController extends Controller
      * GET /user/vouchers
      * Tampilkan halaman daftar voucher beserta tab-tab kategori.
      */
-    public function index(ClaimVoucherRequest $request): \Illuminate\View\View
+    public function index(ClaimVoucherRequest $request): View
     {
         $data = $this->voucherService->getIndexData(
             user  : Auth::user(),
@@ -50,10 +51,10 @@ class UserVoucherController extends Controller
         $result = $this->voucherService->claim(Auth::user(), $voucher);
 
         match ($result['success']) {
-            true  => ToastHelper::success($result['message']),
+            true => ToastHelper::success($result['message']),
             false => match ($result['type']) {
                 'duplicate' => ToastHelper::info($result['message']),
-                default     => ToastHelper::error($result['message']),
+                default => ToastHelper::error($result['message']),
             },
         };
 

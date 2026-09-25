@@ -28,16 +28,12 @@ Thumbs.db
 PRD.md
 CLAUDE.md
 DESIGN.md
-<<<<<<< Updated upstream
+Optimalisasi.md
+function.md
 **/caddy
 frankenphp
 frankenphp-worker.php
+/.pnpm-store
+.pnpm-store
 /.impeccable
 /.claude
-**/caddy
-frankenphp
-frankenphp-worker.php
-=======
-Optimalisasi.md
-CLAUDE.md
->>>>>>> Stashed changes

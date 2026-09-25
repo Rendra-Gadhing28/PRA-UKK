@@ -27,7 +27,7 @@ return new class extends Migration
             $table->dropColumn([
                 'is_h24_reminded',
                 'is_h1_reminded',
-                'is_m30_reminded'
+                'is_m30_reminded',
             ]);
         });
     }

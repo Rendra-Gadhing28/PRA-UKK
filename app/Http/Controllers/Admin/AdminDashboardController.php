@@ -6,11 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Bookings;
 use App\Models\Transactions;
 use App\Models\Treatments;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class AdminDashboardController extends Controller
 {
@@ -49,7 +49,7 @@ class AdminDashboardController extends Controller
             $incomeThisMonth = (float) Transactions::where('type', 'income')
                 ->whereBetween('transaction_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
                 ->sum('amount');
-            
+
             // Fallback jika tidak ada transactions record terpisah, hitung dari Bookings paid/completed
             if ($incomeThisMonth == 0) {
                 $incomeThisMonth = (float) Bookings::whereIn('status', ['completed', 'confirmed'])
@@ -121,9 +121,9 @@ class AdminDashboardController extends Controller
             for ($i = 6; $i >= 0; $i--) {
                 $date = $now->copy()->subDays($i);
                 $dateStr = $date->toDateString();
-                
+
                 // Format label: "16 Agt", "17 Agt", ...
-                $chartLabels[] = $date->format('j') . ' ' . $date->translatedFormat('M');
+                $chartLabels[] = $date->format('j').' '.$date->translatedFormat('M');
 
                 $txDay = $transactionsGrouped->get($dateStr);
                 $dayInc = (float) ($txDay?->where('type', 'income')->sum('total') ?? 0);
@@ -140,9 +140,9 @@ class AdminDashboardController extends Controller
             $topTreatments = Treatments::withCount(['bookings' => function ($q) use ($startOfMonth, $endOfMonth) {
                 $q->whereBetween('booking_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()]);
             }])
-            ->orderBy('bookings_count', 'desc')
-            ->take(5)
-            ->get();
+                ->orderBy('bookings_count', 'desc')
+                ->take(5)
+                ->get();
 
             $totalTreatmentBookings = $topTreatments->sum('bookings_count');
 
@@ -160,7 +160,7 @@ class AdminDashboardController extends Controller
             foreach ($topTreatments as $t) {
                 $count = $t->bookings_count;
                 $percentage = $totalTreatmentBookings > 0 ? round(($count / $totalTreatmentBookings) * 100, 1) : 0;
-                
+
                 $treatmentChartLabels[] = $t->name;
                 $treatmentChartData[] = $count;
                 $treatmentChartPercentages[] = $percentage;
@@ -217,8 +217,8 @@ class AdminDashboardController extends Controller
             ->get();
 
         $pdf = Pdf::loadView('admin.reports.pdf', compact('now', 'income', 'expense', 'bookings'));
-        
-        return $pdf->download('Laporan_Bulanan_Yalia_Beauty_' . $now->format('Y_m') . '.pdf');
+
+        return $pdf->download('Laporan_Bulanan_Yalia_Beauty_'.$now->format('Y_m').'.pdf');
     }
 
     public function exportExcel(Request $request)
@@ -233,20 +233,20 @@ class AdminDashboardController extends Controller
             ->get();
 
         $totalRevenue = $bookings->whereIn('status', ['completed', 'confirmed'])->sum('total_amount');
-        $fileName = 'Laporan_Keuangan_Yalia_Beauty_' . $now->format('Y_m') . '.csv';
+        $fileName = 'Laporan_Keuangan_Yalia_Beauty_'.$now->format('Y_m').'.csv';
 
         return response()->streamDownload(function () use ($bookings, $now, $totalRevenue) {
             $file = fopen('php://output', 'w');
-            
+
             // UTF-8 BOM untuk MS Excel
-            fputs($file, "\xEF\xBB\xBF");
-            
+            fwrite($file, "\xEF\xBB\xBF");
+
             // === HEADER ATAS LAPORAN ===
             fputcsv($file, ['LAPORAN KEUANGAN & RESERVASI - YALIA BEAUTY SALON']);
             fputcsv($file, ['Alamat Salon: GHV9+F2 Candi, Kabupaten Boyolali, Jawa Tengah | WA: 0822-2702-3362']);
             fputcsv($file, ['Periode Laporan:', $now->translatedFormat('F Y')]);
-            fputcsv($file, ['Waktu Diunduh:', $now->translatedFormat('l, d F Y H:i') . ' WIB']);
-            fputcsv($file, ['Ringkasan:', 'Total Reservasi: ' . $bookings->count(), 'Total Omset: Rp ' . number_format($totalRevenue, 0, ',', '.')]);
+            fputcsv($file, ['Waktu Diunduh:', $now->translatedFormat('l, d F Y H:i').' WIB']);
+            fputcsv($file, ['Ringkasan:', 'Total Reservasi: '.$bookings->count(), 'Total Omset: Rp '.number_format($totalRevenue, 0, ',', '.')]);
             fputcsv($file, []); // Baris Kosong Pemisah
 
             // === TABEL DATA & FIELD AKURAT API/DATABASE ===
@@ -262,13 +262,13 @@ class AdminDashboardController extends Controller
                 'Tipe Kunjungan',
                 'Total Harga (Rp)',
                 'Status Pembayaran',
-                'Status Booking'
+                'Status Booking',
             ]);
 
             $no = 1;
             foreach ($bookings as $b) {
-                $statusText = is_object($b->status) 
-                    ? (method_exists($b->status, 'badgeLabel') ? $b->status->badgeLabel() : $b->status->value) 
+                $statusText = is_object($b->status)
+                    ? (method_exists($b->status, 'badgeLabel') ? $b->status->badgeLabel() : $b->status->value)
                     : (string) $b->status;
 
                 fputcsv($file, [
@@ -279,7 +279,7 @@ class AdminDashboardController extends Controller
                     $b->beautician?->name ?? 'Auto Assign',
                     $b->treatments->pluck('name')->join(', ') ?: 'N/A',
                     $b->booking_date ? $b->booking_date->format('Y-m-d') : '-',
-                    ($b->time_start ?? '') . ' - ' . ($b->time_end ?? ''),
+                    ($b->time_start ?? '').' - '.($b->time_end ?? ''),
                     $b->booking_type === 'home' ? 'Home Service' : 'Ke Salon',
                     $b->total_amount,
                     $b->payment_status ? ucfirst($b->payment_status) : 'Lunas',
@@ -301,10 +301,11 @@ class AdminDashboardController extends Controller
     {
         if ($previous == 0) {
             $percentage = $current > 0 ? 100 : 0;
+
             return [
                 'value' => $percentage,
                 'is_positive' => $current >= 0,
-                'formatted' => '+' . number_format($percentage, 1) . '%'
+                'formatted' => '+'.number_format($percentage, 1).'%',
             ];
         }
 
@@ -314,7 +315,7 @@ class AdminDashboardController extends Controller
         return [
             'value' => round(abs($change), 1),
             'is_positive' => $isPositive,
-            'formatted' => ($isPositive ? '+' : '-') . number_format(abs($change), 1) . '%'
+            'formatted' => ($isPositive ? '+' : '-').number_format(abs($change), 1).'%',
         ];
     }
 }

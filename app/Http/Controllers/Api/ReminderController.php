@@ -20,17 +20,18 @@ class ReminderController extends Controller
     {
         try {
             $this->reminderService->processReminders();
+
             return response()->json([
-                "status" => "success",
-                "message" => "Reminders processed successfully"
+                'status' => 'success',
+                'message' => 'Reminders processed successfully',
             ]);
         } catch (\Exception $e) {
-            Log::error("Failed to process reminders", ["error" => $e->getMessage()]);
+            Log::error('Failed to process reminders', ['error' => $e->getMessage()]);
+
             return response()->json([
-                "status" => "error",
-                "message" => "Failed to process reminders"
+                'status' => 'error',
+                'message' => 'Failed to process reminders',
             ], 500);
         }
     }
 }
-

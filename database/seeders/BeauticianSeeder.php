@@ -19,7 +19,7 @@ class BeauticianSeeder extends Seeder
                 'phone' => '082227023362',
                 'specialties' => ['Perawatan Kuku', 'Perawatan Wajah'],
                 'off_day' => 0, // libur Minggu
-            ]
+            ],
         ];
 
         foreach ($beauticians as $b) {

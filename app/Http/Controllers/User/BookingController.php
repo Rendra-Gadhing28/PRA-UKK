@@ -214,13 +214,13 @@ class BookingController extends Controller
                 ->orderBy('name')
                 ->get()
                 ->map(fn ($t) => [
-                    'id'               => $t->id,
-                    'name'             => $t->name,
-                    'price'            => (float) $t->price,
+                    'id' => $t->id,
+                    'name' => $t->name,
+                    'price' => (float) $t->price,
                     'duration_minutes' => $t->duration_minutes,
-                    'image_url'        => $t->image_url,
-                    'badge'            => $t->badge,
-                    'category'         => $t->category?->name,
+                    'image_url' => $t->image_url,
+                    'badge' => $t->badge,
+                    'category' => $t->category?->name,
                 ])
                 ->values()
                 ->all()
@@ -277,7 +277,7 @@ class BookingController extends Controller
             'name' => $membershipProgress['current_meta']['name'] ?? 'Regular',
             'label' => $membershipProgress['current_meta']['label'] ?? 'Regular Member',
             'discount_val' => $membershipDiscount,
-            'discount' => $membershipDiscount . '%',
+            'discount' => $membershipDiscount.'%',
             'color' => $membershipProgress['current_meta']['color'] ?? 'rose',
             'badge_cls' => $membershipProgress['current_meta']['badge_cls'] ?? 'bg-rose-950/80 text-rose-200 border-rose-500/50',
             'tier_points' => $user->tier_points ?? 0,
@@ -477,10 +477,10 @@ class BookingController extends Controller
         if (in_array($booking->status, ['completed', 'canceled'], true)) {
             return back()->with('error', 'Booking ini tidak bisa dibatalkan.');
         }
-        
+
         $reason = $request->string('reason', 'Dibatalkan oleh customer.')->toString();
         $refundNote = '';
-        
+
         if ($booking->payment_status === 'paid' || $booking->payment_status === 'fullpayment') {
             $refundNote = ' [Refund 100% untuk Full Payment]';
         } elseif ($booking->payment_status === 'dp_paid') {
@@ -489,12 +489,12 @@ class BookingController extends Controller
 
         $this->cancelBookingRecord(
             $booking,
-            $reason . $refundNote
+            $reason.$refundNote
         );
 
         return redirect()
             ->route('user.bookings.index')
-            ->with('success', 'Booking berhasil dibatalkan.' . $refundNote);
+            ->with('success', 'Booking berhasil dibatalkan.'.$refundNote);
     }
 
     /**
@@ -540,8 +540,8 @@ class BookingController extends Controller
         }
 
         $reason = $request->validated('reason');
-        $rescheduleNote = "Jadwal diubah oleh customer ke " . $bookingDate->format('d-m-Y') . " " . $timeStart . ($reason ? " (Alasan: {$reason})" : "");
-        $existingNotes = $booking->notes ? $booking->notes . " | " . $rescheduleNote : $rescheduleNote;
+        $rescheduleNote = 'Jadwal diubah oleh customer ke '.$bookingDate->format('d-m-Y').' '.$timeStart.($reason ? " (Alasan: {$reason})" : '');
+        $existingNotes = $booking->notes ? $booking->notes.' | '.$rescheduleNote : $rescheduleNote;
 
         $booking->update([
             'booking_date' => $bookingDate->toDateString(),
@@ -555,7 +555,7 @@ class BookingController extends Controller
             'is_m30_reminded' => false,
         ]);
 
-        return back()->with('success', 'Jadwal reservasi berhasil diubah ke tanggal ' . $bookingDate->format('d/m/Y') . ' jam ' . $timeStart . ' WIB.');
+        return back()->with('success', 'Jadwal reservasi berhasil diubah ke tanggal '.$bookingDate->format('d/m/Y').' jam '.$timeStart.' WIB.');
     }
 
     public function uploadPhotoAssign(UploadPhotoAssignRequest $request, Bookings $booking): RedirectResponse

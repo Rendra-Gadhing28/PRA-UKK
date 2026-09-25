@@ -7,8 +7,10 @@ namespace App\Services;
 use App\Models\Categories;
 use App\Models\Treatments;
 use Illuminate\Contracts\Pagination\CursorPaginator;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Request as RequestFacade;
 
 /**
  * Menangani seluruh logika query untuk listing Treatment:
@@ -63,8 +65,8 @@ class TreatmentQueryService
         ?string $categorySlug,
         ?string $page = null,
         int $perPage = self::DEFAULT_PER_PAGE,
-    ): \Illuminate\Contracts\Pagination\LengthAwarePaginator {
-        // Query akan menggunakan simple Eloquent pagination agar URL mengandung "?page=" 
+    ): LengthAwarePaginator {
+        // Query akan menggunakan simple Eloquent pagination agar URL mengandung "?page="
         // dan menampilkan link nomor halaman lengkap.
         return $this->baseQuery($search, $categorySlug)
             ->paginate($perPage);
@@ -73,7 +75,7 @@ class TreatmentQueryService
     /**
      * Query dasar treatment aktif dengan eager loading & seleksi kolom minimal.
      */
-    private function baseQuery(?string $search, ?string $categorySlug): \Illuminate\Database\Eloquent\Builder
+    private function baseQuery(?string $search, ?string $categorySlug): Builder
     {
         return Treatments::query()
             ->active()
@@ -93,15 +95,13 @@ class TreatmentQueryService
             ->orderByDesc('id');
     }
 
-
-
     /**
      * Mengambil daftar kategori aktif untuk filter bar, di-cache karena
      * data ini jarang berubah namun diakses di setiap request listing.
      *
-     * @return \Illuminate\Support\Collection<int, Categories>
+     * @return Collection<int, Categories>
      */
-    public function getActiveCategories(): \Illuminate\Support\Collection
+    public function getActiveCategories(): Collection
     {
         $cacheKey = self::CATEGORIES_CACHE_KEY_PREFIX.$this->currentVersion();
 

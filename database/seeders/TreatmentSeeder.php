@@ -5,10 +5,10 @@ namespace Database\Seeders;
 use App\Models\Categories;
 use App\Models\Treatments;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\ImageManager;
+use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class TreatmentSeeder extends Seeder
 {
@@ -46,10 +46,10 @@ class TreatmentSeeder extends Seeder
             'Behel' => [
                 ['name' => 'Behel Damon', 'price' => 25000, 'duration' => 15, 'badge' => 'best_seller'],
                 ['name' => 'Remove Behel', 'price' => 25000, 'duration' => 25, 'badge' => 'none'],
-            ]
+            ],
         ];
 
-        $manager = new ImageManager(new Driver());
+        $manager = new ImageManager(new Driver);
 
         foreach ($data as $categoryName => $treatments) {
             $category = Categories::where('name', $categoryName)->first();
@@ -84,7 +84,7 @@ class TreatmentSeeder extends Seeder
                         $destinationDir = "treatments/{$folderName}";
                         $destinationPath = "{$destinationDir}/{$treatmentSlug}.webp";
 
-                        if (!Storage::disk('public')->exists($destinationDir)) {
+                        if (! Storage::disk('public')->exists($destinationDir)) {
                             Storage::disk('public')->makeDirectory($destinationDir);
                         }
 
@@ -94,7 +94,7 @@ class TreatmentSeeder extends Seeder
 
                         $this->command->info("✅ Berhasil convert: {$destinationPath}");
                     } catch (\Exception $e) {
-                        $this->command->error("❌ Gagal convert {$sourceFile}: " . $e->getMessage());
+                        $this->command->error("❌ Gagal convert {$sourceFile}: ".$e->getMessage());
                     }
                 } else {
                     $this->command->warn("⚠️ Gambar tidak ditemukan untuk: {$t['name']}");
@@ -105,7 +105,7 @@ class TreatmentSeeder extends Seeder
                     'name' => $t['name'],
                     'slug' => $treatmentSlug.'-'.$category->id,
                     'description' => "Layanan {$t['name']} yang dilakukan oleh beautician profesional dengan produk berkualitas.",
-                    'benefits' => "Membuat kulit/tubuh lebih sehat, segar, dan terawat.",
+                    'benefits' => 'Membuat kulit/tubuh lebih sehat, segar, dan terawat.',
                     'price' => $t['price'],
                     'duration_minutes' => $t['duration'],
                     'images' => $imagePathForDb,

@@ -50,10 +50,10 @@ class AdminBookingController extends Controller
             $search = trim($request->search);
             $query->where(function ($q) use ($search) {
                 $q->where('booking_code', 'like', "%{$search}%")
-                  ->orWhereHas('user', function ($qu) use ($search) {
-                      $qu->where('name', 'like', "%{$search}%")
-                         ->orWhere('phone', 'like', "%{$search}%");
-                  });
+                    ->orWhereHas('user', function ($qu) use ($search) {
+                        $qu->where('name', 'like', "%{$search}%")
+                            ->orWhere('phone', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -93,6 +93,7 @@ class AdminBookingController extends Controller
 
         if (in_array($oldStatus, ['completed', 'canceled', 'cancelled'], true)) {
             ToastHelper::error('Reservasi yang sudah Selesai atau Dibatalkan tidak dapat diubah lagi statusnya.');
+
             return redirect()->back();
         }
 
@@ -100,7 +101,7 @@ class AdminBookingController extends Controller
 
         $booking->status = $newStatus;
 
-        if (!empty($validated['beautician_id'])) {
+        if (! empty($validated['beautician_id'])) {
             $booking->beautician_id = $validated['beautician_id'];
         }
 
@@ -118,7 +119,7 @@ class AdminBookingController extends Controller
         $booking->save();
 
         // Jika status menjadi completed dan poin belum ditambahkan, akumulasi poin
-        if ($newStatus === 'completed' && !$booking->points_added) {
+        if ($newStatus === 'completed' && ! $booking->points_added) {
             $totalPoints = $booking->calculateEarnedPoints();
             if ($totalPoints > 0 && $booking->user) {
                 $booking->user->addPoints($totalPoints);
@@ -149,7 +150,7 @@ class AdminBookingController extends Controller
             'status' => $currStatus === 'pending' ? 'confirmed' : $booking->status,
         ]);
 
-        if (!$booking->points_added) {
+        if (! $booking->points_added) {
             $totalPoints = $booking->calculateEarnedPoints();
             if ($totalPoints > 0 && $booking->user) {
                 $booking->user->addPoints($totalPoints);
@@ -160,7 +161,7 @@ class AdminBookingController extends Controller
         $this->bumpBookingCache();
 
         $successMsg = $isDpPaid
-            ? "Pelunasan tunai sisa Rp " . number_format((float)$booking->remaining_amount, 0, ',', '.') . " untuk reservasi #{$booking->booking_code} berhasil dicatat (Lunas)!"
+            ? 'Pelunasan tunai sisa Rp '.number_format((float) $booking->remaining_amount, 0, ',', '.')." untuk reservasi #{$booking->booking_code} berhasil dicatat (Lunas)!"
             : "Pembayaran untuk reservasi #{$booking->booking_code} berhasil diverifikasi!";
 
         ToastHelper::success($successMsg);
@@ -199,7 +200,7 @@ class AdminBookingController extends Controller
 
         $pdf = Pdf::loadView('admin.reports.bookings_pdf', compact('bookings', 'request'));
 
-        return $pdf->download('Laporan_Booking_Yalia_Beauty_' . now()->format('Ymd_His') . '.pdf');
+        return $pdf->download('Laporan_Booking_Yalia_Beauty_'.now()->format('Ymd_His').'.pdf');
     }
 
     /**
@@ -221,19 +222,19 @@ class AdminBookingController extends Controller
 
         $bookings = $query->orderBy('booking_date', 'desc')->get();
         $totalAmount = $bookings->sum('total_amount');
-        $fileName = 'Laporan_Booking_Yalia_Beauty_' . now()->format('Ymd_His') . '.csv';
+        $fileName = 'Laporan_Booking_Yalia_Beauty_'.now()->format('Ymd_His').'.csv';
 
         return response()->streamDownload(function () use ($bookings, $totalAmount) {
             $file = fopen('php://output', 'w');
-            
+
             // UTF-8 BOM untuk MS Excel
-            fputs($file, "\xEF\xBB\xBF");
-            
+            fwrite($file, "\xEF\xBB\xBF");
+
             // === HEADER ATAS LAPORAN ===
             fputcsv($file, ['LAPORAN DAFTAR RESERVASI BOOKING - YALIA BEAUTY SALON']);
             fputcsv($file, ['Alamat Salon: GHV9+F2 Candi, Kabupaten Boyolali, Jawa Tengah | WA: 0822-2702-3362']);
-            fputcsv($file, ['Tanggal Diunduh:', now()->translatedFormat('l, d F Y H:i') . ' WIB']);
-            fputcsv($file, ['Ringkasan:', 'Total Data: ' . $bookings->count() . ' Reservasi', 'Nilai Total: Rp ' . number_format($totalAmount, 0, ',', '.')]);
+            fputcsv($file, ['Tanggal Diunduh:', now()->translatedFormat('l, d F Y H:i').' WIB']);
+            fputcsv($file, ['Ringkasan:', 'Total Data: '.$bookings->count().' Reservasi', 'Nilai Total: Rp '.number_format($totalAmount, 0, ',', '.')]);
             fputcsv($file, []); // Baris Kosong Pemisah
 
             // === TABEL DATA & FIELD AKURAT API/DATABASE ===
@@ -249,13 +250,13 @@ class AdminBookingController extends Controller
                 'Tipe Kunjungan',
                 'Total Harga (Rp)',
                 'Status Pembayaran',
-                'Status Booking'
+                'Status Booking',
             ]);
 
             $no = 1;
             foreach ($bookings as $b) {
-                $statusText = is_object($b->status) 
-                    ? (method_exists($b->status, 'badgeLabel') ? $b->status->badgeLabel() : $b->status->value) 
+                $statusText = is_object($b->status)
+                    ? (method_exists($b->status, 'badgeLabel') ? $b->status->badgeLabel() : $b->status->value)
                     : (string) $b->status;
 
                 fputcsv($file, [
@@ -266,7 +267,7 @@ class AdminBookingController extends Controller
                     $b->beautician?->name ?? 'Auto Assign',
                     $b->treatments->pluck('name')->join(', ') ?: 'N/A',
                     $b->booking_date ? $b->booking_date->format('Y-m-d') : '-',
-                    ($b->time_start ?? '') . ' - ' . ($b->time_end ?? ''),
+                    ($b->time_start ?? '').' - '.($b->time_end ?? ''),
                     $b->booking_type === 'home' ? 'Home Service' : 'Ke Salon',
                     $b->total_amount,
                     $b->payment_status ? ucfirst($b->payment_status) : 'Lunas',
@@ -287,11 +288,11 @@ class AdminBookingController extends Controller
     public function replyReview(Request $request, Bookings $booking)
     {
         $request->validate([
-            'admin_reply' => 'required|string|max:1000'
+            'admin_reply' => 'required|string|max:1000',
         ]);
 
         $review = $booking->review;
-        if (!$review) {
+        if (! $review) {
             return back()->with('error', 'Ulasan tidak ditemukan.');
         }
 

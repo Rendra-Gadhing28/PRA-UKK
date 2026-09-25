@@ -52,19 +52,19 @@ class RegisterRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required'      => 'Nama lengkap wajib diisi.',
-            'name.min'           => 'Nama minimal 2 karakter.',
-            'name.max'           => 'Nama maksimal 100 karakter.',
+            'name.required' => 'Nama lengkap wajib diisi.',
+            'name.min' => 'Nama minimal 2 karakter.',
+            'name.max' => 'Nama maksimal 100 karakter.',
 
-            'email.required'     => 'Alamat email wajib diisi.',
-            'email.email'        => 'Format email tidak valid.',
-            'email.unique'       => 'Email ini sudah terdaftar. Silakan gunakan email lain atau masuk.',
+            'email.required' => 'Alamat email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email ini sudah terdaftar. Silakan gunakan email lain atau masuk.',
 
-            'phone.required'     => 'Nomor HP wajib diisi.',
-            'phone.regex'        => 'Format nomor HP tidak valid. Gunakan 08xx, +628xx, atau 628xx.',
-            'phone.unique'       => 'Nomor HP ini sudah terdaftar.',
+            'phone.required' => 'Nomor HP wajib diisi.',
+            'phone.regex' => 'Format nomor HP tidak valid. Gunakan 08xx, +628xx, atau 628xx.',
+            'phone.unique' => 'Nomor HP ini sudah terdaftar.',
 
-            'password.required'  => 'Password wajib diisi.',
+            'password.required' => 'Password wajib diisi.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ];
     }
@@ -79,9 +79,9 @@ class RegisterRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name'     => 'nama',
-            'email'    => 'email',
-            'phone'    => 'nomor HP',
+            'name' => 'nama',
+            'email' => 'email',
+            'phone' => 'nomor HP',
             'password' => 'password',
         ];
     }
@@ -93,7 +93,7 @@ class RegisterRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
-            'name'  => trim((string) $this->name),
+            'name' => trim((string) $this->name),
             'email' => strtolower(trim((string) $this->email)),
             'phone' => trim((string) $this->phone),
         ]);

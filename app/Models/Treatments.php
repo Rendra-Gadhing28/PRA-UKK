@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Support\ImageHelper;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Treatment / layanan salon yang dapat dibooking.
@@ -38,8 +41,8 @@ class Treatments extends Model
     protected static function booted(): void
     {
         $clearCache = static function (): void {
-            \Illuminate\Support\Facades\Cache::forget('treatments:active-with-category');
-            \Illuminate\Support\Facades\Cache::forget('dashboard:top-treatments-v5');
+            Cache::forget('treatments:active-with-category');
+            Cache::forget('dashboard:top-treatments-v5');
         };
 
         static::saved($clearCache);
@@ -95,7 +98,6 @@ class Treatments extends Model
         ];
     }
 
-    
     /**
      * Relasi ke kategori. Selalu eager-load ini via ->with('category')
      * di layer query supaya tidak memicu N+1 saat menampilkan listing.
@@ -108,7 +110,7 @@ class Treatments extends Model
     /**
      * Relasi ke bookings (Many-to-Many via booking_treatments).
      */
-    public function bookings(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function bookings(): BelongsToMany
     {
         return $this->belongsToMany(Bookings::class, 'booking_treatments', 'treatment_id', 'booking_id')
             ->withPivot(['quantity', 'price_per_unit', 'subtotal']);
@@ -117,11 +119,10 @@ class Treatments extends Model
     /**
      * Relasi ke booking_treatments pivot.
      */
-    public function bookingTreatments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function bookingTreatments(): HasMany
     {
         return $this->hasMany(BookingTreatments::class, 'treatment_id');
     }
-
 
     /**
      * URL publik gambar treatment. Mengembalikan placeholder bila
@@ -131,7 +132,7 @@ class Treatments extends Model
     protected function imageUrl(): Attribute
     {
         return Attribute::make(
-            get: fn (): string => \App\Support\ImageHelper::url($this->images),
+            get: fn (): string => ImageHelper::url($this->images),
         );
     }
 

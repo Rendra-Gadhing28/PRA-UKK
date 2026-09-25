@@ -21,8 +21,8 @@ class AdminVoucherController extends Controller
             $search = trim($request->search);
             $query->where(function ($q) use ($search) {
                 $q->where('code', 'like', "%{$search}%")
-                  ->orWhere('name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
@@ -58,32 +58,32 @@ class AdminVoucherController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'code'         => ['required', 'string', 'max:100', 'unique:vouchers,code'],
-            'name'         => ['required', 'string', 'max:255'],
-            'description'  => ['nullable', 'string'],
-            'type'         => ['required', 'in:percentage,fixed'],
-            'value'        => ['required', 'numeric', 'min:0'],
+            'code' => ['required', 'string', 'max:100', 'unique:vouchers,code'],
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'type' => ['required', 'in:percentage,fixed'],
+            'value' => ['required', 'numeric', 'min:0'],
             'min_purchase' => ['nullable', 'numeric', 'min:0'],
             'max_discount' => ['nullable', 'numeric', 'min:0'],
-            'valid_from'   => ['required', 'date'],
-            'valid_until'  => ['required', 'date', 'after_or_equal:valid_from'],
-            'quota'        => ['required', 'integer', 'min:1'],
-            'is_active'    => ['nullable', 'boolean'],
+            'valid_from' => ['required', 'date'],
+            'valid_until' => ['required', 'date', 'after_or_equal:valid_from'],
+            'quota' => ['required', 'integer', 'min:1'],
+            'is_active' => ['nullable', 'boolean'],
         ]);
 
         Vouchers::create([
-            'code'         => strtoupper(trim($validated['code'])),
-            'name'         => $validated['name'],
-            'description'  => $validated['description'] ?? null,
-            'type'         => $validated['type'],
-            'value'        => $validated['value'],
+            'code' => strtoupper(trim($validated['code'])),
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? null,
+            'type' => $validated['type'],
+            'value' => $validated['value'],
             'min_purchase' => $validated['min_purchase'] ?? 0,
             'max_discount' => $validated['max_discount'] ?? null,
-            'valid_from'   => $validated['valid_from'],
-            'valid_until'  => $validated['valid_until'],
-            'quota'        => $validated['quota'],
-            'used_count'   => 0,
-            'is_active'    => $request->boolean('is_active', true),
+            'valid_from' => $validated['valid_from'],
+            'valid_until' => $validated['valid_until'],
+            'quota' => $validated['quota'],
+            'used_count' => 0,
+            'is_active' => $request->boolean('is_active', true),
         ]);
 
         ToastHelper::success("Voucher '{$validated['code']}' berhasil ditambahkan! 🎟️");
@@ -105,31 +105,31 @@ class AdminVoucherController extends Controller
     public function update(Request $request, Vouchers $voucher)
     {
         $validated = $request->validate([
-            'code'         => ['required', 'string', 'max:100', 'unique:vouchers,code,' . $voucher->id],
-            'name'         => ['required', 'string', 'max:255'],
-            'description'  => ['nullable', 'string'],
-            'type'         => ['required', 'in:percentage,fixed'],
-            'value'        => ['required', 'numeric', 'min:0'],
+            'code' => ['required', 'string', 'max:100', 'unique:vouchers,code,'.$voucher->id],
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'type' => ['required', 'in:percentage,fixed'],
+            'value' => ['required', 'numeric', 'min:0'],
             'min_purchase' => ['nullable', 'numeric', 'min:0'],
             'max_discount' => ['nullable', 'numeric', 'min:0'],
-            'valid_from'   => ['required', 'date'],
-            'valid_until'  => ['required', 'date', 'after_or_equal:valid_from'],
-            'quota'        => ['required', 'integer', 'min:1'],
-            'is_active'    => ['nullable', 'boolean'],
+            'valid_from' => ['required', 'date'],
+            'valid_until' => ['required', 'date', 'after_or_equal:valid_from'],
+            'quota' => ['required', 'integer', 'min:1'],
+            'is_active' => ['nullable', 'boolean'],
         ]);
 
         $voucher->update([
-            'code'         => strtoupper(trim($validated['code'])),
-            'name'         => $validated['name'],
-            'description'  => $validated['description'] ?? null,
-            'type'         => $validated['type'],
-            'value'        => $validated['value'],
+            'code' => strtoupper(trim($validated['code'])),
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? null,
+            'type' => $validated['type'],
+            'value' => $validated['value'],
             'min_purchase' => $validated['min_purchase'] ?? 0,
             'max_discount' => $validated['max_discount'] ?? null,
-            'valid_from'   => $validated['valid_from'],
-            'valid_until'  => $validated['valid_until'],
-            'quota'        => $validated['quota'],
-            'is_active'    => $request->boolean('is_active', true),
+            'valid_from' => $validated['valid_from'],
+            'valid_until' => $validated['valid_until'],
+            'quota' => $validated['quota'],
+            'is_active' => $request->boolean('is_active', true),
         ]);
 
         ToastHelper::success("Voucher '{$voucher->code}' berhasil diperbarui! ✨");

@@ -1,1 +1,0 @@
-<x-skeleton.avatar {{ $attributes }} />

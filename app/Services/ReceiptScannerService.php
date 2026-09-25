@@ -12,8 +12,9 @@ class ReceiptScannerService
     /**
      * Parse receipt image using Gemini 2.5 Flash API.
      *
-     * @param string $imagePath Absolute or relative storage path to receipt image file.
+     * @param  string  $imagePath  Absolute or relative storage path to receipt image file.
      * @return array Parsed receipt structured data.
+     *
      * @throws Exception
      */
     public function parseReceipt(string $imagePath): array
@@ -24,7 +25,7 @@ class ReceiptScannerService
 
         $apiKey = Config::get('services.gemini.api_key');
         if (empty($apiKey) || $apiKey === 'your_gemini_api_key_here') {
-            throw new Exception("GEMINI_API_KEY belum dikonfigurasi di file .env");
+            throw new Exception('GEMINI_API_KEY belum dikonfigurasi di file .env');
         }
 
         $model = Config::get('services.gemini.model', 'gemini-2.5-flash');
@@ -38,7 +39,7 @@ class ReceiptScannerService
         // Base64 Encode
         $imageData = base64_encode(file_get_contents($imagePath));
 
-        $promptText = <<<PROMPT
+        $promptText = <<<'PROMPT'
 Anda adalah sistem OCR Struk Belanja cerdas. Analisis foto struk belanja ini dan ekstrak seluruh informasi transaksi ke dalam format JSON berikut:
 
 {
@@ -79,7 +80,7 @@ PROMPT;
                             [
                                 'inline_data' => [
                                     'mime_type' => $mimeType,
-                                    'data'      => $imageData,
+                                    'data' => $imageData,
                                 ],
                             ],
                         ],
@@ -87,13 +88,13 @@ PROMPT;
                 ],
                 'generationConfig' => [
                     'response_mime_type' => 'application/json',
-                    'temperature'        => 0.1,
+                    'temperature' => 0.1,
                 ],
             ]);
 
             if ($response->failed()) {
                 Log::error('Gemini API Error Response', ['body' => $response->body()]);
-                throw new Exception("Gagal menghubungi Gemini API: " . $response->status() . " - " . $response->body());
+                throw new Exception('Gagal menghubungi Gemini API: '.$response->status().' - '.$response->body());
             }
 
             $responseData = $response->json();
@@ -108,29 +109,29 @@ PROMPT;
             $parsedData = json_decode($cleanJson, true);
 
             if (! is_array($parsedData)) {
-                throw new Exception("Gagal menguraikan format JSON dari Gemini API.");
+                throw new Exception('Gagal menguraikan format JSON dari Gemini API.');
             }
 
             // Normalisasi data default jika ada field yang null
             return [
-                'merchant'         => $parsedData['merchant'] ?? 'Merchant Tidak Diketahui',
-                'branch'           => $parsedData['branch'] ?? null,
+                'merchant' => $parsedData['merchant'] ?? 'Merchant Tidak Diketahui',
+                'branch' => $parsedData['branch'] ?? null,
                 'transaction_date' => $parsedData['transaction_date'] ?? date('Y-m-d H:i:s'),
-                'payment_method'   => $parsedData['payment_method'] ?? 'Cash',
-                'total_amount'     => (float) ($parsedData['total_amount'] ?? 0),
-                'items'            => array_map(function ($item) {
+                'payment_method' => $parsedData['payment_method'] ?? 'Cash',
+                'total_amount' => (float) ($parsedData['total_amount'] ?? 0),
+                'items' => array_map(function ($item) {
                     return [
-                        'item_name'  => $item['item_name'] ?? 'Item',
-                        'qty'        => (int) ($item['qty'] ?? 1),
+                        'item_name' => $item['item_name'] ?? 'Item',
+                        'qty' => (int) ($item['qty'] ?? 1),
                         'unit_price' => (float) ($item['unit_price'] ?? 0),
-                        'subtotal'   => (float) ($item['subtotal'] ?? 0),
-                        'category'   => $item['category'] ?? 'Kebutuhan',
+                        'subtotal' => (float) ($item['subtotal'] ?? 0),
+                        'category' => $item['category'] ?? 'Kebutuhan',
                     ];
                 }, $parsedData['items'] ?? []),
             ];
 
         } catch (Exception $e) {
-            Log::error('ReceiptScannerService Exception: ' . $e->getMessage());
+            Log::error('ReceiptScannerService Exception: '.$e->getMessage());
             throw $e;
         }
     }

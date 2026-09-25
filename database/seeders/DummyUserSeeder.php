@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -24,7 +24,7 @@ class DummyUserSeeder extends Seeder
             'Rachel Vennya', 'Fujianti Utami', 'Marion Jola', 'Ziva Magnolya', 'Tiara Andini',
             'Lyodra Ginting', 'Mahalini Raharja', 'Keisya Levronka', 'Novia Bachmid', 'Brisia Jodie',
             'Yura Yunita', 'Nadin Amizah', 'Danilla Riyadi', 'Eva Celia', 'Sherina Munaf',
-            'Gita Gutawa', 'Tasya Kamila', 'Yuki Kato', 'Enzy Storia', 'Febby Rastanty'
+            'Gita Gutawa', 'Tasya Kamila', 'Yuki Kato', 'Enzy Storia', 'Febby Rastanty',
         ];
 
         $cities = [
@@ -37,7 +37,7 @@ class DummyUserSeeder extends Seeder
             'Jl. Raya Semarang-Solo Km 15, Banyumanik, Semarang',
             'Jl. Pahlawan No. 78, Mojosongo, Boyolali',
             'Jl. Suharso No. 23, Jaten, Karanganyar',
-            'Jl. Mayor Kusmanto No. 90, Klaten Utara'
+            'Jl. Mayor Kusmanto No. 90, Klaten Utara',
         ];
 
         $tiers = ['regular', 'silver', 'gold', 'purple'];
@@ -48,12 +48,12 @@ class DummyUserSeeder extends Seeder
             $num = $index + 1;
             $slug = Str::slug($name);
             $email = "{$slug}{$num}@gmail.com";
-            $phone = '08' . rand(11, 99) . rand(1000, 9999) . rand(100, 999);
+            $phone = '08'.rand(11, 99).rand(1000, 9999).rand(100, 999);
             $address = $cities[array_rand($cities)];
-            
+
             // Random tier & points allocation
             $tier = $tiers[array_rand($tiers)];
-            $points = match($tier) {
+            $points = match ($tier) {
                 'purple' => rand(600, 1000),
                 'gold' => rand(300, 599),
                 'silver' => rand(100, 299),

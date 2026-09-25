@@ -25,7 +25,7 @@ return new class extends Migration
             $table->enum('membership_level', ['regular', 'silver', 'gold', 'platinum'])->default('regular');
             $table->integer('total_points')->default(0);
             $table->integer('total_bookings')->default(0);
-            $table->decimal('total_spending', 15,2)->default(0);
+            $table->decimal('total_spending', 15, 2)->default(0);
             $table->boolean('is_active')->default(true);
             $table->enum('role', ['admin', 'user'])->default('user');
             $table->string('google_id')->nullable()->unique()->nullable();

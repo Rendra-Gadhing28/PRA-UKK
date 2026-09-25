@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Helpers\ToastHelper;
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +23,7 @@ class AdminMiddleware
      * Redirect ke dashboard user jika bukan admin,
      * atau ke halaman login jika belum terautentikasi.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -30,7 +31,7 @@ class AdminMiddleware
             return redirect()->route('login');
         }
 
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         if (! $user->isAdmin()) {
@@ -38,7 +39,6 @@ class AdminMiddleware
 
             return redirect()->route('user.dashboard');
         }
-
 
         return $next($request);
     }

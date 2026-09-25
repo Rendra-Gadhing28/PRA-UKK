@@ -26,7 +26,7 @@ class ImageOptimizationService
     private const WEBP_QUALITY = 80;
 
     public function __construct(
-        private readonly ImageManager $manager = new ImageManager(new Driver()),
+        private readonly ImageManager $manager = new ImageManager(new Driver),
     ) {}
 
     /**

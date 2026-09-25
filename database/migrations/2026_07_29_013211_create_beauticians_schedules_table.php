@@ -14,15 +14,15 @@ return new class extends Migration
         Schema::create('beauticians_schedules', function (Blueprint $table) {
             $table->id();
             $table->foreignId('beautician_id')
-            ->constrained('beauticians')
-            ->onDelete('cascade');
+                ->constrained('beauticians')
+                ->onDelete('cascade');
             $table->tinyInteger('day_of_week')
-            ->comment('0=Minggu, 1=Senin, 2=Selasa, 3=Rabu, 4=Kamis, 5=Jumat, 6=Sabtu');
+                ->comment('0=Minggu, 1=Senin, 2=Selasa, 3=Rabu, 4=Kamis, 5=Jumat, 6=Sabtu');
             $table->time('start_time');
             $table->time('end_time');
             $table->boolean('is_working')->default(true);
             $table->timestamps();
-            
+
             // Indexes
             $table->index('beautician_id');
             $table->index('day_of_week');

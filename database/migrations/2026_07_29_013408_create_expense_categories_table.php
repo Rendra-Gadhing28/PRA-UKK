@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('expense_categories', function (Blueprint $table) {
             $table->id();
             $table->string('name')
-            ->comment('Nama kategori pengeluaran1');
+                ->comment('Nama kategori pengeluaran1');
             $table->string('icon')
-            ->comment('Emoji icon untuk kategori');
+                ->comment('Emoji icon untuk kategori');
             $table->text('description')->nullable()
-            ->comment('Deskripsi kategori');
+                ->comment('Deskripsi kategori');
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->index('is_active');

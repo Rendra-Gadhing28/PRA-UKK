@@ -19,15 +19,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table): void {
-          
-        });
+        Schema::table('users', function (Blueprint $table): void {});
     }
 
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table): void {
-         
-        });
+        Schema::table('users', function (Blueprint $table): void {});
     }
 };

@@ -47,8 +47,8 @@ class SocialiteController extends Controller
             $googleUser = Socialite::driver('google')->stateless()->user();
         } catch (\Exception $e) {
             Log::error('Google OAuth callback error', [
-                'error'   => $e->getMessage(),
-                'ip'      => request()->ip(),
+                'error' => $e->getMessage(),
+                'ip' => request()->ip(),
             ]);
 
             ToastHelper::error('Gagal login dengan Google. Silakan coba lagi.');
@@ -69,8 +69,8 @@ class SocialiteController extends Controller
 
         request()->session()->regenerate();
 
-        $namaDepan   = explode(' ', $user->name)[0];
-        $isNewUser   = $user->wasRecentlyCreated;
+        $namaDepan = explode(' ', $user->name)[0];
+        $isNewUser = $user->wasRecentlyCreated;
 
         if ($isNewUser) {
             ToastHelper::success("Selamat datang di Yalia Beauty, {$namaDepan}! 🌸 Akun Google Anda berhasil terhubung.");
@@ -90,8 +90,6 @@ class SocialiteController extends Controller
      * 1. Berdasarkan google_id (sudah pernah login Google)
      * 2. Berdasarkan email (sudah punya akun manual, hubungkan ke Google)
      * 3. Buat akun baru (pertama kali)
-     *
-     * @param  \Laravel\Socialite\Contracts\User  $googleUser
      */
     private function findOrCreateUserFromGoogle(\Laravel\Socialite\Contracts\User $googleUser): User
     {
@@ -101,9 +99,9 @@ class SocialiteController extends Controller
         if ($user) {
             // Update token Google yang mungkin sudah expired
             $user->update([
-                'google_token'         => $googleUser->token,
+                'google_token' => $googleUser->token,
                 'google_refresh_token' => $googleUser->refreshToken,
-                'avatar_url'           => $googleUser->getAvatar(),
+                'avatar_url' => $googleUser->getAvatar(),
             ]);
 
             return $user;
@@ -114,10 +112,10 @@ class SocialiteController extends Controller
 
         if ($user) {
             $user->update([
-                'google_id'            => $googleUser->getId(),
-                'google_token'         => $googleUser->token,
+                'google_id' => $googleUser->getId(),
+                'google_token' => $googleUser->token,
                 'google_refresh_token' => $googleUser->refreshToken,
-                'avatar_url'           => $googleUser->getAvatar(),
+                'avatar_url' => $googleUser->getAvatar(),
             ]);
 
             return $user;
@@ -125,18 +123,18 @@ class SocialiteController extends Controller
 
         // Buat akun baru dari data Google
         return User::create([
-            'name'                 => $googleUser->getName(),
-            'email'                => $googleUser->getEmail(),
-            'phone'                => null, // Tidak tersedia dari Google
-            'password'             => bcrypt(Str::random(32)), // Password acak karena login via Google
-            'google_id'            => $googleUser->getId(),
-            'google_token'         => $googleUser->token,
+            'name' => $googleUser->getName(),
+            'email' => $googleUser->getEmail(),
+            'phone' => null, // Tidak tersedia dari Google
+            'password' => bcrypt(Str::random(32)), // Password acak karena login via Google
+            'google_id' => $googleUser->getId(),
+            'google_token' => $googleUser->token,
             'google_refresh_token' => $googleUser->refreshToken,
-            'avatar_url'           => $googleUser->getAvatar(),
-            'email_verified_at'    => now(), // Email dari Google sudah terverifikasi
-            'membership_level'     => 'regular',
-            'is_active'            => true,
-            'role'             => 'user',
+            'avatar_url' => $googleUser->getAvatar(),
+            'email_verified_at' => now(), // Email dari Google sudah terverifikasi
+            'membership_level' => 'regular',
+            'is_active' => true,
+            'role' => 'user',
         ]);
     }
 }

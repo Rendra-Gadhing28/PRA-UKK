@@ -5,6 +5,7 @@ namespace App\Services\User;
 use App\Models\UserVouchers;
 use App\Models\Vouchers;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -21,10 +22,10 @@ class UserVoucherService
      * dan tidak ada duplikasi kondisi WHERE di service.
      *
      * @return array{
-     *     allVouchers: \Illuminate\Support\Collection,
-     *     pointVouchers: \Illuminate\Support\Collection,
-     *     eventVouchers: \Illuminate\Support\Collection,
-     *     myVouchers: \Illuminate\Support\Collection,
+     *     allVouchers: Collection,
+     *     pointVouchers: Collection,
+     *     eventVouchers: Collection,
+     *     myVouchers: Collection,
      *     claimedVoucherIds: array<int>
      * }
      */
@@ -64,8 +65,8 @@ class UserVoucherService
 
         // Eager-load relasi 'voucher' dengan kolom spesifik — eliminasi N+1
         $myVouchers = UserVouchers::with([
-                'voucher:id,code,name,description,type,value,is_event,points_required,valid_until',
-            ])
+            'voucher:id,code,name,description,type,value,is_event,points_required,valid_until',
+        ])
             ->where('user_id', $user->id)
             ->select('id', 'user_id', 'voucher_id', 'is_used', 'created_at')
             ->orderBy('is_used')
@@ -121,7 +122,7 @@ class UserVoucherService
         if ($voucher->points_required > 0 && $user->total_points < $voucher->points_required) {
             return $this->result(false, 'insufficient_points',
                 "Poin PTS Anda ({$user->total_points} PTS) tidak mencukupi "
-                . "untuk menukar voucher ini ({$voucher->points_required} PTS)."
+                ."untuk menukar voucher ini ({$voucher->points_required} PTS)."
             );
         }
 
@@ -138,9 +139,9 @@ class UserVoucherService
                 }
 
                 UserVouchers::create([
-                    'user_id'    => $user->id,
+                    'user_id' => $user->id,
                     'voucher_id' => $voucher->id,
-                    'is_used'    => false,
+                    'is_used' => false,
                 ]);
 
                 // Increment used_count — wajib agar kuota berkurang
@@ -148,9 +149,9 @@ class UserVoucherService
             });
         } catch (\Throwable $e) {
             Log::error('VoucherClaimFailed', [
-                'user_id'    => $user->id,
+                'user_id' => $user->id,
                 'voucher_id' => $voucher->id,
-                'error'      => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
 
             return $this->result(false, 'server_error',
@@ -161,16 +162,16 @@ class UserVoucherService
         // --- Pesan sukses sesuai tipe klaim ---
         if ($voucher->points_required > 0) {
             $message = "Berhasil menukarkan {$voucher->points_required} PTS "
-                     . "dengan voucher '{$voucher->code}'! 🎉";
-            $type    = 'points';
+                     ."dengan voucher '{$voucher->code}'! 🎉";
+            $type = 'points';
         } elseif ($voucher->is_event) {
             $message = "Selamat! Voucher Event '{$voucher->name}' "
-                     . "(Kode: {$voucher->code}) berhasil diklaim! 🎁";
-            $type    = 'event';
+                     ."(Kode: {$voucher->code}) berhasil diklaim! 🎁";
+            $type = 'event';
         } else {
             $message = "Voucher '{$voucher->code}' berhasil diklaim "
-                     . "dan tersimpan di akun Anda! 🎟️";
-            $type    = 'regular';
+                     .'dan tersimpan di akun Anda! 🎟️';
+            $type = 'regular';
         }
 
         return $this->result(true, $type, $message);

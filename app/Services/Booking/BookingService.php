@@ -9,6 +9,7 @@ use App\Models\Bookings;
 use App\Models\BookingTreatments;
 use App\Models\Treatments;
 use App\Models\User;
+use App\Models\UserVouchers;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -147,7 +148,7 @@ class BookingService
             $userVoucherRecord = null;
 
             if ($userVoucherId) {
-                $userVoucherRecord = \App\Models\UserVouchers::with('voucher')
+                $userVoucherRecord = UserVouchers::with('voucher')
                     ->where('id', $userVoucherId)
                     ->where('user_id', $user->id)
                     ->where('is_used', false)

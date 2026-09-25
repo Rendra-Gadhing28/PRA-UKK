@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use App\Support\ImageHelper;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Storage;
 
 class Beauticians extends Model
 {
@@ -15,14 +15,14 @@ class Beauticians extends Model
     public const PHOTO_DIRECTORY = 'beauticians';
 
     protected $fillable = [
-        'name', 
-        'phone', 
-        'email', 
+        'name',
+        'phone',
+        'email',
         'photo',
-        'bio', 
+        'bio',
         'service_area',
         'total_bookings',
-        'is_active'
+        'is_active',
     ];
 
     protected $casts = [
@@ -38,7 +38,7 @@ class Beauticians extends Model
         return Attribute::make(
             get: function (): string {
                 if (blank($this->photo)) {
-                    return 'https://ui-avatars.com/api/?name=' . urlencode($this->name ?? 'Beautician') . '&background=f45472&color=fff';
+                    return 'https://ui-avatars.com/api/?name='.urlencode($this->name ?? 'Beautician').'&background=f45472&color=fff';
                 }
 
                 $path = $this->photo;
@@ -48,10 +48,10 @@ class Beauticians extends Model
 
                 $cleanPath = ltrim($path, '/');
                 if (! str_starts_with($cleanPath, 'beauticians/')) {
-                    $cleanPath = self::PHOTO_DIRECTORY . '/' . $cleanPath;
+                    $cleanPath = self::PHOTO_DIRECTORY.'/'.$cleanPath;
                 }
 
-                return \App\Support\ImageHelper::url($cleanPath);
+                return ImageHelper::url($cleanPath);
             }
         );
     }

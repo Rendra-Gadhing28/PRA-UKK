@@ -38,7 +38,7 @@ class AdminTreatmentController extends Controller
             $search = trim($request->search);
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
@@ -69,16 +69,16 @@ class AdminTreatmentController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'             => ['required', 'string', 'max:255'],
-            'category_id'      => ['required', 'exists:categories,id'],
-            'price'            => ['required', 'numeric', 'min:0'],
+            'name' => ['required', 'string', 'max:255'],
+            'category_id' => ['required', 'exists:categories,id'],
+            'price' => ['required', 'numeric', 'min:0'],
             'duration_minutes' => ['required', 'integer', 'min:1'],
-            'badge'            => ['required', 'in:none,best_seller,new,promo'],
-            'description'      => ['required', 'string'],
-            'benefits'         => ['nullable', 'string'],
-            'is_active'        => ['nullable', 'boolean'],
-            'image'            => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
-            'images'           => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'badge' => ['required', 'in:none,best_seller,new,promo'],
+            'description' => ['required', 'string'],
+            'benefits' => ['nullable', 'string'],
+            'is_active' => ['nullable', 'boolean'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'images' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);
 
         // Auto-generate slug unik
@@ -93,25 +93,25 @@ class AdminTreatmentController extends Controller
         $imageName = null;
         $file = $request->file('image') ?? $request->file('images');
         if ($file) {
-            $imageName = time() . '_' . Str::slug($validated['name']) . '.' . $file->getClientOriginalExtension();
+            $imageName = time().'_'.Str::slug($validated['name']).'.'.$file->getClientOriginalExtension();
             $file->storeAs(Treatments::IMAGE_DIRECTORY, $imageName, 'public');
-            $imageName = Treatments::IMAGE_DIRECTORY . '/' . $imageName;
+            $imageName = Treatments::IMAGE_DIRECTORY.'/'.$imageName;
         }
 
         Treatments::create([
-            'name'             => $validated['name'],
-            'slug'             => $slug,
-            'category_id'      => $validated['category_id'],
-            'price'            => $validated['price'],
+            'name' => $validated['name'],
+            'slug' => $slug,
+            'category_id' => $validated['category_id'],
+            'price' => $validated['price'],
             'duration_minutes' => $validated['duration_minutes'],
-            'badge'            => $validated['badge'],
-            'description'      => $validated['description'],
-            'benefits'         => $validated['benefits'] ?? null,
-            'is_active'        => $request->boolean('is_active', true),
-            'images'           => $imageName,
-            'rating'           => 0.0,
-            'rating_count'     => 0,
-            'sort_order'       => 0,
+            'badge' => $validated['badge'],
+            'description' => $validated['description'],
+            'benefits' => $validated['benefits'] ?? null,
+            'is_active' => $request->boolean('is_active', true),
+            'images' => $imageName,
+            'rating' => 0.0,
+            'rating_count' => 0,
+            'sort_order' => 0,
         ]);
 
         $this->bumpCacheVersion();
@@ -138,16 +138,16 @@ class AdminTreatmentController extends Controller
     public function update(Request $request, Treatments $treatment)
     {
         $validated = $request->validate([
-            'name'             => ['required', 'string', 'max:255'],
-            'category_id'      => ['required', 'exists:categories,id'],
-            'price'            => ['required', 'numeric', 'min:0'],
+            'name' => ['required', 'string', 'max:255'],
+            'category_id' => ['required', 'exists:categories,id'],
+            'price' => ['required', 'numeric', 'min:0'],
             'duration_minutes' => ['required', 'integer', 'min:1'],
-            'badge'            => ['required', 'in:none,best_seller,new,promo'],
-            'description'      => ['required', 'string'],
-            'benefits'         => ['nullable', 'string'],
-            'is_active'        => ['nullable', 'boolean'],
-            'image'            => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
-            'images'           => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'badge' => ['required', 'in:none,best_seller,new,promo'],
+            'description' => ['required', 'string'],
+            'benefits' => ['nullable', 'string'],
+            'is_active' => ['nullable', 'boolean'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'images' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);
 
         if ($validated['name'] !== $treatment->name) {
@@ -167,20 +167,20 @@ class AdminTreatmentController extends Controller
                 Storage::disk('public')->delete($treatment->images);
             }
 
-            $imageName = time() . '_' . Str::slug($validated['name']) . '.' . $file->getClientOriginalExtension();
+            $imageName = time().'_'.Str::slug($validated['name']).'.'.$file->getClientOriginalExtension();
             $file->storeAs(Treatments::IMAGE_DIRECTORY, $imageName, 'public');
-            $treatment->images = Treatments::IMAGE_DIRECTORY . '/' . $imageName;
+            $treatment->images = Treatments::IMAGE_DIRECTORY.'/'.$imageName;
         }
 
         $treatment->update([
-            'name'             => $validated['name'],
-            'category_id'      => $validated['category_id'],
-            'price'            => $validated['price'],
+            'name' => $validated['name'],
+            'category_id' => $validated['category_id'],
+            'price' => $validated['price'],
             'duration_minutes' => $validated['duration_minutes'],
-            'badge'            => $validated['badge'],
-            'description'      => $validated['description'],
-            'benefits'         => $validated['benefits'] ?? null,
-            'is_active'        => $request->boolean('is_active', true),
+            'badge' => $validated['badge'],
+            'description' => $validated['description'],
+            'benefits' => $validated['benefits'] ?? null,
+            'is_active' => $request->boolean('is_active', true),
         ]);
 
         $this->bumpCacheVersion();
@@ -198,7 +198,7 @@ class AdminTreatmentController extends Controller
         $name = $treatment->name;
 
         if ($treatment->images) {
-            Storage::disk('public')->delete(Treatments::IMAGE_DIRECTORY . '/' . $treatment->images);
+            Storage::disk('public')->delete(Treatments::IMAGE_DIRECTORY.'/'.$treatment->images);
         }
 
         $treatment->delete();

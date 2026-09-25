@@ -14,40 +14,40 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->enum('type', ['income', 'expense'])
-            ->comment('Tipe tranksaksi: pemasukan atau pengeluaran');
+                ->comment('Tipe tranksaksi: pemasukan atau pengeluaran');
             $table->foreignId('booking_id')
-            ->nullable()
-            ->constrained('bookings')
-            ->onDelete('set null')
-            ->comment('Foreign key ke booking (jika income dari booking)');
+                ->nullable()
+                ->constrained('bookings')
+                ->onDelete('set null')
+                ->comment('Foreign key ke booking (jika income dari booking)');
             $table->string('category', 150)
-            ->comment('Kategori tranksaksi');
+                ->comment('Kategori tranksaksi');
             $table->string('icon')->nullable()
-            ->comment('Emoji icon untuk kategori');
+                ->comment('Emoji icon untuk kategori');
 
             $table->string('title')
-            ->comment('Judul tranksaksi');
+                ->comment('Judul tranksaksi');
             $table->text('description')->nullable()
-            ->comment('Deskripsi detail tranksaksi');
+                ->comment('Deskripsi detail tranksaksi');
             $table->decimal('amount', 20, 2)
-            ->comment('Jumlah uang(Rp)');
+                ->comment('Jumlah uang(Rp)');
 
             $table->string('receipt_image')->nullable()
-            ->comment('Path gambar bukti/nota');
+                ->comment('Path gambar bukti/nota');
             $table->date('transaction_date')
-            ->comment('Tanggal tranksaksi');
+                ->comment('Tanggal tranksaksi');
             // Additional metadata (JSON)
             $table->json('metadata')->nullable()
-            ->comment('Data tambahan dalam format JSON');
+                ->comment('Data tambahan dalam format JSON');
 
             $table->foreignId('created_by')
-            ->nullable()
-            ->constrained('users')
-            ->onDelete('set null')
-            ->comment('Admin yang mencatat tranksaksi');
+                ->nullable()
+                ->constrained('users')
+                ->onDelete('set null')
+                ->comment('Admin yang mencatat tranksaksi');
             $table->timestamps();
 
-             $table->index('type');
+            $table->index('type');
             $table->index('category');
             $table->index('booking_id');
             $table->index('transaction_date');

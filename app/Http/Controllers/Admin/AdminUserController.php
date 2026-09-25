@@ -21,8 +21,8 @@ class AdminUserController extends Controller
             $search = trim($request->search);
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
             });
         }
 
@@ -39,10 +39,11 @@ class AdminUserController extends Controller
         // Cegah admin menonaktifkan dirinya sendiri
         if (auth()->id() === $user->id) {
             ToastHelper::error('Tidak dapat menonaktifkan akun sendiri.');
+
             return back();
         }
 
-        $user->is_active = !$user->is_active;
+        $user->is_active = ! $user->is_active;
         $user->save();
 
         $status = $user->is_active ? 'diaktifkan' : 'dinonaktifkan';
@@ -59,6 +60,7 @@ class AdminUserController extends Controller
         // Cegah admin menghapus dirinya sendiri
         if (auth()->id() === $user->id) {
             ToastHelper::error('Tidak dapat menghapus akun sendiri.');
+
             return back();
         }
 
