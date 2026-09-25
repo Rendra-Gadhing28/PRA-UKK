@@ -23,6 +23,8 @@ class RegisterRequest extends FormRequest
     }
 
     /**
+     * Aturan validasi pendaftaran pengguna baru.
+     *
      * @return array<string, mixed>
      */
     public function rules(): array

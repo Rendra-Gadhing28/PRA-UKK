@@ -6,7 +6,9 @@ use Exception;
 
 class BookingException extends Exception
 {
-    // return response json with status code 409
+    /**
+     * Render exception ke response JSON dengan status HTTP 409 Conflict.
+     */
     public function render($request)
     {
         return response()->json([

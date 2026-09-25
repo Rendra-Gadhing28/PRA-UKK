@@ -21,10 +21,16 @@ use Illuminate\Support\Facades\Log;
  */
 class MidtransWebhookController extends Controller
 {
+    /**
+     * Injeksi service verifikasi pembayaran Midtrans QRIS.
+     */
     public function __construct(
         private readonly MidtransQrisService $midtransQris,
     ) {}
 
+    /**
+     * Menangani webhook callback notifikasi pembayaran dari Midtrans.
+     */
     public function handle(Request $request): JsonResponse
     {
         $payload = $request->all();

@@ -11,11 +11,17 @@ class ReminderController extends Controller
 {
     private BookingReminderService $reminderService;
 
+    /**
+     * Injeksi service pemrosesan notifikasi pengingat booking.
+     */
     public function __construct(BookingReminderService $reminderService)
     {
         $this->reminderService = $reminderService;
     }
 
+    /**
+     * Memicu pemrosesan antrean reminder booking yang mendekati jadwal reservasi.
+     */
     public function trigger(): JsonResponse
     {
         try {

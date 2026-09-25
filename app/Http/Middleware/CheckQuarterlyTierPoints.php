@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class CheckQuarterlyTierPoints
 {
     /**
-     * Handle an incoming request.
+     * Memeriksa dan mereset tier_points kuartalan jika kuartal sudah berganti sebelum memproses request.
      *
      * @return mixed
      */

@@ -17,7 +17,7 @@ use Illuminate\View\View;
 class NewPasswordController extends Controller
 {
     /**
-     * Display the password reset view.
+     * Tampilkan formulir pembuatan kata sandi baru dengan token reset.
      */
     public function create(Request $request): View
     {
@@ -25,7 +25,7 @@ class NewPasswordController extends Controller
     }
 
     /**
-     * Handle an incoming new password request.
+     * Simpan kata sandi baru yang telah direset ke database.
      *
      * @throws ValidationException
      */

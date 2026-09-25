@@ -6,7 +6,31 @@
                     <span class="w-4 h-8 bg-[#f45472] rounded-full inline-block"></span>
                     Kelola Akun User
                 </h2>
-                <p class="text-sm text-gray-500 mt-1">Daftar pengguna aplikasi, termasuk status aktif, dan pengelolaan hapus akun.</p>
+                <p class="text-sm text-gray-500 mt-1">Daftar pengguna aplikasi, termasuk status aktif, level membership, dan reset kuartalan.</p>
+            </div>
+
+            <div class="flex items-center gap-2.5 flex-wrap">
+                {{-- Tombol Reset Membership Kuartalan --}}
+                <form action="{{ route('admin.users.reset-memberships') }}" method="POST"
+                      onsubmit="return confirm('Apakah Anda yakin ingin me-reset seluruh status membership customer kembali ke Regular (0 Tier PTS)?');">
+                    @csrf
+                    <button type="submit" 
+                            class="px-4 py-2.5 bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold rounded-xl hover:bg-rose-100 transition-all flex items-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-arrows-rotate text-rose-500"></i>
+                        Reset Membership Kuartalan
+                    </button>
+                </form>
+
+                {{-- Tombol Testing Simulasi 90 Hari (After 90D) --}}
+                <form action="{{ route('admin.users.simulate-90d') }}" method="POST"
+                      onsubmit="return confirm('Jalankan simulasi 90 hari? Sistem akan memajukan waktu 90 hari lalu memicu pengecekan syncTierReset() pada seluruh customer.');">
+                    @csrf
+                    <button type="submit" 
+                            class="px-4 py-2.5 bg-amber-500 text-white text-xs font-bold rounded-xl hover:bg-amber-600 transition-all flex items-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-flask-vial"></i>
+                        Testing: After 90D (Skip 3 Bulan)
+                    </button>
+                </form>
             </div>
         </div>
     </x-slot>
@@ -46,6 +70,7 @@
                             <tr>
                                 <th class="px-6 py-4 font-bold text-xs text-gray-500 uppercase tracking-wider">User</th>
                                 <th class="px-6 py-4 font-bold text-xs text-gray-500 uppercase tracking-wider">Role</th>
+                                <th class="px-6 py-4 font-bold text-xs text-gray-500 uppercase tracking-wider">Membership & Tier PTS</th>
                                 <th class="px-6 py-4 font-bold text-xs text-gray-500 uppercase tracking-wider">Tgl Daftar</th>
                                 <th class="px-6 py-4 font-bold text-xs text-gray-500 uppercase tracking-wider">Status</th>
                                 <th class="px-6 py-4 font-bold text-xs text-gray-500 uppercase tracking-wider text-right">Aksi</th>
@@ -70,6 +95,33 @@
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $user->role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800' }}">
                                             {{ ucfirst($user->role) }}
                                         </span>
+                                    </td>
+
+                                    <td class="px-6 py-4">
+                                        @if($user->role !== 'admin')
+                                            @php
+                                                $tierName = strtolower($user->membership_level ?? 'regular');
+                                                $badgeStyle = match($tierName) {
+                                                    'silver' => 'bg-slate-100 text-slate-800 border-slate-300',
+                                                    'gold' => 'bg-amber-100 text-amber-900 border-amber-300',
+                                                    'platinum' => 'bg-cyan-100 text-cyan-900 border-cyan-300',
+                                                    'diamond', 'purple vip' => 'bg-purple-100 text-purple-900 border-purple-300',
+                                                    default => 'bg-rose-50 text-rose-800 border-rose-200'
+                                                };
+                                            @endphp
+                                            <div class="space-y-1">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border {{ $badgeStyle }}">
+                                                    {{ ucfirst($user->membership_level ?? 'Regular') }}
+                                                </span>
+                                                <p class="text-[11px] text-gray-500 font-medium">
+                                                    <span class="font-bold text-gray-800">{{ number_format($user->tier_points ?? 0) }}</span> Tier PTS
+                                                    <span class="text-gray-300 mx-1">|</span>
+                                                    Total: <span class="font-semibold">{{ number_format($user->total_points ?? 0) }}</span> PTS
+                                                </p>
+                                            </div>
+                                        @else
+                                            <span class="text-xs text-gray-400 italic">System Admin</span>
+                                        @endif
                                     </td>
                                     
                                     <td class="px-6 py-4 text-xs text-gray-500 font-medium">
@@ -111,7 +163,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-6 py-12 text-center">
+                                    <td colspan="6" class="px-6 py-12 text-center">
                                         <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-50 mb-4">
                                             <i class="fa-solid fa-user-xmark text-2xl text-gray-400"></i>
                                         </div>

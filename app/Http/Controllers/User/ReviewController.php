@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
 {
+    /**
+     * Tampilkan halaman formulir review ulasan untuk booking yang telah selesai.
+     */
     public function create(Bookings $booking, Treatments $treatment)
     {
         // Pastikan booking milik user yang sedang login
@@ -31,6 +34,9 @@ class ReviewController extends Controller
         return view('user.reviews.create', compact('booking', 'treatment'));
     }
 
+    /**
+     * Simpan rating dan ulasan pelanggan baru ke database.
+     */
     public function store(Request $request, Bookings $booking, Treatments $treatment)
     {
         if ($booking->user_id !== Auth::id()) {

@@ -265,6 +265,8 @@ Route::middleware(['auth', AdminMiddleware::class])
         // Admin Users Management
         Route::prefix('users')->name('users.')->group(function () {
             Route::get('/', [AdminUserController::class, 'index'])->name('index');
+            Route::post('/reset-memberships', [AdminUserController::class, 'resetMemberships'])->name('reset-memberships');
+            Route::post('/simulate-90d', [AdminUserController::class, 'simulateQuarterReset'])->name('simulate-90d');
             Route::delete('/{user}', [AdminUserController::class, 'destroy'])->name('destroy');
             Route::match(['POST', 'PATCH'], '/{user}/toggle-active', [AdminUserController::class, 'toggleActive'])->name('toggle-active');
         });

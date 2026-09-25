@@ -23,6 +23,9 @@ use Illuminate\Http\JsonResponse;
  */
 class TreatmentController extends Controller
 {
+    /**
+     * Injeksi service query katalog treatment.
+     */
     public function __construct(
         private readonly TreatmentQueryService $treatments,
     ) {}

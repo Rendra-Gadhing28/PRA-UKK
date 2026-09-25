@@ -19,6 +19,9 @@ class ExpenseController extends Controller
 {
     protected ReceiptScannerService $scannerService;
 
+    /**
+     * Injeksi service OCR AI Receipt Scanner.
+     */
     public function __construct(ReceiptScannerService $scannerService)
     {
         $this->scannerService = $scannerService;

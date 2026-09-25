@@ -11,12 +11,17 @@ use Illuminate\Foundation\Http\FormRequest;
  */
 class DailySlotsRequest extends FormRequest
 {
+    /**
+     * Otorisasi pengecekan slot harian.
+     */
     public function authorize(): bool
     {
         return true;
     }
 
     /**
+     * Aturan validasi tanggal booking dan durasi layanan.
+     *
      * @return array<string, array<int, string>>
      */
     public function rules(): array

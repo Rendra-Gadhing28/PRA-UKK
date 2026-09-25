@@ -13,7 +13,7 @@ use Illuminate\View\View;
 class ProfileController extends Controller
 {
     /**
-     * Display the user's profile form.
+     * Tampilkan formulir edit profil user.
      */
     public function edit(Request $request): View
     {
@@ -23,7 +23,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update the user's profile information.
+     * Perbarui data profil user (nama, email, dan foto avatar).
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
@@ -48,7 +48,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * Delete the user's account.
+     * Hapus akun user secara permanen setelah verifikasi password.
      */
     public function destroy(Request $request): RedirectResponse
     {

@@ -25,11 +25,17 @@ class AdminDashboardController extends Controller
         Cache::forever(self::VERSION_KEY, $version + 1);
     }
 
+    /**
+     * Ambil nomor versi cache dashboard saat ini.
+     */
     private function currentVersion(): int
     {
         return (int) Cache::get(self::VERSION_KEY, 1);
     }
 
+    /**
+     * Tampilkan halaman utama ringkasan performa dan grafik finansial dashboard admin.
+     */
     public function index(Request $request)
     {
         $version = $this->currentVersion();
@@ -197,6 +203,9 @@ class AdminDashboardController extends Controller
         return view('admin.dashboard', $dashboardData);
     }
 
+    /**
+     * Ekspor laporan performa keuangan dan reservasi bulanan ke format PDF.
+     */
     public function exportPdf(Request $request)
     {
         $now = Carbon::now();
@@ -221,6 +230,9 @@ class AdminDashboardController extends Controller
         return $pdf->download('Laporan_Bulanan_Yalia_Beauty_'.$now->format('Y_m').'.pdf');
     }
 
+    /**
+     * Ekspor dan download berkas laporan keuangan & reservasi bulanan ke file CSV/Excel.
+     */
     public function exportExcel(Request $request)
     {
         $now = Carbon::now();
@@ -297,6 +309,9 @@ class AdminDashboardController extends Controller
         ]);
     }
 
+    /**
+     * Hitung persentase pertumbuhan antara nilai periode sebelumnya dan saat ini.
+     */
     private function calculatePercentageChange(float $previous, float $current): array
     {
         if ($previous == 0) {

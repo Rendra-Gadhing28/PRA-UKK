@@ -34,6 +34,9 @@ use Illuminate\Validation\ValidationException;
  */
 class BookingController extends Controller
 {
+    /**
+     * Injeksi service reservasi, pembayaran Midtrans QRIS, alokasi beautician, dan pemrosesan foto WebP.
+     */
     public function __construct(
         private readonly BookingService $bookingService,
         private readonly MidtransQrisService $midtransQris,
@@ -146,6 +149,9 @@ class BookingController extends Controller
         ]);
     }
 
+    /**
+     * Mengembalikan daftar booking untuk AJAX tab switching atau redirect ke index.
+     */
     public function list(Request $request)
     {
         $activeTab = $request->string('tab', 'upcoming')->toString();
@@ -295,6 +301,9 @@ class BookingController extends Controller
         ]);
     }
 
+    /**
+     * Memproses penyimpanan data reservasi booking baru dan penugasan beautician.
+     */
     public function store(StoreBookingRequest $request): RedirectResponse
     {
         $treatmentItems = collect($request->validated('treatments'))
@@ -470,6 +479,9 @@ class BookingController extends Controller
         ]);
     }
 
+    /**
+     * Membatalkan booking oleh customer sesuai aturan refund.
+     */
     public function cancel(Request $request, Bookings $booking): RedirectResponse
     {
         $this->authorizeOwnership($booking);
@@ -558,6 +570,9 @@ class BookingController extends Controller
         return back()->with('success', 'Jadwal reservasi berhasil diubah ke tanggal '.$bookingDate->format('d/m/Y').' jam '.$timeStart.' WIB.');
     }
 
+    /**
+     * Upload dan kompresi foto hasil pengerjaan treatment ke format WebP.
+     */
     public function uploadPhotoAssign(UploadPhotoAssignRequest $request, Bookings $booking): RedirectResponse
     {
         $this->authorizeOwnership($booking);
@@ -567,6 +582,9 @@ class BookingController extends Controller
         return back()->with('success', 'Foto hasil treatment berhasil diunggah.');
     }
 
+    /**
+     * Memastikan hak akses kepemilikan booking oleh user yang sedang login.
+     */
     private function authorizeOwnership(Bookings $booking): void
     {
         abort_unless($booking->user_id === auth()->id(), 403);

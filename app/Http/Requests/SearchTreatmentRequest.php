@@ -11,12 +11,17 @@ use Illuminate\Foundation\Http\FormRequest;
  */
 class SearchTreatmentRequest extends FormRequest
 {
+    /**
+     * Otorisasi pencarian katalog treatment untuk semua pengguna.
+     */
     public function authorize(): bool
     {
         return true;
     }
 
     /**
+     * Aturan validasi query filter dan kata kunci treatment.
+     *
      * @return array<string, array<int, mixed>>
      */
     public function rules(): array

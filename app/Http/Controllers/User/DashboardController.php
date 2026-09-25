@@ -22,10 +22,16 @@ use Illuminate\View\View;
  */
 class DashboardController extends Controller
 {
+    /**
+     * Injeksi service statistik performa dashboard user.
+     */
     public function __construct(
         private readonly DashboardStatsService $dashboardStats,
     ) {}
 
+    /**
+     * Tampilkan halaman dashboard user beserta statistik, tier level, top treatment, dan upcoming booking.
+     */
     public function index(Request $request): View
     {
         $user = Auth::user();
@@ -35,7 +41,7 @@ class DashboardController extends Controller
         $stats = $this->dashboardStats->forUser($user->id);
 
         // Pastikan tier poin disinkronisasi dulu
-        $user->syncTierReset();
+        $user->syncTierReset();     
 
         $membership = Membership::progress($user->tier_points);
 

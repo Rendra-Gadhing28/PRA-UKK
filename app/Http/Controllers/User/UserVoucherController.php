@@ -17,6 +17,9 @@ use Illuminate\View\View;
  */
 class UserVoucherController extends Controller
 {
+    /**
+     * Injeksi service manajemen voucher user.
+     */
     public function __construct(
         private readonly UserVoucherService $voucherService
     ) {}

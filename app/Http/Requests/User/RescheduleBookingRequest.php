@@ -8,11 +8,17 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class RescheduleBookingRequest extends FormRequest
 {
+    /**
+     * Otorisasi hanya untuk pengguna yang telah login.
+     */
     public function authorize(): bool
     {
         return auth()->check();
     }
 
+    /**
+     * Aturan validasi tanggal dan jam reschedule booking.
+     */
     public function rules(): array
     {
         return [
@@ -22,6 +28,9 @@ class RescheduleBookingRequest extends FormRequest
         ];
     }
 
+    /**
+     * Kustomisasi pesan error validasi dalam bahasa Indonesia.
+     */
     public function messages(): array
     {
         return [

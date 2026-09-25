@@ -285,6 +285,9 @@ class AdminBookingController extends Controller
         ]);
     }
 
+    /**
+     * Kirim balasan admin terhadap ulasan reservasi customer dan setujui ulasan.
+     */
     public function replyReview(Request $request, Bookings $booking)
     {
         $request->validate([

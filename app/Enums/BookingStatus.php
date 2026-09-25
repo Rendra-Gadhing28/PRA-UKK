@@ -11,6 +11,9 @@ enum BookingStatus: string
     case CANCELED = 'canceled';
     case CANCELLED = 'cancelled';
 
+    /**
+     * Ambil kelas CSS Tailwind untuk styling badge status.
+     */
     public function badgeClasses(): string
     {
         return match ($this) {
@@ -22,6 +25,9 @@ enum BookingStatus: string
         };
     }
 
+    /**
+     * Ambil label teks berbahasa Indonesia untuk status booking.
+     */
     public function badgeLabel(): string
     {
         return match ($this) {

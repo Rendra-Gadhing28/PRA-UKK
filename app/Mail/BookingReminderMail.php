@@ -19,12 +19,18 @@ class BookingReminderMail extends Mailable
 
     public string $reminderType;
 
+    /**
+     * Inisialisasi mailable dengan data booking dan jenis pengingat.
+     */
     public function __construct(Bookings $booking, string $reminderType)
     {
         $this->booking = $booking;
         $this->reminderType = $reminderType;
     }
 
+    /**
+     * Tentukan amplop email (subjek & pengirim).
+     */
     public function envelope(): Envelope
     {
         return new Envelope(
@@ -32,6 +38,9 @@ class BookingReminderMail extends Mailable
         );
     }
 
+    /**
+     * Tentukan template view Blade dan variabel konten email.
+     */
     public function content(): Content
     {
         return new Content(
@@ -43,6 +52,9 @@ class BookingReminderMail extends Mailable
         );
     }
 
+    /**
+     * Tentukan lampiran file untuk email jika ada.
+     */
     public function attachments(): array
     {
         return [];

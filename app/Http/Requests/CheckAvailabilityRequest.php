@@ -15,12 +15,17 @@ use Illuminate\Foundation\Http\FormRequest;
  */
 class CheckAvailabilityRequest extends FormRequest
 {
+    /**
+     * Otorisasi pengecekan ketersediaan jadwal terapis.
+     */
     public function authorize(): bool
     {
         return true;
     }
 
     /**
+     * Aturan validasi tanggal, jam mulai, dan durasi reservasi.
+     *
      * @return array<string, array<int, string>>
      */
     public function rules(): array

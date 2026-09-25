@@ -11,12 +11,17 @@ use Illuminate\Foundation\Http\FormRequest;
  */
 class UploadPhotoAssignRequest extends FormRequest
 {
+    /**
+     * Otorisasi request upload foto pengerjaan treatment.
+     */
     public function authorize(): bool
     {
         return true;
     }
 
     /**
+     * Aturan validasi file gambar hasil treatment.
+     *
      * @return array<string, array<int, string>>
      */
     public function rules(): array
@@ -27,6 +32,8 @@ class UploadPhotoAssignRequest extends FormRequest
     }
 
     /**
+     * Kustomisasi pesan error validasi upload foto.
+     *
      * @return array<string, string>
      */
     public function messages(): array

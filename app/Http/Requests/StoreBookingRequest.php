@@ -9,11 +9,17 @@ use Illuminate\Validation\Rule;
 
 class StoreBookingRequest extends FormRequest
 {
+    /**
+     * Otorisasi hanya untuk pengguna yang telah login.
+     */
     public function authorize(): bool
     {
         return auth()->check();
     }
 
+    /**
+     * Aturan validasi pembuatan reservasi booking baru.
+     */
     public function rules(): array
     {
         return [
@@ -37,6 +43,9 @@ class StoreBookingRequest extends FormRequest
         ];
     }
 
+    /**
+     * Hook validator tambahan untuk validasi tipe pembayaran layanan Home Service.
+     */
     public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
@@ -46,6 +55,9 @@ class StoreBookingRequest extends FormRequest
         });
     }
 
+    /**
+     * Kustomisasi pesan error validasi dalam bahasa Indonesia.
+     */
     public function messages(): array
     {
         return [
