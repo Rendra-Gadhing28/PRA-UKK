@@ -6,6 +6,7 @@ use App\Helpers\ToastHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Vouchers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class AdminVoucherController extends Controller
 {
@@ -57,6 +58,10 @@ class AdminVoucherController extends Controller
      */
     public function store(Request $request)
     {
+        if (! $request->filled('code') && $request->filled('name')) {
+            $request->merge(['code' => $this->generateUniqueCode($request->name)]);
+        }
+
         $validated = $request->validate([
             'code' => ['required', 'string', 'max:100', 'unique:vouchers,code'],
             'name' => ['required', 'string', 'max:255'],
@@ -104,6 +109,10 @@ class AdminVoucherController extends Controller
      */
     public function update(Request $request, Vouchers $voucher)
     {
+        if (! $request->filled('code') && $request->filled('name')) {
+            $request->merge(['code' => $this->generateUniqueCode($request->name, $voucher->id)]);
+        }
+
         $validated = $request->validate([
             'code' => ['required', 'string', 'max:100', 'unique:vouchers,code,'.$voucher->id],
             'name' => ['required', 'string', 'max:255'],
@@ -162,5 +171,39 @@ class AdminVoucherController extends Controller
         ToastHelper::info("Voucher '{$voucher->code}' berhasil {$statusText}.");
 
         return redirect()->back();
+    }
+
+    /**
+     * Generate kode voucher otomatis berbasis nama voucher yang dijamin unik.
+     */
+    private function generateUniqueCode(string $name, ?int $ignoreId = null): string
+    {
+        $slug = Str::slug($name, '-');
+        $words = array_filter(explode('-', $slug));
+        $base = implode('-', array_slice($words, 0, 3));
+        $base = strtoupper(substr($base, 0, 14));
+
+        if (empty($base)) {
+            $base = 'VOUCHER';
+        }
+
+        $query = Vouchers::where('code', $base);
+        if ($ignoreId) {
+            $query->where('id', '!=', $ignoreId);
+        }
+
+        if (! $query->exists()) {
+            return $base;
+        }
+
+        do {
+            $code = $base.'-'.strtoupper(Str::random(3));
+            $check = Vouchers::where('code', $code);
+            if ($ignoreId) {
+                $check->where('id', '!=', $ignoreId);
+            }
+        } while ($check->exists());
+
+        return $code;
     }
 }

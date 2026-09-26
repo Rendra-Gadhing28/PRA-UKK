@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const initialCategory = userFilterContainer.getAttribute('data-initial-category') || 'all';
         const initialSearch = userFilterContainer.getAttribute('data-initial-search') || '';
         const actionUrl = userFilterContainer.getAttribute('data-action-url') || '/treatments';
+        const userFavoritesCount = parseInt(userFilterContainer.getAttribute('data-user-favorites-count') || '0', 10);
 
         const root = createRoot(userFilterContainer);
         root.render(
@@ -30,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     initialCategory,
                     initialSearch,
                     actionUrl,
+                    userFavoritesCount,
                 })
             )
         );

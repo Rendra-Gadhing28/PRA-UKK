@@ -54,11 +54,17 @@ class BeauticianAssignmentService
     /**
      * Cari & kembalikan satu beautician yang available, atau lempar
      * exception kalau tidak ada sama sekali.
+     * Mendukung pesimistic locking (FOR UPDATE) untuk pencegahan race condition.
      *
      * @throws NoBeauticianAvailableException
      */
-    public function findAvailable(Carbon $bookingDate, string $timeStart, string $timeEnd, ?int $excludeBookingId = null): Beauticians
-    {
+    public function findAvailable(
+        Carbon $bookingDate,
+        string $timeStart,
+        string $timeEnd,
+        ?int $excludeBookingId = null,
+        bool $lock = false
+    ): Beauticians {
         $candidateBeauticianIds = $this->getCandidateBeauticianIds($bookingDate, $timeStart, $timeEnd);
 
         if ($candidateBeauticianIds->isEmpty()) {
@@ -67,10 +73,24 @@ class BeauticianAssignmentService
             );
         }
 
+        if ($lock) {
+            // Urutkan ID secara konsisten untuk mencegah DB deadlock saat multi-row locking
+            Beauticians::query()
+                ->whereIn('id', $candidateBeauticianIds)
+                ->orderBy('id')
+                ->lockForUpdate()
+                ->get();
+        }
+
         $busyBeauticianIds = DB::table('bookings')
             ->whereIn('beautician_id', $candidateBeauticianIds)
             ->whereDate('booking_date', $bookingDate->toDateString())
             ->whereNotIn('status', ['canceled', 'cancelled'])
+            ->where(function ($query) {
+                $query->where('status', '!=', 'pending')
+                    ->orWhereNull('payment_expires_at')
+                    ->orWhere('payment_expires_at', '>', now());
+            })
             ->when($excludeBookingId, fn ($q) => $q->where('id', '!=', $excludeBookingId))
             ->where('time_start', '<', $timeEnd)
             ->where('time_end', '>', $timeStart)
@@ -80,7 +100,7 @@ class BeauticianAssignmentService
 
         if ($availableBeauticianIds->isEmpty()) {
             throw new NoBeauticianAvailableException(
-                'Semua beautician yang bertugas di jam tersebut sedang dalam pengerjaan perawatan lain (terisi).'
+                "Maaf, slot jam {$timeStart} WIB baru saja diambil oleh pelanggan lain beberapa detik yang lalu. Silakan pilih jam lainnya."
             );
         }
 
@@ -100,16 +120,83 @@ class BeauticianAssignmentService
     }
 
     /**
-     * Mengambil daftar seluruh slot jam (08:00 - 20:00 per 30 menit) pada tanggal tertentu
+     * Cari beautician spesifik dan validasi ketersediaannya dengan opsi locking.
+     *
+     * @throws NoBeauticianAvailableException
+     */
+    public function findSpecificAvailable(
+        int $beauticianId,
+        Carbon $bookingDate,
+        string $timeStart,
+        string $timeEnd,
+        ?int $excludeBookingId = null,
+        bool $lock = false
+    ): Beauticians {
+        $candidateBeauticianIds = $this->getCandidateBeauticianIds($bookingDate, $timeStart, $timeEnd);
+
+        if (! $candidateBeauticianIds->contains($beauticianId)) {
+            throw new NoBeauticianAvailableException(
+                'Beautician yang dipilih tidak bertugas pada jadwal tersebut. Silakan pilih beautician atau jam lain.'
+            );
+        }
+
+        if ($lock) {
+            Beauticians::query()
+                ->where('id', $beauticianId)
+                ->lockForUpdate()
+                ->first();
+        }
+
+        $isBusy = DB::table('bookings')
+            ->where('beautician_id', $beauticianId)
+            ->whereDate('booking_date', $bookingDate->toDateString())
+            ->whereNotIn('status', ['canceled', 'cancelled'])
+            ->where(function ($query) {
+                $query->where('status', '!=', 'pending')
+                    ->orWhereNull('payment_expires_at')
+                    ->orWhere('payment_expires_at', '>', now());
+            })
+            ->when($excludeBookingId, fn ($q) => $q->where('id', '!=', $excludeBookingId))
+            ->where('time_start', '<', $timeEnd)
+            ->where('time_end', '>', $timeStart)
+            ->exists();
+
+        if ($isBusy) {
+            throw new NoBeauticianAvailableException(
+                "Maaf, beautician yang dipilih pada jam {$timeStart} WIB baru saja diambil oleh pelanggan lain. Silakan pilih jam atau terapis lainnya."
+            );
+        }
+
+        $beautician = Beauticians::query()
+            ->where('id', $beauticianId)
+            ->where('is_active', true)
+            ->first();
+
+        if (! $beautician) {
+            throw new NoBeauticianAvailableException(
+                'Beautician yang dipilih sedang tidak aktif. Silakan pilih beautician lain.'
+            );
+        }
+
+        return $beautician;
+    }
+
+    /**
+     * Mengambil daftar seluruh slot jam (09:00 - 17:30 per 30 menit) pada tanggal tertentu
      * lengkap dengan status ketersediaannya untuk durasi treatment yang ditentukan.
+     * Otomatis mengunci slot jam yang sudah lewat jika memilih hari ini,
+     * serta mengunci slot jika total durasi treatment melebihi jam operasional salon (18:00 WIB).
      *
      * @return array<int, array{time: string, formatted_time: string, available: bool, reason: string}>
      */
     public function getDailySlotsAvailability(Carbon $bookingDate, int $durationMinutes, int $intervalMinutes = 30): array
     {
         $slots = [];
-        $start = Carbon::createFromFormat('Y-m-d H:i', $bookingDate->format('Y-m-d').' 08:00');
-        $end = Carbon::createFromFormat('Y-m-d H:i', $bookingDate->format('Y-m-d').' 20:00');
+        $start = Carbon::createFromFormat('Y-m-d H:i', $bookingDate->format('Y-m-d').' 09:00');
+        $end = Carbon::createFromFormat('Y-m-d H:i', $bookingDate->format('Y-m-d').' 17:30');
+
+        $isToday = $bookingDate->isToday();
+        $now = Carbon::now();
 
         $current = $start->copy();
         while ($current->lte($end)) {
@@ -119,12 +206,20 @@ class BeauticianAssignmentService
             $isAvailable = false;
             $reason = '';
 
-            try {
-                $this->findAvailable($bookingDate, $timeStartStr, $timeEndCalc);
-                $isAvailable = true;
-            } catch (NoBeauticianAvailableException $e) {
+            if ($isToday && $current->lte($now)) {
                 $isAvailable = false;
-                $reason = $e->getMessage();
+                $reason = 'Waktu slot sudah terlewat.';
+            } elseif ($timeEndCalc > '18:00' || $timeEndCalc < $timeStartStr) {
+                $isAvailable = false;
+                $reason = 'Durasi perawatan melewati jam tutup salon (18:00 WIB).';
+            } else {
+                try {
+                    $this->findAvailable($bookingDate, $timeStartStr, $timeEndCalc);
+                    $isAvailable = true;
+                } catch (NoBeauticianAvailableException $e) {
+                    $isAvailable = false;
+                    $reason = $e->getMessage();
+                }
             }
 
             $slots[] = [
@@ -158,6 +253,11 @@ class BeauticianAssignmentService
             ->whereIn('beautician_id', $candidateBeauticianIds)
             ->whereDate('booking_date', $bookingDate->toDateString())
             ->whereNotIn('status', ['canceled', 'cancelled'])
+            ->where(function ($query) {
+                $query->where('status', '!=', 'pending')
+                    ->orWhereNull('payment_expires_at')
+                    ->orWhere('payment_expires_at', '>', now());
+            })
             ->when($excludeBookingId, fn ($q) => $q->where('id', '!=', $excludeBookingId))
             ->where('time_start', '<', $timeEnd)
             ->where('time_end', '>', $timeStart)
@@ -172,6 +272,7 @@ class BeauticianAssignmentService
         return Beauticians::query()
             ->whereIn('id', $availableBeauticianIds)
             ->where('is_active', true)
+            ->withCount('bookings')
             ->orderBy('name')
             ->get();
     }

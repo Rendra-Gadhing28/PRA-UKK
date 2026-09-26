@@ -41,17 +41,15 @@ class DashboardController extends Controller
         $stats = $this->dashboardStats->forUser($user->id);
 
         // Pastikan tier poin disinkronisasi dulu
-        $user->syncTierReset();     
+        $user->syncTierReset();
 
         $membership = Membership::progress($user->tier_points);
 
-        // AUDIT: top-3-treatment-by-rating IDENTIK untuk semua user (bukan
-        // data per-user), tapi sebelumnya query ORDER BY rating dijalankan
-        // ulang ke MySQL setiap kali dashboard dibuka siapa pun. Di-cache
-        // 10 menit karena rating tidak berubah tiap detik — sesuaikan TTL
-        // kalau Anda butuh update lebih real-time.
+        $userFavIds = $user->favoriteTreatments()->pluck('treatment_id')->toArray();
+
+        // Top 4 treatments by rating
         $topTreatments = Cache::remember(
-            'dashboard:top-treatments-v7',
+            'dashboard:top-treatments-v8',
             now()->addMinutes(10),
             fn () => Treatments::query()
                 ->active()
@@ -69,10 +67,17 @@ class DashboardController extends Controller
                     'rating' => (float) $t->rating,
                     'rating_count' => (int) $t->rating_count,
                     'image_url' => $t->image_url,
+                    'badge' => $t->badge,
                     'category_name' => $t->category?->name ?? '',
                 ])
                 ->all()
         );
+
+        $topTreatments = array_map(function ($t) use ($userFavIds) {
+            $t['is_favorite'] = in_array($t['id'], $userFavIds);
+
+            return $t;
+        }, $topTreatments);
 
         // Render awal hanya tab "Upcoming" — hemat query di initial load.
         $upcomingBookings = Bookings::query()

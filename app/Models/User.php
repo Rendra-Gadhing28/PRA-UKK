@@ -182,6 +182,12 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    public function favoriteTreatments()
+    {
+        return $this->belongsToMany(Treatments::class, 'user_favorite_treatments', 'user_id', 'treatment_id')
+            ->withTimestamps();
+    }
+
     // Helpers Transaction by Admin
     public function createdTransactions()
     {

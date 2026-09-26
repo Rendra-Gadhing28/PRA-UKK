@@ -19,7 +19,7 @@
                 <a href="{{ route('admin.export.excel') }}" 
                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#f45472] text-white hover:bg-[#d93856] text-sm font-semibold shadow-md hover:shadow-lg transition-all">
                     <i class="fa-solid fa-file-excel text-white text-sm"></i>
-                    <span>Export Excel (CSV)</span>
+                    <span>Export Excel</span>
                 </a>
             </div>
         </div>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\User;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RescheduleBookingRequest extends FormRequest
@@ -26,6 +27,28 @@ class RescheduleBookingRequest extends FormRequest
             'time_start' => ['required', 'date_format:H:i'],
             'reason' => ['nullable', 'string', 'max:500'],
         ];
+    }
+
+    /**
+     * Hook validator tambahan untuk validasi jam operasional dan waktu lampau.
+     */
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            if ($this->filled('booking_date') && $this->filled('time_start')) {
+                try {
+                    $slotTime = Carbon::createFromFormat('Y-m-d H:i', $this->input('booking_date').' '.$this->input('time_start'));
+                    $timeStr = $this->input('time_start');
+                    if ($timeStr < '09:00' || $timeStr > '17:30') {
+                        $validator->errors()->add('time_start', 'Jam kedatangan harus berada di rentang 09:00 - 17:30 WIB.');
+                    } elseif ($slotTime->isPast()) {
+                        $validator->errors()->add('time_start', 'Waktu reservasi yang dipilih sudah terlewat. Silakan pilih jam lain.');
+                    }
+                } catch (\Throwable) {
+                    // Handled by date_format rules
+                }
+            }
+        });
     }
 
     /**

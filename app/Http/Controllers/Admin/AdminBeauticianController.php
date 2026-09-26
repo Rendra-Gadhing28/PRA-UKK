@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Helpers\ToastHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Beauticians;
+use App\Support\ImageHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -133,12 +134,14 @@ class AdminBeauticianController extends Controller
         if ($request->hasFile('photo')) {
             if ($beautician->photo) {
                 Storage::disk('public')->delete(Beauticians::PHOTO_DIRECTORY.'/'.$beautician->photo);
+                ImageHelper::clearCache('beauticians/'.$beautician->photo);
             }
 
             $file = $request->file('photo');
             $photoName = time().'_'.Str::slug($validated['name']).'.'.$file->getClientOriginalExtension();
             $file->storeAs(Beauticians::PHOTO_DIRECTORY, $photoName, 'public');
             $updateData['photo'] = $photoName;
+            ImageHelper::clearCache('beauticians/'.$photoName);
         }
 
         $beautician->update($updateData);

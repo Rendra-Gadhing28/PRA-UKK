@@ -26,6 +26,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -52,24 +53,47 @@ class BookingController extends Controller
      */
     public function checkAvailability(CheckAvailabilityRequest $request): JsonResponse
     {
-        $date = Carbon::createFromFormat('Y-m-d', $request->validated('booking_date'));
+        $dateStr = $request->validated('booking_date');
         $timeStart = $request->validated('time_start');
-        $timeEnd = Carbon::createFromFormat(
-            'Y-m-d H:i',
-            $request->validated('booking_date').' '.$timeStart
-        )->addMinutes((int) $request->validated('duration_minutes'))->format('H:i');
+        $duration = (int) $request->validated('duration_minutes');
 
         try {
+            $slotDateTime = Carbon::createFromFormat('Y-m-d H:i', $dateStr.' '.$timeStart);
+            if ($timeStart < '09:00' || $timeStart > '17:30') {
+                return response()->json([
+                    'available' => false,
+                    'message' => 'Jam kedatangan harus di rentang 09:00 - 17:30 WIB.',
+                ]);
+            }
+            if ($slotDateTime->isPast()) {
+                return response()->json([
+                    'available' => false,
+                    'message' => 'Waktu slot ini sudah terlewat. Silakan pilih jam lain.',
+                ]);
+            }
+
+            $date = Carbon::createFromFormat('Y-m-d', $dateStr);
+            $timeEnd = $slotDateTime->copy()->addMinutes($duration)->format('H:i');
+
+            if ($timeEnd > '18:00' || $timeEnd < $timeStart) {
+                return response()->json([
+                    'available' => false,
+                    'message' => 'Durasi perawatan melewati jam tutup salon (18:00 WIB).',
+                ]);
+            }
+
             $this->beauticianAssignment->findAvailable($date, $timeStart, $timeEnd);
 
             return response()->json(['available' => true]);
         } catch (NoBeauticianAvailableException $e) {
             return response()->json(['available' => false, 'message' => $e->getMessage()]);
+        } catch (\Throwable $e) {
+            return response()->json(['available' => false, 'message' => 'Format waktu tidak valid.']);
         }
     }
 
     /**
-     * Endpoint untuk mengambil seluruh slot jam sekaligus dalam 1 tanggal (08:00 - 20:00).
+     * Endpoint untuk mengambil seluruh slot jam sekaligus dalam 1 tanggal (09:00 - 18:00).
      */
     public function dailySlots(DailySlotsRequest $request): JsonResponse
     {
@@ -100,8 +124,13 @@ class BookingController extends Controller
         }
 
         try {
+            $slotDateTime = Carbon::createFromFormat('Y-m-d H:i', (string) $dateStr.' '.$timeStart);
+            if ($slotDateTime->isPast() || $timeStart < '09:00' || $timeStart > '18:00') {
+                return response()->json(['beauticians' => []]);
+            }
+
             $date = Carbon::createFromFormat('Y-m-d', (string) $dateStr);
-            $timeEnd = Carbon::createFromFormat('Y-m-d H:i', $dateStr.' '.$timeStart)
+            $timeEnd = $slotDateTime->copy()
                 ->addMinutes($durationMinutes)
                 ->format('H:i');
 
@@ -115,6 +144,8 @@ class BookingController extends Controller
                     'bio' => $b->bio,
                     'service_area' => $b->service_area,
                     'total_bookings' => $b->total_bookings,
+                    'average_rating' => $b->average_rating,
+                    'reviews_count' => $b->reviews()->count(),
                 ])->values()->all(),
             ]);
         } catch (\Throwable $e) {
@@ -475,6 +506,7 @@ class BookingController extends Controller
                 'bookingTreatments.Treatments',
                 'beautician:id,name',
                 'user',
+                'review',
             ]),
         ]);
     }
@@ -544,30 +576,38 @@ class BookingController extends Controller
             ->format('H:i');
 
         try {
-            $beautician = $this->beauticianAssignment->findAvailable($bookingDate, $timeStart, $timeEnd, $booking->id);
+            return DB::transaction(function () use ($booking, $bookingDate, $timeStart, $timeEnd, $request) {
+                $beautician = $this->beauticianAssignment->findAvailable(
+                    bookingDate: $bookingDate,
+                    timeStart: $timeStart,
+                    timeEnd: $timeEnd,
+                    excludeBookingId: $booking->id,
+                    lock: true,
+                );
+
+                $reason = $request->validated('reason');
+                $rescheduleNote = 'Jadwal diubah oleh customer ke '.$bookingDate->format('d-m-Y').' '.$timeStart.($reason ? " (Alasan: {$reason})" : '');
+                $existingNotes = $booking->notes ? $booking->notes.' | '.$rescheduleNote : $rescheduleNote;
+
+                $booking->update([
+                    'booking_date' => $bookingDate->toDateString(),
+                    'time_start' => $timeStart,
+                    'time_end' => $timeEnd,
+                    'beautician_id' => $beautician->id,
+                    'notes' => $existingNotes,
+                    'version' => $booking->version + 1,
+                    'is_h24_reminded' => false,
+                    'is_h1_reminded' => false,
+                    'is_m30_reminded' => false,
+                ]);
+
+                return back()->with('success', 'Jadwal reservasi berhasil diubah ke tanggal '.$bookingDate->format('d/m/Y').' jam '.$timeStart.' WIB.');
+            });
         } catch (NoBeauticianAvailableException $e) {
             throw ValidationException::withMessages([
                 'time_start' => $e->getMessage(),
             ]);
         }
-
-        $reason = $request->validated('reason');
-        $rescheduleNote = 'Jadwal diubah oleh customer ke '.$bookingDate->format('d-m-Y').' '.$timeStart.($reason ? " (Alasan: {$reason})" : '');
-        $existingNotes = $booking->notes ? $booking->notes.' | '.$rescheduleNote : $rescheduleNote;
-
-        $booking->update([
-            'booking_date' => $bookingDate->toDateString(),
-            'time_start' => $timeStart,
-            'time_end' => $timeEnd,
-            'beautician_id' => $beautician->id,
-            'notes' => $existingNotes,
-            'version' => $booking->version + 1,
-            'is_h24_reminded' => false,
-            'is_h1_reminded' => false,
-            'is_m30_reminded' => false,
-        ]);
-
-        return back()->with('success', 'Jadwal reservasi berhasil diubah ke tanggal '.$bookingDate->format('d/m/Y').' jam '.$timeStart.' WIB.');
     }
 
     /**

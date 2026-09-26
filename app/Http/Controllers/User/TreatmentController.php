@@ -49,6 +49,7 @@ class TreatmentController extends Controller
             'categories' => $categories,
             'currentSearch' => $request->search(),
             'currentCategory' => $request->categorySlug() ?? 'all',
+            'userFavoritesCount' => $this->treatments->getUserFavoritesCount(),
         ]);
     }
 

@@ -37,10 +37,10 @@
 
         {{-- Ambient background removed per request --}}
 
-        <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 space-y-6 animate-card-enter">
+        <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 space-y-6 animate-card-enter">
 
             {{-- ─── Page Header ─────────────────────────────── --}}
-            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 ">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                 <div>
                     <p class="text-xs font-bold text-primary uppercase tracking-widest mb-1">Yalia Beauty Salon</p>
                     <h1 class="text-2xl sm:text-3xl font-extrabold text-text-heading leading-tight" style="font-family:'Playfair Display',serif">
@@ -48,14 +48,14 @@
                     </h1>
                     <p class="text-sm text-on-surface-variant mt-1">Pantau & kelola semua jadwal perawatan kecantikanmu</p>
                 </div>
-                <div class="self-center content-center ">
-                      <a href="{{ route('user.treatments.index') }}"
-                   class="inline-flex items-center gap-2.5 px-6 py-2.5 rounded-md bg-primary text-on-primary text-xs font-bold shadow-sm
-                          hover:bg-primary-container hover:shadow-md active:scale-95
-                          transition-all duration-300 ease-out shrink-0">
-                    <i class="fas fa-plus text-xs"></i>
-                    <span>Booking Baru</span>
-                </a>
+                <div class="self-start sm:self-end shrink-0">
+                    <a href="{{ route('user.treatments.index') }}"
+                       class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-on-primary text-xs font-bold shadow-sm
+                              hover:bg-primary-container hover:shadow-md active:scale-95
+                              transition-all duration-300 ease-out shrink-0">
+                        <i class="fas fa-plus text-xs"></i>
+                        <span>Booking Baru</span>
+                    </a>
                 </div>
             </div>
             

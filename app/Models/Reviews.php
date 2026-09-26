@@ -11,6 +11,8 @@ class Reviews extends Model
         'user_id',
         'beautician_id',
         'rating',
+        'beautician_rating',
+        'beautician_tags',
         'comment',
         'photo',
         'is_approved',

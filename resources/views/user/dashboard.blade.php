@@ -287,22 +287,62 @@
                                 <div class="relative w-full h-44 rounded-[18px] overflow-hidden bg-[#fafafa] flex items-center justify-center p-2 mb-3">
                                     <img alt="{{ $tName }}" width="300" height="176" loading="lazy" decoding="async" class="w-full h-full object-cover rounded-[14px] group-hover:scale-105 transition-transform duration-500" src="{{ $tImage }}"/>
                                     
-                                    {{-- Top Left Ranking Pill --}}
-                                    <div class="absolute top-2.5 left-2.5 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-black text-[#B01F44] shadow-xs flex items-center gap-1 border border-[#F4DDE1]">
-                                        <span class="material-symbols-outlined text-xs text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span>
-                                        <span>Top {{ $loop->iteration }}</span>
+                                    {{-- Top Left Ranking / Best Pill --}}
+                                    <div class="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1 items-start">
+                                        @if(!empty($tItem['badge']) && $tItem['badge'] === 'best_seller')
+                                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary text-white shadow-sm flex items-center gap-1">
+                                                <i class="fa-solid fa-crown text-xs text-amber-300"></i> Best
+                                            </span>
+                                        @elseif(!empty($tItem['badge']) && $tItem['badge'] === 'new')
+                                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-600 text-white shadow-sm flex items-center gap-1">
+                                                <i class="fa-solid fa-sparkles text-xs"></i> Baru
+                                            </span>
+                                        @else
+                                            <div class="bg-white/95 backdrop-blur-md px-2.5 py-0.5 rounded-full text-xs font-black text-[#B01F44] shadow-sm flex items-center gap-1 border border-[#F4DDE1]">
+                                                <i class="fa-solid fa-star text-amber-500 text-xs"></i>
+                                                <span>Top {{ $loop->iteration }}</span>
+                                            </div>
+                                        @endif
                                     </div>
 
                                     {{-- Top Right Circular Wishlist / Favorite Button --}}
                                     <button type="button"
-                                            x-data="{ fav: false }"
-                                            @click.stop="fav = !fav"
-                                            class="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-white/95 backdrop-blur-md border border-[#F4DDE1] shadow-xs flex items-center justify-center transition-colors"
-                                            :class="fav ? 'text-rose-600 bg-rose-50' : 'text-[#8D7072] hover:text-[#B01F44]'"
+                                            x-data="{
+                                                fav: {{ !empty($tItem['is_favorite']) ? 'true' : 'false' }},
+                                                toggling: false,
+                                                async toggleFav(id) {
+                                                    if (this.toggling || !id) return;
+                                                    this.toggling = true;
+                                                    try {
+                                                        const res = await fetch('{{ url('dashboard/treatments') }}/' + id + '/favorite', {
+                                                            method: 'POST',
+                                                            headers: {
+                                                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                                'Accept': 'application/json',
+                                                                'Content-Type': 'application/json'
+                                                            }
+                                                        });
+                                                        if (res.status === 401) {
+                                                            window.location.href = '{{ route('login') }}';
+                                                            return;
+                                                        }
+                                                        const data = await res.json();
+                                                        if (data.success) {
+                                                            this.fav = data.favorited;
+                                                        }
+                                                    } catch (e) {
+                                                    } finally {
+                                                        this.toggling = false;
+                                                    }
+                                                }
+                                            }"
+                                            @click.stop="toggleFav({{ $tId }})"
+                                            class="absolute top-2.5 right-2.5 z-10 w-8 h-8 rounded-full bg-white/95 backdrop-blur-md border border-[#F4DDE1] shadow-sm flex items-center justify-center transition-all duration-200 active:scale-125 cursor-pointer"
+                                            :class="fav ? 'text-rose-600 bg-rose-50 border-rose-200' : 'text-[#8D7072] hover:text-[#B01F44]'"
+                                            :title="fav ? 'Hapus dari Favorit' : 'Simpan ke Favorit'"
                                             aria-label="Simpan ke favorit">
-                                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path :fill="fav ? 'currentColor' : 'none'" d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
-                                        </svg>
+                                        <i class="fa-solid fa-heart text-sm transition-transform duration-200"
+                                           :class="fav ? 'text-rose-500 scale-110' : 'text-[#d1a3ac] opacity-70'"></i>
                                     </button>
                                 </div>
 
@@ -412,10 +452,10 @@
                                 </div>
                             </div>
 
-                            <div x-show="!isCardCollapsed" x-collapse>
+                            <div x-show="!isCardCollapsed" x-collapse class="flex flex-col gap-3.5 pt-1">
 
                             {{-- 7-Day Clean Horizontal Strip (Guaranteed Flexbox Row) --}}
-                            <div class="mb-4">
+                            <div>
                                 <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: stretch; gap: 4px; width: 100%;" class="p-2 rounded-2xl bg-[#fff0f2]/60 border border-[#f4dde1]">
                                     <template x-for="(mission, index) in missions" :key="'strip-'+index">
                                         <div style="flex: 1 1 0%; min-width: 0;" class="flex flex-col items-center text-center gap-1">
@@ -459,7 +499,7 @@
                             </div>
 
                             {{-- Spotlight "Misi Hari Ini" --}}
-                            <div class="rounded-2xl p-4 bg-gradient-to-r from-[#fff0f2] to-[#fff8f8] border border-[#F4DDE1] shadow-xs mb-3.5">
+                            <div class="rounded-2xl p-4 bg-gradient-to-r from-[#fff0f2] to-[#fff8f8] border border-[#F4DDE1] shadow-xs">
                                 <div class="flex items-center justify-between mb-1.5">
                                     <span class="text-xs font-black uppercase tracking-wider text-[#B01F44] flex items-center gap-1">
                                         <span class="material-symbols-outlined text-sm text-[#F4B942]" style="font-variation-settings: 'FILL' 1;">stars</span>
@@ -472,14 +512,14 @@
                             </div>
 
                             {{-- Streak Progress Summary Bar --}}
-                            <div class="mb-3.5 p-3 rounded-2xl bg-white border border-[#F4DDE1] shadow-2xs flex items-center justify-between gap-3">
+                            <div class="p-3.5 rounded-2xl bg-white border border-[#F4DDE1] shadow-2xs flex items-center justify-between gap-3">
                                 <div class="flex items-center gap-2 shrink-0">
-                                    <span class="w-7 h-7 rounded-xl bg-gradient-to-br from-[#F4B942] to-[#D97706] text-white flex items-center justify-center shadow-xs">
-                                        <span class="material-symbols-outlined text-sm">local_fire_department</span>
+                                    <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-[#F4B942] to-[#D97706] text-white flex items-center justify-center shadow-xs">
+                                        <span class="material-symbols-outlined text-base">local_fire_department</span>
                                     </span>
                                     <div>
                                         <p class="text-xs font-bold text-[#2B0F23] leading-none">Streak Kamu</p>
-                                        <p class="text-xs font-black text-[#B01F44] mt-0.5 leading-none"><span x-text="currentStreak"></span> / 7 Hari 🔥</p>
+                                        <p class="text-xs font-black text-[#B01F44] mt-1 leading-none"><span x-text="currentStreak"></span> / 7 Hari 🔥</p>
                                     </div>
                                 </div>
                                 <div class="flex-1 max-w-[140px]">
@@ -487,20 +527,22 @@
                                         <div class="h-full rounded-full transition-all duration-500"
                                              :style="`width: ${Math.min(100, Math.round((currentStreak / 7) * 100))}%; background: linear-gradient(to right, #F4B942, #B01F44);`"></div>
                                     </div>
-                                    <p class="text-xs text-right font-medium text-[#594043] mt-0.5" x-text="(7 - currentStreak) > 0 ? (7 - currentStreak) + ' hari ke Diskon 5%' : 'Streak komplit!'"></p>
+                                    <p class="text-xs text-right font-medium text-[#594043] mt-1" x-text="(7 - currentStreak) > 0 ? (7 - currentStreak) + ' hari ke Diskon 5%' : 'Streak komplit!'"></p>
                                 </div>
                             </div>
 
                             {{-- Toggle Detail 7 Hari --}}
-                            <button @click="showAllMissions = !showAllMissions" type="button" class="w-full flex items-center justify-center gap-1 text-xs font-extrabold text-[#B01F44] mb-3 hover:underline cursor-pointer">
-                                <span x-text="showAllMissions ? 'Sembunyikan Detail Misi' : 'Lihat Detail Semua Misi (7 Hari)'"></span>
-                                <span class="material-symbols-outlined text-sm transition-transform duration-300" :class="showAllMissions ? 'rotate-180' : ''">expand_more</span>
-                            </button>
+                            <div>
+                                <button @click="showAllMissions = !showAllMissions" type="button" class="w-full flex items-center justify-center gap-1 text-xs font-extrabold text-[#B01F44] py-1 hover:underline cursor-pointer">
+                                    <span x-text="showAllMissions ? 'Sembunyikan Detail Misi' : 'Lihat Detail Semua Misi (7 Hari)'"></span>
+                                    <span class="material-symbols-outlined text-sm transition-transform duration-300" :class="showAllMissions ? 'rotate-180' : ''">expand_more</span>
+                                </button>
+                            </div>
 
                             {{-- Expanded 7-Day List ("Menjalar Keluar") --}}
-                            <div x-show="showAllMissions" x-collapse x-cloak class="mt-2 mb-3.5 space-y-2">
+                            <div x-show="showAllMissions" x-collapse x-cloak class="space-y-2">
                                 <template x-for="(mission, index) in missions" :key="'detail-'+index">
-                                    <div class="flex items-center gap-2 p-2 rounded-xl border transition-all"
+                                    <div class="flex items-center gap-2.5 p-2.5 rounded-xl border transition-all"
                                          :style="{
                                              'background-color': mission.status === 'completed' ? '#FFF0F2' : (mission.status === 'active' ? '#FFFFFF' : 'rgba(255, 245, 247, 0.4)'),
                                              'border-color': mission.status === 'completed' ? '#F4DDE1' : (mission.status === 'active' ? '#B01F44' : '#F4DDE1'),
@@ -543,11 +585,11 @@
                                         :disabled="hasClaimedToday"
                                         type="button"
                                         class="shimmer-btn relative w-full py-3.5 rounded-full font-button text-xs shadow-md transition-all duration-300 flex justify-center items-center gap-2 group transform active:scale-95 disabled:cursor-not-allowed overflow-hidden"
-                                        :style="hasClaimedToday ? 'background: #FFF0F2; color: #B01F44; border: 1px solid #F4DDE1; box-shadow: none;' : 'background: linear-gradient(to right, #B01F44, #C82D53, #9B4054); color: white;'">
-                                    <span class="material-symbols-outlined text-lg" :class="!hasClaimedToday ? 'group-hover:rotate-12 transition-transform text-white' : 'text-[#B01F44]'">
-                                        <span x-text="hasClaimedToday ? 'task_alt' : 'celebration'"></span>
+                                        :style="hasClaimedToday ? 'background: #F0FDF4; color: #15803D; border: 1.5px solid #BBF7D0; box-shadow: none;' : 'background: linear-gradient(to right, #B01F44, #C82D53, #9B4054); color: white;'">
+                                    <span class="material-symbols-outlined text-lg" :class="!hasClaimedToday ? 'group-hover:rotate-12 transition-transform text-white' : 'text-emerald-600'">
+                                        <span x-text="hasClaimedToday ? 'check_circle' : 'celebration'"></span>
                                     </span>
-                                    <span class="font-black" :class="hasClaimedToday ? 'text-[#B01F44]' : 'text-white'" x-text="hasClaimedToday ? 'Hadiah Hari Ini Sudah Diklaim' : 'Klaim Hadiah Hari Ini!'"></span>
+                                    <span class="font-black" :class="hasClaimedToday ? 'text-emerald-700' : 'text-white'" x-text="hasClaimedToday ? 'Hadiah Hari Ini Sudah Diklaim' : 'Klaim Hadiah Hari Ini!'"></span>
                                 </button>
                             </div>
 
@@ -559,39 +601,84 @@
 
             </div>
 
-            {{-- Booking Management Section --}}
-            <section class="mt-8 pt-6 border-t border-[#E0247E]/15">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            {{-- Booking Management Section (Styled identically to My Bookings Page) --}}
+            <section class="mt-8 pt-6 border-t border-[#E0247E]/15 space-y-6">
+                {{-- Header with Title, Actions & Sort --}}
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                     <div>
-                        <h2 class="font-headline-md text-xl md:text-2xl font-black text-[#2B0F23]">Riwayat & Booking Saya</h2>
-                        <p class="text-body-sm text-xs md:text-sm text-[#5C1439]/80 font-medium">Kelola janji temu dan periksa status jadwal perawatan Anda.</p>
+                        <p class="text-xs font-bold text-primary uppercase tracking-widest mb-1">Yalia Beauty Salon</p>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-[#2B0F23] leading-tight" style="font-family:'Playfair Display',serif">
+                            Riwayat Reservasi Saya
+                        </h2>
+                        <p class="text-sm text-on-surface-variant mt-1">Pantau & kelola semua jadwal perawatan kecantikanmu</p>
                     </div>
 
-                    <div class="flex items-center gap-3">
-                        <div class="flex gap-1.5 bg-[#FFF0F2] p-1 rounded-full border border-[#E0247E]/15">
-                            <template x-for="t in tabs" :key="t">
-                                <button
-                                    @click="switchTab(t)"
-                                    type="button"
-                                    class="px-4 py-1.5 rounded-full text-xs font-bold transition-all"
-                                    :class="activeTab === t ? 'bg-white text-[#2B0F23] font-black shadow-sm border border-[#E0247E]/25' : 'text-[#5C1439]/70 hover:text-[#2B0F23]'"
-                                    x-text="t === 'upcoming' ? 'Mendatang' : (t === 'past' ? 'Selesai' : 'Dibatalkan')">
-                                </button>
-                            </template>
-                        </div>
-
+                    <div class="flex items-center gap-2.5 flex-wrap sm:self-end">
                         <button
                             type="button"
                             @click="toggleSort()"
-                            class="flex items-center gap-1 px-3 py-1.5 rounded-full border border-[#E0247E]/20 bg-[#FFF6FA] text-xs font-bold text-[#5C1439] hover:border-[#B01F44] hover:text-[#B01F44] transition-colors shadow-sm"
+                            class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full border border-outline-variant/60 bg-surface-container-lowest text-xs font-bold text-on-surface-variant hover:border-primary hover:text-primary transition-all duration-200 shadow-sm cursor-pointer active:scale-95"
+                            title="Urutkan Jadwal"
                         >
-                            <span class="material-symbols-outlined text-sm">filter_list</span>
-                            <span x-text="sort === 'asc' ? 'Urutkan: Lama' : 'Urutkan: Baru'"></span>
+                            <i class="fas fa-arrow-down-wide-short text-xs"></i>
+                            <span x-text="sort === 'asc' ? 'Urutan: Lama' : 'Urutan: Baru'">Urutan: Baru</span>
                         </button>
+
+                        <a href="{{ route('user.bookings.index') }}"
+                           class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-primary/30 bg-[#FFF0F2] text-primary text-xs font-bold shadow-sm hover:bg-[#FFE0E6] hover:shadow-md active:scale-95 transition-all duration-300 shrink-0"
+                           title="Buka Halaman Riwayat Lengkap">
+                            <span>Lihat Semua</span>
+                            <i class="fas fa-arrow-right text-xs"></i>
+                        </a>
+
+                        <a href="{{ route('user.treatments.index') }}"
+                           class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-on-primary text-xs font-bold shadow-sm hover:bg-primary-container hover:shadow-md active:scale-95 transition-all duration-300 shrink-0">
+                            <i class="fas fa-plus text-xs"></i>
+                            <span>Booking Baru</span>
+                        </a>
                     </div>
                 </div>
 
-                <div class="relative min-h-[140px]">
+                {{-- Tab Navigation (Identical to My Bookings Segmented Control) --}}
+                <div class="bg-surface-container-lowest rounded-2xl p-1.5 shadow-sm border border-outline-variant/30 flex gap-1">
+                    <button
+                        type="button"
+                        @click="switchTab('upcoming')"
+                        class="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer"
+                        :class="activeTab === 'upcoming'
+                            ? 'bg-primary text-on-primary shadow-md'
+                            : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'"
+                    >
+                        <i class="fas fa-clock text-xs"></i>
+                        <span>Mendatang</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        @click="switchTab('past')"
+                        class="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer"
+                        :class="activeTab === 'past'
+                            ? 'bg-primary text-on-primary shadow-md'
+                            : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'"
+                    >
+                        <i class="fas fa-circle-check text-xs"></i>
+                        <span>Selesai</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        @click="switchTab('cancelled')"
+                        class="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer"
+                        :class="activeTab === 'cancelled'
+                            ? 'bg-primary text-on-primary shadow-md'
+                            : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'"
+                    >
+                        <i class="fas fa-circle-xmark text-xs"></i>
+                        <span>Dibatalkan</span>
+                    </button>
+                </div>
+
+                <div class="relative min-h-[160px]">
                     <div x-show="loading" x-cloak class="space-y-4 py-2">
                         <x-skeleton.card />
                         <x-skeleton.card />
@@ -799,7 +886,7 @@
              class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#25181c]/65 backdrop-blur-md">
             <div @click.away="showRewardModal = false"
                  x-trap.noscroll="showRewardModal"
-                 class="relative w-full max-w-sm overflow-hidden rounded-[32px] bg-white p-6 sm:p-7 text-center space-y-4.5 shadow-[0_25px_60px_-15px_rgba(176,31,68,0.22)] border border-[#f4dde1]">
+                 class="relative w-full max-w-sm overflow-hidden rounded-[32px] bg-white p-6 sm:p-7 text-center flex flex-col gap-4 shadow-[0_25px_60px_-15px_rgba(176,31,68,0.22)] border border-[#f4dde1]">
 
                 {{-- Close Button --}}
                 <button type="button" @click="closeRewardModal()" aria-label="Tutup modal hadiah" class="absolute top-4 right-4 text-[#594043] hover:text-[#b01f44] transition-colors p-2 rounded-full hover:bg-rose-50 cursor-pointer z-20">
@@ -816,7 +903,7 @@
                 </div>
 
                 {{-- Badge & Title --}}
-                <div class="relative z-10 space-y-1.5">
+                <div class="relative z-10 flex flex-col items-center gap-1.5">
                     <div class="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#fff0f2] border border-[#f4dde1] rounded-full shadow-2xs">
                         <span class="text-xs font-black tracking-widest uppercase text-[#b01f44]">
                             AURA GLOW-UP MEMANCAR! ✨
@@ -826,20 +913,20 @@
                 </div>
 
                 {{-- Message --}}
-                <div class="relative z-10 p-3.5 bg-[#fff0f2]/75 rounded-2xl border border-[#f4dde1] text-xs text-[#594043] leading-relaxed font-medium">
+                <div class="relative z-10 p-4 bg-[#fff0f2]/75 rounded-2xl border border-[#f4dde1] text-xs text-[#594043] leading-relaxed font-medium">
                     <p x-text="rewardModalData.message"></p>
                 </div>
 
                 {{-- Reward Box --}}
-                <div class="relative z-10 bg-gradient-to-r from-[#fff7e8] via-[#fff0f2] to-[#fff7e8] p-3.5 rounded-2xl border border-[#f4b942]/40 flex items-center justify-center gap-2 text-[#25181c] font-bold shadow-2xs">
+                <div class="relative z-10 bg-gradient-to-r from-[#fff7e8] via-[#fff0f2] to-[#fff7e8] p-4 rounded-2xl border border-[#f4b942]/40 flex items-center justify-center gap-2 text-[#25181c] font-bold shadow-2xs">
                     <span class="material-symbols-outlined text-[#f4b942] text-xl" style="font-variation-settings: 'FILL' 1;">stars</span>
                     <span class="tracking-wider text-xs uppercase text-[#785341] font-extrabold">HADIAH:</span>
                     <span class="text-[#b01f44] text-base font-black tracking-wider" x-text="rewardModalData.reward"></span>
                 </div>
 
                 {{-- CTA Button --}}
-                <div class="relative z-10 pt-1">
-                    <button @click="closeRewardModal()" type="button" class="shimmer-btn relative w-full py-3.5 bg-gradient-to-r from-[#b01f44] via-[#c82d53] to-[#9b4054] hover:brightness-105 text-white font-black text-xs rounded-full shadow-md hover:shadow-lg transition-all transform active:scale-95 tracking-wider uppercase">
+                <div class="relative z-10 pt-2">
+                    <button @click="closeRewardModal()" type="button" class="shimmer-btn relative w-full py-3.5 bg-gradient-to-r from-[#b01f44] via-[#c82d53] to-[#9b4054] hover:brightness-105 text-white font-black text-xs rounded-full shadow-md hover:shadow-lg transition-all transform active:scale-95 tracking-wider uppercase cursor-pointer">
                         SIAP GLOW-UP BANGET!
                     </button>
                 </div>
@@ -892,8 +979,8 @@
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('dashboardPage', () => ({
+        function createDashboardPage() {
+            return {
                 userPoints: {{ $user->total_points }},
                 showQrModal: false,
                 showTiersModal: false,
@@ -944,9 +1031,8 @@
                         this.hasClaimedToday = true;
                     }
 
-                    const currentDayIdx = this.todayDayOfWeek - 1; // 0..6 (Friday = 4 -> Day 5)
+                    const currentDayIdx = this.todayDayOfWeek - 1;
 
-                    // Dynamically set status for all days based on current day of week (Friday = Day 5)
                     this.missions.forEach((m, idx) => {
                         if (idx < currentDayIdx) {
                             m.status = 'completed';
@@ -1079,9 +1165,18 @@
                         this.loading = false;
                     }
                 }
+            };
+        }
 
-            }));
-        });
+        window.dashboardPage = createDashboardPage;
+
+        if (window.Alpine) {
+            Alpine.data('dashboardPage', createDashboardPage);
+        } else {
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('dashboardPage', createDashboardPage);
+            });
+        }
     </script>
     @endpush
 </x-app-layout>

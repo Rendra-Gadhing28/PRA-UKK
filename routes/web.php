@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminBookingController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminFinanceController;
 use App\Http\Controllers\Admin\AdminProfileController;
+use App\Http\Controllers\Admin\AdminReviewController;
 use App\Http\Controllers\Admin\AdminTreatmentController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminVoucherController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\BookingController;
 use App\Http\Controllers\User\DashboardController;
+use App\Http\Controllers\User\FavoriteTreatmentController;
 use App\Http\Controllers\User\ReviewController;
 use App\Http\Controllers\User\TreatmentController;
 use App\Http\Controllers\User\UserVoucherController;
@@ -134,6 +136,8 @@ Route::middleware(['auth'])->prefix('dashboard')->name('user.')->group(function 
     Route::get('/treatments', [TreatmentController::class, 'index'])
         ->name('treatments.index');
     Route::get('/treatments/search', [TreatmentController::class, 'search'])->name('user.treatments.search');
+    Route::post('/treatments/{treatment}/favorite', [FavoriteTreatmentController::class, 'toggle'])
+        ->name('treatments.favorite');
     // Vouchers & Tukar Point
     Route::get('/vouchers', [UserVoucherController::class, 'index'])->name('vouchers.index');
     Route::post('/vouchers/{voucher}/claim', [UserVoucherController::class, 'claim'])->name('vouchers.claim');
@@ -182,6 +186,10 @@ Route::middleware(['auth'])->prefix('dashboard')->name('user.')->group(function 
 // =============================================================
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/account/status', function () {
+        return response()->json(['active' => true]);
+    })->name('account.status');
+
     Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
     Route::post('/expenses/scan', [ExpenseController::class, 'scan'])->name('expenses.scan');
     Route::post('/expenses', [ExpenseController::class, 'store'])->name('expenses.store');
@@ -218,6 +226,14 @@ Route::middleware(['auth', AdminMiddleware::class])
             Route::patch('/{booking}/status', [AdminBookingController::class, 'updateStatus'])->name('update-status');
             Route::patch('/{booking}/verify-payment', [AdminBookingController::class, 'verifyPayment'])->name('verify-payment');
             Route::post('/{booking}/reply-review', [AdminBookingController::class, 'replyReview'])->name('reply-review');
+        });
+
+        // Admin Reviews & Feedback Moderation Center
+        Route::prefix('reviews')->name('reviews.')->group(function () {
+            Route::get('/', [AdminReviewController::class, 'index'])->name('index');
+            Route::post('/{review}/reply', [AdminReviewController::class, 'reply'])->name('reply');
+            Route::patch('/{review}/toggle-approve', [AdminReviewController::class, 'toggleApprove'])->name('toggle-approve');
+            Route::delete('/{review}', [AdminReviewController::class, 'destroy'])->name('destroy');
         });
 
         // Admin Treatments Management

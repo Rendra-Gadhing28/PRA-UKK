@@ -117,6 +117,15 @@ class Treatments extends Model
     }
 
     /**
+     * Relasi ke users yang memfavoritkan treatment ini.
+     */
+    public function favoritedBy(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_favorite_treatments', 'treatment_id', 'user_id')
+            ->withTimestamps();
+    }
+
+    /**
      * Relasi ke booking_treatments pivot.
      */
     public function bookingTreatments(): HasMany

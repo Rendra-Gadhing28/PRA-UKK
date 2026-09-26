@@ -14,6 +14,19 @@ class Beauticians extends Model
 
     public const PHOTO_DIRECTORY = 'beauticians';
 
+    protected static function booted(): void
+    {
+        $clearCache = static function (self $beautician): void {
+            if ($beautician->photo) {
+                ImageHelper::clearCache('beauticians/'.$beautician->photo);
+                ImageHelper::clearCache($beautician->photo);
+            }
+        };
+
+        static::saved($clearCache);
+        static::deleted($clearCache);
+    }
+
     protected $fillable = [
         'name',
         'phone',
@@ -29,6 +42,30 @@ class Beauticians extends Model
         'is_active' => 'boolean',
         'total_bookings' => 'integer',
     ];
+
+    /**
+     * Total booking yang ditangani beautician (mengutamakan count aktual relasi bookings).
+     */
+    protected function totalBookings(): Attribute
+    {
+        return Attribute::make(
+            get: function (?int $value): int {
+                if (isset($this->attributes['bookings_count'])) {
+                    return (int) $this->attributes['bookings_count'];
+                }
+
+                if ($this->relationLoaded('bookings')) {
+                    return $this->bookings->count();
+                }
+
+                if (! is_null($value) && $value > 0) {
+                    return (int) $value;
+                }
+
+                return (int) $this->bookings()->count();
+            }
+        );
+    }
 
     /**
      * URL publik foto profil beautician.
@@ -70,6 +107,26 @@ class Beauticians extends Model
     public function reviews(): HasMany
     {
         return $this->hasMany(Reviews::class, 'beautician_id');
+    }
+
+    /**
+     * Rata-rata rating ulasan beautician (fallback ke 5.0 jika belum ada).
+     */
+    protected function averageRating(): Attribute
+    {
+        return Attribute::make(
+            get: function (): float {
+                if ($this->relationLoaded('reviews') && $this->reviews->isNotEmpty()) {
+                    $avg = $this->reviews->avg('beautician_rating') ?: $this->reviews->avg('rating');
+
+                    return round((float) ($avg ?: 5.0), 1);
+                }
+
+                $avg = $this->reviews()->avg('beautician_rating') ?: $this->reviews()->avg('rating');
+
+                return round((float) ($avg ?: 5.0), 1);
+            }
+        );
     }
 
     /**

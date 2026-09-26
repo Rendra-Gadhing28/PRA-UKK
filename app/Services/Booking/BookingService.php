@@ -130,12 +130,20 @@ class BookingService
 
             $beautician = null;
             if ($beauticianId) {
-                $availableList = $this->beauticianAssignment->getAvailableBeauticians($bookingDate, $timeStart, $timeEnd);
-                $beautician = $availableList->firstWhere('id', $beauticianId);
-            }
-
-            if (! $beautician) {
-                $beautician = $this->beauticianAssignment->findAvailable($bookingDate, $timeStart, $timeEnd);
+                $beautician = $this->beauticianAssignment->findSpecificAvailable(
+                    beauticianId: $beauticianId,
+                    bookingDate: $bookingDate,
+                    timeStart: $timeStart,
+                    timeEnd: $timeEnd,
+                    lock: true,
+                );
+            } else {
+                $beautician = $this->beauticianAssignment->findAvailable(
+                    bookingDate: $bookingDate,
+                    timeStart: $timeStart,
+                    timeEnd: $timeEnd,
+                    lock: true,
+                );
             }
 
             // 1. Calculate Membership Discount (Tier: Regular 0%, Silver 5%, Gold 10%, Purple VIP 15%)
@@ -223,6 +231,9 @@ class BookingService
                     'subtotal' => $line['subtotal'],
                 ]);
             }
+
+            // Increment total bookings count for beautician
+            $beautician->increment('total_bookings');
 
             // Mark UserVoucher as used
             if ($userVoucherRecord) {

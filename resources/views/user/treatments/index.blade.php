@@ -114,16 +114,17 @@
         }
         .treatment-card:hover .card-img-wrapper img { transform: scale(1.06); }
 
-        /* badge overlay (best seller, new, promo) */
+        /* badge overlay (best, new, promo) */
         .overlay-badge {
-            position: absolute;
-            top: 10px; left: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
             padding: 3px 10px;
             border-radius: 999px;
             font-size: 0.75rem;
             font-weight: 700;
             letter-spacing: .5px;
-            text-transform: uppercase;
+            white-space: nowrap;
             box-shadow: 0 2px 6px rgba(0,0,0,0.06);
             z-index: 2;
         }
@@ -304,9 +305,10 @@
                      data-categories='@json($categories)'
                      data-initial-category="{{ request('category', 'all') }}"
                      data-initial-search="{{ request('search', '') }}"
-                     data-action-url="{{ route('user.treatments.index') }}">
+                     data-action-url="{{ route('user.treatments.index') }}"
+                     data-user-favorites-count="{{ $userFavoritesCount ?? 0 }}">
                     
-                    {{-- Fallback form --}}
+                    {{-- Fallback form (No-JS) --}}
                     <form @submit="loading = true" action="{{ route('user.treatments.index') }}" method="GET"
                           class="mt-8 max-w-2xl mx-auto flex flex-col sm:flex-row gap-3">
                         <div class="relative flex-grow">
@@ -320,6 +322,9 @@
                                 <option value="all" {{ request('category', 'all') === 'all' ? 'selected' : '' }}>
                                     Semua Layanan
                                 </option>
+                                <option value="favorites" {{ request('category') === 'favorites' ? 'selected' : '' }}>
+                                    Favorit Saya ({{ $userFavoritesCount ?? 0 }})
+                                </option>
                                 @foreach($categories as $cat)
                                     <option value="{{ $cat->slug }}"
                                         {{ request('category') === $cat->slug ? 'selected' : '' }}>
@@ -332,6 +337,9 @@
                             <i class="fa-solid fa-magnifying-glass text-xs"></i>
                             <span>Cari Perawatan</span>
                         </button>
+                        <a href="{{ route('user.treatments.index') }}" class="px-3.5 py-2.5 rounded-xl border border-rose-200 bg-white text-primary flex items-center justify-center" title="Refresh">
+                            <i class="fa-solid fa-arrows-rotate text-xs"></i>
+                        </a>
                     </form>
                 </div>
             </div>
@@ -348,8 +356,13 @@
                     @endif
                     @if(request('category') && request('category') !== 'all')
                         <span class="category-pill">
-                            <i class="fa-solid fa-layer-group text-xs"></i>
-                            {{ $categories->firstWhere('slug', request('category'))?->name }}
+                            @if(request('category') === 'favorites')
+                                <i class="fa-solid fa-heart text-xs text-rose-500"></i>
+                                Favorit Saya
+                            @else
+                                <i class="fa-solid fa-layer-group text-xs"></i>
+                                {{ $categories->firstWhere('slug', request('category'))?->name }}
+                            @endif
                         </span>
                     @endif
                     <a href="{{ route('user.treatments.index') }}"
@@ -383,24 +396,66 @@
                              decoding="async">
 
                         {{-- Overlay badge --}}
-                        @if($treatment->badge && $treatment->badge !== 'none')
-                            <span class="overlay-badge
-                                {{ $treatment->badge === 'best_seller' ? 'badge-best-seller' :
-                                   ($treatment->badge === 'new' ? 'badge-new' : 'badge-promo') }}">
-                                {{ str_replace('_', ' ', $treatment->badge) }}
-                            </span>
-                        @endif
+                        <div class="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1 items-start">
+                            @if($treatment->is_favorite)
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-600 text-white shadow-sm flex items-center gap-1">
+                                    <i class="fa-solid fa-heart text-xs text-white"></i> Favorit Anda
+                                </span>
+                            @endif
 
-                        {{-- Circular Favorite / Wishlist Button (Sony Headphone Reference) --}}
+                            @if($treatment->badge && $treatment->badge !== 'none')
+                                <span class="overlay-badge static flex items-center gap-1 whitespace-nowrap
+                                    {{ $treatment->badge === 'best_seller' ? 'badge-best-seller' :
+                                       ($treatment->badge === 'new' ? 'badge-new' : 'badge-promo') }}">
+                                    @if($treatment->badge === 'best_seller')
+                                        <i class="fa-solid fa-crown text-xs text-amber-300"></i> Best
+                                    @elseif($treatment->badge === 'new')
+                                        <i class="fa-solid fa-sparkles text-xs"></i> Baru
+                                    @else
+                                        {{ ucfirst(str_replace('_', ' ', $treatment->badge)) }}
+                                    @endif
+                                </span>
+                            @endif
+                        </div>
+
+                        {{-- Circular AJAX Favorite / Wishlist Button --}}
                         <button type="button"
-                                x-data="{ fav: false }"
-                                @click.stop="fav = !fav"
-                                class="absolute top-2.5 right-2.5 z-10 w-7 h-7 rounded-full bg-white/95 backdrop-blur-md border border-[#F4DDE1] shadow-xs flex items-center justify-center transition-colors"
-                                :class="fav ? 'text-rose-600 bg-rose-50' : 'text-[#8D7072] hover:text-[#B01F44]'"
+                                x-data="{
+                                    fav: {{ (bool) ($treatment->is_favorite ?? false) ? 'true' : 'false' }},
+                                    toggling: false,
+                                    async toggleFav() {
+                                        if (this.toggling) return;
+                                        this.toggling = true;
+                                        try {
+                                            const res = await fetch('{{ route('user.treatments.favorite', $treatment->id) }}', {
+                                                method: 'POST',
+                                                headers: {
+                                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                    'Accept': 'application/json',
+                                                    'Content-Type': 'application/json'
+                                                }
+                                            });
+                                            if (res.status === 401) {
+                                                window.location.href = '{{ route('login') }}';
+                                                return;
+                                            }
+                                            const data = await res.json();
+                                            if (data.success) {
+                                                this.fav = data.favorited;
+                                            }
+                                        } catch (e) {
+                                        } finally {
+                                            this.toggling = false;
+                                        }
+                                    }
+                                }"
+                                @click.stop="toggleFav()"
+                                class="absolute top-2.5 right-2.5 z-10 w-8 h-8 rounded-full bg-white/95 backdrop-blur-md border border-[#F4DDE1] shadow-sm flex items-center justify-center transition-all duration-200 active:scale-125 cursor-pointer"
+                                :class="fav ? 'text-rose-600 bg-rose-50 border-rose-200' : 'text-[#8D7072] hover:text-primary'"
+                                :title="fav ? 'Hapus dari Favorit' : 'Simpan ke Favorit'"
                                 aria-label="Simpan ke favorit">
-                            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path :fill="fav ? 'currentColor' : 'none'" d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
-                            </svg>
+                            <i class="fa-solid fa-heart text-sm transition-transform duration-200"
+                               :class="fav ? 'text-rose-500 scale-110' : 'text-[#d1a3ac] opacity-70'"></i>
                         </button>
                     </div>
 

@@ -6,33 +6,18 @@ namespace App\Services;
 
 use App\Models\Categories;
 use App\Models\Treatments;
-use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 /**
  * Menangani seluruh logika query untuk listing Treatment:
  * - eager loading relasi (anti N+1)
- * - caching dengan invalidation berbasis versi
- * - cursor pagination (lebih efisien daripada offset pagination
- *   untuk tabel yang terus bertambah / sering diakses publik)
- *
- * Cache driver aplikasi ini adalah "database", yang TIDAK mendukung
- * cache tags. Sebagai gantinya kita pakai pola "cache versioning":
- * setiap kali data treatment berubah (create/update/delete), sebuah
- * counter versi di-bump (lihat TreatmentObserver). Versi ini ikut
- * masuk ke dalam cache key, sehingga key lama otomatis "basi" tanpa
- * perlu menghapus satu per satu.
- *
- * PENTING: kita TIDAK boleh menyimpan objek CursorPaginator utuh ke
- * dalam cache. Objek paginator membawa closure (path resolver) dan
- * referensi lain yang tidak bisa di-serialize/unserialize dengan
- * bersih lewat cache driver "database" — hasilnya adalah error
- * `__PHP_Incomplete_Class` saat cache dibaca kembali. Solusinya:
- * cache hanya array data mentah (atribut model), lalu bangun ulang
- * objek CursorPaginator secara manual di setiap request.
+ * - sorting cerdas (treatment favorit user dipin di posisi paling atas)
+ * - filter kategori khusus 'favorites' (hanya menampilkan favorit user)
+ * - caching kategori aktif dengan invalidation berbasis versi
  */
 class TreatmentQueryService
 {
@@ -45,20 +30,8 @@ class TreatmentQueryService
     private const DEFAULT_PER_PAGE = 9;
 
     /**
-     * Kolom yang dipakai untuk order by & sebagai parameter cursor.
-     * "id" ditambahkan sebagai tiebreaker agar urutan selalu deterministik
-     * walau ada beberapa treatment dengan sort_order/created_at yang sama.
-     */
-    private const ORDER_COLUMNS = ['sort_order', 'created_at', 'id'];
-
-    /**
      * Mengambil daftar treatment aktif dengan filter pencarian & kategori,
-     * dipaginasi menggunakan cursor pagination.
-     *
-     * @param  string|null  $search  kata kunci pencarian (nama/deskripsi)
-     * @param  string|null  $categorySlug  slug kategori, atau null/"all" untuk semua
-     * @param  string|null  $cursor  cursor pagination dari request sebelumnya
-     * @param  int  $perPage  jumlah item per halaman
+     * dipaginasi menggunakan simple Eloquent pagination.
      */
     public function paginateActiveTreatments(
         ?string $search,
@@ -66,30 +39,62 @@ class TreatmentQueryService
         ?string $page = null,
         int $perPage = self::DEFAULT_PER_PAGE,
     ): LengthAwarePaginator {
-        // Query akan menggunakan simple Eloquent pagination agar URL mengandung "?page="
-        // dan menampilkan link nomor halaman lengkap.
         return $this->baseQuery($search, $categorySlug)
             ->paginate($perPage);
     }
 
     /**
-     * Query dasar treatment aktif dengan eager loading & seleksi kolom minimal.
+     * Total jumlah treatment yang difavoritkan oleh user tertentu.
+     */
+    public function getUserFavoritesCount(?int $userId = null): int
+    {
+        $uid = $userId ?? Auth::id();
+        if (! $uid) {
+            return 0;
+        }
+
+        return \DB::table('user_favorite_treatments')
+            ->where('user_id', $uid)
+            ->count();
+    }
+
+    /**
+     * Query dasar treatment aktif dengan eager loading, penanda is_favorite,
+     * dan pengurutan prioritas (Favorit Teratas -> Sort Order -> Tanggal Terbaru).
      */
     private function baseQuery(?string $search, ?string $categorySlug): Builder
     {
-        return Treatments::query()
+        $userId = Auth::id() ?? 0;
+
+        $query = Treatments::query()
             ->active()
-            ->search($search)
-            ->inCategory($categorySlug)
-            // select kolom yang benar-benar dipakai di listing untuk
-            // mengurangi ukuran payload dari database
+            ->search($search);
+
+        if ($categorySlug === 'favorites') {
+            $query->whereExists(function ($q) use ($userId): void {
+                $q->select(\DB::raw(1))
+                    ->from('user_favorite_treatments')
+                    ->whereColumn('user_favorite_treatments.treatment_id', 'treatments.id')
+                    ->where('user_favorite_treatments.user_id', $userId);
+            });
+        } else {
+            $query->inCategory($categorySlug);
+        }
+
+        return $query
             ->select([
                 'id', 'category_id', 'name', 'slug', 'description',
                 'price', 'duration_minutes', 'images', 'badge',
                 'rating', 'rating_count', 'sort_order', 'created_at',
             ])
-            // eager load kategori agar tidak N+1 saat view mengakses $treatment->category->name
+            ->selectRaw(
+                $userId > 0
+                    ? 'EXISTS(SELECT 1 FROM user_favorite_treatments WHERE user_favorite_treatments.treatment_id = treatments.id AND user_favorite_treatments.user_id = ?) as is_favorite'
+                    : '0 as is_favorite',
+                $userId > 0 ? [$userId] : []
+            )
             ->with(['category:id,name,slug'])
+            ->orderByDesc('is_favorite')
             ->orderByDesc('sort_order')
             ->orderByDesc('created_at')
             ->orderByDesc('id');
@@ -105,8 +110,6 @@ class TreatmentQueryService
     {
         $cacheKey = self::CATEGORIES_CACHE_KEY_PREFIX.$this->currentVersion();
 
-        // Sama seperti di atas: cache array atribut (bukan koleksi model),
-        // lalu hydrate ulang, agar konsisten aman untuk driver cache "database".
         $cachedRows = Cache::remember(
             $cacheKey,
             self::CACHE_TTL_SECONDS,
@@ -117,9 +120,7 @@ class TreatmentQueryService
     }
 
     /**
-     * Menaikkan versi cache. Dipanggil oleh TreatmentObserver /
-     * CategoryObserver setiap kali data berubah, agar cache lama
-     * otomatis tidak terpakai lagi tanpa perlu flush manual.
+     * Menaikkan versi cache.
      */
     public function bumpCacheVersion(): void
     {

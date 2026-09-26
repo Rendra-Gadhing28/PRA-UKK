@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\BookingsExport;
 use App\Helpers\ToastHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Beauticians;
@@ -9,6 +10,7 @@ use App\Models\Bookings;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminBookingController extends Controller
 {
@@ -204,7 +206,7 @@ class AdminBookingController extends Controller
     }
 
     /**
-     * Export laporan daftar booking ke Excel (CSV).
+     * Export laporan daftar booking ke Excel (XLSX).
      */
     public function exportExcel(Request $request)
     {
@@ -212,7 +214,12 @@ class AdminBookingController extends Controller
 
         if ($request->filled('start_date') && $request->filled('end_date')) {
             $query->whereBetween('booking_date', [$request->start_date, $request->end_date]);
+        } elseif ($request->filled('start_date')) {
+            $query->whereDate('booking_date', '>=', $request->start_date);
+        } elseif ($request->filled('end_date')) {
+            $query->whereDate('booking_date', '<=', $request->end_date);
         }
+
         if ($request->filled('status') && $request->status !== 'all') {
             $query->where('status', $request->status);
         }
@@ -221,68 +228,9 @@ class AdminBookingController extends Controller
         }
 
         $bookings = $query->orderBy('booking_date', 'desc')->get();
-        $totalAmount = $bookings->sum('total_amount');
-        $fileName = 'Laporan_Booking_Yalia_Beauty_'.now()->format('Ymd_His').'.csv';
+        $fileName = 'Laporan_Booking_Yalia_Beauty_'.now()->format('Ymd_His').'.xlsx';
 
-        return response()->streamDownload(function () use ($bookings, $totalAmount) {
-            $file = fopen('php://output', 'w');
-
-            // UTF-8 BOM untuk MS Excel
-            fwrite($file, "\xEF\xBB\xBF");
-
-            // === HEADER ATAS LAPORAN ===
-            fputcsv($file, ['LAPORAN DAFTAR RESERVASI BOOKING - YALIA BEAUTY SALON']);
-            fputcsv($file, ['Alamat Salon: GHV9+F2 Candi, Kabupaten Boyolali, Jawa Tengah | WA: 0822-2702-3362']);
-            fputcsv($file, ['Tanggal Diunduh:', now()->translatedFormat('l, d F Y H:i').' WIB']);
-            fputcsv($file, ['Ringkasan:', 'Total Data: '.$bookings->count().' Reservasi', 'Nilai Total: Rp '.number_format($totalAmount, 0, ',', '.')]);
-            fputcsv($file, []); // Baris Kosong Pemisah
-
-            // === TABEL DATA & FIELD AKURAT API/DATABASE ===
-            fputcsv($file, [
-                'No',
-                'Kode Booking',
-                'Nama Pelanggan',
-                'No. Handphone',
-                'Terapis / Beautician',
-                'Layanan Treatment',
-                'Tanggal Booking',
-                'Waktu Layanan',
-                'Tipe Kunjungan',
-                'Total Harga (Rp)',
-                'Status Pembayaran',
-                'Status Booking',
-            ]);
-
-            $no = 1;
-            foreach ($bookings as $b) {
-                $statusText = is_object($b->status)
-                    ? (method_exists($b->status, 'badgeLabel') ? $b->status->badgeLabel() : $b->status->value)
-                    : (string) $b->status;
-
-                fputcsv($file, [
-                    $no++,
-                    $b->booking_code,
-                    $b->user?->name ?? 'Guest',
-                    $b->user?->phone ?? '-',
-                    $b->beautician?->name ?? 'Auto Assign',
-                    $b->treatments->pluck('name')->join(', ') ?: 'N/A',
-                    $b->booking_date ? $b->booking_date->format('Y-m-d') : '-',
-                    ($b->time_start ?? '').' - '.($b->time_end ?? ''),
-                    $b->booking_type === 'home' ? 'Home Service' : 'Ke Salon',
-                    $b->total_amount,
-                    $b->payment_status ? ucfirst($b->payment_status) : 'Lunas',
-                    $statusText,
-                ]);
-            }
-
-            // === BARIS TOTAL SUMMARY ===
-            fputcsv($file, []); // Baris Kosong
-            fputcsv($file, ['', '', '', '', '', '', '', '', 'TOTAL NILAI RESERVASI', $totalAmount, '', '']);
-
-            fclose($file);
-        }, $fileName, [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-        ]);
+        return Excel::download(new BookingsExport($bookings, $request->all()), $fileName);
     }
 
     /**

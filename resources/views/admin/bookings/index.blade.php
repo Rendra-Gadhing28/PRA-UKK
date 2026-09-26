@@ -18,7 +18,7 @@
                 <a href="{{ route('admin.bookings.export.excel', request()->query()) }}" 
                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#f45472] text-white hover:bg-[#d93856] text-xs font-bold shadow-md transition-all">
                     <i class="fa-solid fa-file-excel text-xs"></i>
-                    <span>Export Excel (CSV)</span>
+                    <span>Export Excel</span>
                 </a>
             </div>
         </div>

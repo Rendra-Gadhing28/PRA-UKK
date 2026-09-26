@@ -6,6 +6,7 @@ use App\Helpers\ToastHelper;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class AdminUserController extends Controller
@@ -46,6 +47,14 @@ class AdminUserController extends Controller
         $user->is_active = ! $user->is_active;
         $user->save();
 
+        if (! $user->is_active) {
+            try {
+                DB::table('sessions')->where('user_id', $user->id)->delete();
+            } catch (\Throwable $e) {
+                // Ignore if sessions table not in use
+            }
+        }
+
         $status = $user->is_active ? 'diaktifkan' : 'dinonaktifkan';
         ToastHelper::success("Akun user {$user->name} berhasil {$status}.");
 
@@ -70,6 +79,10 @@ class AdminUserController extends Controller
         }
 
         $userName = $user->name;
+        try {
+            DB::table('sessions')->where('user_id', $user->id)->delete();
+        } catch (\Throwable $e) {
+        }
         $user->delete();
 
         ToastHelper::success("Akun user {$userName} berhasil dihapus permanen.");

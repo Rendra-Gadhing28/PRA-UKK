@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\MonthlyFinanceExport;
 use App\Http\Controllers\Controller;
 use App\Models\Bookings;
 use App\Models\Transactions;
@@ -11,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminDashboardController extends Controller
 {
@@ -231,7 +233,7 @@ class AdminDashboardController extends Controller
     }
 
     /**
-     * Ekspor dan download berkas laporan keuangan & reservasi bulanan ke file CSV/Excel.
+     * Ekspor dan download berkas laporan keuangan & reservasi bulanan ke file Excel (XLSX).
      */
     public function exportExcel(Request $request)
     {
@@ -244,69 +246,17 @@ class AdminDashboardController extends Controller
             ->orderBy('booking_date', 'desc')
             ->get();
 
-        $totalRevenue = $bookings->whereIn('status', ['completed', 'confirmed'])->sum('total_amount');
-        $fileName = 'Laporan_Keuangan_Yalia_Beauty_'.$now->format('Y_m').'.csv';
+        $income = (float) Bookings::whereIn('status', ['completed', 'confirmed'])
+            ->whereBetween('booking_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
+            ->sum('total_amount');
 
-        return response()->streamDownload(function () use ($bookings, $now, $totalRevenue) {
-            $file = fopen('php://output', 'w');
+        $expense = (float) Transactions::where('type', 'expense')
+            ->whereBetween('transaction_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
+            ->sum('amount');
 
-            // UTF-8 BOM untuk MS Excel
-            fwrite($file, "\xEF\xBB\xBF");
+        $fileName = 'Laporan_Keuangan_Yalia_Beauty_'.$now->format('Y_m').'.xlsx';
 
-            // === HEADER ATAS LAPORAN ===
-            fputcsv($file, ['LAPORAN KEUANGAN & RESERVASI - YALIA BEAUTY SALON']);
-            fputcsv($file, ['Alamat Salon: GHV9+F2 Candi, Kabupaten Boyolali, Jawa Tengah | WA: 0822-2702-3362']);
-            fputcsv($file, ['Periode Laporan:', $now->translatedFormat('F Y')]);
-            fputcsv($file, ['Waktu Diunduh:', $now->translatedFormat('l, d F Y H:i').' WIB']);
-            fputcsv($file, ['Ringkasan:', 'Total Reservasi: '.$bookings->count(), 'Total Omset: Rp '.number_format($totalRevenue, 0, ',', '.')]);
-            fputcsv($file, []); // Baris Kosong Pemisah
-
-            // === TABEL DATA & FIELD AKURAT API/DATABASE ===
-            fputcsv($file, [
-                'No',
-                'Kode Booking',
-                'Nama Pelanggan',
-                'No. Handphone',
-                'Terapis / Beautician',
-                'Layanan Treatment',
-                'Tanggal Booking',
-                'Waktu Layanan',
-                'Tipe Kunjungan',
-                'Total Harga (Rp)',
-                'Status Pembayaran',
-                'Status Booking',
-            ]);
-
-            $no = 1;
-            foreach ($bookings as $b) {
-                $statusText = is_object($b->status)
-                    ? (method_exists($b->status, 'badgeLabel') ? $b->status->badgeLabel() : $b->status->value)
-                    : (string) $b->status;
-
-                fputcsv($file, [
-                    $no++,
-                    $b->booking_code,
-                    $b->user?->name ?? 'Guest',
-                    $b->user?->phone ?? '-',
-                    $b->beautician?->name ?? 'Auto Assign',
-                    $b->treatments->pluck('name')->join(', ') ?: 'N/A',
-                    $b->booking_date ? $b->booking_date->format('Y-m-d') : '-',
-                    ($b->time_start ?? '').' - '.($b->time_end ?? ''),
-                    $b->booking_type === 'home' ? 'Home Service' : 'Ke Salon',
-                    $b->total_amount,
-                    $b->payment_status ? ucfirst($b->payment_status) : 'Lunas',
-                    $statusText,
-                ]);
-            }
-
-            // === BARIS TOTAL SUMMARY ===
-            fputcsv($file, []); // Baris Kosong
-            fputcsv($file, ['', '', '', '', '', '', '', '', 'TOTAL PEMASUKAN', $totalRevenue, '', '']);
-
-            fclose($file);
-        }, $fileName, [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-        ]);
+        return Excel::download(new MonthlyFinanceExport($bookings, $now, $income, $expense), $fileName);
     }
 
     /**

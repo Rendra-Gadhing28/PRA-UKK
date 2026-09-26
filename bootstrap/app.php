@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\CheckQuarterlyTierPoints;
+use App\Http\Middleware\EnsureAccountIsActive;
 use App\Http\Middleware\SecurityHeadersMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -19,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'api/trigger-reminders',
         ]);
         $middleware->web(append: [
+            EnsureAccountIsActive::class,
             CheckQuarterlyTierPoints::class,
             SecurityHeadersMiddleware::class,
         ]);

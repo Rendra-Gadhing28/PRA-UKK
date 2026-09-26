@@ -23,20 +23,27 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         
-                        {{-- Kode Voucher --}}
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">Kode Voucher *</label>
-                            <input type="text" name="code" value="{{ old('code', $voucher->code) }}" required 
-                                   class="w-full px-4 py-3 text-sm font-mono font-bold rounded-2xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472] uppercase">
-                            @error('code') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
-                        </div>
-
                         {{-- Nama Voucher --}}
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">Nama Voucher *</label>
-                            <input type="text" name="name" value="{{ old('name', $voucher->name) }}" required 
+                            <input type="text" id="voucher_name" name="name" value="{{ old('name', $voucher->name) }}" required 
                                    class="w-full px-4 py-3 text-sm rounded-2xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472]">
                             @error('name') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        {{-- Kode Voucher --}}
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Kode Voucher *</label>
+                                <button type="button" id="btn_generate_code" class="text-[11px] font-bold text-[#f45472] hover:text-[#d93856] flex items-center gap-1 transition-colors">
+                                    <i class="fa-solid fa-wand-magic-sparkles text-[10px]"></i>
+                                    <span>Generate Unik</span>
+                                </button>
+                            </div>
+                            <input type="text" id="voucher_code" name="code" value="{{ old('code', $voucher->code) }}" required 
+                                   class="w-full px-4 py-3 text-sm font-mono font-bold rounded-2xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472] uppercase">
+                            <p class="text-[10px] text-gray-400 mt-1">Gunakan kode ini atau klik Generate Unik dari nama voucher.</p>
+                            @error('code') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         {{-- Tipe Voucher --}}
@@ -129,4 +136,54 @@
 
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const nameInput = document.getElementById('voucher_name');
+            const codeInput = document.getElementById('voucher_code');
+            const generateBtn = document.getElementById('btn_generate_code');
+
+            function slugifyName(text) {
+                if (!text) return '';
+                return text
+                    .toString()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .toUpperCase()
+                    .trim()
+                    .replace(/[^A-Z0-9\s-]/g, '')
+                    .replace(/[\s_]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+            }
+
+            function generateCode(withSuffix = false) {
+                const rawName = nameInput.value.trim();
+                if (!rawName) return;
+
+                let slug = slugifyName(rawName);
+                let parts = slug.split('-').filter(p => p.length > 0);
+                if (parts.length === 0) return;
+
+                let base = parts.slice(0, 3).join('-');
+                if (base.length > 14) {
+                    base = base.substring(0, 14).replace(/-+$/, '');
+                }
+
+                if (withSuffix) {
+                    const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+                    let suffix = '';
+                    for (let i = 0; i < 3; i++) {
+                        suffix += chars.charAt(Math.floor(Math.random() * chars.length));
+                    }
+                    codeInput.value = `${base}-${suffix}`;
+                } else {
+                    codeInput.value = base;
+                }
+            }
+
+            generateBtn.addEventListener('click', function() {
+                generateCode(true);
+            });
+        });
+    </script>
 </x-admin-layout>

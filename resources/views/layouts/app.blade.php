@@ -44,6 +44,48 @@
             <x-toast />
             <x-action-modal />
         </div>
+        @auth
+        <script>
+            (function() {
+                let isChecking = false;
+                function checkAccountStatus() {
+                    if (isChecking) return;
+                    isChecking = true;
+                    fetch('{{ route("account.status") }}', {
+                        method: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                        }
+                    })
+                    .then(res => {
+                        if (res.status === 401 || res.status === 403 || res.redirected) {
+                            window.location.href = '{{ route("login") }}';
+                            return null;
+                        }
+                        return res.json();
+                    })
+                    .then(data => {
+                        if (data && data.active === false) {
+                            window.location.href = '{{ route("login") }}';
+                        }
+                    })
+                    .catch(() => {})
+                    .finally(() => {
+                        isChecking = false;
+                    });
+                }
+
+                // Polling setiap 3 detik dan saat user kembali ke tab browser
+                setInterval(checkAccountStatus, 3000);
+                document.addEventListener('visibilitychange', () => {
+                    if (document.visibilityState === 'visible') {
+                        checkAccountStatus();
+                    }
+                });
+            })();
+        </script>
+        @endauth
         @stack('scripts')
     </body>
 </html>

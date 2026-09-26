@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -44,13 +45,27 @@ class StoreBookingRequest extends FormRequest
     }
 
     /**
-     * Hook validator tambahan untuk validasi tipe pembayaran layanan Home Service.
+     * Hook validator tambahan untuk validasi tipe pembayaran layanan Home Service dan jam operasional.
      */
     public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
             if ($this->input('booking_type') === 'home' && $this->input('payment_type') === 'cash') {
                 $validator->errors()->add('payment_type', 'Layanan Home Service hanya mendukung pembayaran Cashless (Full Payment 100%).');
+            }
+
+            if ($this->filled('booking_date') && $this->filled('time_start')) {
+                try {
+                    $slotTime = Carbon::createFromFormat('Y-m-d H:i', $this->input('booking_date').' '.$this->input('time_start'));
+                    $timeStr = $this->input('time_start');
+                    if ($timeStr < '09:00' || $timeStr > '17:30') {
+                        $validator->errors()->add('time_start', 'Jam kedatangan harus berada di rentang 09:00 - 17:30 WIB.');
+                    } elseif ($slotTime->isPast()) {
+                        $validator->errors()->add('time_start', 'Waktu reservasi yang dipilih sudah terlewat. Silakan pilih jam lain.');
+                    }
+                } catch (\Throwable) {
+                    // Handled by date_format rules
+                }
             }
         });
     }

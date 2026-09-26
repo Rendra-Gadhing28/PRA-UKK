@@ -58,6 +58,17 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        $user = Auth::user();
+        if (! $user->is_active) {
+            Auth::guard('web')->logout();
+            $this->session()->invalidate();
+            $this->session()->regenerateToken();
+
+            throw ValidationException::withMessages([
+                'email' => 'Akun Anda telah dinonaktifkan oleh Administrator. Silakan hubungi admin Yalia Beauty.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

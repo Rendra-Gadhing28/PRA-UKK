@@ -312,7 +312,7 @@
                 <div class="mb-6">
                     <div class="flex items-center justify-between mb-2">
                         <label class="block text-xs font-bold text-[#5b3a29] uppercase tracking-wider">Pilih Jam Kedatangan (Langsung Klik)</label>
-                        <span class="text-xs text-[#5b3a29]/60 font-semibold">Jam Operasional 08:00 - 20:00 WIB</span>
+                        <span class="text-xs text-[#5b3a29]/60 font-semibold">Jam Operasional 09:00 - 18:00 WIB</span>
                     </div>
 
                     {{-- Skeleton Loading Slots Grid --}}
@@ -327,11 +327,12 @@
                         <template x-for="slot in dailySlots" :key="slot.time">
                             <button type="button" 
                                     @click="selectTimeSlot(slot.time)"
+                                    :disabled="!slot.available"
                                     class="relative rounded-xl p-2 min-h-[64px] border-2 transition-all flex flex-col items-center justify-center gap-1 group text-center overflow-hidden w-full"
                                     :class="{
                                         'border-[#f45472] bg-gradient-to-r from-[#f45472] to-[#e03e5c] text-white font-extrabold shadow-md scale-[1.02]': selectedTimeSlot === slot.time && slot.available,
                                         'border-rose-200 bg-white text-[#5b3a29] hover:border-[#f45472] hover:bg-rose-50 shadow-xs': selectedTimeSlot !== slot.time && slot.available,
-                                        'border-rose-200/80 bg-rose-50/80 text-rose-800 opacity-80': !slot.available
+                                        'border-rose-200/80 bg-rose-50/80 text-rose-800 opacity-60 cursor-not-allowed': !slot.available
                                     }">
                                 <div class="flex items-center justify-center gap-1 w-full px-1">
                                     <span class="text-xs sm:text-sm font-extrabold truncate" x-text="slot.formatted_time"></span>
@@ -341,9 +342,10 @@
                                 <span x-show="slot.available" class="text-xs uppercase font-bold tracking-wider truncate w-full" 
                                       :class="selectedTimeSlot === slot.time ? 'text-white/90' : 'text-emerald-600'">Tersedia</span>
 
-                                <span x-show="!slot.available" class="w-full text-xs uppercase font-bold tracking-wider text-rose-800 bg-rose-200/70 px-1 py-0.5 rounded flex items-center justify-center gap-1 truncate">
+                                <span x-show="!slot.available" class="w-full text-xs uppercase font-bold tracking-wider text-rose-800 bg-rose-200/70 px-1 py-0.5 rounded flex items-center justify-center gap-1 truncate"
+                                      :title="slot.reason || 'Slot tidak tersedia'">
                                     <i class="fa-solid fa-lock text-xs shrink-0"></i>
-                                    <span class="truncate">TUTUP</span>
+                                    <span class="truncate" x-text="slot.reason && slot.reason.includes('terlewat') ? 'LEWAT' : 'TUTUP'"></span>
                                 </span>
                             </button>
                         </template>
@@ -458,15 +460,16 @@
                                         </span>
                                     </div>
                                     <p class="text-[11px] text-[#5b3a29]/75 mt-0.5 truncate" x-text="selectedBeautician.bio ? selectedBeautician.bio : 'Spesialis Perawatan Kecantikan Yalia Beauty'"></p>
-                                    <div class="flex items-center gap-2.5 text-[10px] text-[#5b3a29]/60 mt-1">
-                                        <span class="flex items-center gap-1">
-                                            <i class="fa-solid fa-circle-check text-emerald-500 text-[10px]"></i>
-                                            <span>Bertugas di Jam Pilihan</span>
+                                    <div class="flex items-center gap-2.5 text-xs text-[#5b3a29]/70 mt-1 flex-wrap">
+                                        <span class="flex items-center gap-1 font-bold text-amber-600">
+                                            <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+                                            <span x-text="(selectedBeautician.average_rating || 5.0).toFixed(1)"></span>
+                                            <span class="font-normal text-xs text-[#5b3a29]/60" x-text="'(' + (selectedBeautician.reviews_count || 0) + ' ulasan)'"></span>
                                         </span>
                                         <span>•</span>
                                         <span class="flex items-center gap-1 font-semibold text-[#5b3a29]/80">
-                                            <i class="fa-solid fa-sparkles text-[#f45472] text-[10px]"></i>
-                                            <span x-text="(selectedBeautician.total_bookings || 0) + ' Booking Ditangani'"></span>
+                                            <i class="fa-solid fa-wand-magic-sparkles text-primary text-xs"></i>
+                                            <span x-text="(selectedBeautician.total_bookings || 0) + ' Booking'"></span>
                                         </span>
                                     </div>
                                 </div>
@@ -716,14 +719,61 @@ function bookingWizard() {
 
         init() {
             const preselected = @json($preselectedData);
+            const oldTreatments = @json(old('treatments') ?? []);
+            const oldBookingType = @json(old('booking_type'));
+            const oldBookingDate = @json(old('booking_date'));
+            const oldTimeStart = @json(old('time_start'));
+            const oldNotes = @json(old('notes'));
+            const oldPaymentType = @json(old('payment_type'));
+            const oldHomeAddress = @json(old('home_address'));
+            const oldHomeLat = @json(old('home_latitude'));
+            const oldHomeLng = @json(old('home_longitude'));
+            const oldBeauticianId = @json(old('beautician_id'));
+            const oldUserVoucherId = @json(old('user_voucher_id'));
 
-            if (preselected) {
+            if (oldTreatments && oldTreatments.length > 0) {
+                this.selectedTreatments = [];
+                oldTreatments.forEach(ot => {
+                    const found = this.allTreatments.find(t => t.id == ot.treatment_id);
+                    if (found) {
+                        this.selectedTreatments.push({ ...found, quantity: Number(ot.quantity) || 1 });
+                    }
+                });
+            } else if (preselected) {
                 if (!this.selectedTreatments.some(t => t.id === preselected.id)) {
                     this.selectedTreatments.push({ ...preselected, quantity: 1 });
                 }
             }
 
+            if (oldBookingType) this.bookingType = oldBookingType;
+            if (oldNotes) this.notes = oldNotes;
+            if (oldPaymentType) this.paymentType = oldPaymentType;
+            if (oldHomeAddress) {
+                this.gps.address = oldHomeAddress;
+                this.gps.lat = oldHomeLat ? Number(oldHomeLat) : null;
+                this.gps.lng = oldHomeLng ? Number(oldHomeLng) : null;
+                if (this.gps.lat && this.gps.lng) {
+                    this.gps.distanceKm = this.haversineKm(this.gps.lat, this.gps.lng, this.salonLat, this.salonLng);
+                }
+            }
+            if (oldBeauticianId) this.selectedBeauticianId = oldBeauticianId;
+            if (oldUserVoucherId) this.selectedUserVoucherId = Number(oldUserVoucherId);
+
             this.buildAvailableDays();
+
+            if (oldBookingDate) {
+                this.selectedDate = oldBookingDate;
+                this.fetchDailySlots();
+            }
+
+            if (this.serverErrors && this.serverErrors.length > 0) {
+                this.step = 3;
+                if (oldTimeStart) {
+                    const parts = oldTimeStart.split(':').map(Number);
+                    this.selectedHour = parts[0] || 9;
+                    this.selectedMinute = parts[1] || 0;
+                }
+            }
         },
 
         get unselectedTreatments() {

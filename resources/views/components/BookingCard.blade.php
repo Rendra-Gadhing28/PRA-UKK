@@ -1,72 +1,128 @@
-{{-- Satu kartu booking. $booking sudah eager-loaded (beautician, treatments) — aman dari N+1. --}}
+{{-- Satu kartu booking reusable component (Compact & Simple) --}}
 @php
-    $stVal = is_object($booking->status) ? $booking->status->value : (string)$booking->status;
-    $statusLabel = match($stVal) {
-        'pending'     => 'Pending Approval',
-        'confirmed'   => 'Confirmed',
-        'in_progress' => 'In Progress',
-        'completed'   => 'Completed',
-        'canceled'    => 'Cancelled',
-        default       => is_object($booking->status) && method_exists($booking->status, 'badgeLabel') ? $booking->status->badgeLabel() : ucfirst($stVal),
+    $statusObj = is_string($booking->status)
+        ? \App\Enums\BookingStatus::tryFrom($booking->status)
+        : $booking->status;
+    $statusVal = is_object($statusObj) && isset($statusObj->value)
+        ? $statusObj->value
+        : (string) $booking->status;
+
+    if ($booking->payment_status === 'paid' && $statusVal === 'pending') {
+        $statusVal = 'confirmed';
+        $statusObj = \App\Enums\BookingStatus::CONFIRMED;
+    }
+
+    $badgeLabel = is_object($statusObj) && method_exists($statusObj, 'badgeLabel')
+        ? $statusObj->badgeLabel()
+        : ucfirst($statusVal);
+
+    $statusColor = match($statusVal) {
+        'completed'             => ['dot'=>'bg-emerald-500', 'text'=>'text-emerald-700', 'bg'=>'bg-emerald-50', 'border'=>'border-emerald-200'],
+        'canceled', 'cancelled' => ['dot'=>'bg-rose-500',    'text'=>'text-rose-700',    'bg'=>'bg-rose-50',    'border'=>'border-rose-200'],
+        'in_progress'           => ['dot'=>'bg-blue-500',    'text'=>'text-blue-700',    'bg'=>'bg-blue-50',    'border'=>'border-blue-200'],
+        'confirmed'             => ['dot'=>'bg-primary',     'text'=>'text-primary',     'bg'=>'bg-[#FFF0F2]',  'border'=>'border-[#F4DDE1]'],
+        default                 => ['dot'=>'bg-amber-500',   'text'=>'text-amber-800',   'bg'=>'bg-amber-50',   'border'=>'border-amber-200'],
     };
-    $statusBadgeClass = $stVal === 'confirmed'
-        ? 'bg-accent-clear text-on-secondary-container'
-        : 'bg-surface-container-high text-on-secondary-container';
+
     $firstTr = $booking->treatments->first();
-    $imgUrl = $firstTr ? $firstTr->image_url : \App\Support\ImageHelper::url(null);
+    $treatmentNames = $booking->treatments->count() > 0
+        ? $booking->treatments->pluck('name')->join(' · ')
+        : ($booking->treatment?->name ?? 'Perawatan Yalia');
+    $heroPhoto = \App\Support\ImageHelper::url($booking->photo_assign ?? $firstTr?->images, $firstTr?->image_url);
+
+    $tStart = $booking->time_start ? \Carbon\Carbon::parse($booking->time_start)->format('H:i') : '-';
+    $tEnd   = $booking->time_end   ? \Carbon\Carbon::parse($booking->time_end)->format('H:i')   : '-';
+    $dateStr = $booking->booking_date ? $booking->booking_date->translatedFormat('d M Y') : '-';
+    $dayStr  = $booking->booking_date ? $booking->booking_date->translatedFormat('l') : '';
 @endphp
 
-<div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-border-subtle flex flex-col lg:flex-row gap-8 items-center transition-all hover:shadow-md {{ $stVal === 'canceled' ? 'opacity-70' : '' }}">
-    <div class="relative w-full lg:w-48 h-48 rounded-2xl overflow-hidden shrink-0 bg-surface-container-high">
-        <img class="w-full h-full object-cover" src="{{ $imgUrl }}" alt="{{ $firstTr?->name ?? 'Treatment' }}">
-    </div>
+<div class="group relative bg-white rounded-2xl p-3 sm:p-4 border border-[#F4DDE1] shadow-sm hover:shadow-md hover:border-primary/40 transition-all duration-300 ease-out flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 {{ $statusVal === 'canceled' || $statusVal === 'cancelled' ? 'opacity-75' : '' }}" style="font-family:'Work Sans',sans-serif">
+    {{-- Left Side: Thumbnail + Info Details --}}
+    <div class="flex items-center gap-3 sm:gap-3.5 min-w-0 flex-1">
+        {{-- Compact Square Thumbnail --}}
+        <div class="relative shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-[#FFF0F2] border border-[#F4DDE1] overflow-hidden">
+            @if($heroPhoto)
+                <img src="{{ $heroPhoto }}" alt="{{ $treatmentNames }}" width="96" height="96" class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105" loading="lazy">
+            @else
+                <div class="w-full h-full flex items-center justify-center p-2 bg-white">
+                    <img src="{{ asset('logo/yalia-logos.svg') }}" alt="Yalia Beauty" width="48" height="48" class="w-12 h-12 object-contain">
+                </div>
+            @endif
+        </div>
 
-    <div class="flex-1 w-full space-y-4">
-        <div class="flex flex-wrap justify-between items-start gap-4">
-            <div>
-                <span class="{{ $statusBadgeClass }} px-3 py-1 rounded-full text-label-md font-label-md">{{ $statusLabel }}</span>
-                <h3 class="text-headline-sm font-headline-sm mt-2">
-                    {{ $booking->treatments->pluck('name')->join(', ') }}
-                </h3>
-                @if($booking->beautician)
-                    <p class="text-body-md font-body-md text-on-surface-variant mt-1">
-                        with Specialist <span class="font-bold">{{ $booking->beautician->name }}</span>
-                    </p>
+        {{-- Center Details --}}
+        <div class="min-w-0 flex-1 space-y-1">
+            <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="font-mono text-xs font-bold text-primary bg-[#FFF0F2] px-2 py-0.5 rounded-md border border-[#F4DDE1]">
+                    #{{ $booking->booking_code }}
+                </span>
+
+                @if($booking->booking_type === 'home_service' || $booking->booking_type === 'home')
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200">
+                        <i class="fa-solid fa-house-chimney text-xs"></i>
+                        <span>Home</span>
+                    </span>
+                @else
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                        <i class="fa-solid fa-store text-xs"></i>
+                        <span>Salon</span>
+                    </span>
                 @endif
-            </div>
-            <div class="text-right">
-                <p class="text-headline-sm font-headline-sm text-primary">Rp {{ number_format($booking->total_amount, 0, ',', '.') }}</p>
-                <p class="text-body-sm font-body-sm text-on-surface-variant">{{ $booking->booking_code }}</p>
-            </div>
-        </div>
 
-        <div class="flex flex-wrap gap-6 text-on-surface-variant">
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary">calendar_month</span>
-                <span class="text-body-md font-body-md">{{ $booking->booking_date->translatedFormat('l, d M Y') }}</span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-bold border {{ $statusColor['bg'] }} {{ $statusColor['text'] }} {{ $statusColor['border'] }}">
+                    <span class="w-1.5 h-1.5 rounded-full {{ $statusColor['dot'] }} shrink-0"></span>
+                    <span>{{ $badgeLabel }}</span>
+                </span>
             </div>
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary">schedule</span>
-                <span class="text-body-md font-body-md">{{ $booking->time_start }} - {{ $booking->time_end }}</span>
+
+            <h3 class="font-bold text-[#2B0F23] text-sm sm:text-base leading-snug truncate group-hover:text-primary transition-colors" style="font-family:'Playfair Display',serif">
+                {{ $treatmentNames }}
+            </h3>
+
+            <div class="flex items-center gap-2 text-xs text-[#5C1439]/70 flex-wrap">
+                <span class="inline-flex items-center gap-1 font-medium">
+                    <i class="fa-regular fa-calendar text-primary text-xs"></i>
+                    <span>{{ $dayStr }}, {{ $dateStr }}</span>
+                </span>
+                <span class="opacity-40">·</span>
+                <span class="inline-flex items-center gap-1 font-medium">
+                    <i class="fa-regular fa-clock text-primary text-xs"></i>
+                    <span>{{ $tStart }} – {{ $tEnd }}</span>
+                </span>
+                <span class="opacity-40">·</span>
+                <span class="inline-flex items-center gap-1 font-medium truncate max-w-[140px]">
+                    <i class="fa-solid fa-wand-magic-sparkles text-primary text-xs"></i>
+                    <span>{{ $booking->beautician?->name ?? 'Auto' }}</span>
+                </span>
             </div>
         </div>
     </div>
 
-    <div class="flex flex-col gap-3 w-full lg:w-48">
-        <a href="{{ route('user.bookings.show', $booking) }}"
-           class="w-full text-center bg-primary text-on-primary py-3 rounded-full text-button hover:bg-secondary transition-all active:scale-95">
-            View Details
-        </a>
+    {{-- Right Side: Price + Actions --}}
+    <div class="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#F4DDE1]/60">
+        <div class="text-left sm:text-right">
+            <span class="text-xs font-extrabold text-[#5C1439]/60 uppercase tracking-wider block sm:leading-none">Total</span>
+            <span class="text-sm sm:text-base font-black text-primary font-mono leading-tight">
+                {{ $booking->formatted_total }}
+            </span>
+        </div>
 
-        @if(in_array($stVal, ['pending', 'confirmed']))
-            <form method="POST" action="{{ route('user.bookings.cancel', $booking) }}"
-                  onsubmit="return confirm('Cancel this booking?')">
-                @csrf
-                @method('PATCH')
-                <button type="submit" class="w-full border border-tertiary text-tertiary py-3 rounded-full text-button hover:bg-surface-container-high transition-all">
-                    Cancel
-                </button>
-            </form>
-        @endif
+        <div class="flex items-center gap-1.5 flex-wrap">
+            <a href="{{ route('user.bookings.show', $booking) }}" class="px-3 py-1 rounded-full text-xs font-bold bg-[#FFF6FA] border border-[#F4DDE1] text-[#2B0F23] hover:bg-[#FFF0F2] hover:text-primary active:scale-95 transition-all flex items-center gap-1">
+                <i class="fa-regular fa-eye text-xs"></i>
+                <span>Detail</span>
+            </a>
+
+            @if(in_array($statusVal, ['pending', 'confirmed']))
+                <form method="POST" action="{{ route('user.bookings.cancel', $booking) }}" onsubmit="return confirm('Batalkan reservasi ini?');" class="inline-flex m-0 p-0">
+                    @csrf
+                    @method('PATCH')
+                    <button type="submit" class="px-2.5 py-1 rounded-full border border-rose-200 text-rose-600 hover:bg-rose-50 active:scale-95 transition-all text-xs font-bold flex items-center gap-0.5 cursor-pointer" title="Batalkan">
+                        <i class="fa-solid fa-xmark text-xs"></i>
+                        <span>Batal</span>
+                    </button>
+                </form>
+            @endif
+        </div>
     </div>
 </div>
