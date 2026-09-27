@@ -165,7 +165,7 @@
                                     <td class="py-3.5 px-5 text-xs">
                                         @if($tr->badge === 'best_seller')
                                             <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold">
-                                                <i class="fa-solid fa-fire text-xs"></i> Best Seller
+                                                <i class="fa-solid fa-fire text-xs"></i> Best
                                             </span>
                                         @elseif($tr->badge === 'new')
                                             <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">

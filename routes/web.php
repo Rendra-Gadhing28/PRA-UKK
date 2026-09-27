@@ -228,14 +228,6 @@ Route::middleware(['auth', AdminMiddleware::class])
             Route::post('/{booking}/reply-review', [AdminBookingController::class, 'replyReview'])->name('reply-review');
         });
 
-        // Admin Reviews & Feedback Moderation Center
-        Route::prefix('reviews')->name('reviews.')->group(function () {
-            Route::get('/', [AdminReviewController::class, 'index'])->name('index');
-            Route::post('/{review}/reply', [AdminReviewController::class, 'reply'])->name('reply');
-            Route::patch('/{review}/toggle-approve', [AdminReviewController::class, 'toggleApprove'])->name('toggle-approve');
-            Route::delete('/{review}', [AdminReviewController::class, 'destroy'])->name('destroy');
-        });
-
         // Admin Treatments Management
         Route::prefix('treatments')->name('treatments.')->group(function () {
             Route::get('/', [AdminTreatmentController::class, 'index'])->name('index');
@@ -268,6 +260,14 @@ Route::middleware(['auth', AdminMiddleware::class])
             Route::put('/{voucher}', [AdminVoucherController::class, 'update'])->name('update');
             Route::delete('/{voucher}', [AdminVoucherController::class, 'destroy'])->name('destroy');
             Route::match(['POST', 'PATCH'], '/{voucher}/toggle-active', [AdminVoucherController::class, 'toggleActive'])->name('toggle-active');
+        });
+
+        // Admin Reviews & Customer Feedback Management
+        Route::prefix('reviews')->name('reviews.')->group(function () {
+            Route::get('/', [AdminReviewController::class, 'index'])->name('index');
+            Route::post('/{review}/reply', [AdminReviewController::class, 'reply'])->name('reply');
+            Route::patch('/{review}/toggle-approve', [AdminReviewController::class, 'toggleApprove'])->name('toggle-approve');
+            Route::delete('/{review}', [AdminReviewController::class, 'destroy'])->name('destroy');
         });
 
         // Admin Finances Management (Track Pengeluaran & Scan Struk)

@@ -126,6 +126,19 @@
                 @endif
             </a>
 
+            {{-- Ulasan Pelanggan --}}
+            <a href="{{ Route::has('admin.reviews.index') ? route('admin.reviews.index') : '#' }}" 
+               class="flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-200 {{ request()->routeIs('admin.reviews.*') ? 'admin-nav-active' : 'admin-nav-idle' }}"
+               style="{{ request()->routeIs('admin.reviews.*') ? 'background: linear-gradient(135deg, #b01f44 0%, #c82d53 50%, #e0247e 100%); color: #ffffff;' : '' }}">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-comments text-base shrink-0"></i>
+                    <span>Ulasan Pelanggan</span>
+                </div>
+                @if(request()->routeIs('admin.reviews.*'))
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-300"></span>
+                @endif
+            </a>
+
             <div class="px-3 pt-3 pb-1 text-xs font-black uppercase tracking-wider text-rose-950/40">Finance & Promos</div>
 
             {{-- Keuangan / Finances --}}

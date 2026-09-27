@@ -54,7 +54,7 @@
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">Badge Promo *</label>
                             <select name="badge" required class="w-full px-4 py-3 text-sm rounded-2xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472]">
                                 <option value="none" {{ old('badge') === 'none' ? 'selected' : '' }}>None (Tidak Ada)</option>
-                                <option value="best_seller" {{ old('badge') === 'best_seller' ? 'selected' : '' }}>Best Seller</option>
+                                <option value="best_seller" {{ old('badge') === 'best_seller' ? 'selected' : '' }}>Best</option>
                                 <option value="new" {{ old('badge') === 'new' ? 'selected' : '' }}>New (Terbaru)</option>
                                 <option value="promo" {{ old('badge') === 'promo' ? 'selected' : '' }}>Promo</option>
                             </select>

@@ -130,7 +130,7 @@
         <main class="flex-grow">
 
             <!-- 2. HERO SECTION -->
-            <section class="relative overflow-hidden py-12 lg:py-20 bg-gradient-to-b from-[#fff8f8] via-[#fdf5f6] to-[#fff8f8]">
+            <section class="relative overflow-hidden py-12 lg:py-20 bg-gradient-to-b from-[#fff8f9] via-[#ffe8ed] to-[#fff0f2]">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
                         
@@ -195,7 +195,7 @@
                                 <div class="absolute -inset-4 rounded-3xl bg-gradient-to-tr from-[#ffd2e1] to-[#f4dde1] blur-2xl opacity-60"></div>
                                 
                                 <!-- MAIN FEATURED CARD -->
-                                <div class="relative bg-white rounded-2xl p-6 sm:p-8 border border-[#e0bec1] shadow-[0_10px_30px_rgba(37,24,28,0.06)] w-full">
+                                <div class="relative bg-white/95 rounded-2xl p-6 sm:p-8 border border-[#e0bec1] shadow-[0_10px_30px_rgba(37,24,28,0.06)] w-full">
                                     
                                     <div class="flex items-center justify-between mb-6">
                                         <div class="flex items-center gap-2">
@@ -207,7 +207,7 @@
                                     </div>
 
                                     <!-- SERVICE CARD PREVIEW -->
-                                    <div class="p-5 rounded-2xl bg-[#fff8f8] border border-[#e0bec1]/60 mb-6">
+                                    <div class="p-5 rounded-2xl bg-[#fff8f9] border border-[#e0bec1]/60 mb-6">
                                         <div class="flex items-start justify-between">
                                             <div>
                                                 <h3 class="font-serif-heading font-bold text-lg text-[#25181c]">Hydrating Facial & Gel Nail Art</h3>
@@ -254,7 +254,7 @@
             </section>
 
             <!-- 3. LAYANAN UNGGULAN -->
-            <section id="layanan" class="py-16 lg:py-24 bg-white">
+            <section id="layanan" class="py-16 lg:py-24 bg-[#fff0f2] border-t border-[#f4dde1]">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     
                     <div class="text-center max-w-2xl mx-auto mb-16">
@@ -271,7 +271,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full">
                         
                         <!-- CARD 1: FACIAL -->
-                        <div class="bg-[#fff8f8] rounded-2xl p-6 border border-[#e0bec1]/70 hover:shadow-[0_8px_24px_rgba(37,24,28,0.08)] hover:-translate-y-1 transition-all flex flex-col justify-between w-full">
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] hover:shadow-[0_8px_24px_rgba(37,24,28,0.08)] hover:-translate-y-1 transition-all flex flex-col justify-between w-full">
                             <div>
                                 <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-6">
                                     <i class="fa-solid fa-spa text-xl"></i>
@@ -289,7 +289,7 @@
                         </div>
 
                         <!-- CARD 2: HAIR -->
-                        <div class="bg-[#fff8f8] rounded-2xl p-6 border border-[#e0bec1]/70 hover:shadow-[0_8px_24px_rgba(37,24,28,0.08)] hover:-translate-y-1 transition-all flex flex-col justify-between w-full">
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] hover:shadow-[0_8px_24px_rgba(37,24,28,0.08)] hover:-translate-y-1 transition-all flex flex-col justify-between w-full">
                             <div>
                                 <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-6">
                                     <i class="fa-solid fa-scissors text-xl"></i>
@@ -307,7 +307,7 @@
                         </div>
 
                         <!-- CARD 3: NAIL ART -->
-                        <div class="bg-[#fff8f8] rounded-2xl p-6 border border-[#e0bec1]/70 hover:shadow-[0_8px_24px_rgba(37,24,28,0.08)] hover:-translate-y-1 transition-all flex flex-col justify-between w-full">
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] hover:shadow-[0_8px_24px_rgba(37,24,28,0.08)] hover:-translate-y-1 transition-all flex flex-col justify-between w-full">
                             <div>
                                 <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-6">
                                     <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
@@ -325,7 +325,7 @@
                         </div>
 
                         <!-- CARD 4: BODY SPA -->
-                        <div class="bg-[#fff8f8] rounded-2xl p-6 border border-[#e0bec1]/70 hover:shadow-[0_8px_24px_rgba(37,24,28,0.08)] hover:-translate-y-1 transition-all flex flex-col justify-between w-full">
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] hover:shadow-[0_8px_24px_rgba(37,24,28,0.08)] hover:-translate-y-1 transition-all flex flex-col justify-between w-full">
                             <div>
                                 <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-6">
                                     <i class="fa-solid fa-hot-tub-person text-xl"></i>
@@ -348,7 +348,7 @@
             </section>
 
             <!-- 4. KENAPA PILIH YALIA (VALUE PROPOSITION) -->
-            <section id="keunggulan" class="py-16 lg:py-24 bg-[#fff8f8]">
+            <section id="keunggulan" class="py-16 lg:py-24 bg-gradient-to-b from-[#fff0f2] via-[#ffe8ed] to-[#fae2e7] border-t border-[#f4dde1]">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     
                     <div class="text-center max-w-2xl mx-auto mb-16">
@@ -364,7 +364,7 @@
                     <!-- 4 VALUE PROPOSITIONS HORIZONTAL GRID -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 w-full">
                         
-                        <div class="bg-white rounded-2xl p-6 border border-[#e0bec1] shadow-xs text-left w-full">
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs text-left w-full">
                             <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-5">
                                 <i class="fa-solid fa-user-nurse text-xl"></i>
                             </div>
@@ -372,7 +372,7 @@
                             <p class="text-xs text-[#594043] leading-relaxed">Seluruh beautician berpengalaman min 3 tahun dan telah lulus ujian sertifikasi resmi.</p>
                         </div>
 
-                        <div class="bg-white rounded-2xl p-6 border border-[#e0bec1] shadow-xs text-left w-full">
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs text-left w-full">
                             <div class="w-12 h-12 rounded-2xl bg-[#d2fff0] text-[#2a3330] flex items-center justify-center mb-5 border border-[#7e9990]/40">
                                 <i class="fa-solid fa-shield-virus text-xl text-[#059669]"></i>
                             </div>
@@ -380,7 +380,7 @@
                             <p class="text-xs text-[#594043] leading-relaxed">Peralatan kuku & jarum sekali pakai, disinfeksi UV instrumen sebelum & sesudah perawatan.</p>
                         </div>
 
-                        <div class="bg-white rounded-2xl p-6 border border-[#e0bec1] shadow-xs text-left w-full">
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs text-left w-full">
                             <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-5">
                                 <i class="fa-solid fa-bottle-droplet text-xl"></i>
                             </div>
@@ -388,7 +388,7 @@
                             <p class="text-xs text-[#594043] leading-relaxed">Hanya menggunakan bahan skincare & kutek gel bersertifikasi BPOM yang aman bagi kulit.</p>
                         </div>
 
-                        <div class="bg-white rounded-2xl p-6 border border-[#e0bec1] shadow-xs text-left w-full">
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs text-left w-full">
                             <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-5">
                                 <i class="fa-solid fa-calendar-check text-xl"></i>
                             </div>
@@ -402,7 +402,7 @@
             </section>
 
             <!-- 5. GALERI HASIL KERJA -->
-            <section id="galeri" class="py-16 lg:py-24 bg-white">
+            <section id="galeri" class="py-16 lg:py-24 bg-[#fae2e7] border-t border-[#f4dde1]">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     
                     <div class="text-center max-w-2xl mx-auto mb-16">
@@ -418,7 +418,7 @@
                     <!-- GRID GALERI DINAMIS -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
                         @forelse($galleryTreatments as $item)
-                        <div class="relative overflow-hidden rounded-2xl bg-[#ffe8ed] aspect-square group border border-[#e0bec1]/50 w-full">
+                        <div class="relative overflow-hidden rounded-2xl bg-[#ffe8ed] aspect-square group border border-[#e0bec1]/50 w-full shadow-sm">
                             @if($item->images)
                                 <img src="{{ $item->image_url }}" alt="{{ $item->name }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                             @else
@@ -446,7 +446,7 @@
             </section>
 
             <!-- 6. TESTIMONI PELANGGAN -->
-            <section id="testimoni" class="py-16 lg:py-24 bg-[#fff8f8]">
+            <section id="testimoni" class="py-16 lg:py-24 bg-gradient-to-b from-[#fae2e7] via-[#fdf5f6] to-[#fff8f9] border-t border-[#f4dde1]">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     
                     <div class="text-center max-w-2xl mx-auto mb-16">
@@ -461,7 +461,7 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
                         @forelse($approvedReviews as $review)
-                        <div class="bg-white rounded-2xl p-6 border border-[#e0bec1] shadow-xs flex flex-col justify-between w-full">
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs flex flex-col justify-between w-full">
                             <div>
                                 <div class="text-[#f59e0b] text-sm mb-3 space-x-1">
                                     @for($i = 1; $i <= 5; $i++)
@@ -490,7 +490,7 @@
                             </div>
                         </div>
                         @empty
-                        <div class="bg-white rounded-2xl p-6 border border-[#e0bec1] shadow-xs flex flex-col justify-between w-full">
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs flex flex-col justify-between w-full">
                             <div>
                                 <div class="text-[#f59e0b] text-sm mb-3 space-x-1">
                                     <i class="fa-solid fa-star"></i>
@@ -512,7 +512,7 @@
                             </div>
                         </div>
 
-                        <div class="bg-white rounded-2xl p-6 border border-[#e0bec1] shadow-xs flex flex-col justify-between w-full">
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs flex flex-col justify-between w-full">
                             <div>
                                 <div class="text-[#f59e0b] text-sm mb-3 space-x-1">
                                     <i class="fa-solid fa-star"></i>
@@ -534,7 +534,7 @@
                             </div>
                         </div>
 
-                        <div class="bg-white rounded-2xl p-6 border border-[#e0bec1] shadow-xs flex flex-col justify-between w-full">
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs flex flex-col justify-between w-full">
                             <div>
                                 <div class="text-[#f59e0b] text-sm mb-3 space-x-1">
                                     <i class="fa-solid fa-star"></i>
@@ -561,16 +561,19 @@
                 </div>
             </section>
 
-            <!-- 7. MEMBERSHIP / VIP TIER CARDS -->
-            <section id="membership" class="py-16 lg:py-24 bg-white">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <!-- 7. MEMBERSHIP / VIP TIER CARDS (LUXURY PLUM CENTERPIECE) -->
+            <section id="membership" class="py-16 lg:py-24 bg-[#25181c] text-white relative overflow-hidden border-y border-[#594043]">
+                <div class="absolute -top-24 -left-24 w-96 h-96 bg-[#b01f44]/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-[#f59e0b]/15 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
                     
                     <div class="text-center max-w-2xl mx-auto mb-16">
-                        <span class="text-xs uppercase tracking-widest font-semibold text-[#9b4054]">Loyalty Rewards</span>
-                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c] mt-2 mb-4">
+                        <span class="text-xs uppercase tracking-widest font-semibold text-[#ffd2e1]">Loyalty Rewards</span>
+                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-white mt-2 mb-4">
                             Keanggotaan VIP Membership
                         </h2>
-                        <p class="text-base text-[#594043]">
+                        <p class="text-base text-rose-200/90">
                             Kumpulkan poin setiap perawatan dan nikmati diskon khusus serta voucher gratis di setiap tier.
                         </p>
                     </div>
@@ -579,7 +582,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
                         
                         <!-- SILVER TIER CARD -->
-                        <div class="rounded-2xl p-8 text-white shadow-lg flex flex-col justify-between relative overflow-hidden bg-[#0f172a] w-full" 
+                        <div class="rounded-2xl p-8 text-white shadow-lg flex flex-col justify-between relative overflow-hidden bg-[#0f172a] w-full border border-cyan-400/30" 
                              style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #0369a1 70%, #0c4a6e 100%);">
                             <div>
                                 <span class="text-xs uppercase tracking-widest text-[#e2e8f0] font-semibold">Tier Starter</span>
@@ -612,7 +615,7 @@
                         </div>
 
                         <!-- PURPLE VIP TIER CARD -->
-                        <div class="rounded-2xl p-8 text-white shadow-lg flex flex-col justify-between relative overflow-hidden bg-[#1e1b4b] w-full" 
+                        <div class="rounded-2xl p-8 text-white shadow-lg flex flex-col justify-between relative overflow-hidden bg-[#1e1b4b] w-full border border-purple-400/30" 
                              style="background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 40%, #6b21a8 70%, #2e1065 100%);">
                             <div>
                                 <span class="text-xs uppercase tracking-widest text-[#e9d5ff] font-semibold">Tier Eksklusif</span>
@@ -633,7 +636,7 @@
             </section>
 
             <!-- 8. CARA BOOKING -->
-            <section class="py-16 lg:py-24 bg-[#fff8f8]">
+            <section class="py-16 lg:py-24 bg-gradient-to-b from-[#fff5f8] via-[#ffe8ed] to-[#fff0f2] border-t border-[#f4dde1]">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     
                     <div class="text-center max-w-2xl mx-auto mb-16">
@@ -648,19 +651,19 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center w-full">
                         
-                        <div class="bg-white rounded-2xl p-8 border border-[#e0bec1] shadow-xs w-full">
+                        <div class="bg-white/95 rounded-2xl p-8 border border-[#e0bec1] shadow-xs w-full">
                             <div class="w-12 h-12 rounded-full bg-[#b01f44] text-white font-bold text-lg flex items-center justify-center mx-auto mb-6 shadow-sm">1</div>
                             <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2">Pilih Layanan & Lokasi</h3>
                             <p class="text-xs text-[#594043] leading-relaxed">Tentukan jenis perawatan (Facial, Hair, Nail) serta pilih datang ke Salon atau Dipanggil ke Rumah.</p>
                         </div>
 
-                        <div class="bg-white rounded-2xl p-8 border border-[#e0bec1] shadow-xs w-full">
+                        <div class="bg-white/95 rounded-2xl p-8 border border-[#e0bec1] shadow-xs w-full">
                             <div class="w-12 h-12 rounded-full bg-[#b01f44] text-white font-bold text-lg flex items-center justify-center mx-auto mb-6 shadow-sm">2</div>
                             <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2">Pilih Jadwal & Beautician</h3>
                             <p class="text-xs text-[#594043] leading-relaxed">Lihat slot jam ketersediaan realtime dan pilih beautician favorit langganan Anda.</p>
                         </div>
 
-                        <div class="bg-white rounded-2xl p-8 border border-[#e0bec1] shadow-xs w-full">
+                        <div class="bg-white/95 rounded-2xl p-8 border border-[#e0bec1] shadow-xs w-full">
                             <div class="w-12 h-12 rounded-full bg-[#b01f44] text-white font-bold text-lg flex items-center justify-center mx-auto mb-6 shadow-sm">3</div>
                             <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2">Konfirmasi & Pembayaran</h3>
                             <p class="text-xs text-[#594043] leading-relaxed">Bayar praktis via QRIS/Transfer Midtrans atau pilih opsi Cash saat perawatan selesai.</p>
@@ -672,7 +675,7 @@
             </section>
 
             <!-- 9. LOKASI & JAM OPERASIONAL -->
-            <section id="lokasi" class="py-16 lg:py-24 bg-white">
+            <section id="lokasi" class="py-16 lg:py-24 bg-[#fff0f2] border-t border-[#f4dde1]">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
                         
@@ -732,7 +735,7 @@
 
                         <!-- RIGHT COLUMN: LEAFLET JS MAP CONTAINER -->
                         <div class="w-full">
-                            <div class="bg-[#fff8f8] rounded-2xl p-4 sm:p-6 border border-[#e0bec1] shadow-md w-full relative">
+                            <div class="bg-white/95 rounded-2xl p-4 sm:p-6 border border-[#e0bec1] shadow-md w-full relative">
                                 <div id="yalia-map" class="w-full h-80 lg:h-[420px] rounded-xl border border-[#e0bec1]/60 shadow-inner overflow-hidden z-0"></div>
                             </div>
                         </div>
@@ -788,7 +791,7 @@
             </script>
 
             <!-- 10. FAQ ACCORDION -->
-            <section id="faq" class="py-16 lg:py-24 bg-[#fff8f8]">
+            <section id="faq" class="py-16 lg:py-24 bg-gradient-to-b from-[#fff0f2] via-[#ffe8ed] to-[#fae2e7] border-t border-[#f4dde1]">
                 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     
                     <div class="text-center max-w-2xl mx-auto mb-16">
@@ -805,7 +808,7 @@
                     <div x-data="{ activeFaq: 1 }" class="space-y-4 w-full">
                         
                         <!-- FAQ ITEM 1 -->
-                        <div class="bg-white rounded-2xl border border-[#e0bec1] overflow-hidden shadow-xs w-full">
+                        <div class="bg-white/95 rounded-2xl border border-[#e0bec1] overflow-hidden shadow-xs w-full">
                             <button @click="activeFaq = (activeFaq === 1 ? null : 1)" 
                                     type="button"
                                     class="w-full p-6 text-left font-serif-heading font-bold text-lg text-[#25181c] flex items-center justify-between focus:outline-none">
@@ -818,7 +821,7 @@
                         </div>
 
                         <!-- FAQ ITEM 2 -->
-                        <div class="bg-white rounded-2xl border border-[#e0bec1] overflow-hidden shadow-xs w-full">
+                        <div class="bg-white/95 rounded-2xl border border-[#e0bec1] overflow-hidden shadow-xs w-full">
                             <button @click="activeFaq = (activeFaq === 2 ? null : 2)" 
                                     type="button"
                                     class="w-full p-6 text-left font-serif-heading font-bold text-lg text-[#25181c] flex items-center justify-between focus:outline-none">
@@ -831,7 +834,7 @@
                         </div>
 
                         <!-- FAQ ITEM 3 -->
-                        <div class="bg-white rounded-2xl border border-[#e0bec1] overflow-hidden shadow-xs w-full">
+                        <div class="bg-white/95 rounded-2xl border border-[#e0bec1] overflow-hidden shadow-xs w-full">
                             <button @click="activeFaq = (activeFaq === 3 ? null : 3)" 
                                     type="button"
                                     class="w-full p-6 text-left font-serif-heading font-bold text-lg text-[#25181c] flex items-center justify-between focus:outline-none">
@@ -844,7 +847,7 @@
                         </div>
 
                         <!-- FAQ ITEM 4 -->
-                        <div class="bg-white rounded-2xl border border-[#e0bec1] overflow-hidden shadow-xs w-full">
+                        <div class="bg-white/95 rounded-2xl border border-[#e0bec1] overflow-hidden shadow-xs w-full">
                             <button @click="activeFaq = (activeFaq === 4 ? null : 4)" 
                                     type="button"
                                     class="w-full p-6 text-left font-serif-heading font-bold text-lg text-[#25181c] flex items-center justify-between focus:outline-none">
