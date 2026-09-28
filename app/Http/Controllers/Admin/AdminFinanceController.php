@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Bookings;
 use App\Models\ExpenseCategories;
 use App\Models\Transactions;
+use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -138,7 +139,7 @@ class AdminFinanceController extends Controller
         $categoryModel = ExpenseCategories::where('name', $validated['category'])->first();
         $icon = $categoryModel ? $categoryModel->icon : 'receipt';
 
-        Transactions::create([
+        $transaction = Transactions::create([
             'type' => 'expense',
             'category' => $validated['category'],
             'icon' => $icon,
@@ -152,6 +153,11 @@ class AdminFinanceController extends Controller
                 'scanned' => $request->boolean('is_scanned', false),
             ],
             'created_by' => auth()->id(),
+        ]);
+
+        ActivityLogger::log('create', "Mencatat pengeluaran keuangan '{$validated['title']}' senilai Rp ".number_format($validated['amount'], 0, ',', '.').'.', $transaction, [
+            'category' => $validated['category'],
+            'amount' => $validated['amount'],
         ]);
 
         ToastHelper::success("Pengeluaran '{$validated['title']}' senilai Rp ".number_format($validated['amount'], 0, ',', '.').' berhasil dicatat! 💳');
@@ -170,6 +176,8 @@ class AdminFinanceController extends Controller
 
         $title = $finance->title;
         $finance->delete();
+
+        ActivityLogger::log('delete', "Menghapus catatan pengeluaran '{$title}'.");
 
         ToastHelper::success("Catatan pengeluaran '{$title}' berhasil dihapus.");
 

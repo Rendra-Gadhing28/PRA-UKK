@@ -163,7 +163,7 @@ class AdminReviewManagementTest extends TestCase
         $response = $this->actingAs($this->admin)->delete(route('admin.reviews.destroy', $review));
         $response->assertRedirect();
 
-        $this->assertDatabaseMissing('reviews', [
+        $this->assertSoftDeleted('reviews', [
             'id' => $review->id,
         ]);
     }

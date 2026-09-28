@@ -44,11 +44,11 @@
                     
                     {{-- Search Input --}}
                     <div class="sm:col-span-3">
-                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                        <label for="filter_user_search" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                             <i class="fa-solid fa-magnifying-glass text-rose-500 text-xs"></i>
                             Cari User (Nama / Email / Telp)
                         </label>
-                        <input type="text" name="search" value="{{ request('search') }}" 
+                        <input id="filter_user_search" type="text" name="search" value="{{ request('search') }}" 
                                placeholder="Ketik untuk mencari user..." 
                                class="w-full px-4 py-2.5 text-xs font-semibold rounded-xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472] text-gray-800 placeholder-gray-400 bg-gray-50/50">
                     </div>
@@ -92,7 +92,7 @@
                                     </td>
                                     
                                     <td class="px-6 py-4">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $user->role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800' }}">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $user->role === 'admin' ? 'bg-purple-100 text-purple-900 border border-purple-200' : 'bg-rose-50 text-[#594043] border border-rose-100' }}">
                                             {{ ucfirst($user->role) }}
                                         </span>
                                     </td>
@@ -113,10 +113,10 @@
                                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border {{ $badgeStyle }}">
                                                     {{ ucfirst($user->membership_level ?? 'Regular') }}
                                                 </span>
-                                                <p class="text-[11px] text-gray-500 font-medium">
-                                                    <span class="font-bold text-gray-800">{{ number_format($user->tier_points ?? 0) }}</span> Tier PTS
+                                                <p class="text-xs text-gray-500 font-medium">
+                                                    <span class="font-bold text-gray-800 tabular-nums">{{ number_format($user->tier_points ?? 0) }}</span> Tier PTS
                                                     <span class="text-gray-300 mx-1">|</span>
-                                                    Total: <span class="font-semibold">{{ number_format($user->total_points ?? 0) }}</span> PTS
+                                                    Total: <span class="font-semibold tabular-nums">{{ number_format($user->total_points ?? 0) }}</span> PTS
                                                 </p>
                                             </div>
                                         @else
@@ -137,7 +137,8 @@
                                                     class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#f45472] focus:ring-offset-2 {{ $user->is_active ? 'bg-[#f45472]' : 'bg-gray-200' }} {{ auth()->id() === $user->id ? 'opacity-50 cursor-not-allowed' : '' }}"
                                                     role="switch" 
                                                     aria-checked="{{ $user->is_active ? 'true' : 'false' }}"
-                                                    title="{{ auth()->id() === $user->id ? 'Akun Anda' : ($user->is_active ? 'Nonaktifkan User' : 'Aktifkan User') }}">
+                                                    title="{{ auth()->id() === $user->id ? 'Akun Anda' : ($user->is_active ? 'Nonaktifkan User' : 'Aktifkan User') }}"
+                                                    aria-label="{{ $user->is_active ? 'Nonaktifkan akun ' . $user->name : 'Aktifkan akun ' . $user->name }}">
                                                 <span class="sr-only">Toggle active status</span>
                                                 <span aria-hidden="true" 
                                                       style="transform: translateX({{ $user->is_active ? '1.25rem' : '0rem' }});"
@@ -152,7 +153,7 @@
                                                   onsubmit="return confirm('Apakah Anda yakin ingin menghapus user ini secara permanen? Data yang berkaitan dengan user ini mungkin akan hilang atau bermasalah jika ada foreign key yang tidak cascade.');">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Hapus User">
+                                                <button type="submit" class="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Hapus User" aria-label="Hapus user {{ $user->name }}">
                                                     <i class="fa-solid fa-trash text-sm"></i>
                                                 </button>
                                             </form>

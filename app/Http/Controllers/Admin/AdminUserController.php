@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Helpers\ToastHelper;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -12,11 +13,18 @@ use Illuminate\Support\Facades\Storage;
 class AdminUserController extends Controller
 {
     /**
-     * Tampilkan daftar user dengan pencarian.
+     * Tampilkan daftar user dengan pencarian & tab aktif/tong sampah.
      */
     public function index(Request $request)
     {
+        $tab = $request->get('tab', 'active');
         $query = User::query();
+
+        if ($tab === 'trashed') {
+            $query->onlyTrashed();
+        } else {
+            $query->withoutTrashed();
+        }
 
         if ($request->filled('search')) {
             $search = trim($request->search);
@@ -27,9 +35,14 @@ class AdminUserController extends Controller
             });
         }
 
-        $users = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+        $users = $query->orderBy($tab === 'trashed' ? 'deleted_at' : 'created_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
 
-        return view('admin.users.index', compact('users'));
+        $activeCount = User::withoutTrashed()->count();
+        $trashedCount = User::onlyTrashed()->count();
+
+        return view('admin.users.index', compact('users', 'tab', 'activeCount', 'trashedCount'));
     }
 
     /**
@@ -56,13 +69,17 @@ class AdminUserController extends Controller
         }
 
         $status = $user->is_active ? 'diaktifkan' : 'dinonaktifkan';
+        ActivityLogger::log('toggle_status', "Mengubah status user '{$user->name}' menjadi {$status}.", $user, [
+            'is_active' => $user->is_active,
+        ]);
+
         ToastHelper::success("Akun user {$user->name} berhasil {$status}.");
 
         return back();
     }
 
     /**
-     * Hapus user beserta avatarnya.
+     * Soft delete user (Pindahkan ke tong sampah).
      */
     public function destroy(User $user)
     {
@@ -73,19 +90,76 @@ class AdminUserController extends Controller
             return back();
         }
 
-        // Hapus avatar jika ada
-        if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
-            Storage::disk('public')->delete($user->avatar);
-        }
-
         $userName = $user->name;
+        $user->delete();
+
+        // Invalidate user session
         try {
             DB::table('sessions')->where('user_id', $user->id)->delete();
         } catch (\Throwable $e) {
         }
-        $user->delete();
+
+        ActivityLogger::log('delete', "Memindahkan user '{$userName}' ke tong sampah (soft delete).", $user);
+
+        ToastHelper::success("Akun user {$userName} berhasil dipindahkan ke tong sampah.");
+
+        return back();
+    }
+
+    /**
+     * Pulihkan user dari tong sampah.
+     */
+    public function restore(int $id)
+    {
+        $user = User::onlyTrashed()->findOrFail($id);
+        $user->restore();
+
+        ActivityLogger::log('restore', "Memulihkan user '{$user->name}' dari tong sampah.", $user);
+
+        ToastHelper::success("Akun user {$user->name} berhasil dipulihkan.");
+
+        return back();
+    }
+
+    /**
+     * Hapus permanen user beserta avatar & session.
+     */
+    public function forceDelete(int $id)
+    {
+        $user = User::onlyTrashed()->findOrFail($id);
+        $userName = $user->name;
+
+        // Hapus file avatar jika ada
+        if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+            Storage::disk('public')->delete($user->avatar);
+        }
+
+        try {
+            DB::table('sessions')->where('user_id', $user->id)->delete();
+        } catch (\Throwable $e) {
+        }
+
+        $user->forceDelete();
+
+        ActivityLogger::log('force_delete', "Menghapus permanen akun user '{$userName}'.");
 
         ToastHelper::success("Akun user {$userName} berhasil dihapus permanen.");
+
+        return back();
+    }
+
+    /**
+     * Simulasi loncat 30 hari di tong sampah user.
+     */
+    public function simulateSkip30Days(Request $request)
+    {
+        $id = $request->input('user_id');
+        $count = ActivityLogger::simulateSkipTrash30Days('users', $id ? (int) $id : null);
+
+        $purged = ActivityLogger::purgeExpiredTrash();
+        $purgedCount = $purged['users'] ?? 0;
+
+        ToastHelper::success("Simulasi Skip 30 Hari berhasil! {$count} user di tong sampah dimajukan 31 hari ke belakang. {$purgedCount} user yang >30 hari langsung dibersihkan permanen.");
 
         return back();
     }
@@ -100,6 +174,8 @@ class AdminUserController extends Controller
             'membership_level' => 'regular',
             'last_tier_reset_at' => now(),
         ]);
+
+        ActivityLogger::log('update', "Mereset membership seluruh {$affectedCount} customer kembali ke Regular.");
 
         ToastHelper::success("Reset kuartalan berhasil! Sebanyak {$affectedCount} akun customer telah dikembalikan ke status Regular (0 Tier Points).");
 
@@ -124,6 +200,8 @@ class AdminUserController extends Controller
             $user->save();
             $resetCount++;
         }
+
+        ActivityLogger::log('update', "Simulasi 90 hari reset membership pada {$resetCount} user.");
 
         ToastHelper::warning("Simulasi 90 Hari (After 90D) berhasil dijalankan! {$resetCount} customer telah diproses reset kuartalan ke Regular.");
 

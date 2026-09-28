@@ -6,6 +6,7 @@ use App\Helpers\ToastHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use App\Models\Treatments;
+use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -98,7 +99,7 @@ class AdminTreatmentController extends Controller
             $imageName = Treatments::IMAGE_DIRECTORY.'/'.$imageName;
         }
 
-        Treatments::create([
+        $treatment = Treatments::create([
             'name' => $validated['name'],
             'slug' => $slug,
             'category_id' => $validated['category_id'],
@@ -115,6 +116,11 @@ class AdminTreatmentController extends Controller
         ]);
 
         $this->bumpCacheVersion();
+
+        ActivityLogger::log('create', "Menambahkan treatment baru '{$treatment->name}'.", $treatment, [
+            'price' => $treatment->price,
+            'category_id' => $treatment->category_id,
+        ]);
 
         ToastHelper::success("Treatment '{$validated['name']}' berhasil ditambahkan! 🌸");
 
@@ -185,27 +191,28 @@ class AdminTreatmentController extends Controller
 
         $this->bumpCacheVersion();
 
+        ActivityLogger::log('update', "Memperbarui data treatment '{$treatment->name}'.", $treatment, [
+            'price' => $treatment->price,
+        ]);
+
         ToastHelper::success("Treatment '{$treatment->name}' berhasil diperbarui! ✨");
 
         return redirect()->route('admin.treatments.index');
     }
 
     /**
-     * Hapus treatment dari database.
+     * Hapus treatment dari database (soft delete).
      */
     public function destroy(Treatments $treatment)
     {
         $name = $treatment->name;
-
-        if ($treatment->images) {
-            Storage::disk('public')->delete(Treatments::IMAGE_DIRECTORY.'/'.$treatment->images);
-        }
-
         $treatment->delete();
 
         $this->bumpCacheVersion();
 
-        ToastHelper::success("Treatment '{$name}' berhasil dihapus.");
+        ActivityLogger::log('delete', "Memindahkan treatment '{$name}' ke tong sampah (soft delete).", $treatment);
+
+        ToastHelper::success("Treatment '{$name}' berhasil dipindahkan ke tong sampah.");
 
         return redirect()->route('admin.treatments.index');
     }
@@ -221,6 +228,8 @@ class AdminTreatmentController extends Controller
         $this->bumpCacheVersion();
 
         $statusText = $treatment->is_active ? 'diaktifkan' : 'dinonaktifkan';
+        ActivityLogger::log('toggle_status', "Mengubah status treatment '{$treatment->name}' menjadi {$statusText}.", $treatment);
+
         ToastHelper::info("Status treatment '{$treatment->name}' berhasil {$statusText}.");
 
         return redirect()->back();

@@ -15,6 +15,7 @@ use App\Http\Requests\User\RescheduleBookingRequest;
 use App\Models\Bookings;
 use App\Models\Treatments;
 use App\Models\UserVouchers;
+use App\Services\ActivityLogger;
 use App\Services\Booking\BeauticianAssignmentService;
 use App\Services\Booking\BookingService;
 use App\Services\Booking\PhotoAssignService;
@@ -393,6 +394,12 @@ class BookingController extends Controller
                 paymentType: $request->validated('payment_type') ?? 'cashless',
                 beauticianId: $beauticianId,
             );
+
+            ActivityLogger::log('create', "Membuat reservasi booking baru #{$booking->booking_code}.", $booking, [
+                'booking_type' => $booking->booking_type,
+                'total_amount' => $booking->total_amount,
+                'booking_date' => $booking->booking_date ? $booking->booking_date->toDateString() : null,
+            ]);
         } catch (NoBeauticianAvailableException $e) {
             throw ValidationException::withMessages([
                 'time_start' => $e->getMessage(),
@@ -601,6 +608,11 @@ class BookingController extends Controller
                     'is_m30_reminded' => false,
                 ]);
 
+                ActivityLogger::log('reschedule', "Mengubah jadwal reservasi #{$booking->booking_code} ke {$bookingDate->format('d/m/Y')} {$timeStart} WIB.", $booking, [
+                    'new_date' => $bookingDate->toDateString(),
+                    'new_time' => $timeStart,
+                ]);
+
                 return back()->with('success', 'Jadwal reservasi berhasil diubah ke tanggal '.$bookingDate->format('d/m/Y').' jam '.$timeStart.' WIB.');
             });
         } catch (NoBeauticianAvailableException $e) {
@@ -618,6 +630,8 @@ class BookingController extends Controller
         $this->authorizeOwnership($booking);
 
         $this->photoAssignService->process($booking, $request->file('photo_assign'));
+
+        ActivityLogger::log('update', "Mengunggah foto hasil pengerjaan treatment untuk reservasi #{$booking->booking_code}.", $booking);
 
         return back()->with('success', 'Foto hasil treatment berhasil diunggah.');
     }
@@ -680,5 +694,9 @@ class BookingController extends Controller
             'version' => $booking->version + 1,
         ]);
         $booking->refresh();
+
+        ActivityLogger::log('cancel', "Membatalkan reservasi booking #{$booking->booking_code}.", $booking, [
+            'reason' => $reason,
+        ]);
     }
 }

@@ -11,7 +11,7 @@
             
             <div class="flex items-center gap-3">
                 <a href="{{ route('admin.treatments.create') }}" 
-                   class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#f45472] text-white hover:bg-[#d93856] text-sm font-semibold shadow-md transition-all">
+                   class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#f45472] text-white hover:bg-[#d93856] text-xs font-bold shadow-md transition-all">
                     <i class="fa-solid fa-plus text-xs"></i>
                     <span>Tambah Treatment Baru</span>
                 </a>
@@ -30,11 +30,11 @@
                         
                         {{-- Filter Category --}}
                         <div class="sm:col-span-2">
-                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                            <label for="filter_treatment_category" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                                 <i class="fa-solid fa-layer-group text-rose-500 text-xs"></i>
                                 Kategori Treatment
                             </label>
-                            <select name="category_id" class="w-full px-4 py-2.5 text-xs font-semibold rounded-xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472] text-gray-800 bg-white">
+                            <select id="filter_treatment_category" name="category_id" class="w-full px-4 py-2.5 text-xs font-semibold rounded-xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472] text-gray-800 bg-white">
                                 <option value="all" {{ request('category_id', 'all') === 'all' ? 'selected' : '' }}>Semua Kategori</option>
                                 @foreach($categories as $cat)
                                     <option value="{{ $cat->id }}" {{ (string)request('category_id') === (string)$cat->id ? 'selected' : '' }}>
@@ -46,19 +46,20 @@
 
                         {{-- Search Input --}}
                         <div class="sm:col-span-3">
-                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                            <label for="filter_treatment_search" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                                 <i class="fa-solid fa-magnifying-glass text-rose-500 text-xs"></i>
                                 Cari Treatment
                             </label>
                             <div class="relative">
-                                <input type="text" name="search" placeholder="Nama atau deskripsi treatment..." value="{{ request('search') }}" 
+                                <input id="filter_treatment_search" type="text" name="search" placeholder="Nama atau deskripsi treatment..." value="{{ request('search') }}" 
                                        class="w-full pl-10 pr-8 py-2.5 text-xs font-semibold rounded-xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472] text-gray-800">
                                 <div class="absolute left-3.5 top-1/2 -translate-y-1/2 text-rose-400">
                                     <i class="fa-solid fa-magnifying-glass text-xs"></i>
                                 </div>
                                 @if(request('search'))
                                     <a href="{{ route('admin.treatments.index', array_filter(['category_id' => request('category_id')])) }}" 
-                                       class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-rose-600 transition-colors">
+                                       class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-rose-600 transition-colors"
+                                       aria-label="Hapus kata kunci pencarian">
                                         <i class="fa-solid fa-xmark text-xs"></i>
                                     </a>
                                 @endif
@@ -71,7 +72,7 @@
                                 <i class="fa-solid fa-sliders text-xs"></i>
                                 <span>Filter</span>
                             </button>
-                            <a href="{{ route('admin.treatments.index') }}" class="py-2.5 px-3 rounded-xl bg-rose-100 text-rose-950 text-xs font-semibold hover:bg-rose-200 transition-all flex items-center justify-center" title="Reset Filter">
+                            <a href="{{ route('admin.treatments.index') }}" class="py-2.5 px-3 rounded-xl bg-rose-100 text-rose-950 text-xs font-semibold hover:bg-rose-200 transition-all flex items-center justify-center" title="Reset Filter" aria-label="Reset filter pencarian">
                                 <i class="fa-solid fa-rotate-left text-xs"></i>
                             </a>
                         </div>
@@ -213,16 +214,19 @@
                                             {{-- Confirmation Modal --}}
                                             <template x-if="showConfirm">
                                                 <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+                                                     role="dialog"
+                                                     aria-modal="true"
+                                                     aria-labelledby="toggle-modal-title-{{ $tr->id }}"
                                                      @click.self="showConfirm = false"
                                                      @keydown.escape.window="showConfirm = false">
                                                     <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full mx-4 border border-rose-100"
                                                          @click.stop>
                                                         <div class="flex items-center gap-3 mb-4">
                                                             <div class="w-10 h-10 rounded-full flex items-center justify-center {{ $tr->is_active ? 'bg-amber-100 text-amber-600' : 'bg-emerald-100 text-emerald-600' }}">
-                                                                <i class="fa-solid {{ $tr->is_active ? 'fa-triangle-exclamation' : 'fa-circle-check' }} text-lg"></i>
+                                                                <i class="fa-solid {{ $tr->is_active ? 'fa-triangle-exclamation' : 'fa-circle-check' }} text-lg" aria-hidden="true"></i>
                                                             </div>
                                                             <div>
-                                                                <h4 class="text-sm font-bold text-gray-900">{{ $tr->is_active ? 'Nonaktifkan Treatment?' : 'Aktifkan Treatment?' }}</h4>
+                                                                <h4 id="toggle-modal-title-{{ $tr->id }}" class="text-sm font-bold text-gray-900">{{ $tr->is_active ? 'Nonaktifkan Treatment?' : 'Aktifkan Treatment?' }}</h4>
                                                                 <p class="text-xs text-gray-500 mt-0.5">{{ $tr->name }}</p>
                                                             </div>
                                                         </div>
@@ -232,7 +236,7 @@
                                                                 : 'Treatment ini akan kembali tampil di halaman booking pelanggan.' }}
                                                         </p>
                                                         <div class="flex items-center gap-2">
-                                                            <button type="button" @click="showConfirm = false"
+                                                            <button type="button" @click="showConfirm = false" autofocus
                                                                     class="flex-1 py-2.5 px-4 rounded-xl bg-gray-100 text-gray-700 text-xs font-bold hover:bg-gray-200 transition-colors">
                                                                 Batal
                                                             </button>

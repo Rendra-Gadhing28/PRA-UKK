@@ -82,7 +82,7 @@ class Bookings extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id')->withTrashed();
     }
 
     public function Users(): BelongsTo
@@ -92,7 +92,7 @@ class Bookings extends Model
 
     public function beautician(): BelongsTo
     {
-        return $this->belongsTo(Beauticians::class, 'beautician_id');
+        return $this->belongsTo(Beauticians::class, 'beautician_id')->withTrashed();
     }
 
     public function Beauticians(): BelongsTo
@@ -113,6 +113,7 @@ class Bookings extends Model
     public function treatments(): BelongsToMany
     {
         return $this->belongsToMany(Treatments::class, 'booking_treatments', 'booking_id', 'treatment_id')
+            ->withTrashed()
             ->withPivot(['quantity', 'price_per_unit', 'subtotal']);
     }
 

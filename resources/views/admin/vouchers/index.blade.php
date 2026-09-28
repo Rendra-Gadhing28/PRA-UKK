@@ -29,11 +29,11 @@
                         
                         {{-- Filter Status --}}
                         <div class="sm:col-span-2">
-                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                            <label for="filter_voucher_status" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                                 <i class="fa-solid fa-filter text-rose-500 text-xs"></i>
                                 Status Voucher
                             </label>
-                            <select name="status" class="w-full px-3 py-2.5 text-xs font-semibold rounded-xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472] text-gray-800 bg-white">
+                            <select id="filter_voucher_status" name="status" class="w-full px-3 py-2.5 text-xs font-semibold rounded-xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472] text-gray-800 bg-white">
                                 <option value="all" {{ request('status', 'all') === 'all' ? 'selected' : '' }}>Semua Status</option>
                                 <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Aktif & Berlaku</option>
                                 <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nonaktif</option>
@@ -43,12 +43,12 @@
 
                         {{-- Search Input --}}
                         <div class="sm:col-span-3">
-                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                            <label for="filter_voucher_search" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                                 <i class="fa-solid fa-magnifying-glass text-rose-500 text-xs"></i>
                                 Cari Kode / Nama Voucher
                             </label>
                             <div class="relative">
-                                <input type="text" name="search" placeholder="Kode promo (contoh: WELCOME10) atau nama voucher..." value="{{ request('search') }}" 
+                                <input id="filter_voucher_search" type="text" name="search" placeholder="Kode promo (contoh: WELCOME10) atau nama voucher..." value="{{ request('search') }}" 
                                        class="w-full pl-9 pr-4 py-2.5 text-xs font-semibold rounded-xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472] text-gray-800">
                                 <div class="absolute left-3 top-1/2 -translate-y-1/2 text-rose-400">
                                     <i class="fa-solid fa-magnifying-glass text-xs"></i>
@@ -62,7 +62,7 @@
                                 <i class="fa-solid fa-sliders text-xs"></i>
                                 <span>Filter</span>
                             </button>
-                            <a href="{{ route('admin.vouchers.index') }}" class="py-2.5 px-3 rounded-xl bg-rose-100/70 text-rose-950 text-xs font-semibold hover:bg-rose-200 transition-all flex items-center justify-center" title="Reset Filter">
+                            <a href="{{ route('admin.vouchers.index') }}" class="py-2.5 px-3 rounded-xl bg-rose-100/70 text-rose-950 text-xs font-semibold hover:bg-rose-200 transition-all flex items-center justify-center" title="Reset Filter" aria-label="Reset filter pencarian">
                                 <i class="fa-solid fa-rotate-left text-xs"></i>
                             </a>
                         </div>
@@ -306,24 +306,27 @@
                                         {{-- Alpine.js Confirmation Modal --}}
                                         <template x-if="showConfirm">
                                             <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+                                                 role="dialog"
+                                                 aria-modal="true"
+                                                 aria-labelledby="delete-voucher-modal-title-{{ $v->id }}"
                                                  @click.self="showConfirm = false"
                                                  @keydown.escape.window="showConfirm = false">
                                                 <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full mx-4 border border-rose-100 text-left text-gray-900"
                                                      @click.stop>
                                                     <div class="flex items-center gap-3 mb-4">
                                                         <div class="w-10 h-10 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
-                                                            <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+                                                            <i class="fa-solid fa-triangle-exclamation text-lg" aria-hidden="true"></i>
                                                         </div>
                                                         <div>
-                                                            <h4 class="text-sm font-bold text-gray-900">Hapus Voucher Promo?</h4>
+                                                            <h4 id="delete-voucher-modal-title-{{ $v->id }}" class="text-sm font-bold text-gray-900">Hapus Voucher Promo?</h4>
                                                             <p class="text-xs text-gray-500 mt-0.5 font-mono">{{ $v->code }}</p>
                                                         </div>
                                                     </div>
                                                     <p class="text-xs text-gray-600 mb-5 leading-relaxed">
-                                                        Voucher <strong>{{ $v->name }}</strong> akan dihapus secara permanen.
+                                                        Voucher <strong>{{ $v->name }}</strong> akan dipindahkan ke tong sampah (soft delete).
                                                     </p>
                                                     <div class="flex items-center gap-2">
-                                                        <button type="button" @click="showConfirm = false"
+                                                        <button type="button" @click="showConfirm = false" autofocus
                                                                 class="flex-1 py-2.5 px-4 rounded-xl bg-gray-100 text-gray-700 text-xs font-bold hover:bg-gray-200 transition-colors">
                                                             Batal
                                                         </button>

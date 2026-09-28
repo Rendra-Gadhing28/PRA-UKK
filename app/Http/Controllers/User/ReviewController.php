@@ -9,6 +9,7 @@ use App\Models\Bookings;
 use App\Models\Reviews;
 use App\Models\Treatments;
 use App\Models\User;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -72,7 +73,7 @@ class ReviewController extends Controller
         $beauticianRating = $request->input('beautician_rating') ? (int) $request->input('beautician_rating') : (int) $request->rating;
         $beauticianTags = $request->input('beautician_tags') ? json_encode($request->input('beautician_tags')) : null;
 
-        Reviews::create([
+        $review = Reviews::create([
             'booking_id' => $booking->id,
             'user_id' => Auth::id(),
             'beautician_id' => $booking->beautician_id,
@@ -82,6 +83,11 @@ class ReviewController extends Controller
             'comment' => $request->comment,
             'photo' => $photoPath,
             'is_approved' => true,
+        ]);
+
+        ActivityLogger::log('create', "Memberikan ulasan bintang {$request->rating} untuk reservasi #{$booking->booking_code}.", $review, [
+            'rating' => $request->rating,
+            'beautician_rating' => $beauticianRating,
         ]);
 
         // Berikan Reward +15 PTS ke User

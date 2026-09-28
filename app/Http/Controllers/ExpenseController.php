@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\ToastHelper;
 use App\Models\Expense;
 use App\Models\ExpenseItem;
+use App\Services\ActivityLogger;
 use App\Services\ReceiptScannerService;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -146,6 +147,11 @@ class ExpenseController extends Controller
                         'category' => $item['category'] ?? 'Kebutuhan',
                     ]);
                 }
+
+                ActivityLogger::log('create', "Mencatat pengeluaran di '{$expense->merchant}' senilai Rp ".number_format($expense->total_amount, 0, ',', '.').'.', $expense, [
+                    'merchant' => $expense->merchant,
+                    'total_amount' => $expense->total_amount,
+                ]);
             });
 
             if ($request->wantsJson()) {

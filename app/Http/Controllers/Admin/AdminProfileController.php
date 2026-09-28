@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -46,6 +47,8 @@ class AdminProfileController extends Controller
 
         $user->save();
 
+        ActivityLogger::log('update', "Admin '{$user->name}' memperbarui profil.", $user);
+
         return Redirect::route('admin.profile.edit')->with('status', 'profile-updated');
     }
 
@@ -59,9 +62,12 @@ class AdminProfileController extends Controller
             'password' => ['required', Password::defaults(), 'confirmed'],
         ]);
 
-        $request->user()->update([
+        $user = $request->user();
+        $user->update([
             'password' => Hash::make($validated['password']),
         ]);
+
+        ActivityLogger::log('update', "Admin '{$user->name}' memperbarui kata sandi akun.", $user);
 
         return Redirect::route('admin.profile.edit')->with('status', 'password-updated');
     }

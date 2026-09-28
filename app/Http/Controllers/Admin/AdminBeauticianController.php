@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Helpers\ToastHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Beauticians;
+use App\Services\ActivityLogger;
 use App\Support\ImageHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -69,7 +70,7 @@ class AdminBeauticianController extends Controller
             $file->storeAs(Beauticians::PHOTO_DIRECTORY, $photoName, 'public');
         }
 
-        Beauticians::create([
+        $beautician = Beauticians::create([
             'name' => $validated['name'],
             'phone' => $validated['phone'] ?? null,
             'email' => $validated['email'] ?? null,
@@ -78,6 +79,8 @@ class AdminBeauticianController extends Controller
             'is_active' => $request->boolean('is_active', true),
             'total_bookings' => 0,
         ]);
+
+        ActivityLogger::log('create', "Menambahkan staf beautician baru '{$beautician->name}'.", $beautician);
 
         ToastHelper::success("Staf beautician '{$validated['name']}' berhasil ditambahkan! 🌸");
 
@@ -146,25 +149,24 @@ class AdminBeauticianController extends Controller
 
         $beautician->update($updateData);
 
+        ActivityLogger::log('update', "Memperbarui profil beautician '{$beautician->name}'.", $beautician);
+
         ToastHelper::success("Profil beautician '{$beautician->name}' berhasil diperbarui! ✨");
 
         return redirect()->route('admin.beauticians.index');
     }
 
     /**
-     * Hapus data beautician.
+     * Hapus data beautician (soft delete).
      */
     public function destroy(Beauticians $beautician)
     {
         $name = $beautician->name;
-
-        if ($beautician->photo) {
-            Storage::disk('public')->delete(Beauticians::PHOTO_DIRECTORY.'/'.$beautician->photo);
-        }
-
         $beautician->delete();
 
-        ToastHelper::success("Staf beautician '{$name}' berhasil dihapus.");
+        ActivityLogger::log('delete', "Memindahkan beautician '{$name}' ke tong sampah (soft delete).", $beautician);
+
+        ToastHelper::success("Staf beautician '{$name}' berhasil dipindahkan ke tong sampah.");
 
         return redirect()->route('admin.beauticians.index');
     }
@@ -178,6 +180,8 @@ class AdminBeauticianController extends Controller
         $beautician->save();
 
         $statusText = $beautician->is_active ? 'diaktifkan kembali' : 'dinonaktifkan';
+        ActivityLogger::log('toggle_status', "Mengubah status beautician '{$beautician->name}' menjadi {$statusText}.", $beautician);
+
         ToastHelper::info("Status penugasan '{$beautician->name}' berhasil {$statusText}.");
 
         return redirect()->back();

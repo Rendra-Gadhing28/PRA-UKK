@@ -195,6 +195,34 @@
                 @endif
             </a>
 
+            <div class="px-3 pt-3 pb-1 text-xs font-black uppercase tracking-wider text-rose-950/40">Sistem & Audit</div>
+
+            {{-- Activity Logs --}}
+            <a href="{{ route('admin.activity-logs.index') }}" 
+               class="flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-200 {{ request()->routeIs('admin.activity-logs.*') ? 'admin-nav-active' : 'admin-nav-idle' }}"
+               style="{{ request()->routeIs('admin.activity-logs.*') ? 'background: linear-gradient(135deg, #b01f44 0%, #c82d53 50%, #e0247e 100%); color: #ffffff;' : '' }}">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-clock-rotate-left text-base shrink-0"></i>
+                    <span>Log Aktivitas</span>
+                </div>
+                @if(request()->routeIs('admin.activity-logs.*'))
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-300"></span>
+                @endif
+            </a>
+
+            {{-- Tong Sampah (Trash) --}}
+            <a href="{{ route('admin.trash.index') }}" 
+               class="flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-200 {{ request()->routeIs('admin.trash.*') ? 'admin-nav-active' : 'admin-nav-idle' }}"
+               style="{{ request()->routeIs('admin.trash.*') ? 'background: linear-gradient(135deg, #b01f44 0%, #c82d53 50%, #e0247e 100%); color: #ffffff;' : '' }}">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-trash-can text-base shrink-0"></i>
+                    <span>Tong Sampah</span>
+                </div>
+                @if(request()->routeIs('admin.trash.*'))
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-300"></span>
+                @endif
+            </a>
+
             <div class="pt-3 border-t border-rose-100/70 my-2"></div>
 
             {{-- Switch to User Site --}}

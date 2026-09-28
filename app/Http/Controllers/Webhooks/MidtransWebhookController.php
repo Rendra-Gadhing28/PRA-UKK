@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Webhooks;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bookings;
+use App\Services\ActivityLogger;
 use App\Services\Payment\MidtransQrisService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -69,21 +70,32 @@ class MidtransWebhookController extends Controller
 
         match (true) {
             in_array($transactionStatus, ['capture', 'settlement'], true)
-                && $fraudStatus !== 'deny' => $booking->update([
-                    'payment_status' => $booking->payment_type === 'cash' ? 'dp_paid' : 'paid',
-                    'status' => 'confirmed',
-                    'payment_verified_at' => now(),
-                    'midtrans_transaction_id' => $payload['transaction_id'] ?? $booking->midtrans_transaction_id,
-                    'version' => $booking->version + 1,
-                ]),
+                && $fraudStatus !== 'deny' => (function () use ($booking, $payload) {
+                    $booking->update([
+                        'payment_status' => $booking->payment_type === 'cash' ? 'dp_paid' : 'paid',
+                        'status' => 'confirmed',
+                        'payment_verified_at' => now(),
+                        'midtrans_transaction_id' => $payload['transaction_id'] ?? $booking->midtrans_transaction_id,
+                        'version' => $booking->version + 1,
+                    ]);
+                    ActivityLogger::log('payment_success', "Pembayaran Midtrans berhasil untuk reservasi #{$booking->booking_code}.", $booking, [
+                        'transaction_status' => $payload['transaction_status'] ?? null,
+                        'gross_amount' => $payload['gross_amount'] ?? null,
+                    ], $booking->user);
+                })(),
 
-            in_array($transactionStatus, ['expire', 'cancel', 'deny'], true) => $booking->update([
-                'payment_status' => 'unpaid',
-                'status' => 'canceled',
-                'cancel_reason' => "Pembayaran {$transactionStatus} via Midtrans.",
-                'canceled_at' => now(),
-                'version' => $booking->version + 1,
-            ]),
+            in_array($transactionStatus, ['expire', 'cancel', 'deny'], true) => (function () use ($booking, $transactionStatus) {
+                $booking->update([
+                    'payment_status' => 'unpaid',
+                    'status' => 'canceled',
+                    'cancel_reason' => "Pembayaran {$transactionStatus} via Midtrans.",
+                    'canceled_at' => now(),
+                    'version' => $booking->version + 1,
+                ]);
+                ActivityLogger::log('payment_failed', "Pembayaran Midtrans gagal ({$transactionStatus}) untuk reservasi #{$booking->booking_code}.", $booking, [
+                    'status' => $transactionStatus,
+                ], $booking->user);
+            })(),
 
             $transactionStatus === 'pending' => $booking->update([
                 'payment_status' => 'pending',

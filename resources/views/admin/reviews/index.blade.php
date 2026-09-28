@@ -3,7 +3,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h2 class="font-bold text-2xl text-gray-900 tracking-tight flex items-center gap-3 font-headline">
-                    <span class="w-3 h-8 bg-primary rounded-full inline-block"></span>
+                    <span class="w-4 h-8 bg-primary rounded-full inline-block"></span>
                     Manajemen Ulasan & Feedback Pelanggan
                 </h2>
                 <p class="text-sm text-gray-500 mt-1">Pantau kepuasan pelanggan, ulasan treatment, rating beautician, dan balas feedback secara langsung.</p>
@@ -118,22 +118,22 @@
 
                     {{-- Search Text --}}
                     <div class="sm:col-span-5">
-                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                        <label for="filter_review_search" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                             <i class="fa-solid fa-magnifying-glass text-primary text-xs"></i>
                             Cari Kata Kunci
                         </label>
-                        <input type="text" name="search" value="{{ $currentSearch }}"
+                        <input id="filter_review_search" type="text" name="search" value="{{ $currentSearch }}"
                                placeholder="Nama customer, treatment, komentar, kode booking..."
                                class="w-full px-3.5 py-2.5 text-xs font-semibold rounded-xl border-gray-200 focus:border-primary focus:ring-primary text-gray-800">
                     </div>
 
                     {{-- Filter Beautician --}}
                     <div class="sm:col-span-3">
-                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                        <label for="filter_review_beautician" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                             <i class="fa-solid fa-user-nurse text-primary text-xs"></i>
                             Terapis / Beautician
                         </label>
-                        <select name="beautician_id" class="w-full px-3 py-2.5 text-xs font-semibold rounded-xl border-gray-200 focus:border-primary focus:ring-primary text-gray-800">
+                        <select id="filter_review_beautician" name="beautician_id" class="w-full px-3 py-2.5 text-xs font-semibold rounded-xl border-gray-200 focus:border-primary focus:ring-primary text-gray-800">
                             <option value="">Semua Terapis</option>
                             @foreach($beauticiansList as $b)
                                 <option value="{{ $b->id }}" {{ (string)$selectedBeautician === (string)$b->id ? 'selected' : '' }}>
@@ -145,11 +145,11 @@
 
                     {{-- Sort Option --}}
                     <div class="sm:col-span-2">
-                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                        <label for="filter_review_sort" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                             <i class="fa-solid fa-arrow-down-short-wide text-primary text-xs"></i>
                             Urutan
                         </label>
-                        <select name="sort" class="w-full px-3 py-2.5 text-xs font-semibold rounded-xl border-gray-200 focus:border-primary focus:ring-primary text-gray-800">
+                        <select id="filter_review_sort" name="sort" class="w-full px-3 py-2.5 text-xs font-semibold rounded-xl border-gray-200 focus:border-primary focus:ring-primary text-gray-800">
                             <option value="latest" {{ $currentSort === 'latest' ? 'selected' : '' }}>Terbaru</option>
                             <option value="oldest" {{ $currentSort === 'oldest' ? 'selected' : '' }}>Terlama</option>
                             <option value="rating_desc" {{ $currentSort === 'rating_desc' ? 'selected' : '' }}>Rating Tertinggi</option>
@@ -163,7 +163,7 @@
                             <i class="fa-solid fa-filter text-xs"></i>
                             <span>Terapkan</span>
                         </button>
-                        <a href="{{ route('admin.reviews.index') }}" class="py-2.5 px-3 rounded-xl bg-rose-100/70 text-rose-950 text-xs font-semibold hover:bg-rose-200 transition-all flex items-center justify-center" title="Reset">
+                        <a href="{{ route('admin.reviews.index') }}" class="py-2.5 px-3 rounded-xl bg-rose-100/70 text-rose-950 text-xs font-semibold hover:bg-rose-200 transition-all flex items-center justify-center" title="Reset" aria-label="Reset filter pencarian">
                             <i class="fa-solid fa-rotate-left text-xs"></i>
                         </a>
                     </div>

@@ -4,6 +4,7 @@ namespace App\Services\User;
 
 use App\Models\UserVouchers;
 use App\Models\Vouchers;
+use App\Services\ActivityLogger;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -173,6 +174,11 @@ class UserVoucherService
                      .'dan tersimpan di akun Anda! 🎟️';
             $type = 'regular';
         }
+
+        ActivityLogger::log('claim', "Mengklaim voucher '{$voucher->code}' ({$voucher->name}).", $voucher, [
+            'points_required' => $voucher->points_required,
+            'is_event' => $voucher->is_event,
+        ]);
 
         return $this->result(true, $type, $message);
     }

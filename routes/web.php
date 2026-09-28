@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminActivityLogController;
 use App\Http\Controllers\Admin\AdminBeauticianController;
 use App\Http\Controllers\Admin\AdminBookingController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminFinanceController;
 use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\AdminReviewController;
+use App\Http\Controllers\Admin\AdminTrashController;
 use App\Http\Controllers\Admin\AdminTreatmentController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminVoucherController;
@@ -292,6 +294,27 @@ Route::middleware(['auth', AdminMiddleware::class])
             Route::get('/', [AdminProfileController::class, 'edit'])->name('edit');
             Route::patch('/', [AdminProfileController::class, 'update'])->name('update');
             Route::put('/password', [AdminProfileController::class, 'updatePassword'])->name('password.update');
+        });
+
+        // Admin Activity Logs (Audit Log)
+        Route::prefix('activity-logs')->name('activity-logs.')->group(function () {
+            Route::get('/', [AdminActivityLogController::class, 'index'])->name('index');
+            Route::post('/{log}/archive', [AdminActivityLogController::class, 'archive'])->name('archive');
+            Route::post('/{log}/unarchive', [AdminActivityLogController::class, 'unarchive'])->name('unarchive');
+            Route::post('/bulk-archive', [AdminActivityLogController::class, 'bulkArchive'])->name('bulk-archive');
+            Route::post('/archive-expired', [AdminActivityLogController::class, 'archiveExpired'])->name('archive-expired');
+            Route::post('/simulate-skip-30d', [AdminActivityLogController::class, 'simulateSkip30Days'])->name('simulate-skip-30d');
+        });
+
+        // Admin Trash Management (Soft Delete Directory)
+        Route::prefix('trash')->name('trash.')->group(function () {
+            Route::get('/', [AdminTrashController::class, 'index'])->name('index');
+            Route::post('/{type}/{id}/restore', [AdminTrashController::class, 'restore'])->name('restore');
+            Route::delete('/{type}/{id}/force-delete', [AdminTrashController::class, 'forceDelete'])->name('force-delete');
+            Route::post('/restore-all', [AdminTrashController::class, 'restoreAll'])->name('restore-all');
+            Route::delete('/empty-trash', [AdminTrashController::class, 'emptyTrash'])->name('empty-trash');
+            Route::post('/purge-expired', [AdminTrashController::class, 'purgeExpired'])->name('purge-expired');
+            Route::post('/simulate-skip-30d', [AdminTrashController::class, 'simulateSkip30Days'])->name('simulate-skip-30d');
         });
     });
 

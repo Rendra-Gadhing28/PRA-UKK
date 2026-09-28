@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Beauticians;
 use App\Models\Reviews;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -116,6 +117,8 @@ class AdminReviewController extends Controller
             'admin_reply' => $request->input('admin_reply'),
         ]);
 
+        ActivityLogger::log('update', "Admin membalas ulasan ID #{$review->id}.", $review);
+
         return back()->with('success', 'Balasan ulasan berhasil disimpan & dikirim ke pelanggan.');
     }
 
@@ -126,6 +129,9 @@ class AdminReviewController extends Controller
     {
         $newStatus = ! $review->is_approved;
         $review->update(['is_approved' => $newStatus]);
+
+        $statusText = $newStatus ? 'Disetujui' : 'Disembunyikan';
+        ActivityLogger::log('toggle_status', "Mengubah status moderasi ulasan ID #{$review->id} menjadi {$statusText}.", $review);
 
         $msg = $newStatus
             ? 'Ulasan berhasil disetujui untuk ditampilkan di publik.'
@@ -139,7 +145,10 @@ class AdminReviewController extends Controller
      */
     public function destroy(Reviews $review): RedirectResponse
     {
+        $reviewId = $review->id;
         $review->delete();
+
+        ActivityLogger::log('delete', "Memindahkan ulasan ID #{$reviewId} ke tong sampah.", $review);
 
         return back()->with('success', 'Ulasan berhasil dihapus.');
     }

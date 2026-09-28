@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -55,6 +56,8 @@ class AuthenticatedSessionController extends Controller
 
         // Periksa status akun aktif
         if (! $user->is_active) {
+            ActivityLogger::log('login', "Percobaan login akun dinonaktifkan: {$user->email}", $user, ['status' => 'inactive']);
+
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
@@ -63,6 +66,11 @@ class AuthenticatedSessionController extends Controller
 
             return redirect()->route('login');
         }
+
+        ActivityLogger::log('login', "User '{$user->name}' ({$user->email}) berhasil login.", $user, [
+            'role' => $user->role,
+            'membership' => $user->membership_level,
+        ]);
 
         $namaDepan = explode(' ', $user->name)[0];
 
@@ -99,6 +107,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        ActivityLogger::log('register', "Pendaftaran pengguna baru '{$user->name}' ({$user->email}).", $user, [
+            'role' => $user->role,
+            'membership' => $user->membership_level,
+        ]);
+
         $namaDepan = explode(' ', $user->name)[0];
         ToastHelper::success("Selamat datang di Yalia Beauty, {$namaDepan}! 🌸  Akun Anda berhasil dibuat.");
 
@@ -112,6 +125,11 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $user = Auth::user();
+        if ($user) {
+            ActivityLogger::log('logout', "User '{$user->name}' ({$user->email}) telah logout.", $user);
+        }
+
         Auth::logout();
 
         // Invalidasi session dan regenerasi token untuk mencegah CSRF

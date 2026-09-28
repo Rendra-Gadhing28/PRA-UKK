@@ -22,7 +22,7 @@ class BookingTreatments extends Model
 
     public function treatment(): BelongsTo
     {
-        return $this->belongsTo(Treatments::class, 'treatment_id');
+        return $this->belongsTo(Treatments::class, 'treatment_id')->withTrashed();
     }
 
     public function Bookings(): BelongsTo

@@ -28,11 +28,11 @@ class Transactions extends Model
 
     public function Bookings()
     {
-        return $this->belongsTo(Bookings::class, 'booking_id');
+        return $this->belongsTo(Bookings::class, 'booking_id')->withTrashed();
     }
 
     public function creator()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by')->withTrashed();
     }
 }

@@ -16,31 +16,31 @@ class UserVouchers extends Model
 
     public function Users()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id')->withTrashed();
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id')->withTrashed();
     }
 
     public function Vouchers()
     {
-        return $this->belongsTo(Vouchers::class, 'voucher_id');
+        return $this->belongsTo(Vouchers::class, 'voucher_id')->withTrashed();
     }
 
     public function voucher()
     {
-        return $this->belongsTo(Vouchers::class, 'voucher_id');
+        return $this->belongsTo(Vouchers::class, 'voucher_id')->withTrashed();
     }
 
     public function Bookings()
     {
-        return $this->belongsTo(Bookings::class, 'booking_id');
+        return $this->belongsTo(Bookings::class, 'booking_id')->withTrashed();
     }
 
     public function booking()
     {
-        return $this->belongsTo(Bookings::class, 'booking_id');
+        return $this->belongsTo(Bookings::class, 'booking_id')->withTrashed();
     }
 }

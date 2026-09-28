@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Beauticians;
 use App\Models\Bookings;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Maatwebsite\Excel\Facades\Excel;
@@ -132,6 +133,12 @@ class AdminBookingController extends Controller
 
         $this->bumpBookingCache();
 
+        ActivityLogger::log('update', "Mengubah status reservasi #{$booking->booking_code} dari {$oldStatus} ke {$newStatus}.", $booking, [
+            'old_status' => $oldStatus,
+            'new_status' => $newStatus,
+            'cancel_reason' => $booking->cancel_reason,
+        ]);
+
         ToastHelper::success("Status reservasi #{$booking->booking_code} berhasil diubah dari {$oldStatus} ke {$newStatus}.");
 
         return redirect()->back();
@@ -161,6 +168,11 @@ class AdminBookingController extends Controller
         }
 
         $this->bumpBookingCache();
+
+        ActivityLogger::log('verify_payment', "Memverifikasi pembayaran reservasi #{$booking->booking_code} (Status: Lunas).", $booking, [
+            'total_amount' => $booking->total_amount,
+            'payment_method' => $booking->payment_method,
+        ]);
 
         $successMsg = $isDpPaid
             ? 'Pelunasan tunai sisa Rp '.number_format((float) $booking->remaining_amount, 0, ',', '.')." untuk reservasi #{$booking->booking_code} berhasil dicatat (Lunas)!"
@@ -200,6 +212,8 @@ class AdminBookingController extends Controller
 
         $bookings = $query->orderBy('booking_date', 'desc')->get();
 
+        ActivityLogger::log('export', 'Mengekspor laporan booking ke PDF.');
+
         $pdf = Pdf::loadView('admin.reports.bookings_pdf', compact('bookings', 'request'));
 
         return $pdf->download('Laporan_Booking_Yalia_Beauty_'.now()->format('Ymd_His').'.pdf');
@@ -230,6 +244,8 @@ class AdminBookingController extends Controller
         $bookings = $query->orderBy('booking_date', 'desc')->get();
         $fileName = 'Laporan_Booking_Yalia_Beauty_'.now()->format('Ymd_His').'.xlsx';
 
+        ActivityLogger::log('export', 'Mengekspor laporan booking ke Excel.');
+
         return Excel::download(new BookingsExport($bookings, $request->all()), $fileName);
     }
 
@@ -256,6 +272,8 @@ class AdminBookingController extends Controller
             ]);
 
         $this->bumpBookingCache();
+
+        ActivityLogger::log('update', "Admin membalas ulasan reservasi #{$booking->booking_code}.", $review);
 
         return back()->with('success', 'Balasan ulasan berhasil dikirim.');
     }

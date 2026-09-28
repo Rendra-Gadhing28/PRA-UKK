@@ -91,11 +91,11 @@
                         
                         {{-- Kategori --}}
                         <div>
-                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                            <label for="filter_finance_category" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                                 <i class="fa-solid fa-layer-group text-rose-500 text-xs"></i>
                                 Kategori
                             </label>
-                            <select name="category" class="w-full px-3 py-2.5 text-xs font-semibold rounded-xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472] text-gray-800 bg-white">
+                            <select id="filter_finance_category" name="category" class="w-full px-3 py-2.5 text-xs font-semibold rounded-xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472] text-gray-800 bg-white">
                                 <option value="all" {{ request('category', 'all') === 'all' ? 'selected' : '' }}>Semua Kategori</option>
                                 @foreach($categories as $cat)
                                     <option value="{{ $cat->name }}" {{ request('category') === $cat->name ? 'selected' : '' }}>
@@ -107,31 +107,31 @@
 
                         {{-- Tanggal Mulai --}}
                         <div>
-                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                            <label for="filter_finance_date_from" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                                 <i class="fa-regular fa-calendar text-rose-500 text-xs"></i>
                                 Dari Tanggal
                             </label>
-                            <input type="date" name="date_from" value="{{ request('date_from') }}"
+                            <input id="filter_finance_date_from" type="date" name="date_from" value="{{ request('date_from') }}"
                                    class="w-full px-3 py-2.5 text-xs font-semibold rounded-xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472] text-gray-800">
                         </div>
 
                         {{-- Tanggal Sampai --}}
                         <div>
-                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                            <label for="filter_finance_date_until" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                                 <i class="fa-regular fa-calendar-check text-rose-500 text-xs"></i>
                                 Sampai Tanggal
                             </label>
-                            <input type="date" name="date_until" value="{{ request('date_until') }}"
+                            <input id="filter_finance_date_until" type="date" name="date_until" value="{{ request('date_until') }}"
                                    class="w-full px-3 py-2.5 text-xs font-semibold rounded-xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472] text-gray-800">
                         </div>
 
                         {{-- Cari Kata Kunci --}}
                         <div>
-                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                            <label for="filter_finance_search" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                                 <i class="fa-solid fa-magnifying-glass text-rose-500 text-xs"></i>
                                 Cari Transaksi
                             </label>
-                            <input type="text" name="search" placeholder="Nama barang / judul..." value="{{ request('search') }}"
+                            <input id="filter_finance_search" type="text" name="search" placeholder="Nama barang / judul..." value="{{ request('search') }}"
                                    class="w-full px-3 py-2.5 text-xs font-semibold rounded-xl border-gray-200 focus:border-[#f45472] focus:ring-[#f45472] text-gray-800">
                         </div>
 
@@ -141,7 +141,7 @@
                                 <i class="fa-solid fa-sliders text-xs"></i>
                                 <span>Filter</span>
                             </button>
-                            <a href="{{ route('admin.finances.index') }}" class="py-2.5 px-3 rounded-xl bg-rose-100/70 text-rose-950 text-xs font-semibold hover:bg-rose-200 transition-all flex items-center justify-center" title="Reset Filter">
+                            <a href="{{ route('admin.finances.index') }}" class="py-2.5 px-3 rounded-xl bg-rose-100/70 text-rose-950 text-xs font-semibold hover:bg-rose-200 transition-all flex items-center justify-center" title="Reset Filter" aria-label="Reset filter pencarian">
                                 <i class="fa-solid fa-rotate-left text-xs"></i>
                             </a>
                         </div>
@@ -277,20 +277,25 @@
                                         </button>
 
                                         {{-- Struk Modal Preview --}}
-                                        <div x-show="showStrukModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+                                        <div x-show="showStrukModal" x-cloak 
+                                             role="dialog"
+                                             aria-modal="true"
+                                             aria-labelledby="struk-modal-title-{{ $item->id }}"
+                                             @keydown.escape.window="showStrukModal = false"
+                                             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
                                             <div @click.outside="showStrukModal = false" class="bg-white rounded-3xl p-6 max-w-lg w-full border border-rose-100 shadow-2xl space-y-4 relative">
                                                 <div class="flex items-center justify-between border-b border-rose-100 pb-3">
-                                                    <h3 class="font-bold text-gray-900 text-sm flex items-center gap-2 font-headline">
-                                                        <i class="fa-solid fa-receipt text-[#f45472] text-sm"></i>
+                                                    <h3 id="struk-modal-title-{{ $item->id }}" class="font-bold text-gray-900 text-sm flex items-center gap-2 font-headline">
+                                                        <i class="fa-solid fa-receipt text-[#f45472] text-sm" aria-hidden="true"></i>
                                                         Foto Struk Pengeluaran
                                                     </h3>
-                                                    <button @click="showStrukModal = false" class="text-gray-400 hover:text-rose-600 transition-colors">
+                                                    <button @click="showStrukModal = false" class="text-gray-400 hover:text-rose-600 transition-colors p-1" aria-label="Tutup foto struk">
                                                         <i class="fa-solid fa-xmark text-sm"></i>
                                                     </button>
                                                 </div>
 
                                                 <div class="overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 flex items-center justify-center max-h-96">
-                                                    <img src="{{ Storage::url($item->receipt_image) }}" alt="Foto Struk" class="max-h-96 w-full object-contain">
+                                                    <img src="{{ Storage::url($item->receipt_image) }}" alt="Foto Struk {{ $item->title }}" class="max-h-96 w-full object-contain">
                                                 </div>
 
                                                 <div class="flex items-center justify-between text-xs pt-2">
@@ -321,16 +326,19 @@
                                         {{-- Alpine.js Confirmation Modal --}}
                                         <template x-if="showConfirm">
                                             <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+                                                 role="dialog"
+                                                 aria-modal="true"
+                                                 aria-labelledby="delete-finance-modal-title-{{ $item->id }}"
                                                  @click.self="showConfirm = false"
                                                  @keydown.escape.window="showConfirm = false">
                                                 <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full mx-4 border border-rose-100 text-left"
                                                      @click.stop>
                                                     <div class="flex items-center gap-3 mb-4">
                                                         <div class="w-10 h-10 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
-                                                            <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+                                                            <i class="fa-solid fa-triangle-exclamation text-lg" aria-hidden="true"></i>
                                                         </div>
                                                         <div>
-                                                            <h4 class="text-sm font-bold text-gray-900">Hapus Catatan Pengeluaran?</h4>
+                                                            <h4 id="delete-finance-modal-title-{{ $item->id }}" class="text-sm font-bold text-gray-900">Hapus Catatan Pengeluaran?</h4>
                                                             <p class="text-xs text-gray-500 mt-0.5 truncate max-w-[200px]">{{ $item->title }}</p>
                                                         </div>
                                                     </div>
@@ -338,7 +346,7 @@
                                                         Data pengeluaran sebesar <strong class="text-rose-600 tabular-nums">Rp {{ number_format($item->amount, 0, ',', '.') }}</strong> akan dihapus permanen.
                                                     </p>
                                                     <div class="flex items-center gap-2">
-                                                        <button type="button" @click="showConfirm = false"
+                                                        <button type="button" @click="showConfirm = false" autofocus
                                                                 class="flex-1 py-2.5 px-4 rounded-xl bg-gray-100 text-gray-700 text-xs font-bold hover:bg-gray-200 transition-colors">
                                                             Batal
                                                         </button>

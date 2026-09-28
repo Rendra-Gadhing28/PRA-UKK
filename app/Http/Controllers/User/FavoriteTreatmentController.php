@@ -6,6 +6,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Treatments;
+use App\Services\ActivityLogger;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -39,6 +40,11 @@ class FavoriteTreatmentController extends Controller
         }
 
         $totalFavorites = $user->favoriteTreatments()->count();
+
+        $actionText = $favorited ? 'menambahkan ke' : 'menghapus dari';
+        ActivityLogger::log('toggle_favorite', "User {$actionText} favorit treatment '{$treatment->name}'.", $treatment, [
+            'favorited' => $favorited,
+        ], $user);
 
         return response()->json([
             'success' => true,

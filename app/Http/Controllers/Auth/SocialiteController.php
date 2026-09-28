@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Helpers\ToastHelper;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -60,6 +61,7 @@ class SocialiteController extends Controller
         $user = $this->findOrCreateUserFromGoogle($googleUser);
 
         if (! $user->is_active) {
+            ActivityLogger::log('login', "Percobaan login Google pada akun nonaktif: {$user->email}", $user);
             ToastHelper::error('Akun Anda telah dinonaktifkan. Hubungi admin untuk informasi lebih lanjut.');
 
             return redirect()->route('login');
@@ -73,8 +75,10 @@ class SocialiteController extends Controller
         $isNewUser = $user->wasRecentlyCreated;
 
         if ($isNewUser) {
+            ActivityLogger::log('register', "Registrasi via Google OAuth '{$user->name}' ({$user->email}).", $user);
             ToastHelper::success("Selamat datang di Yalia Beauty, {$namaDepan}! 🌸 Akun Google Anda berhasil terhubung.");
         } else {
+            ActivityLogger::log('login', "User '{$user->name}' berhasil login via Google OAuth.", $user);
             ToastHelper::success("Selamat datang kembali, {$namaDepan}! 👋");
         }
 

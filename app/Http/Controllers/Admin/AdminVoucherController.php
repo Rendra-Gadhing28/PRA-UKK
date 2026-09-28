@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Helpers\ToastHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Vouchers;
+use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -76,7 +77,7 @@ class AdminVoucherController extends Controller
             'is_active' => ['nullable', 'boolean'],
         ]);
 
-        Vouchers::create([
+        $voucher = Vouchers::create([
             'code' => strtoupper(trim($validated['code'])),
             'name' => $validated['name'],
             'description' => $validated['description'] ?? null,
@@ -89,6 +90,12 @@ class AdminVoucherController extends Controller
             'quota' => $validated['quota'],
             'used_count' => 0,
             'is_active' => $request->boolean('is_active', true),
+        ]);
+
+        ActivityLogger::log('create', "Menambahkan voucher baru '{$voucher->code}'.", $voucher, [
+            'type' => $voucher->type,
+            'value' => $voucher->value,
+            'quota' => $voucher->quota,
         ]);
 
         ToastHelper::success("Voucher '{$validated['code']}' berhasil ditambahkan! 🎟️");
@@ -141,18 +148,22 @@ class AdminVoucherController extends Controller
             'is_active' => $request->boolean('is_active', true),
         ]);
 
+        ActivityLogger::log('update', "Memperbarui data voucher '{$voucher->code}'.", $voucher);
+
         ToastHelper::success("Voucher '{$voucher->code}' berhasil diperbarui! ✨");
 
         return redirect()->route('admin.vouchers.index');
     }
 
     /**
-     * Hapus voucher.
+     * Hapus voucher (soft delete).
      */
     public function destroy(Vouchers $voucher)
     {
         $code = $voucher->code;
         $voucher->delete();
+
+        ActivityLogger::log('delete', "Memindahkan voucher '{$code}' ke tong sampah (soft delete).", $voucher);
 
         ToastHelper::success("Voucher '{$code}' berhasil dihapus.");
 
@@ -168,6 +179,8 @@ class AdminVoucherController extends Controller
         $voucher->save();
 
         $statusText = $voucher->is_active ? 'diaktifkan' : 'dinonaktifkan';
+        ActivityLogger::log('toggle_status', "Mengubah status voucher '{$voucher->code}' menjadi {$statusText}.", $voucher);
+
         ToastHelper::info("Voucher '{$voucher->code}' berhasil {$statusText}.");
 
         return redirect()->back();
