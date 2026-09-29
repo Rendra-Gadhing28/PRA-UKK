@@ -191,4 +191,19 @@ class AdminActivityLogAndTrashTest extends TestCase
         $this->assertCount(1, $freshBooking->treatments);
         $this->assertSame('Hair Spa Deluxe', $freshBooking->treatments->first()->name);
     }
+
+    public function test_simulate_skip_30_days_makes_logs_active_and_expired(): void
+    {
+        $log = ActivityLogger::log('test_action', 'Test log for simulate skip.', null, [], $this->admin);
+        $log->archive();
+        $this->assertTrue($log->fresh()->is_archived);
+
+        $response = $this->actingAs($this->admin)->post(route('admin.activity-logs.simulate-skip-30d'));
+        $response->assertRedirect();
+
+        $freshLog = $log->fresh();
+        $this->assertFalse($freshLog->is_archived);
+        $this->assertNull($freshLog->archived_at);
+        $this->assertTrue($freshLog->created_at->lt(now()->subDays(30)));
+    }
 }

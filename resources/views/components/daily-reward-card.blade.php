@@ -44,9 +44,6 @@
 
     {{-- Header: Soft blush gradient + Sparkle icon --}}
     <div class="reward-card__header">
-        <span class="reward-card__spark reward-card__spark--1" aria-hidden="true">✦</span>
-        <span class="reward-card__spark reward-card__spark--2" aria-hidden="true">✦</span>
-
         <div class="reward-card__icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
                 <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z" fill="#ffffff"/>

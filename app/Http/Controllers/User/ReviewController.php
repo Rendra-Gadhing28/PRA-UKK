@@ -111,6 +111,6 @@ class ReviewController extends Controller
             ]);
         }
 
-        return redirect()->route('user.bookings.show', $booking)->with('success', 'Terima kasih atas ulasan Anda! Selamat, Anda mendapatkan +15 PTS Poin Loyalty ✨');
+        return redirect()->route('user.bookings.show', $booking)->with('success', 'Terima kasih atas ulasan Anda! Selamat, Anda mendapatkan +15 PTS Poin Loyalty.');
     }
 }

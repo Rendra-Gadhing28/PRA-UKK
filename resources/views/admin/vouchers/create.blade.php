@@ -5,7 +5,8 @@
                 <i class="fas fa-arrow-left text-sm"></i>
             </a>
             <div>
-                <h2 class="font-bold text-2xl text-gray-900 tracking-tight flex items-center gap-2 font-headline">
+                <h2 class="font-bold text-2xl text-gray-900 tracking-tight flex items-center gap-3 font-headline">
+                    <span class="w-1.5 h-7 bg-gradient-to-b from-[#b01f44] to-[#f45472] rounded-full inline-block shadow-[0_2px_10px_rgba(244,84,114,0.45)]"></span>
                     Tambah Voucher Baru
                 </h2>
                 <p class="text-xs text-gray-500 mt-0.5">Buat kode promo & diskon khusus untuk pelanggan Yalia Beauty</p>
@@ -138,69 +139,78 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const nameInput = document.getElementById('voucher_name');
-            const codeInput = document.getElementById('voucher_code');
-            const generateBtn = document.getElementById('btn_generate_code');
-            
-            let isManuallyModified = {{ old('code') ? 'true' : 'false' }};
+        (function() {
+            function initVoucherCodeGen() {
+                const nameInput = document.getElementById('voucher_name');
+                const codeInput = document.getElementById('voucher_code');
+                const generateBtn = document.getElementById('btn_generate_code');
+                if (!nameInput || !codeInput || !generateBtn) return;
+                
+                let isManuallyModified = {{ old('code') ? 'true' : 'false' }};
 
-            function slugifyName(text) {
-                if (!text) return '';
-                return text
-                    .toString()
-                    .normalize('NFD')
-                    .replace(/[\u0300-\u036f]/g, '')
-                    .toUpperCase()
-                    .trim()
-                    .replace(/[^A-Z0-9\s-]/g, '')
-                    .replace(/[\s_]+/g, '-')
-                    .replace(/^-+|-+$/g, '');
-            }
-
-            function generateCode(withSuffix = false) {
-                const rawName = nameInput.value.trim();
-                if (!rawName) return;
-
-                let slug = slugifyName(rawName);
-                let parts = slug.split('-').filter(p => p.length > 0);
-                if (parts.length === 0) return;
-
-                let base = parts.slice(0, 3).join('-');
-                if (base.length > 14) {
-                    base = base.substring(0, 14).replace(/-+$/, '');
+                function slugifyName(text) {
+                    if (!text) return '';
+                    return text
+                        .toString()
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .toUpperCase()
+                        .trim()
+                        .replace(/[^A-Z0-9\s-]/g, '')
+                        .replace(/[\s_]+/g, '-')
+                        .replace(/^-+|-+$/g, '');
                 }
 
-                if (withSuffix) {
-                    const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-                    let suffix = '';
-                    for (let i = 0; i < 3; i++) {
-                        suffix += chars.charAt(Math.floor(Math.random() * chars.length));
+                function generateCode(withSuffix = false) {
+                    const rawName = nameInput.value.trim();
+                    if (!rawName) return;
+
+                    let slug = slugifyName(rawName);
+                    let parts = slug.split('-').filter(p => p.length > 0);
+                    if (parts.length === 0) return;
+
+                    let base = parts.slice(0, 3).join('-');
+                    if (base.length > 14) {
+                        base = base.substring(0, 14).replace(/-+$/, '');
                     }
-                    codeInput.value = `${base}-${suffix}`;
-                } else {
-                    codeInput.value = base;
+
+                    if (withSuffix) {
+                        const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+                        let suffix = '';
+                        for (let i = 0; i < 3; i++) {
+                            suffix += chars.charAt(Math.floor(Math.random() * chars.length));
+                        }
+                        codeInput.value = `${base}-${suffix}`;
+                    } else {
+                        codeInput.value = base;
+                    }
                 }
+
+                nameInput.addEventListener('input', function() {
+                    if (!isManuallyModified) {
+                        generateCode(false);
+                    }
+                });
+
+                codeInput.addEventListener('input', function() {
+                    if (codeInput.value.trim() === '') {
+                        isManuallyModified = false;
+                    } else {
+                        isManuallyModified = true;
+                    }
+                });
+
+                generateBtn.addEventListener('click', function() {
+                    generateCode(true);
+                    isManuallyModified = true;
+                });
             }
 
-            nameInput.addEventListener('input', function() {
-                if (!isManuallyModified) {
-                    generateCode(false);
-                }
-            });
-
-            codeInput.addEventListener('input', function() {
-                if (codeInput.value.trim() === '') {
-                    isManuallyModified = false;
-                } else {
-                    isManuallyModified = true;
-                }
-            });
-
-            generateBtn.addEventListener('click', function() {
-                generateCode(true);
-                isManuallyModified = true;
-            });
-        });
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initVoucherCodeGen);
+            } else {
+                initVoucherCodeGen();
+            }
+        })();
     </script>
 </x-admin-layout>

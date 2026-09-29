@@ -17,8 +17,9 @@
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
                         <span>Tracker Pengeluaran Struk</span>
-                        <span class="px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full text-xs font-semibold shadow-sm">
-                            Gemini 2.5 Flash AI ✨
+                        <span class="px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full text-xs font-semibold shadow-sm flex items-center gap-1">
+                            <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+                            <span>Gemini 2.5 Flash AI</span>
                         </span>
                     </h1>
                     <p class="text-gray-500 text-sm mt-1">

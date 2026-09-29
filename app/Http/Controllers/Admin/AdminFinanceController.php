@@ -160,7 +160,7 @@ class AdminFinanceController extends Controller
             'amount' => $validated['amount'],
         ]);
 
-        ToastHelper::success("Pengeluaran '{$validated['title']}' senilai Rp ".number_format($validated['amount'], 0, ',', '.').' berhasil dicatat! 💳');
+        ToastHelper::success("Pengeluaran '{$validated['title']}' senilai Rp ".number_format($validated['amount'], 0, ',', '.').' berhasil dicatat.');
 
         return redirect()->route('admin.finances.index');
     }

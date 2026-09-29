@@ -51,9 +51,9 @@
 
                     {{-- Brand Title & Executive Badge --}}
                     <div class="min-w-0">
-                        <div class="flex items-center gap-1">
+                        <div class="flex items-center gap-1.5">
                             <span class="font-serif font-black text-gray-900 text-lg tracking-tight block leading-tight">Yalia Beauty</span>
-                            <span class="text-amber-500 text-xs">✨</span>
+                            <i class="fa-solid fa-gem text-amber-500 text-xs" aria-hidden="true"></i>
                         </div>
                         <div class="mt-1">
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-black uppercase tracking-widest bg-gradient-to-r from-rose-500/10 via-[#b01f44]/12 to-amber-500/10 border border-[#b01f44]/25 text-[#b01f44] shadow-sm">
@@ -226,7 +226,7 @@
             <div class="pt-3 border-t border-rose-100/70 my-2"></div>
 
             {{-- Switch to User Site --}}
-            <a href="{{ route('user.dashboard') }}" 
+            <a href="{{ route('user.dashboard') }}" data-spa-ignore
                class="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold text-[#b01f44] bg-rose-50/80 hover:bg-rose-100/80 border border-rose-200/60 transition-all shadow-sm group">
                 <i class="fa-solid fa-arrow-left text-xs transition-transform group-hover:-translate-x-1"></i>
                 <span>Lihat Tampilan Customer</span>

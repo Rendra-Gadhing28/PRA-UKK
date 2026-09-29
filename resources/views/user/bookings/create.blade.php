@@ -213,13 +213,15 @@
                             ? 'border-[#f45472] bg-gradient-to-br from-[#fff5f7] to-white shadow-md' 
                             : 'border-gray-200 bg-white hover:border-rose-200'">
                         <div class="flex items-center gap-3 mb-2">
-                            <span class="text-2xl">🏛️</span>
+                            <i class="fa-solid fa-store text-xl text-[#f45472]"></i>
                             <p class="font-display font-bold text-lg text-[#5b3a29]">At Salon</p>
                         </div>
                         <p class="text-xs text-[#5b3a29]/80 leading-relaxed font-medium">
                             Datang dan bersantai langsung di lokasi salon Yalia Beauty yang nyaman.
                         </p>
-                        <div x-show="bookingType === 'salon'" class="absolute top-3 right-3 text-[#f45472] font-bold">✓</div>
+                        <div x-show="bookingType === 'salon'" class="absolute top-3 right-3 text-[#f45472] font-bold">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
                     </button>
 
                     {{-- Home Service Option --}}
@@ -229,25 +231,29 @@
                             ? 'border-[#f45472] bg-gradient-to-br from-[#fff5f7] to-white shadow-md' 
                             : 'border-gray-200 bg-white hover:border-rose-200'">
                         <div class="flex items-center gap-3 mb-2">
-                            <span class="text-2xl">🏡</span>
+                            <i class="fa-solid fa-house text-xl text-[#f45472]"></i>
                             <p class="font-display font-bold text-lg text-[#5b3a29]">Home Service</p>
                         </div>
                         <p class="text-xs text-[#5b3a29]/80 leading-relaxed font-medium">
                             Beautician profesional kami yang akan datang ke rumah/lokasi Anda (maks {{ $serviceRadiusKm }} km).
                         </p>
-                        <div x-show="bookingType === 'home'" class="absolute top-3 right-3 text-[#f45472] font-bold">✓</div>
+                        <div x-show="bookingType === 'home'" class="absolute top-3 right-3 text-[#f45472] font-bold">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
                     </button>
                 </div>
 
                 {{-- Home Service Location Form --}}
                 <div x-show="bookingType === 'home'" x-cloak class="rounded-2xl border border-rose-200 bg-[#fff8f9] p-6 mb-8">
                     <h3 class="font-bold text-[#5b3a29] text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
-                        <span>📍 Lokasi Pengiriman Home Service</span>
+                        <i class="fa-solid fa-location-dot text-[#f45472]"></i>
+                        <span>Lokasi Pengiriman Home Service</span>
                     </h3>
 
-                    <button type="button" class="rounded-full bg-gradient-to-r from-[#5b3a29] to-[#3a2217] text-white text-xs font-bold px-6 py-3 shadow hover:shadow-md transition"
+                    <button type="button" class="rounded-full bg-gradient-to-r from-[#5b3a29] to-[#3a2217] text-white text-xs font-bold px-6 py-3 shadow hover:shadow-md transition flex items-center gap-2"
                         @click="shareLocation" :disabled="gps.loading">
-                        <span x-show="!gps.loading">📍 Dapatkan Lokasi GPS Saya</span>
+                        <i class="fa-solid fa-crosshairs text-xs" x-show="!gps.loading"></i>
+                        <span x-show="!gps.loading">Dapatkan Lokasi GPS Saya</span>
                         <span x-show="gps.loading">Mendeteksi lokasi...</span>
                     </button>
 
@@ -265,8 +271,9 @@
                                 <span class="font-semibold">Estimasi Ongkir Transport:</span>
                                 <span class="font-bold text-[#5b3a29]" x-text="formatRupiah(estimateTransportFee(gps.distanceKm))"></span>
                             </div>
-                            <p class="text-xs text-red-600 font-bold" x-show="gps.distanceKm !== null && gps.distanceKm > {{ $serviceRadiusKm }}">
-                                ⚠️ Lokasi di luar jangkauan (maks {{ $serviceRadiusKm }} km).
+                            <p class="text-xs text-red-600 font-bold flex items-center gap-1.5" x-show="gps.distanceKm !== null && gps.distanceKm > {{ $serviceRadiusKm }}">
+                                <i class="fa-solid fa-triangle-exclamation text-xs"></i>
+                                <span>Lokasi di luar jangkauan (maks {{ $serviceRadiusKm }} km).</span>
                             </p>
                             <div>
                                 <label class="block text-xs font-bold text-[#5b3a29] mb-1">Alamat Lengkap (Dapat disunting):</label>

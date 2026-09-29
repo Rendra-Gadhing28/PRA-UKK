@@ -3,7 +3,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h2 class="font-bold text-2xl text-gray-900 tracking-tight flex items-center gap-3 font-headline">
-                    <span class="w-4 h-8 bg-gradient-to-b from-[#b01f44] to-[#f45472] rounded-full inline-block"></span>
+                    <span class="w-1.5 h-7 bg-gradient-to-b from-[#b01f44] to-[#f45472] rounded-full inline-block shadow-[0_2px_10px_rgba(244,84,114,0.45)]"></span>
                     Tong Sampah Sistem (Trash)
                 </h2>
                 <p class="text-sm text-gray-500 mt-1">Kelola data terhapus (Soft Delete). Data disimpan selama 30 hari sebelum dibersihkan otomatis secara permanen.</p>
@@ -59,6 +59,7 @@
                             'users' => ['label' => 'User', 'icon' => 'fa-users'],
                             'treatments' => ['label' => 'Treatments', 'icon' => 'fa-spa'],
                             'beauticians' => ['label' => 'Beauticians', 'icon' => 'fa-user-nurse'],
+                            'bookings' => ['label' => 'Reservasi', 'icon' => 'fa-calendar-check'],
                             'vouchers' => ['label' => 'Vouchers', 'icon' => 'fa-ticket'],
                             'reviews' => ['label' => 'Ulasan', 'icon' => 'fa-comments'],
                             'expenses' => ['label' => 'Pengeluaran', 'icon' => 'fa-receipt'],
@@ -126,6 +127,7 @@
                                         'users' => 'User Akun',
                                         'treatments' => 'Treatment',
                                         'beauticians' => 'Beautician',
+                                        'bookings' => 'Reservasi',
                                         'vouchers' => 'Voucher',
                                         'reviews' => 'Ulasan',
                                         'expenses' => 'Pengeluaran',
@@ -136,6 +138,7 @@
                                         'users' => 'bg-purple-50 text-purple-700 border-purple-200',
                                         'treatments' => 'bg-rose-50 text-[#b01f44] border-rose-200',
                                         'beauticians' => 'bg-blue-50 text-blue-700 border-blue-200',
+                                        'bookings' => 'bg-pink-50 text-pink-700 border-pink-200',
                                         'vouchers' => 'bg-amber-50 text-amber-700 border-amber-200',
                                         'reviews' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
                                         'expenses' => 'bg-cyan-50 text-cyan-700 border-cyan-200',
@@ -174,6 +177,11 @@
                                             <div>
                                                 <p class="font-bold text-xs text-gray-900">{{ $item->name }}</p>
                                                 <p class="text-[10px] text-gray-500">{{ $item->specialization ?? 'Beautician' }} &bull; {{ $item->phone ?? '-' }}</p>
+                                            </div>
+                                        @elseif($itemType === 'bookings')
+                                            <div>
+                                                <p class="font-bold text-xs text-gray-900 font-mono">{{ $item->booking_code }}</p>
+                                                <p class="text-[10px] text-gray-500">{{ $item->user?->name ?? 'Guest' }} &bull; Rp {{ number_format((float)$item->total_amount, 0, ',', '.') }} &bull; {{ $item->booking_date ? $item->booking_date->format('d/m/Y') : '-' }}</p>
                                             </div>
                                         @elseif($itemType === 'vouchers')
                                             <div>

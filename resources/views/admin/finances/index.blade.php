@@ -3,7 +3,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h2 class="font-bold text-2xl text-gray-900 tracking-tight flex items-center gap-3 font-headline">
-                    <span class="w-4 h-8 bg-[#f45472] rounded-full inline-block"></span>
+                    <span class="w-1.5 h-7 bg-gradient-to-b from-[#b01f44] to-[#f45472] rounded-full inline-block shadow-[0_2px_10px_rgba(244,84,114,0.45)]"></span>
                     Track Keuangan & Pengeluaran
                 </h2>
                 <p class="text-sm text-gray-500 mt-1">Pencatatan pengeluaran salon, scan struk eksternal otomatis, dan rincian item barang</p>
@@ -311,12 +311,11 @@
 
                                 {{-- Aksi --}}
                                 <td class="py-3.5 px-5 text-center">
-                                    <form method="POST" action="{{ route('admin.finances.destroy', $item->id) }}" 
-                                          x-data="{ showConfirm: false }"
-                                          @submit.prevent="showConfirm = true">
+                                    <form id="delete-finance-form-{{ $item->id }}" method="POST" action="{{ route('admin.finances.destroy', $item->id) }}" 
+                                          x-data="{ showConfirm: false }">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" 
+                                        <button type="button" @click="showConfirm = true"
                                                 class="p-2 rounded-full bg-rose-50 text-rose-600 text-xs font-bold hover:bg-rose-100 transition-all border border-rose-200" 
                                                 title="Hapus Pengeluaran"
                                                 aria-label="Hapus pengeluaran {{ $item->title }}">
@@ -324,40 +323,42 @@
                                         </button>
 
                                         {{-- Alpine.js Confirmation Modal --}}
-                                        <template x-if="showConfirm">
-                                            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
-                                                 role="dialog"
-                                                 aria-modal="true"
-                                                 aria-labelledby="delete-finance-modal-title-{{ $item->id }}"
-                                                 @click.self="showConfirm = false"
-                                                 @keydown.escape.window="showConfirm = false">
-                                                <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full mx-4 border border-rose-100 text-left"
-                                                     @click.stop>
-                                                    <div class="flex items-center gap-3 mb-4">
-                                                        <div class="w-10 h-10 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
-                                                            <i class="fa-solid fa-triangle-exclamation text-lg" aria-hidden="true"></i>
+                                        <template x-teleport="body">
+                                            <template x-if="showConfirm">
+                                                <div class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm"
+                                                     role="dialog"
+                                                     aria-modal="true"
+                                                     aria-labelledby="delete-finance-modal-title-{{ $item->id }}"
+                                                     @click.self="showConfirm = false"
+                                                     @keydown.escape.window="showConfirm = false">
+                                                    <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full mx-4 border border-rose-100 text-left"
+                                                         @click.stop>
+                                                        <div class="flex items-center gap-3 mb-4">
+                                                            <div class="w-10 h-10 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
+                                                                <i class="fa-solid fa-triangle-exclamation text-lg" aria-hidden="true"></i>
+                                                            </div>
+                                                            <div>
+                                                                <h4 id="delete-finance-modal-title-{{ $item->id }}" class="text-sm font-bold text-gray-900">Hapus Catatan Pengeluaran?</h4>
+                                                                <p class="text-xs text-gray-500 mt-0.5 truncate max-w-[200px]">{{ $item->title }}</p>
+                                                            </div>
                                                         </div>
-                                                        <div>
-                                                            <h4 id="delete-finance-modal-title-{{ $item->id }}" class="text-sm font-bold text-gray-900">Hapus Catatan Pengeluaran?</h4>
-                                                            <p class="text-xs text-gray-500 mt-0.5 truncate max-w-[200px]">{{ $item->title }}</p>
+                                                        <p class="text-xs text-gray-600 mb-5 leading-relaxed">
+                                                            Data pengeluaran sebesar <strong class="text-rose-600 tabular-nums">Rp {{ number_format($item->amount, 0, ',', '.') }}</strong> akan dihapus permanen.
+                                                        </p>
+                                                        <div class="flex items-center gap-2">
+                                                            <button type="button" @click="showConfirm = false" autofocus
+                                                                    class="flex-1 py-2.5 px-4 rounded-xl bg-gray-100 text-gray-700 text-xs font-bold hover:bg-gray-200 transition-colors">
+                                                                Batal
+                                                            </button>
+                                                            <button type="button" 
+                                                                    @click="document.getElementById('delete-finance-form-{{ $item->id }}').submit()"
+                                                                    class="flex-1 py-2.5 px-4 rounded-xl bg-rose-600 text-white text-xs font-bold hover:bg-rose-700 transition-colors">
+                                                                Ya, Hapus
+                                                            </button>
                                                         </div>
-                                                    </div>
-                                                    <p class="text-xs text-gray-600 mb-5 leading-relaxed">
-                                                        Data pengeluaran sebesar <strong class="text-rose-600 tabular-nums">Rp {{ number_format($item->amount, 0, ',', '.') }}</strong> akan dihapus permanen.
-                                                    </p>
-                                                    <div class="flex items-center gap-2">
-                                                        <button type="button" @click="showConfirm = false" autofocus
-                                                                class="flex-1 py-2.5 px-4 rounded-xl bg-gray-100 text-gray-700 text-xs font-bold hover:bg-gray-200 transition-colors">
-                                                            Batal
-                                                        </button>
-                                                        <button type="button" 
-                                                                @click="$el.closest('form').removeEventListener('submit', arguments.callee); $el.closest('form').submit()"
-                                                                class="flex-1 py-2.5 px-4 rounded-xl bg-rose-600 text-white text-xs font-bold hover:bg-rose-700 transition-colors">
-                                                            Ya, Hapus
-                                                        </button>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </template>
                                         </template>
                                     </form>
                                 </td>

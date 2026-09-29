@@ -10,10 +10,22 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Bookings extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
+
+    protected static function booted(): void
+    {
+        static::saving(function (Bookings $booking): void {
+            $statusVal = is_object($booking->status) ? $booking->status->value : (string) $booking->status;
+            if ($statusVal === 'completed' && ! $booking->is_archived) {
+                $booking->is_archived = true;
+                $booking->archived_at = $booking->archived_at ?? now();
+            }
+        });
+    }
 
     protected $fillable = [
         'booking_code',
@@ -60,6 +72,8 @@ class Bookings extends Model
         'is_h24_reminded',
         'is_h1_reminded',
         'is_m30_reminded',
+        'is_archived',
+        'archived_at',
     ];
 
     protected $casts = [
@@ -78,6 +92,8 @@ class Bookings extends Model
         'is_h24_reminded' => 'boolean',
         'is_h1_reminded' => 'boolean',
         'is_m30_reminded' => 'boolean',
+        'is_archived' => 'boolean',
+        'archived_at' => 'datetime',
     ];
 
     public function user(): BelongsTo
@@ -145,6 +161,32 @@ class Bookings extends Model
     public function scopeOwnedBy(Builder $query, int $userId): Builder
     {
         return $query->where('user_id', $userId);
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('is_archived', false);
+    }
+
+    public function scopeArchived(Builder $query): Builder
+    {
+        return $query->where('is_archived', true);
+    }
+
+    public function archive(): bool
+    {
+        $this->is_archived = true;
+        $this->archived_at = now();
+
+        return $this->save();
+    }
+
+    public function unarchive(): bool
+    {
+        $this->is_archived = false;
+        $this->archived_at = null;
+
+        return $this->save();
     }
 
     /**

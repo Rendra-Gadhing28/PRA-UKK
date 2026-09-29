@@ -6,25 +6,57 @@
                     <i class="fa-solid fa-arrow-left text-xs"></i>
                 </a>
                 <div>
-                    <h2 class="font-bold text-2xl text-gray-900 tracking-tight flex items-center gap-2 font-headline">
+                    <h2 class="font-bold text-2xl text-gray-900 tracking-tight flex items-center gap-3 font-headline">
+                        <span class="w-1.5 h-7 bg-gradient-to-b from-[#b01f44] to-[#f45472] rounded-full inline-block shadow-[0_2px_10px_rgba(244,84,114,0.45)]"></span>
                         Reservasi #{{ $booking->booking_code }}
                     </h2>
                     <p class="text-xs text-gray-500 mt-0.5">Dibuat pada {{ $booking->created_at->translatedFormat('d F Y, H:i') }} WIB</p>
                 </div>
             </div>
 
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2.5 flex-wrap">
                 <a href="{{ route('admin.bookings.receipt', $booking->id) }}" target="_blank"
                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-rose-200 text-rose-600 hover:bg-rose-50 text-xs font-bold shadow-xs transition-all">
                     <i class="fa-solid fa-receipt text-xs"></i>
-                    <span>Cetak Struk Pembayaran</span>
+                    <span>Cetak Struk</span>
                 </a>
+
+                {{-- Soft Delete --}}
+                <form action="{{ route('admin.bookings.destroy', $booking->id) }}" method="POST"
+                      onsubmit="return confirm('Pindahkan reservasi ini ke tong sampah?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" 
+                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 text-xs font-bold transition-all shadow-xs"
+                            title="Pindahkan ke Tong Sampah">
+                        <i class="fa-solid fa-trash text-xs"></i>
+                        <span>Hapus</span>
+                    </button>
+                </form>
             </div>
         </div>
     </x-slot>
 
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+
+            @if($booking->is_archived)
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-box-archive text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-xs text-amber-900">Reservasi Selesai & Otomatis Diarsipkan</h4>
+                            <p class="text-[11px] text-amber-700 mt-0.5">Masuk ke riwayat arsip pada {{ $booking->archived_at ? $booking->archived_at->translatedFormat('d F Y, H:i') : '-' }} WIB.</p>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1.5 rounded-xl bg-amber-100 text-amber-800 text-xs font-bold flex items-center gap-1.5 border border-amber-200">
+                        <i class="fa-solid fa-check-double text-xs"></i>
+                        <span>Arsip Otomatis</span>
+                    </span>
+                </div>
+            @endif
 
             {{-- TOP INFO CARDS GRID --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">

@@ -5,7 +5,8 @@
                 <i class="fas fa-arrow-left text-sm"></i>
             </a>
             <div>
-                <h2 class="font-bold text-2xl text-gray-900 tracking-tight flex items-center gap-4 font-headline">
+                <h2 class="font-bold text-2xl text-gray-900 tracking-tight flex items-center gap-3 font-headline">
+                    <span class="w-1.5 h-7 bg-gradient-to-b from-[#b01f44] to-[#f45472] rounded-full inline-block shadow-[0_2px_10px_rgba(244,84,114,0.45)]"></span>
                     Catat / Scan Struk Pengeluaran
                 </h2>
                 <p class="text-xs text-gray-500 mt-1">Input manual atau scan langsung pakai kamera untuk mendeteksi barang, qty & harga</p>

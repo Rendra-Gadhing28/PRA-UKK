@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Helpers\ToastHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Beauticians;
+use App\Models\Bookings;
 use App\Models\Expense;
 use App\Models\Reviews;
 use App\Models\Treatments;
@@ -25,6 +26,7 @@ class AdminTrashController extends Controller
         'users' => User::class,
         'treatments' => Treatments::class,
         'beauticians' => Beauticians::class,
+        'bookings' => Bookings::class,
         'vouchers' => Vouchers::class,
         'reviews' => Reviews::class,
         'expenses' => Expense::class,
@@ -253,6 +255,7 @@ class AdminTrashController extends Controller
         return match ($type) {
             'users', 'beauticians' => $item->name ?? 'Tanpa Nama',
             'treatments' => $item->name ?? 'Treatment #'.$item->id,
+            'bookings' => 'Reservasi #'.$item->booking_code.' ('.($item->user?->name ?? 'Guest').')',
             'vouchers' => $item->code ?? $item->name ?? 'Voucher #'.$item->id,
             'reviews' => 'Ulasan #'.$item->id.' (Rating: '.$item->rating.')',
             'expenses' => 'Pengeluaran '.$item->merchant.' (Rp '.number_format($item->total_amount ?? 0, 0, ',', '.').')',
@@ -286,6 +289,13 @@ class AdminTrashController extends Controller
                 if (Storage::disk('public')->exists($item->receipt_image_path)) {
                     Storage::disk('public')->delete($item->receipt_image_path);
                 }
+            } elseif ($type === 'bookings') {
+                if (! empty($item->payment_proof) && Storage::disk('public')->exists($item->payment_proof)) {
+                    Storage::disk('public')->delete($item->payment_proof);
+                }
+                if (! empty($item->photo_assign) && Storage::disk('public')->exists($item->photo_assign)) {
+                    Storage::disk('public')->delete($item->photo_assign);
+                }
             }
         } catch (\Throwable $e) {
             report($e);
@@ -304,6 +314,13 @@ class AdminTrashController extends Controller
                     ->orWhere('phone', 'like', "%{$search}%");
             }),
             'treatments' => $query->where('name', 'like', "%{$search}%"),
+            'bookings' => $query->where(function ($q) use ($search) {
+                $q->where('booking_code', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($qu) use ($search) {
+                        $qu->where('name', 'like', "%{$search}%")
+                            ->orWhere('phone', 'like', "%{$search}%");
+                    });
+            }),
             'beauticians' => $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%");

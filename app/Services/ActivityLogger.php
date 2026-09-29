@@ -4,11 +4,13 @@ namespace App\Services;
 
 use App\Models\ActivityLog;
 use App\Models\Beauticians;
+use App\Models\Bookings;
 use App\Models\Expense;
 use App\Models\Reviews;
 use App\Models\Treatments;
 use App\Models\User;
 use App\Models\Vouchers;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
@@ -69,6 +71,7 @@ class ActivityLogger
             'users' => User::class,
             'treatments' => Treatments::class,
             'beauticians' => Beauticians::class,
+            'bookings' => Bookings::class,
             'vouchers' => Vouchers::class,
             'reviews' => Reviews::class,
             'expenses' => Expense::class,
@@ -90,7 +93,8 @@ class ActivityLogger
     }
 
     /**
-     * Simulasi: Majukan umur activity log sebanyak 30 hari ke belakang.
+     * Simulasi: Ubah seluruh activity log menjadi aktif & majukan umur 31 hari ke belakang
+     * agar berstatus expired (>30 hari) dan siap diuji fitur pengarsipannya.
      */
     public static function simulateSkipLogs30Days(?int $logId = null): int
     {
@@ -105,13 +109,15 @@ class ActivityLogger
 
         foreach ($logs as $log) {
             $log->timestamps = false;
-            $log->created_at = $log->created_at->subDays(31);
+            $log->is_archived = false;
+            $log->archived_at = null;
+            $currentCreatedAt = $log->created_at ? Carbon::parse($log->created_at) : now();
+            $log->created_at = $currentCreatedAt->subDays(31);
             $log->save();
             $count++;
         }
 
-        // Jalankan auto archive untuk log yang kini telah expired
-        self::archiveExpiredLogs();
+        // ponytail: Biarkan log tetap aktif & berumur >30 hari agar user dapat menguji tombol 'Arsipkan Semua >30H' secara manual.
 
         return $count;
     }
@@ -125,6 +131,7 @@ class ActivityLogger
             'users' => User::class,
             'treatments' => Treatments::class,
             'beauticians' => Beauticians::class,
+            'bookings' => Bookings::class,
             'vouchers' => Vouchers::class,
             'reviews' => Reviews::class,
             'expenses' => Expense::class,
@@ -147,7 +154,8 @@ class ActivityLogger
 
             foreach ($items as $item) {
                 $item->timestamps = false;
-                $item->deleted_at = $item->deleted_at ? $item->deleted_at->subDays(31) : now()->subDays(31);
+                $deletedAt = $item->deleted_at ? Carbon::parse($item->deleted_at) : now();
+                $item->deleted_at = $deletedAt->subDays(31);
                 $item->saveQuietly();
                 $totalShifted++;
             }

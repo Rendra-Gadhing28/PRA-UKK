@@ -122,7 +122,7 @@ class AdminTreatmentController extends Controller
             'category_id' => $treatment->category_id,
         ]);
 
-        ToastHelper::success("Treatment '{$validated['name']}' berhasil ditambahkan! 🌸");
+        ToastHelper::success("Treatment '{$validated['name']}' berhasil ditambahkan.");
 
         return redirect()->route('admin.treatments.index');
     }
@@ -195,7 +195,7 @@ class AdminTreatmentController extends Controller
             'price' => $treatment->price,
         ]);
 
-        ToastHelper::success("Treatment '{$treatment->name}' berhasil diperbarui! ✨");
+        ToastHelper::success("Treatment '{$treatment->name}' berhasil diperbarui.");
 
         return redirect()->route('admin.treatments.index');
     }

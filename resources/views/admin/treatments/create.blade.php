@@ -5,7 +5,8 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
             </a>
             <div>
-                <h2 class="font-bold text-2xl text-gray-900 tracking-tight flex items-center gap-2 font-headline">
+                <h2 class="font-bold text-2xl text-gray-900 tracking-tight flex items-center gap-3 font-headline">
+                    <span class="w-1.5 h-7 bg-gradient-to-b from-[#b01f44] to-[#f45472] rounded-full inline-block shadow-[0_2px_10px_rgba(244,84,114,0.45)]"></span>
                     Tambah Treatment Baru
                 </h2>
                 <p class="text-xs text-gray-500 mt-0.5">Tambahkan layanan perawatan salon baru ke katalog Yalia Beauty</p>
@@ -39,10 +40,9 @@
                                     @php
                                         $catId = is_object($cat) ? $cat->id : (is_array($cat) ? ($cat['id'] ?? '') : $cat);
                                         $catName = is_object($cat) ? $cat->name : (is_array($cat) ? ($cat['name'] ?? '') : $cat);
-                                        $catIcon = is_object($cat) ? ($cat->icon ?? '🌸') : (is_array($cat) ? ($cat['icon'] ?? '🌸') : '🌸');
                                     @endphp
                                     <option value="{{ $catId }}" {{ old('category_id') == $catId ? 'selected' : '' }}>
-                                        {{ $catIcon }} {{ $catName }}
+                                        {{ $catName }}
                                     </option>
                                 @endforeach
                             </select>

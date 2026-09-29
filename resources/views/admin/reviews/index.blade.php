@@ -3,7 +3,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h2 class="font-bold text-2xl text-gray-900 tracking-tight flex items-center gap-3 font-headline">
-                    <span class="w-4 h-8 bg-primary rounded-full inline-block"></span>
+                    <span class="w-1.5 h-7 bg-gradient-to-b from-[#b01f44] to-[#f45472] rounded-full inline-block shadow-[0_2px_10px_rgba(244,84,114,0.45)]"></span>
                     Manajemen Ulasan & Feedback Pelanggan
                 </h2>
                 <p class="text-sm text-gray-500 mt-1">Pantau kepuasan pelanggan, ulasan treatment, rating beautician, dan balas feedback secara langsung.</p>
@@ -35,7 +35,7 @@
                             <span class="text-2xl font-black text-gray-900">{{ number_format($avgRating, 1) }}</span>
                             <span class="text-xs font-semibold text-gray-500">/ 5.0</span>
                         </div>
-                        <span class="text-xs text-amber-700 font-semibold block mt-0.5">Terapis: ⭐ {{ number_format($avgBeauticianRating, 1) }}</span>
+                        <span class="text-xs text-amber-700 font-semibold block mt-0.5"><i class="fa-solid fa-star text-amber-400 text-xs"></i> Terapis: {{ number_format($avgBeauticianRating, 1) }}</span>
                     </div>
                 </div>
 
@@ -73,7 +73,7 @@
                         <span class="text-sm font-black text-gray-900 block mt-0.5 truncate">{{ $topBeautician?->name ?? 'Belum Ada' }}</span>
                         @if($topBeautician)
                             <span class="text-xs text-purple-700 font-bold block mt-0.5">
-                                ⭐ {{ number_format((float)$topBeautician->reviews_avg_beautician_rating, 1) }} ({{ $topBeautician->reviews_count }} review)
+                                <i class="fa-solid fa-star text-amber-400 text-xs"></i> {{ number_format((float)$topBeautician->reviews_avg_beautician_rating, 1) }} ({{ $topBeautician->reviews_count }} review)
                             </span>
                         @else
                             <span class="text-xs text-gray-400 block mt-0.5">0 Ulasan</span>
@@ -90,8 +90,8 @@
                         $tabs = [
                             ['key' => 'all',              'label' => 'Semua Ulasan',       'count' => $totalReviews,    'icon' => 'fa-list'],
                             ['key' => 'unreplied',        'label' => 'Belum Dibalas',      'count' => $unrepliedCount,  'icon' => 'fa-clock-rotate-left'],
-                            ['key' => 'five_star',        'label' => 'Bintang 5 ⭐',       'count' => null,             'icon' => 'fa-star'],
-                            ['key' => 'needs_attention',  'label' => 'Rating Rendah (≤3⭐)','count' => null,             'icon' => 'fa-triangle-exclamation'],
+                            ['key' => 'five_star',        'label' => 'Bintang 5',          'count' => null,             'icon' => 'fa-star'],
+                            ['key' => 'needs_attention',  'label' => 'Rating Rendah (≤3)', 'count' => null,             'icon' => 'fa-triangle-exclamation'],
                             ['key' => 'with_photo',       'label' => 'Dengan Foto',        'count' => null,             'icon' => 'fa-camera'],
                             ['key' => 'unapproved',       'label' => 'Disembunyikan',      'count' => $unapprovedCount, 'icon' => 'fa-eye-slash'],
                         ];
@@ -268,8 +268,9 @@
                                 @if(!empty($tags) && is_array($tags))
                                     <div class="flex flex-wrap gap-1 mb-2.5">
                                         @foreach($tags as $tg)
-                                            <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-white border border-[#F4DDE1] text-[#5C1439]">
-                                                ✨ {{ $tg }}
+                                            <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-white border border-[#F4DDE1] text-[#5C1439] inline-flex items-center gap-1">
+                                                <i class="fa-solid fa-sparkles text-[10px] text-amber-500"></i>
+                                                <span>{{ $tg }}</span>
                                             </span>
                                         @endforeach
                                     </div>

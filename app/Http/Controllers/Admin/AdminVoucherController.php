@@ -98,7 +98,7 @@ class AdminVoucherController extends Controller
             'quota' => $voucher->quota,
         ]);
 
-        ToastHelper::success("Voucher '{$validated['code']}' berhasil ditambahkan! 🎟️");
+        ToastHelper::success("Voucher '{$validated['code']}' berhasil ditambahkan.");
 
         return redirect()->route('admin.vouchers.index');
     }
@@ -150,7 +150,7 @@ class AdminVoucherController extends Controller
 
         ActivityLogger::log('update', "Memperbarui data voucher '{$voucher->code}'.", $voucher);
 
-        ToastHelper::success("Voucher '{$voucher->code}' berhasil diperbarui! ✨");
+        ToastHelper::success("Voucher '{$voucher->code}' berhasil diperbarui.");
 
         return redirect()->route('admin.vouchers.index');
     }

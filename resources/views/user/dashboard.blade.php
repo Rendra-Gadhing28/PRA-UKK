@@ -436,7 +436,7 @@
                                 <div>
                                     <div class="flex items-center gap-2">
                                         <h3 class="font-headline-sm text-lg font-black text-[#2B0F23]">Misi Harian</h3>
-                                        <span class="animate-pulse text-base">✨</span>
+                                        <span class="material-symbols-outlined text-rose-500 text-base">award_star</span>
                                         <span x-show="hasClaimedToday && isCardCollapsed" x-cloak class="px-2 py-0.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-700 border border-emerald-200">Klaim Berhasil</span>
                                         <span x-show="!hasClaimedToday && isCardCollapsed" x-cloak class="px-2 py-0.5 rounded-full text-xs font-black bg-amber-100 text-amber-800 border border-amber-200 animate-pulse">Ada Hadiah!</span>
                                     </div>
@@ -519,7 +519,7 @@
                                     </span>
                                     <div>
                                         <p class="text-xs font-bold text-[#2B0F23] leading-none">Streak Kamu</p>
-                                        <p class="text-xs font-black text-[#B01F44] mt-1 leading-none"><span x-text="currentStreak"></span> / 7 Hari 🔥</p>
+                                        <p class="text-xs font-black text-[#B01F44] mt-1 leading-none flex items-center gap-1"><span x-text="currentStreak"></span> / 7 Hari</p>
                                     </div>
                                 </div>
                                 <div class="flex-1 max-w-[140px]">
@@ -850,11 +850,11 @@
                             {{-- Bottom Tier Status Bar --}}
                             <div class="pt-2 border-t border-white/10 text-center">
                                 @if($isActive)
-                                    <span class="text-xs font-bold text-emerald-400">✨ Status Aktif</span>
+                                    <span class="text-xs font-bold text-emerald-400">Status Aktif</span>
                                 @elseif(($user->tier_points ?? 0) < $tMeta['min_points'])
                                     <span class="text-xs text-slate-400">Tersisa {{ number_format($tMeta['min_points'] - ($user->tier_points ?? 0)) }} Pts</span>
                                 @else
-                                    <span class="text-xs font-bold text-purple-300">Unlocked 🎉</span>
+                                    <span class="text-xs font-bold text-purple-300">Unlocked</span>
                                 @endif
                             </div>
                         </div>
@@ -898,15 +898,15 @@
                 <div class="absolute -bottom-10 -left-10 w-36 h-36 bg-[#ffe8ed]/60 rounded-full blur-2xl pointer-events-none"></div>
 
                 {{-- Icon Header --}}
-                <div class="relative z-10 mx-auto flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[#ffd2e1] via-[#fff0f2] to-[#ffe8ed] border border-[#f4dde1] shadow-xs">
-                    <span class="text-3xl filter drop-shadow-xs" x-text="rewardModalData.icon">✨</span>
+                <div class="relative z-10 mx-auto flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[#ffd2e1] via-[#fff0f2] to-[#ffe8ed] border border-[#f4dde1] shadow-xs text-[#b01f44]">
+                    <i class="fa-solid fa-gift text-2xl"></i>
                 </div>
 
                 {{-- Badge & Title --}}
                 <div class="relative z-10 flex flex-col items-center gap-1.5">
                     <div class="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#fff0f2] border border-[#f4dde1] rounded-full shadow-2xs">
                         <span class="text-xs font-black tracking-widest uppercase text-[#b01f44]">
-                            AURA GLOW-UP MEMANCAR! ✨
+                            AURA GLOW-UP MEMANCAR!
                         </span>
                     </div>
                     <h3 id="reward-modal-title" class="font-headline-sm text-2xl font-black text-[#25181c] tracking-tight font-serif" x-text="rewardModalData.title"></h3>
@@ -1003,7 +1003,7 @@
                 loading: false,
 
                 rewardModalData: {
-                    icon: '🌟',
+                    icon: '',
                     title: 'Glow Up Striking Back!',
                     reward: '+25 Points',
                     message: 'Selamat Sis! Aura cantikmu resmi naik 1000 Watt hari ini. Kenangan kusam ter-exfoliate sempurna!'
@@ -1109,7 +1109,7 @@
                     }
 
                     this.rewardModalData = {
-                        icon: '✨',
+                        icon: '',
                         title: `${activeM ? activeM.dayTitle : 'Hadiah Hari Ini'}!`,
                         reward: activeM ? activeM.reward : '+25 Points',
                         message: `Selamat Ratu Beauty! Kamu berhasil mengklaim misi hari ini. Bonus poin PTS telah disimpan ke akunmu!`

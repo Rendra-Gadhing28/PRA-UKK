@@ -43,15 +43,18 @@
                     >
                 @else
                     <div
-                        class="w-full bg-gradient-to-br from-indigo-50 to-purple-50
-                               flex items-center justify-center"
+                        class="w-full bg-gradient-to-br from-rose-50 to-pink-50
+                               flex items-center justify-center text-rose-500"
                         style="height:100px"
                         aria-hidden="true"
                     >
                         <span class="text-3xl select-none">
-                            @if($voucher->is_event) 🎁
-                            @elseif($voucher->points_required > 0) 💎
-                            @else 🎟️
+                            @if($voucher->is_event)
+                                <i class="fa-solid fa-gift"></i>
+                            @elseif($voucher->points_required > 0)
+                                <i class="fa-solid fa-gem"></i>
+                            @else
+                                <i class="fa-solid fa-ticket"></i>
                             @endif
                         </span>
                     </div>
@@ -127,9 +130,10 @@
                             disabled
                             aria-label="Voucher {{ $voucher->code }} sudah diklaim"
                             class="mt-2 w-full py-2 rounded-xl text-xs font-semibold
-                                   bg-gray-100 text-gray-400 cursor-not-allowed"
+                                   bg-gray-100 text-gray-400 cursor-not-allowed flex items-center justify-center gap-1"
                         >
-                            ✓ Sudah Diklaim
+                            <i class="fa-solid fa-check text-xs"></i>
+                            <span>Sudah Diklaim</span>
                         </button>
 
                     @elseif ($voucher->is_quota_out)

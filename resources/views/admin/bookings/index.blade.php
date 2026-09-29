@@ -3,7 +3,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h2 class="font-bold text-2xl text-gray-900 tracking-tight flex items-center gap-3 font-headline">
-                    <span class="w-4 h-8 bg-[#f45472] rounded-full inline-block"></span>
+                    <span class="w-1.5 h-7 bg-gradient-to-b from-[#b01f44] to-[#f45472] rounded-full inline-block shadow-[0_2px_10px_rgba(244,84,114,0.45)]"></span>
                     Manajemen Booking Pelanggan
                 </h2>
                 <p class="text-sm text-gray-500 mt-1">Kelola reservasi, filter tanggal, konfirmasi beautician, & verifikasi pembayaran</p>
@@ -27,9 +27,39 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
+            {{-- TAB NAVIGATION (AKTIF vs ARSIP) --}}
+            <div class="bg-white rounded-3xl p-4 shadow-sm border border-rose-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
+                    <a href="{{ route('admin.bookings.index', array_merge(request()->except(['page']), ['tab' => 'active'])) }}"
+                       class="px-5 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 {{ ($tab ?? 'active') === 'active' ? 'bg-[#b01f44] text-white shadow-md shadow-rose-900/10' : 'bg-gray-100 text-gray-700 hover:bg-rose-50 hover:text-[#b01f44]' }}">
+                        <i class="fa-solid fa-calendar-check text-xs"></i>
+                        <span>Reservasi Aktif</span>
+                        <span class="px-2 py-0.5 text-[10px] rounded-full {{ ($tab ?? 'active') === 'active' ? 'bg-white/25 text-white' : 'bg-gray-200 text-gray-700' }}">
+                            {{ $activeCount ?? 0 }}
+                        </span>
+                    </a>
+
+                    <a href="{{ route('admin.bookings.index', array_merge(request()->except(['page']), ['tab' => 'archived'])) }}"
+                       class="px-5 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 {{ ($tab ?? 'active') === 'archived' ? 'bg-[#b01f44] text-white shadow-md shadow-rose-900/10' : 'bg-gray-100 text-gray-700 hover:bg-rose-50 hover:text-[#b01f44]' }}">
+                        <i class="fa-solid fa-box-archive text-xs"></i>
+                        <span>Riwayat Diarsipkan</span>
+                        <span class="px-2 py-0.5 text-[10px] rounded-full {{ ($tab ?? 'active') === 'archived' ? 'bg-white/25 text-white' : 'bg-gray-200 text-gray-700' }}">
+                            {{ $archivedCount ?? 0 }}
+                        </span>
+                    </a>
+                </div>
+
+                <a href="{{ route('admin.trash.index', ['type' => 'bookings']) }}"
+                   class="px-4 py-2.5 rounded-2xl text-xs font-bold text-gray-600 bg-gray-50 border border-gray-200 hover:bg-rose-50 hover:text-[#b01f44] hover:border-rose-200 transition-all flex items-center gap-2 shrink-0 self-start sm:self-auto">
+                    <i class="fa-solid fa-trash-can text-xs text-rose-500"></i>
+                    <span>Tong Sampah Reservasi</span>
+                </a>
+            </div>
+
             {{-- FILTER BAR SECTION --}}
             <div class="bg-white rounded-3xl p-6 shadow-sm border border-rose-100 space-y-4">
                 <form method="GET" action="{{ route('admin.bookings.index') }}" class="space-y-4">
+                    <input type="hidden" name="tab" value="{{ $tab ?? 'active' }}">
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 items-end">
                         
                         {{-- Filter Start Date --}}
@@ -263,19 +293,31 @@
 
                                 {{-- Aksi --}}
                                 <td class="py-3.5 px-5 text-center">
-                                    <div class="flex items-center justify-center gap-1.5">
+                                    <div class="flex items-center justify-center gap-1.5 flex-wrap">
                                         <a href="{{ route('admin.bookings.show', $b->id) }}" 
-                                           class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-rose-50 text-[#f45472] hover:bg-rose-100 text-xs font-bold transition-all shadow-2xs"
+                                           class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-rose-50 text-[#f45472] hover:bg-rose-100 text-xs font-bold transition-all shadow-2xs"
                                            aria-label="Lihat detail reservasi {{ $b->booking_code }}">
                                             <i class="fa-solid fa-eye text-xs"></i>
                                             <span>Detail</span>
                                         </a>
                                         <a href="{{ route('admin.bookings.receipt', $b->id) }}" target="_blank"
-                                           class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 text-xs font-bold transition-all shadow-2xs"
+                                           class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 text-xs font-bold transition-all shadow-2xs"
                                            aria-label="Cetak struk reservasi {{ $b->booking_code }}">
                                             <i class="fa-solid fa-receipt text-xs"></i>
                                             <span>Struk</span>
                                         </a>
+
+                                        {{-- Tombol Soft Delete (Tong Sampah) --}}
+                                        <form action="{{ route('admin.bookings.destroy', $b->id) }}" method="POST" class="inline"
+                                              onsubmit="return confirm('Pindahkan reservasi #{{ $b->booking_code }} ke tong sampah?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" 
+                                                    class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100 text-xs font-bold transition-all shadow-2xs"
+                                                    title="Pindahkan ke Tong Sampah">
+                                                <i class="fa-solid fa-trash text-xs"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>

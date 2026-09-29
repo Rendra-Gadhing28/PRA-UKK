@@ -76,10 +76,10 @@ class SocialiteController extends Controller
 
         if ($isNewUser) {
             ActivityLogger::log('register', "Registrasi via Google OAuth '{$user->name}' ({$user->email}).", $user);
-            ToastHelper::success("Selamat datang di Yalia Beauty, {$namaDepan}! 🌸 Akun Google Anda berhasil terhubung.");
+            ToastHelper::success("Selamat datang di Yalia Beauty, {$namaDepan}! Akun Google Anda berhasil terhubung.");
         } else {
             ActivityLogger::log('login', "User '{$user->name}' berhasil login via Google OAuth.", $user);
-            ToastHelper::success("Selamat datang kembali, {$namaDepan}! 👋");
+            ToastHelper::success("Selamat datang kembali, {$namaDepan}!");
         }
 
         return $user->is_admin

@@ -3,7 +3,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h2 class="font-bold text-2xl text-gray-900 tracking-tight flex items-center gap-3 font-headline">
-                    <span class="w-4 h-8 bg-gradient-to-b from-[#b01f44] to-[#f45472] rounded-full inline-block"></span>
+                    <span class="w-1.5 h-7 bg-gradient-to-b from-[#b01f44] to-[#f45472] rounded-full inline-block shadow-[0_2px_10px_rgba(244,84,114,0.45)]"></span>
                     Audit Log Aktivitas
                 </h2>
                 <p class="text-sm text-gray-500 mt-1">Rekam jejak audit keamanan read-only, pengarsipan otomatis >30 hari, dan detail payload perubahan data.</p>
@@ -23,12 +23,12 @@
 
                 {{-- Tombol Simulasi Skip 30 Hari --}}
                 <form action="{{ route('admin.activity-logs.simulate-skip-30d') }}" method="POST"
-                      onsubmit="return confirm('Simulasikan majukan umur log 30 hari ke belakang? Sistem akan otomatis mengarsipkan log yang telah expired.');">
+                      onsubmit="return confirm('Ubah seluruh log menjadi aktif dan mundurkan tanggal dibuat sebanyak 31 hari ke belakang (>30 hari) untuk uji fitur arsip?');">
                     @csrf
                     <button type="submit" 
                             class="px-4 py-2.5 bg-amber-500 text-white text-xs font-bold rounded-xl hover:bg-amber-600 transition-all flex items-center gap-2 shadow-sm">
                         <i class="fa-solid fa-flask-vial"></i>
-                        Testing: Skip 30 Hari
+                        Simulasi Log (+30 Hari Umur)
                     </button>
                 </form>
             </div>

@@ -3,8 +3,8 @@
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-                <h2 class="font-bold text-2xl text-gray-900 tracking-tight flex items-center gap-2 font-headline">
-                    <span class="w-3 h-8 bg-[#f45472] rounded-full inline-block"></span>
+                <h2 class="font-bold text-2xl text-gray-900 tracking-tight flex items-center gap-3 font-headline">
+                    <span class="w-1.5 h-7 bg-gradient-to-b from-[#b01f44] to-[#f45472] rounded-full inline-block shadow-[0_2px_10px_rgba(244,84,114,0.45)]"></span>
                     Admin Executive Dashboard
                 </h2>
                 <p class="text-sm text-gray-500 mt-1">Monitoring Performa Salon Yalia Beauty — {{ now()->translatedFormat('F Y') }}</p>
@@ -205,17 +205,15 @@
 
                     <div class="space-y-4 flex-1">
                         @php
-                            $isValidTopObj = is_object($topTreatments) && !($topTreatments instanceof \__PHP_Incomplete_Class);
-                            $firstItem = ($isValidTopObj && method_exists($topTreatments, 'first')) ? $topTreatments->first() : (is_array($topTreatments) ? ($topTreatments[0] ?? null) : null);
-                            $firstCount = is_object($firstItem) && !($firstItem instanceof \__PHP_Incomplete_Class) ? ($firstItem->bookings_count ?? 1) : (is_array($firstItem) ? ($firstItem['bookings_count'] ?? 1) : 1);
+                            $firstItem = $topTreatments->first();
+                            $firstCount = $firstItem ? ($firstItem->bookings_count ?? 1) : 1;
                             $maxCount = max(1, (int) $firstCount);
-                            $topTreatmentsList = ($isValidTopObj || is_array($topTreatments)) ? $topTreatments : [];
                         @endphp
-                        @forelse($topTreatmentsList as $index => $treatment)
+                        @forelse($topTreatments as $index => $treatment)
                         @php
-                            $nameStr = is_object($treatment) ? ($treatment->name ?? '') : (is_array($treatment) ? ($treatment['name'] ?? '') : (string) $treatment);
-                            $priceNum = is_object($treatment) ? ($treatment->price ?? 0) : (is_array($treatment) ? ($treatment['price'] ?? 0) : 0);
-                            $countNum = is_object($treatment) ? ($treatment->bookings_count ?? 0) : (is_array($treatment) ? ($treatment['bookings_count'] ?? 0) : 0);
+                            $nameStr = $treatment->name ?? '';
+                            $priceNum = $treatment->price ?? 0;
+                            $countNum = $treatment->bookings_count ?? 0;
                             $barWidth = min(100, max(8, round(($countNum / $maxCount) * 100)));
                         @endphp
                         <div class="p-3 rounded-2xl hover:bg-rose-50/50 transition-colors space-y-1.5">
@@ -267,11 +265,7 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-50 text-sm">
-                                @php
-                                    $isValidRecentObj = is_object($recentBookings) && !($recentBookings instanceof \__PHP_Incomplete_Class);
-                                    $recentBookingsList = ($isValidRecentObj || is_array($recentBookings)) ? $recentBookings : [];
-                                @endphp
-                                @forelse($recentBookingsList as $booking)
+                                @forelse($recentBookings as $booking)
                                 <tr class="hover:bg-rose-50/30 transition-colors">
                                     <td class="py-3 px-2 font-bold text-gray-900">
                                         {{ $booking->user?->name ?? 'Guest User' }}
@@ -325,187 +319,205 @@
         </div>
     </div>
 
-    {{-- CHART.JS SCRIPT INTEGRATION --}}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {{-- CHART.JS INITIALIZATION (Supports SPA & Standard Navigation) --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // 1. Line Chart 7-Hari Monitoring Keuangan (TradingView / Binance Style)
-            const ctxLine = document.getElementById('financeChart').getContext('2d');
-            
-            // TradingView gradient fill: #9b4054 (Burgundy) fading down to transparent
-            const incomeGradient = ctxLine.createLinearGradient(0, 0, 0, 300);
-            incomeGradient.addColorStop(0, 'rgba(155, 64, 84, 0.45)');   // Burgundy glow (#9b4054)
-            incomeGradient.addColorStop(0.5, 'rgba(155, 64, 84, 0.12)'); 
-            incomeGradient.addColorStop(1, 'rgba(155, 64, 84, 0.00)');   // Transparent area fill
+        (function() {
+            function renderDashboardCharts() {
+                const canvasLine = document.getElementById('financeChart');
+                const canvasDoughnut = document.getElementById('treatmentDoughnutChart');
+                
+                if (!canvasLine || !canvasDoughnut || typeof Chart === 'undefined') return;
 
-            const expenseGradient = ctxLine.createLinearGradient(0, 0, 0, 300);
-            expenseGradient.addColorStop(0, 'rgba(251, 191, 36, 0.35)');  // Amber glow
-            expenseGradient.addColorStop(0.5, 'rgba(251, 191, 36, 0.08)');
-            expenseGradient.addColorStop(1, 'rgba(251, 191, 36, 0.00)');
-
-            // Custom Vertical Hairline Crosshair plugin
-            const crosshairPlugin = {
-                id: 'crosshair',
-                afterDraw: (chart) => {
-                    if (chart.tooltip?._active && chart.tooltip._active.length) {
-                        const activePoint = chart.tooltip._active[0];
-                        const ctx = chart.ctx;
-                        const x = activePoint.element.x;
-                        const topY = chart.scales.y.top;
-                        const bottomY = chart.scales.y.bottom;
-
-                        ctx.save();
-                        ctx.beginPath();
-                        ctx.setLineDash([4, 4]);
-                        ctx.moveTo(x, topY);
-                        ctx.lineTo(x, bottomY);
-                        ctx.lineWidth = 1;
-                        ctx.strokeStyle = 'rgba(176, 31, 68, 0.35)';
-                        ctx.stroke();
-                        ctx.restore();
-                    }
+                // Hancurkan instance chart lama agar tidak numpuk / memory leak saat navigasi SPA
+                if (window._adminFinanceChart instanceof Chart) {
+                    window._adminFinanceChart.destroy();
                 }
-            };
+                if (window._adminTreatmentChart instanceof Chart) {
+                    window._adminTreatmentChart.destroy();
+                }
 
-            new Chart(ctxLine, {
-                type: 'line',
-                plugins: [crosshairPlugin],
-                data: {
-                    labels: @json($chartLabels),
-                    datasets: [
-                        {
-                            label: 'Pemasukan (Rp)',
-                            data: @json($chartIncome),
-                            borderColor: '#9b4054',
-                            backgroundColor: incomeGradient,
-                            fill: true,
-                            tension: 0.42,
-                            borderWidth: 3,
-                            pointRadius: 0,
-                            pointHoverRadius: 6,
-                            pointHoverBackgroundColor: '#ffffff',
-                            pointHoverBorderColor: '#9b4054',
-                            pointHoverBorderWidth: 3.5,
-                            pointHitRadius: 16
-                        },
-                        {
-                            label: 'Pengeluaran (Rp)',
-                            data: @json($chartExpense),
-                            borderColor: '#fbbf24',
-                            backgroundColor: expenseGradient,
-                            fill: true,
-                            tension: 0.42,
-                            borderWidth: 2,
-                            borderDash: [5, 5],
-                            pointRadius: 0,
-                            pointHoverRadius: 6,
-                            pointHoverBackgroundColor: '#ffffff',
-                            pointHoverBorderColor: '#fbbf24',
-                            pointHoverBorderWidth: 3,
-                            pointHitRadius: 16
+                // 1. Line Chart 7-Hari Monitoring Keuangan
+                const ctxLine = canvasLine.getContext('2d');
+                
+                const incomeGradient = ctxLine.createLinearGradient(0, 0, 0, 300);
+                incomeGradient.addColorStop(0, 'rgba(155, 64, 84, 0.45)');
+                incomeGradient.addColorStop(0.5, 'rgba(155, 64, 84, 0.12)'); 
+                incomeGradient.addColorStop(1, 'rgba(155, 64, 84, 0.00)');
+
+                const expenseGradient = ctxLine.createLinearGradient(0, 0, 0, 300);
+                expenseGradient.addColorStop(0, 'rgba(251, 191, 36, 0.35)');
+                expenseGradient.addColorStop(0.5, 'rgba(251, 191, 36, 0.08)');
+                expenseGradient.addColorStop(1, 'rgba(251, 191, 36, 0.00)');
+
+                const crosshairPlugin = {
+                    id: 'crosshair',
+                    afterDraw: (chart) => {
+                        if (chart.tooltip?._active && chart.tooltip._active.length) {
+                            const activePoint = chart.tooltip._active[0];
+                            const ctx = chart.ctx;
+                            const x = activePoint.element.x;
+                            const topY = chart.scales.y.top;
+                            const bottomY = chart.scales.y.bottom;
+
+                            ctx.save();
+                            ctx.beginPath();
+                            ctx.setLineDash([4, 4]);
+                            ctx.moveTo(x, topY);
+                            ctx.lineTo(x, bottomY);
+                            ctx.lineWidth = 1;
+                            ctx.strokeStyle = 'rgba(176, 31, 68, 0.35)';
+                            ctx.stroke();
+                            ctx.restore();
                         }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: {
-                        duration: 1200,
-                        easing: 'easeOutQuart'
-                    },
-                    interaction: {
-                        mode: 'index',
-                        intersect: false
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            enabled: true,
-                            backgroundColor: '#2b1a1f',
-                            titleColor: '#ffd2e1',
-                            bodyColor: '#ffffff',
-                            borderColor: 'rgba(244, 84, 114, 0.3)',
-                            borderWidth: 1,
-                            padding: { top: 10, bottom: 10, left: 14, right: 14 },
-                            cornerRadius: 12,
-                            displayColors: true,
-                            boxWidth: 8,
-                            boxHeight: 8,
-                            boxPadding: 6,
-                            usePointStyle: true,
-                            titleFont: { family: 'Work Sans, sans-serif', size: 11, weight: '600' },
-                            bodyFont: { family: 'Work Sans, sans-serif', size: 13, weight: '700' },
-                            callbacks: {
-                                label: function(context) {
-                                    return ' ' + context.dataset.label + ': Rp ' + context.parsed.y.toLocaleString('id-ID');
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: { display: false, drawBorder: false },
-                            ticks: { 
-                                font: { family: 'Work Sans, sans-serif', size: 11, weight: '700' }, 
-                                color: '#594043' 
-                            }
-                        },
-                        y: {
-                            grid: { 
-                                color: 'rgba(244, 221, 225, 0.6)',
-                                drawBorder: false 
+                    }
+                };
+
+                window._adminFinanceChart = new Chart(ctxLine, {
+                    type: 'line',
+                    plugins: [crosshairPlugin],
+                    data: {
+                        labels: @json($chartLabels),
+                        datasets: [
+                            {
+                                label: 'Pemasukan (Rp)',
+                                data: @json($chartIncome),
+                                borderColor: '#9b4054',
+                                backgroundColor: incomeGradient,
+                                fill: true,
+                                tension: 0.42,
+                                borderWidth: 3,
+                                pointRadius: 0,
+                                pointHoverRadius: 6,
+                                pointHoverBackgroundColor: '#ffffff',
+                                pointHoverBorderColor: '#9b4054',
+                                pointHoverBorderWidth: 3.5,
+                                pointHitRadius: 16
                             },
-                            ticks: {
-                                font: { family: 'Work Sans, sans-serif', size: 10, weight: '700' },
-                                color: '#594043',
-                                callback: function(value) {
-                                    if (value >= 1000000) return 'Rp ' + (value / 1000000).toLocaleString('id-ID') + 'M';
-                                    if (value >= 1000) return 'Rp ' + (value / 1000).toLocaleString('id-ID') + 'k';
-                                    return 'Rp ' + value;
+                            {
+                                label: 'Pengeluaran (Rp)',
+                                data: @json($chartExpense),
+                                borderColor: '#fbbf24',
+                                backgroundColor: expenseGradient,
+                                fill: true,
+                                tension: 0.42,
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                pointRadius: 0,
+                                pointHoverRadius: 6,
+                                pointHoverBackgroundColor: '#ffffff',
+                                pointHoverBorderColor: '#fbbf24',
+                                pointHoverBorderWidth: 3,
+                                pointHitRadius: 16
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 800,
+                            easing: 'easeOutQuart'
+                        },
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                enabled: true,
+                                backgroundColor: '#2b1a1f',
+                                titleColor: '#ffd2e1',
+                                bodyColor: '#ffffff',
+                                borderColor: 'rgba(244, 84, 114, 0.3)',
+                                borderWidth: 1,
+                                padding: { top: 10, bottom: 10, left: 14, right: 14 },
+                                cornerRadius: 12,
+                                displayColors: true,
+                                boxWidth: 8,
+                                boxHeight: 8,
+                                boxPadding: 6,
+                                usePointStyle: true,
+                                titleFont: { family: 'Work Sans, sans-serif', size: 11, weight: '600' },
+                                bodyFont: { family: 'Work Sans, sans-serif', size: 13, weight: '700' },
+                                callbacks: {
+                                    label: function(context) {
+                                        return ' ' + context.dataset.label + ': Rp ' + context.parsed.y.toLocaleString('id-ID');
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { display: false, drawBorder: false },
+                                ticks: { 
+                                    font: { family: 'Work Sans, sans-serif', size: 11, weight: '700' }, 
+                                    color: '#594043' 
+                                }
+                            },
+                            y: {
+                                grid: { 
+                                    color: 'rgba(244, 221, 225, 0.6)',
+                                    drawBorder: false 
+                                },
+                                ticks: { 
+                                    font: { family: 'Work Sans, sans-serif', size: 10, weight: '700' },
+                                    color: '#594043',
+                                    callback: function(value) {
+                                        if (value >= 1000000) return 'Rp ' + (value / 1000000).toLocaleString('id-ID') + 'M';
+                                        if (value >= 1000) return 'Rp ' + (value / 1000).toLocaleString('id-ID') + 'k';
+                                        return 'Rp ' + value;
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            });
+                });
 
-            // 2. Doughnut Chart Persentase Booking Treatment
-            const ctxDoughnut = document.getElementById('treatmentDoughnutChart').getContext('2d');
-            
-            new Chart(ctxDoughnut, {
-                type: 'doughnut',
-                data: {
-                    labels: @json($treatmentChartLabels),
-                    datasets: [{
-                        data: @json($treatmentChartData),
-                        backgroundColor: @json($treatmentChartColors),
-                        borderWidth: 3,
-                        borderColor: '#ffffff',
-                        hoverOffset: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '72%',
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#2b1a1f',
-                            padding: 10,
-                            callbacks: {
-                                label: function(context) {
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const value = context.parsed;
-                                    const pct = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                                    return context.label + ': ' + value + ' booking (' + pct + '%)';
+                // 2. Doughnut Chart Persentase Booking Treatment
+                const ctxDoughnut = canvasDoughnut.getContext('2d');
+                
+                window._adminTreatmentChart = new Chart(ctxDoughnut, {
+                    type: 'doughnut',
+                    data: {
+                        labels: @json($treatmentChartLabels),
+                        datasets: [{
+                            data: @json($treatmentChartData),
+                            backgroundColor: @json($treatmentChartColors),
+                            borderWidth: 3,
+                            borderColor: '#ffffff',
+                            hoverOffset: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '72%',
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: '#2b1a1f',
+                                padding: 10,
+                                callbacks: {
+                                    label: function(context) {
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const value = context.parsed;
+                                        const pct = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                        return context.label + ': ' + value + ' booking (' + pct + '%)';
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            });
-        });
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', renderDashboardCharts);
+            } else {
+                setTimeout(renderDashboardCharts, 30);
+            }
+        })();
     </script>
 </x-admin-layout>
 

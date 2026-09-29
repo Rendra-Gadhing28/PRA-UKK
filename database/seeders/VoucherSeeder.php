@@ -90,7 +90,7 @@ class VoucherSeeder extends Seeder
                 'max_discount' => 80000,
                 'points_required' => 0,
                 'is_event' => true,
-                'event_name' => 'Beauty Fiesta 2026 🎉',
+                'event_name' => 'Beauty Fiesta 2026',
                 'quota' => 150,
             ],
             [
@@ -103,7 +103,7 @@ class VoucherSeeder extends Seeder
                 'max_discount' => null,
                 'points_required' => 0,
                 'is_event' => true,
-                'event_name' => 'Payday Promo 💳',
+                'event_name' => 'Payday Promo',
                 'quota' => 60,
             ],
         ];

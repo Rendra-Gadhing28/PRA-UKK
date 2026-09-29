@@ -40,169 +40,168 @@ class AdminDashboardController extends Controller
      */
     public function index(Request $request)
     {
-        $version = $this->currentVersion();
-        $todayStr = Carbon::now()->toDateString();
-        $cacheKey = "admin.dashboard.v{$version}.{$todayStr}";
+        $now = Carbon::now();
+        $startOfMonth = $now->copy()->startOfMonth();
+        $endOfMonth = $now->copy()->endOfMonth();
 
-        // Simpan hasil perhitungan dashboard selama 5 menit (300 detik) / sampai di-bump
-        $dashboardData = Cache::remember($cacheKey, 300, function () {
-            $now = Carbon::now();
-            $startOfMonth = $now->copy()->startOfMonth();
-            $endOfMonth = $now->copy()->endOfMonth();
+        $lastMonthStart = $now->copy()->subMonth()->startOfMonth();
+        $lastMonthEnd = $now->copy()->subMonth()->endOfMonth();
 
-            $lastMonthStart = $now->copy()->subMonth()->startOfMonth();
-            $lastMonthEnd = $now->copy()->subMonth()->endOfMonth();
+        // 1. Pemasukan (Income) Bulan ini vs Bulan Lalu
+        $incomeThisMonth = (float) Transactions::where('type', 'income')
+            ->whereBetween('transaction_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
+            ->sum('amount');
 
-            // 1. Pemasukan (Income) Bulan ini vs Bulan Lalu
-            $incomeThisMonth = (float) Transactions::where('type', 'income')
-                ->whereBetween('transaction_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
-                ->sum('amount');
-
-            // Fallback jika tidak ada transactions record terpisah, hitung dari Bookings paid/completed
-            if ($incomeThisMonth == 0) {
-                $incomeThisMonth = (float) Bookings::whereIn('status', ['completed', 'confirmed'])
-                    ->whereBetween('booking_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
-                    ->sum('total_amount');
-            }
-
-            $incomeLastMonth = (float) Transactions::where('type', 'income')
-                ->whereBetween('transaction_date', [$lastMonthStart->toDateString(), $lastMonthEnd->toDateString()])
-                ->sum('amount');
-
-            if ($incomeLastMonth == 0) {
-                $incomeLastMonth = (float) Bookings::whereIn('status', ['completed', 'confirmed'])
-                    ->whereBetween('booking_date', [$lastMonthStart->toDateString(), $lastMonthEnd->toDateString()])
-                    ->sum('total_amount');
-            }
-
-            $incomeGrowth = $this->calculatePercentageChange($incomeLastMonth, $incomeThisMonth);
-
-            // 2. Pengeluaran (Expense) Bulan ini vs Bulan Lalu
-            $expenseThisMonth = (float) Transactions::where('type', 'expense')
-                ->whereBetween('transaction_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
-                ->sum('amount');
-
-            $expenseLastMonth = (float) Transactions::where('type', 'expense')
-                ->whereBetween('transaction_date', [$lastMonthStart->toDateString(), $lastMonthEnd->toDateString()])
-                ->sum('amount');
-
-            $expenseGrowth = $this->calculatePercentageChange($expenseLastMonth, $expenseThisMonth);
-
-            // 3. Completed Bookings Bulan ini vs Bulan Lalu
-            $completedThisMonth = Bookings::where('status', 'completed')
+        // Fallback jika tidak ada transactions record terpisah, hitung dari Bookings paid/completed
+        if ($incomeThisMonth == 0) {
+            $incomeThisMonth = (float) Bookings::whereIn('status', ['completed', 'confirmed'])
                 ->whereBetween('booking_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
-                ->count();
+                ->sum('total_amount');
+        }
 
-            $completedLastMonth = Bookings::where('status', 'completed')
+        $incomeLastMonth = (float) Transactions::where('type', 'income')
+            ->whereBetween('transaction_date', [$lastMonthStart->toDateString(), $lastMonthEnd->toDateString()])
+            ->sum('amount');
+
+        if ($incomeLastMonth == 0) {
+            $incomeLastMonth = (float) Bookings::whereIn('status', ['completed', 'confirmed'])
                 ->whereBetween('booking_date', [$lastMonthStart->toDateString(), $lastMonthEnd->toDateString()])
-                ->count();
+                ->sum('total_amount');
+        }
 
-            $completedGrowth = $this->calculatePercentageChange($completedLastMonth, $completedThisMonth);
+        $incomeGrowth = $this->calculatePercentageChange($incomeLastMonth, $incomeThisMonth);
 
-            // 4. Net Profit
-            $netProfitThisMonth = $incomeThisMonth - $expenseThisMonth;
-            $netProfitLastMonth = $incomeLastMonth - $expenseLastMonth;
-            $netProfitGrowth = $this->calculatePercentageChange($netProfitLastMonth, $netProfitThisMonth);
+        // 2. Pengeluaran (Expense) Bulan ini vs Bulan Lalu
+        $expenseThisMonth = (float) Transactions::where('type', 'expense')
+            ->whereBetween('transaction_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
+            ->sum('amount');
 
-            // 5. Data Chart Monitoring Keuangan (7 Hari Terakhir / Rolling 7-Day Window)
-            $chartLabels = [];
-            $chartIncome = [];
-            $chartExpense = [];
+        $expenseLastMonth = (float) Transactions::where('type', 'expense')
+            ->whereBetween('transaction_date', [$lastMonthStart->toDateString(), $lastMonthEnd->toDateString()])
+            ->sum('amount');
 
-            $startDate7Days = $now->copy()->subDays(6)->startOfDay();
-            $endDate7Days = $now->copy()->endOfDay();
+        $expenseGrowth = $this->calculatePercentageChange($expenseLastMonth, $expenseThisMonth);
 
-            $transactionsGrouped = Transactions::query()
-                ->whereBetween('transaction_date', [$startDate7Days->toDateString(), $endDate7Days->toDateString()])
-                ->selectRaw('DATE(transaction_date) as date, type, SUM(amount) as total')
-                ->groupBy(DB::raw('DATE(transaction_date)'), 'type')
-                ->get()
-                ->groupBy('date');
+        // 3. Completed Bookings Bulan ini vs Bulan Lalu
+        $completedThisMonth = Bookings::where('status', 'completed')
+            ->whereBetween('booking_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
+            ->count();
 
-            $bookingsGrouped = Bookings::query()
-                ->whereIn('status', ['completed', 'confirmed'])
-                ->whereBetween('booking_date', [$startDate7Days->toDateString(), $endDate7Days->toDateString()])
-                ->selectRaw('DATE(booking_date) as date, SUM(total_amount) as total')
-                ->groupBy(DB::raw('DATE(booking_date)'))
-                ->pluck('total', 'date');
+        $completedLastMonth = Bookings::where('status', 'completed')
+            ->whereBetween('booking_date', [$lastMonthStart->toDateString(), $lastMonthEnd->toDateString()])
+            ->count();
 
-            for ($i = 6; $i >= 0; $i--) {
-                $date = $now->copy()->subDays($i);
-                $dateStr = $date->toDateString();
+        $completedGrowth = $this->calculatePercentageChange($completedLastMonth, $completedThisMonth);
 
-                // Format label: "16 Agt", "17 Agt", ...
-                $chartLabels[] = $date->format('j').' '.$date->translatedFormat('M');
+        // 4. Net Profit
+        $netProfitThisMonth = $incomeThisMonth - $expenseThisMonth;
+        $netProfitLastMonth = $incomeLastMonth - $expenseLastMonth;
+        $netProfitGrowth = $this->calculatePercentageChange($netProfitLastMonth, $netProfitThisMonth);
 
-                $txDay = $transactionsGrouped->get($dateStr);
-                $dayInc = (float) ($txDay?->where('type', 'income')->sum('total') ?? 0);
-                if ($dayInc == 0) {
-                    $dayInc = (float) ($bookingsGrouped->get($dateStr) ?? 0);
-                }
-                $chartIncome[] = $dayInc;
+        // 5. Data Chart Monitoring Keuangan (7 Hari Terakhir / Rolling 7-Day Window)
+        $chartLabels = [];
+        $chartIncome = [];
+        $chartExpense = [];
 
-                $dayExp = (float) ($txDay?->where('type', 'expense')->sum('total') ?? 0);
-                $chartExpense[] = $dayExp;
+        $startDate7Days = $now->copy()->subDays(6)->startOfDay();
+        $endDate7Days = $now->copy()->endOfDay();
+
+        $transactionsGrouped = Transactions::query()
+            ->whereBetween('transaction_date', [$startDate7Days->toDateString(), $endDate7Days->toDateString()])
+            ->selectRaw('DATE(transaction_date) as date, type, SUM(amount) as total')
+            ->groupBy(DB::raw('DATE(transaction_date)'), 'type')
+            ->get()
+            ->groupBy('date');
+
+        $bookingsGrouped = Bookings::query()
+            ->whereIn('status', ['completed', 'confirmed'])
+            ->whereBetween('booking_date', [$startDate7Days->toDateString(), $endDate7Days->toDateString()])
+            ->selectRaw('DATE(booking_date) as date, SUM(total_amount) as total')
+            ->groupBy(DB::raw('DATE(booking_date)'))
+            ->pluck('total', 'date');
+
+        for ($i = 6; $i >= 0; $i--) {
+            $date = $now->copy()->subDays($i);
+            $dateStr = $date->toDateString();
+
+            // Format label: "16 Agt", "17 Agt", ...
+            $chartLabels[] = $date->format('j').' '.$date->translatedFormat('M');
+
+            $txDay = $transactionsGrouped->get($dateStr);
+            $dayInc = (float) ($txDay?->where('type', 'income')->sum('total') ?? 0);
+            if ($dayInc == 0) {
+                $dayInc = (float) ($bookingsGrouped->get($dateStr) ?? 0);
             }
+            $chartIncome[] = $dayInc;
 
-            // 6. Top Treatments & Data Diagram Lingkaran Persentase Booking
-            $topTreatments = Treatments::withCount(['bookings' => function ($q) use ($startOfMonth, $endOfMonth) {
-                $q->whereBetween('booking_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()]);
-            }])
+            $dayExp = (float) ($txDay?->where('type', 'expense')->sum('total') ?? 0);
+            $chartExpense[] = $dayExp;
+        }
+
+        // 6. Top Treatments & Data Diagram Lingkaran Persentase Booking
+        $topTreatments = Treatments::withCount(['bookings' => function ($q) use ($startOfMonth, $endOfMonth) {
+            $q->whereBetween('booking_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()]);
+        }])
+            ->orderBy('bookings_count', 'desc')
+            ->take(5)
+            ->get();
+
+        // Fallback jika belum ada booking bulan ini: ambil berdasarkan total booking keseluruhan
+        if ($topTreatments->sum('bookings_count') == 0) {
+            $topTreatments = Treatments::withCount('bookings')
                 ->orderBy('bookings_count', 'desc')
                 ->take(5)
                 ->get();
+        }
 
-            $totalTreatmentBookings = $topTreatments->sum('bookings_count');
+        $totalTreatmentBookings = $topTreatments->sum('bookings_count');
 
-            $treatmentChartLabels = [];
-            $treatmentChartData = [];
-            $treatmentChartPercentages = [];
-            $treatmentChartColors = [
-                '#b01f44', // Primary Rose Deep
-                '#d23b5b', // Bright Rose Accent
-                '#ff8fa4', // Soft Rose Pink
-                '#785341', // Rich Warm Brown
-                '#946c58', // Light Brown Accent
-            ];
+        $treatmentChartLabels = [];
+        $treatmentChartData = [];
+        $treatmentChartPercentages = [];
+        $treatmentChartColors = [
+            '#b01f44', // Primary Rose Deep
+            '#d23b5b', // Bright Rose Accent
+            '#ff8fa4', // Soft Rose Pink
+            '#785341', // Rich Warm Brown
+            '#946c58', // Light Brown Accent
+        ];
 
-            foreach ($topTreatments as $t) {
-                $count = $t->bookings_count;
-                $percentage = $totalTreatmentBookings > 0 ? round(($count / $totalTreatmentBookings) * 100, 1) : 0;
+        foreach ($topTreatments as $t) {
+            $count = $t->bookings_count;
+            $percentage = $totalTreatmentBookings > 0 ? round(($count / $totalTreatmentBookings) * 100, 1) : 0;
 
-                $treatmentChartLabels[] = $t->name;
-                $treatmentChartData[] = $count;
-                $treatmentChartPercentages[] = $percentage;
-            }
+            $treatmentChartLabels[] = $t->name;
+            $treatmentChartData[] = $count;
+            $treatmentChartPercentages[] = $percentage;
+        }
 
-            // 7. Recent Bookings
-            $recentBookings = Bookings::with(['user', 'treatments'])
-                ->orderBy('created_at', 'desc')
-                ->take(6)
-                ->get();
+        // 7. Recent Bookings
+        $recentBookings = Bookings::with(['user', 'treatments'])
+            ->orderBy('created_at', 'desc')
+            ->take(6)
+            ->get();
 
-            return compact(
-                'incomeThisMonth',
-                'incomeGrowth',
-                'expenseThisMonth',
-                'expenseGrowth',
-                'completedThisMonth',
-                'completedGrowth',
-                'netProfitThisMonth',
-                'netProfitGrowth',
-                'chartLabels',
-                'chartIncome',
-                'chartExpense',
-                'topTreatments',
-                'totalTreatmentBookings',
-                'treatmentChartLabels',
-                'treatmentChartData',
-                'treatmentChartPercentages',
-                'treatmentChartColors',
-                'recentBookings'
-            );
-        });
-
-        return view('admin.dashboard', $dashboardData);
+        return view('admin.dashboard', compact(
+            'incomeThisMonth',
+            'incomeGrowth',
+            'expenseThisMonth',
+            'expenseGrowth',
+            'completedThisMonth',
+            'completedGrowth',
+            'netProfitThisMonth',
+            'netProfitGrowth',
+            'chartLabels',
+            'chartIncome',
+            'chartExpense',
+            'topTreatments',
+            'totalTreatmentBookings',
+            'treatmentChartLabels',
+            'treatmentChartData',
+            'treatmentChartPercentages',
+            'treatmentChartColors',
+            'recentBookings'
+        ));
     }
 
     /**

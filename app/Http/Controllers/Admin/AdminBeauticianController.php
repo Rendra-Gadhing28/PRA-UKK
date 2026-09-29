@@ -82,7 +82,7 @@ class AdminBeauticianController extends Controller
 
         ActivityLogger::log('create', "Menambahkan staf beautician baru '{$beautician->name}'.", $beautician);
 
-        ToastHelper::success("Staf beautician '{$validated['name']}' berhasil ditambahkan! 🌸");
+        ToastHelper::success("Staf beautician '{$validated['name']}' berhasil ditambahkan.");
 
         return redirect()->route('admin.beauticians.index');
     }
@@ -151,7 +151,7 @@ class AdminBeauticianController extends Controller
 
         ActivityLogger::log('update', "Memperbarui profil beautician '{$beautician->name}'.", $beautician);
 
-        ToastHelper::success("Profil beautician '{$beautician->name}' berhasil diperbarui! ✨");
+        ToastHelper::success("Profil beautician '{$beautician->name}' berhasil diperbarui.");
 
         return redirect()->route('admin.beauticians.index');
     }

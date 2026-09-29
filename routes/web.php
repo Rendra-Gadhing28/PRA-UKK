@@ -72,9 +72,9 @@ Route::get('/test-email', function () {
 
         Mail::to(env('MAIL_USERNAME'))->send(new BookingReminderMail($booking, 'H-1 Hari'));
 
-        return '<h2 style="color:#0d9488; font-family:sans-serif;">✨ Sukses! Email Template Yalia Beauty berhasil dikirim ke '.env('MAIL_USERNAME').'</h2><p style="font-family:sans-serif;">Silakan buka Inbox / Spam Gmail Anda untuk melihat tampilan barunya.</p>';
+        return '<h2 style="color:#0d9488; font-family:sans-serif;">Sukses! Email Template Yalia Beauty berhasil dikirim ke '.env('MAIL_USERNAME').'</h2><p style="font-family:sans-serif;">Silakan buka Inbox / Spam Gmail Anda untuk melihat tampilan barunya.</p>';
     } catch (Exception $e) {
-        return '<h2 style="color:red; font-family:sans-serif;">❌ Gagal mengirim email:</h2><p style="font-family:sans-serif;">'.$e->getMessage().'</p>';
+        return '<h2 style="color:red; font-family:sans-serif;">Gagal mengirim email:</h2><p style="font-family:sans-serif;">'.$e->getMessage().'</p>';
     }
 });
 
@@ -228,6 +228,9 @@ Route::middleware(['auth', AdminMiddleware::class])
             Route::patch('/{booking}/status', [AdminBookingController::class, 'updateStatus'])->name('update-status');
             Route::patch('/{booking}/verify-payment', [AdminBookingController::class, 'verifyPayment'])->name('verify-payment');
             Route::post('/{booking}/reply-review', [AdminBookingController::class, 'replyReview'])->name('reply-review');
+            Route::post('/{booking}/archive', [AdminBookingController::class, 'archive'])->name('archive');
+            Route::post('/{booking}/unarchive', [AdminBookingController::class, 'unarchive'])->name('unarchive');
+            Route::delete('/{booking}', [AdminBookingController::class, 'destroy'])->name('destroy');
         });
 
         // Admin Treatments Management

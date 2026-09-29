@@ -58,11 +58,11 @@
                   },
                   ratingText(r) {
                       switch(parseInt(r)) {
-                          case 1: return 'Sangat Kecewa 😞';
-                          case 2: return 'Kurang Puas 😕';
-                          case 3: return 'Cukup Baik 🙂';
-                          case 4: return 'Puas & Nyaman 😊';
-                          case 5: return 'Luar Biasa Glowing! ✨';
+                          case 1: return 'Sangat Kecewa';
+                          case 2: return 'Kurang Puas';
+                          case 3: return 'Cukup Baik';
+                          case 4: return 'Puas & Nyaman';
+                          case 5: return 'Luar Biasa Glowing!';
                           default: return 'Pilih Bintang';
                       }
                   }

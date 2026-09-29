@@ -92,12 +92,12 @@ class TreatmentSeeder extends Seeder
                         Storage::disk('public')->put($destinationPath, (string) $encodedImage);
                         $imagePathForDb = $destinationPath;
 
-                        $this->command->info("✅ Berhasil convert: {$destinationPath}");
+                        $this->command->info("[OK] Berhasil convert: {$destinationPath}");
                     } catch (\Exception $e) {
-                        $this->command->error("❌ Gagal convert {$sourceFile}: ".$e->getMessage());
+                        $this->command->error("[ERROR] Gagal convert {$sourceFile}: ".$e->getMessage());
                     }
                 } else {
-                    $this->command->warn("⚠️ Gambar tidak ditemukan untuk: {$t['name']}");
+                    $this->command->warn("[WARN] Gambar tidak ditemukan untuk: {$t['name']}");
                 }
 
                 Treatments::create([

@@ -18,11 +18,18 @@ class AdminBookingController extends Controller
     private const VERSION_KEY = 'admin.bookings:version';
 
     /**
-     * Tampilkan daftar booking dengan filter tanggal, status, beautician, dan keyword pencarian (Cached).
+     * Tampilkan daftar booking dengan filter tanggal, status, beautician, keyword pencarian, dan tab arsip.
      */
     public function index(Request $request)
     {
+        $tab = $request->get('tab', 'active');
         $query = Bookings::with(['user', 'beautician', 'treatments']);
+
+        if ($tab === 'archived') {
+            $query->archived();
+        } else {
+            $query->active();
+        }
 
         // Filter: Tanggal Mulai & Tanggal Akhir
         if ($request->filled('start_date') && $request->filled('end_date')) {
@@ -65,9 +72,11 @@ class AdminBookingController extends Controller
             ->paginate(10)
             ->withQueryString();
 
+        $activeCount = Bookings::active()->count();
+        $archivedCount = Bookings::archived()->count();
         $beauticians = Beauticians::orderBy('name')->get();
 
-        return view('admin.bookings.index', compact('bookings', 'beauticians'));
+        return view('admin.bookings.index', compact('bookings', 'beauticians', 'tab', 'activeCount', 'archivedCount'));
     }
 
     /**
@@ -113,10 +122,14 @@ class AdminBookingController extends Controller
             $booking->cancel_reason = $validated['cancel_reason'] ?? 'Dibatalkan oleh admin';
         }
 
-        if ($newStatus === 'completed' && $booking->payment_status !== 'paid') {
-            $booking->payment_status = 'paid';
-            $booking->payment_verified_at = now();
-            $booking->payment_verified_by = auth()->id();
+        if ($newStatus === 'completed') {
+            $booking->is_archived = true;
+            $booking->archived_at = now();
+            if ($booking->payment_status !== 'paid') {
+                $booking->payment_status = 'paid';
+                $booking->payment_verified_at = now();
+                $booking->payment_verified_by = auth()->id();
+            }
         }
         // Simpan perubahan status booking terlebih dahulu
         $booking->save();
@@ -133,13 +146,18 @@ class AdminBookingController extends Controller
 
         $this->bumpBookingCache();
 
-        ActivityLogger::log('update', "Mengubah status reservasi #{$booking->booking_code} dari {$oldStatus} ke {$newStatus}.", $booking, [
+        ActivityLogger::log('update', "Mengubah status reservasi #{$booking->booking_code} dari {$oldStatus} ke {$newStatus} (Otomatis Diarsipkan).", $booking, [
             'old_status' => $oldStatus,
             'new_status' => $newStatus,
             'cancel_reason' => $booking->cancel_reason,
+            'is_archived' => $booking->is_archived,
         ]);
 
-        ToastHelper::success("Status reservasi #{$booking->booking_code} berhasil diubah dari {$oldStatus} ke {$newStatus}.");
+        $msg = $newStatus === 'completed'
+            ? "Status reservasi #{$booking->booking_code} selesai dan otomatis masuk ke arsip."
+            : "Status reservasi #{$booking->booking_code} berhasil diubah dari {$oldStatus} ke {$newStatus}.";
+
+        ToastHelper::success($msg);
 
         return redirect()->back();
     }
@@ -276,6 +294,55 @@ class AdminBookingController extends Controller
         ActivityLogger::log('update', "Admin membalas ulasan reservasi #{$booking->booking_code}.", $review);
 
         return back()->with('success', 'Balasan ulasan berhasil dikirim.');
+    }
+
+    /**
+     * Arsipkan data booking yang sudah selesai atau dibatalkan.
+     */
+    public function archive(Bookings $booking)
+    {
+        $booking->archive();
+
+        $this->bumpBookingCache();
+
+        ActivityLogger::log('archive', "Mengarsipkan riwayat reservasi #{$booking->booking_code}.", $booking);
+
+        ToastHelper::success("Reservasi #{$booking->booking_code} berhasil diarsipkan.");
+
+        return back();
+    }
+
+    /**
+     * Pulihkan data booking dari arsip ke daftar aktif.
+     */
+    public function unarchive(Bookings $booking)
+    {
+        $booking->unarchive();
+
+        $this->bumpBookingCache();
+
+        ActivityLogger::log('unarchive', "Membatalkan arsip reservasi #{$booking->booking_code} ke daftar aktif.", $booking);
+
+        ToastHelper::success("Reservasi #{$booking->booking_code} berhasil dipindahkan ke reservasi aktif.");
+
+        return back();
+    }
+
+    /**
+     * Hapus reservasi dari sistem (Soft Delete ke Tong Sampah).
+     */
+    public function destroy(Bookings $booking)
+    {
+        $code = $booking->booking_code;
+        $booking->delete();
+
+        $this->bumpBookingCache();
+
+        ActivityLogger::log('delete', "Memindahkan reservasi #{$code} ke tong sampah (soft delete).", $booking);
+
+        ToastHelper::success("Reservasi #{$code} berhasil dipindahkan ke tong sampah.");
+
+        return redirect()->route('admin.bookings.index');
     }
 
     /**

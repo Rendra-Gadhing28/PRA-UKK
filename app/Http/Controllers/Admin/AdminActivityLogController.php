@@ -146,7 +146,7 @@ class AdminActivityLogController extends Controller
         $logId = $request->input('log_id');
         $count = ActivityLogger::simulateSkipLogs30Days($logId);
 
-        ToastHelper::success("Simulasi Skip 30 Hari berhasil! {$count} log telah dimajukan umurnya dan log >30 hari otomatis diarsipkan.");
+        ToastHelper::success("Simulasi Umur Log berhasil! {$count} log diubah menjadi aktif dengan umur >30 hari (+31 hari ke belakang). Silakan uji fitur arsip.");
 
         return back();
     }

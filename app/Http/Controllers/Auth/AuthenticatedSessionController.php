@@ -74,7 +74,7 @@ class AuthenticatedSessionController extends Controller
 
         $namaDepan = explode(' ', $user->name)[0];
 
-        ToastHelper::success("Selamat datang kembali, {$namaDepan}! 👋");
+        ToastHelper::success("Selamat datang kembali, {$namaDepan}!");
 
         // Arahkan admin ke dashboard admin, user biasa ke dashboard user
         if ($user->isAdmin()) {
@@ -113,7 +113,7 @@ class AuthenticatedSessionController extends Controller
         ]);
 
         $namaDepan = explode(' ', $user->name)[0];
-        ToastHelper::success("Selamat datang di Yalia Beauty, {$namaDepan}! 🌸  Akun Anda berhasil dibuat.");
+        ToastHelper::success("Selamat datang di Yalia Beauty, {$namaDepan}! Akun Anda berhasil dibuat.");
 
         return redirect()->route('user.dashboard');
     }

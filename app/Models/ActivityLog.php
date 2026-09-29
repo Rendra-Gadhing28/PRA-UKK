@@ -28,6 +28,8 @@ class ActivityLog extends Model
         'properties' => 'array',
         'is_archived' => 'boolean',
         'archived_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     /**

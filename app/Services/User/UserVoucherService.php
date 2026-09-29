@@ -163,15 +163,15 @@ class UserVoucherService
         // --- Pesan sukses sesuai tipe klaim ---
         if ($voucher->points_required > 0) {
             $message = "Berhasil menukarkan {$voucher->points_required} PTS "
-                     ."dengan voucher '{$voucher->code}'! 🎉";
+                     ."dengan voucher '{$voucher->code}'!";
             $type = 'points';
         } elseif ($voucher->is_event) {
             $message = "Selamat! Voucher Event '{$voucher->name}' "
-                     ."(Kode: {$voucher->code}) berhasil diklaim! 🎁";
+                     ."(Kode: {$voucher->code}) berhasil diklaim!";
             $type = 'event';
         } else {
             $message = "Voucher '{$voucher->code}' berhasil diklaim "
-                     .'dan tersimpan di akun Anda! 🎟️';
+                     .'dan tersimpan di akun Anda!';
             $type = 'regular';
         }
 

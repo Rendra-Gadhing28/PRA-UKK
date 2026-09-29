@@ -3,13 +3,18 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h2 class="font-bold text-2xl text-gray-900 tracking-tight flex items-center gap-3 font-headline">
-                    <span class="w-4 h-8 bg-[#f45472] rounded-full inline-block"></span>
+                    <span class="w-1.5 h-7 bg-gradient-to-b from-[#b01f44] to-[#f45472] rounded-full inline-block shadow-[0_2px_10px_rgba(244,84,114,0.45)]"></span>
                     Manajemen Treatment & Layanan
                 </h2>
                 <p class="text-sm text-gray-500 mt-1">Kelola daftar perawatan, kategori, harga, durasi, dan badge visual</p>
             </div>
             
             <div class="flex items-center gap-3">
+                <a href="{{ route('admin.trash.index', ['type' => 'treatments']) }}" 
+                   class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-rose-200 text-rose-700 hover:bg-rose-50 text-xs font-bold shadow-xs transition-all">
+                    <i class="fa-solid fa-trash-can text-rose-500 text-xs"></i>
+                    <span>Tong Sampah</span>
+                </a>
                 <a href="{{ route('admin.treatments.create') }}" 
                    class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#f45472] text-white hover:bg-[#d93856] text-xs font-bold shadow-md transition-all">
                     <i class="fa-solid fa-plus text-xs"></i>
@@ -196,12 +201,11 @@
 
                                     {{-- Status Toggle --}}
                                     <td class="py-3.5 px-5">
-                                        <form method="POST" action="{{ route('admin.treatments.toggle-active', $tr->id) }}" 
-                                              x-data="{ showConfirm: false }" 
-                                              @submit.prevent="showConfirm = true">
+                                        <form id="toggle-treatment-form-{{ $tr->id }}" method="POST" action="{{ route('admin.treatments.toggle-active', $tr->id) }}" 
+                                              x-data="{ showConfirm: false }">
                                             @csrf
                                             
-                                            <button type="submit"
+                                            <button type="button" @click="showConfirm = true"
                                                     class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all
                                                     {{ $tr->is_active 
                                                         ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' 
@@ -212,50 +216,52 @@
                                             </button>
 
                                             {{-- Confirmation Modal --}}
-                                            <template x-if="showConfirm">
-                                                <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
-                                                     role="dialog"
-                                                     aria-modal="true"
-                                                     aria-labelledby="toggle-modal-title-{{ $tr->id }}"
-                                                     @click.self="showConfirm = false"
-                                                     @keydown.escape.window="showConfirm = false">
-                                                    <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full mx-4 border border-rose-100"
-                                                         @click.stop>
-                                                        <div class="flex items-center gap-3 mb-4">
-                                                            <div class="w-10 h-10 rounded-full flex items-center justify-center {{ $tr->is_active ? 'bg-amber-100 text-amber-600' : 'bg-emerald-100 text-emerald-600' }}">
-                                                                <i class="fa-solid {{ $tr->is_active ? 'fa-triangle-exclamation' : 'fa-circle-check' }} text-lg" aria-hidden="true"></i>
+                                            <template x-teleport="body">
+                                                <template x-if="showConfirm">
+                                                    <div class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm"
+                                                         role="dialog"
+                                                         aria-modal="true"
+                                                         aria-labelledby="toggle-modal-title-{{ $tr->id }}"
+                                                         @click.self="showConfirm = false"
+                                                         @keydown.escape.window="showConfirm = false">
+                                                        <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full mx-4 border border-rose-100"
+                                                             @click.stop>
+                                                            <div class="flex items-center gap-3 mb-4">
+                                                                <div class="w-10 h-10 rounded-full flex items-center justify-center {{ $tr->is_active ? 'bg-amber-100 text-amber-600' : 'bg-emerald-100 text-emerald-600' }}">
+                                                                    <i class="fa-solid {{ $tr->is_active ? 'fa-triangle-exclamation' : 'fa-circle-check' }} text-lg" aria-hidden="true"></i>
+                                                                </div>
+                                                                <div>
+                                                                    <h4 id="toggle-modal-title-{{ $tr->id }}" class="text-sm font-bold text-gray-900">{{ $tr->is_active ? 'Nonaktifkan Treatment?' : 'Aktifkan Treatment?' }}</h4>
+                                                                    <p class="text-xs text-gray-500 mt-0.5">{{ $tr->name }}</p>
+                                                                </div>
                                                             </div>
-                                                            <div>
-                                                                <h4 id="toggle-modal-title-{{ $tr->id }}" class="text-sm font-bold text-gray-900">{{ $tr->is_active ? 'Nonaktifkan Treatment?' : 'Aktifkan Treatment?' }}</h4>
-                                                                <p class="text-xs text-gray-500 mt-0.5">{{ $tr->name }}</p>
+                                                            <p class="text-xs text-gray-600 mb-5 leading-relaxed">
+                                                                {{ $tr->is_active 
+                                                                    ? 'Treatment ini tidak akan tampil di halaman booking pelanggan. Anda dapat mengaktifkannya kembali kapan saja.'
+                                                                    : 'Treatment ini akan kembali tampil di halaman booking pelanggan.' }}
+                                                            </p>
+                                                            <div class="flex items-center gap-2">
+                                                                <button type="button" @click="showConfirm = false" autofocus
+                                                                        class="flex-1 py-2.5 px-4 rounded-xl bg-gray-100 text-gray-700 text-xs font-bold hover:bg-gray-200 transition-colors">
+                                                                    Batal
+                                                                </button>
+                                                                <button type="button" 
+                                                                        @click="document.getElementById('toggle-treatment-form-{{ $tr->id }}').submit()"
+                                                                        class="flex-1 py-2.5 px-4 rounded-xl text-white text-xs font-bold transition-colors
+                                                                        {{ $tr->is_active ? 'bg-amber-500 hover:bg-amber-600' : 'bg-emerald-500 hover:bg-emerald-600' }}">
+                                                                    {{ $tr->is_active ? 'Ya, Nonaktifkan' : 'Ya, Aktifkan' }}
+                                                                </button>
                                                             </div>
-                                                        </div>
-                                                        <p class="text-xs text-gray-600 mb-5 leading-relaxed">
-                                                            {{ $tr->is_active 
-                                                                ? 'Treatment ini tidak akan tampil di halaman booking pelanggan. Anda dapat mengaktifkannya kembali kapan saja.'
-                                                                : 'Treatment ini akan kembali tampil di halaman booking pelanggan.' }}
-                                                        </p>
-                                                        <div class="flex items-center gap-2">
-                                                            <button type="button" @click="showConfirm = false" autofocus
-                                                                    class="flex-1 py-2.5 px-4 rounded-xl bg-gray-100 text-gray-700 text-xs font-bold hover:bg-gray-200 transition-colors">
-                                                                Batal
-                                                            </button>
-                                                            <button type="button" 
-                                                                    @click="$el.closest('form').removeEventListener('submit', arguments.callee); $el.closest('form').submit()"
-                                                                    class="flex-1 py-2.5 px-4 rounded-xl text-white text-xs font-bold transition-colors
-                                                                    {{ $tr->is_active ? 'bg-amber-500 hover:bg-amber-600' : 'bg-emerald-500 hover:bg-emerald-600' }}">
-                                                                {{ $tr->is_active ? 'Ya, Nonaktifkan' : 'Ya, Aktifkan' }}
-                                                            </button>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </template>
                                             </template>
                                         </form>
                                     </td>
 
                                     {{-- Aksi --}}
                                     <td class="py-3.5 px-5 text-center">
-                                        <div class="flex items-center justify-center gap-1">
+                                        <div class="flex items-center justify-center gap-1.5">
                                             <a href="{{ route('admin.treatments.edit', $tr->id) }}" 
                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 text-[#f45472] hover:bg-rose-100 font-semibold text-xs transition-colors"
                                                title="Edit Treatment"
@@ -263,6 +269,18 @@
                                                 <i class="fa-solid fa-pen-to-square text-xs"></i>
                                                 <span>Edit</span>
                                             </a>
+                                            <form action="{{ route('admin.treatments.destroy', $tr->id) }}" method="POST" class="inline"
+                                                  onsubmit="return confirm('Pindahkan treatment \'{{ $tr->name }}\' ke tong sampah (soft delete)?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" 
+                                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 text-rose-700 hover:bg-rose-100 font-semibold text-xs transition-colors"
+                                                        title="Pindahkan ke Tong Sampah"
+                                                        aria-label="Hapus {{ $tr->name }}">
+                                                    <i class="fa-solid fa-trash text-xs"></i>
+                                                    <span>Hapus</span>
+                                                </button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>

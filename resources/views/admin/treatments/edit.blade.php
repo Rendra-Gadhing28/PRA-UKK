@@ -5,7 +5,8 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
             </a>
             <div>
-                <h2 class="font-bold text-2xl text-gray-900 tracking-tight flex items-center gap-2 font-headline">
+                <h2 class="font-bold text-2xl text-gray-900 tracking-tight flex items-center gap-3 font-headline">
+                    <span class="w-1.5 h-7 bg-gradient-to-b from-[#b01f44] to-[#f45472] rounded-full inline-block shadow-[0_2px_10px_rgba(244,84,114,0.45)]"></span>
                     Edit Treatment — {{ $treatment->name }}
                 </h2>
                 <p class="text-xs text-gray-500 mt-0.5">Perbarui rincian, harga, durasi, atau gambar treatment</p>
@@ -40,10 +41,9 @@
                                     @php
                                         $catId = is_object($cat) ? $cat->id : (is_array($cat) ? ($cat['id'] ?? '') : $cat);
                                         $catName = is_object($cat) ? $cat->name : (is_array($cat) ? ($cat['name'] ?? '') : $cat);
-                                        $catIcon = is_object($cat) ? ($cat->icon ?? '🌸') : (is_array($cat) ? ($cat['icon'] ?? '🌸') : '🌸');
                                     @endphp
                                     <option value="{{ $catId }}" {{ old('category_id', $treatment->category_id) == $catId ? 'selected' : '' }}>
-                                        {{ $catIcon }} {{ $catName }}
+                                        {{ $catName }}
                                     </option>
                                 @endforeach
                             </select>
@@ -123,15 +123,30 @@
                     </div>
 
                     {{-- Form Actions --}}
-                    <div class="pt-6 border-t border-gray-100 flex items-center justify-end gap-3">
-                        <a href="{{ route('admin.treatments.index') }}" class="px-6 py-3 rounded-full bg-gray-100 text-gray-700 font-bold text-xs hover:bg-gray-200 transition-all">
-                            Batal
-                        </a>
-                        <button type="submit" class="px-8 py-3 rounded-full bg-[#f45472] text-white font-bold text-xs hover:bg-[#d93856] shadow-md hover:shadow-lg transition-all">
-                            Simpan Perubahan
-                        </button>
+                    <div class="pt-6 border-t border-gray-100 flex items-center justify-between gap-3 flex-wrap">
+                        <div>
+                            <button type="button" 
+                                    onclick="if(confirm('Pindahkan treatment \'{{ $treatment->name }}\' ke tong sampah (soft delete)?')) { document.getElementById('delete-treatment-form').submit(); }"
+                                    class="px-5 py-3 rounded-full bg-rose-50 text-rose-700 border border-rose-200 font-bold text-xs hover:bg-rose-100 transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-trash text-xs"></i>
+                                <span>Pindahkan ke Sampah</span>
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <a href="{{ route('admin.treatments.index') }}" class="px-6 py-3 rounded-full bg-gray-100 text-gray-700 font-bold text-xs hover:bg-gray-200 transition-all">
+                                Batal
+                            </a>
+                            <button type="submit" class="px-8 py-3 rounded-full bg-[#f45472] text-white font-bold text-xs hover:bg-[#d93856] shadow-md hover:shadow-lg transition-all">
+                                Simpan Perubahan
+                            </button>
+                        </div>
                     </div>
 
+                </form>
+
+                <form id="delete-treatment-form" action="{{ route('admin.treatments.destroy', $treatment->id) }}" method="POST" class="hidden">
+                    @csrf
+                    @method('DELETE')
                 </form>
             </div>
 

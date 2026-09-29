@@ -132,7 +132,7 @@
 
         {{-- Footer Greeting --}}
         <div class="pt-4 text-center border-t border-dashed border-gray-200">
-            <p class="text-xs font-headline font-bold text-gray-900">Terima Kasih Atas Kunjungan Anda! 🌸</p>
+            <p class="text-xs font-headline font-bold text-gray-900">Terima Kasih Atas Kunjungan Anda!</p>
             <p class="text-[10px] text-gray-400 mt-0.5">Glow Up Your Beauty with Yalia Beauty</p>
         </div>
 
