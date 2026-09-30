@@ -77,7 +77,16 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'last_daily_checkin_at' => 'datetime',
+            'last_tier_reset_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
+            'total_points' => 'integer',
+            'tier_points' => 'integer',
+            'total_bookings' => 'integer',
+            'total_spending' => 'decimal:2',
+            'latitude' => 'decimal:8',
+            'longitude' => 'decimal:8',
         ];
     }
 

@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\Services\Booking;
 
 use App\Exceptions\OutOfServiceAreaException;
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Models\Bookings;
 use App\Models\BookingTreatments;
+use App\Models\Notifications;
 use App\Models\Treatments;
 use App\Models\User;
 use App\Models\UserVouchers;
+use App\Services\ActivityLogger;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -200,7 +203,7 @@ class BookingService
                 'user_id' => $user->id,
                 'beautician_id' => $beautician->id,
                 'booking_type' => $bookingType,
-                'status' => 'pending',
+                'status' => 'confirmed',
                 'booking_date' => $bookingDate->toDateString(),
                 'time_start' => $timeStart,
                 'time_end' => $timeEnd,
@@ -244,6 +247,18 @@ class BookingService
                 ]);
                 $userVoucherRecord->voucher->increment('used_count');
             }
+
+            // Buat Notifikasi Admin & Catat Activity Log
+            $notification = Notifications::createForBooking($booking, 'Reservasi Baru Terkonfirmasi');
+            ActivityLogger::log('create', "Membuat reservasi baru #{$booking->booking_code} (Status: Terkonfirmasi, Rp ".number_format((float) $totalAmount, 0, ',', '.').") oleh {$user->name}.", $booking, [
+                'booking_id' => $booking->id,
+                'booking_code' => $booking->booking_code,
+                'total_amount' => $totalAmount,
+                'status' => 'confirmed',
+                'notification_id' => $notification->id,
+            ]);
+
+            AdminDashboardController::bumpDashboardCache();
 
             return $booking->fresh(['treatments', 'beautician']);
         });

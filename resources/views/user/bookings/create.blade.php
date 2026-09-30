@@ -462,11 +462,11 @@
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-2">
                                         <p class="font-bold text-[#5b3a29] text-xs truncate" x-text="selectedBeautician.name"></p>
-                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-100 text-[#f45472] uppercase tracking-wider shrink-0">
-                                            <i class="fa-solid fa-star text-[9px] text-[#f45472] mr-0.5"></i>Terapis Terpilih
+                                        <span class="px-2 py-0.5 rounded-full text-xs font-extrabold bg-rose-100 text-[#f45472] uppercase tracking-wider shrink-0">
+                                            <i class="fa-solid fa-star text-xs text-[#f45472] mr-0.5"></i>Terapis Terpilih
                                         </span>
                                     </div>
-                                    <p class="text-[11px] text-[#5b3a29]/75 mt-0.5 truncate" x-text="selectedBeautician.bio ? selectedBeautician.bio : 'Spesialis Perawatan Kecantikan Yalia Beauty'"></p>
+                                    <p class="text-xs text-[#5b3a29]/75 mt-0.5 truncate" x-text="selectedBeautician.bio ? selectedBeautician.bio : 'Spesialis Perawatan Kecantikan Yalia Beauty'"></p>
                                     <div class="flex items-center gap-2.5 text-xs text-[#5b3a29]/70 mt-1 flex-wrap">
                                         <span class="flex items-center gap-1 font-bold text-amber-600">
                                             <i class="fa-solid fa-star text-amber-400 text-xs"></i>
@@ -490,7 +490,7 @@
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <p class="font-bold text-[#5b3a29] text-xs">Penugasan Otomatis (Rekomendasi)</p>
-                                    <p class="text-[10px] text-[#5b3a29]/70 truncate">Sistem akan otomatis menugaskan terapis terbaik & paling siap untuk Anda.</p>
+                                    <p class="text-xs text-[#5b3a29]/70 truncate">Sistem akan otomatis menugaskan terapis terbaik & paling siap untuk Anda.</p>
                                 </div>
                             </div>
                         </template>

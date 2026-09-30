@@ -57,10 +57,10 @@
                             <i class="fas fa-crown text-amber-500"></i>
                             <span>Yalia Beauty Loyalty & Promo Rewards</span>
                         </div>
-                        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#2e0e16] tracking-tight leading-tight" style="font-family:'Playfair Display',serif">
+                        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#2e0e16] tracking-tight leading-tight [text-wrap:balance]" style="font-family:'Playfair Display',serif">
                             Klaim Voucher & Tukar Poin PTS Kamu
                         </h1>
-                        <p class="text-sm sm:text-base text-[#5c3740] font-semibold leading-relaxed">
+                        <p class="text-sm sm:text-base text-[#5c3740] font-semibold leading-relaxed [text-wrap:pretty]">
                             Nikmati berbagai potongan harga eksklusif, voucher event special, dan tukarkan poin PTS dari setiap booking perawatanmu!
                         </p>
                     </div>
@@ -135,7 +135,7 @@
             </div>
 
             {{-- Skeleton Loading Grid --}}
-            <div x-show="loading" class="grid grid-cols-1 md:grid-cols-2 gap-8 py-4">
+            <div x-show="loading" class="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
                 <x-skeleton.card />
                 <x-skeleton.card />
             </div>
@@ -144,13 +144,13 @@
             <div x-show="!loading && activeTab === 'all'" class="space-y-4">
 
                 <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2 font-headline">
+                    <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2 font-headline [text-wrap:balance]">
                         <span class="w-2.5 h-6 bg-[#f45472] rounded-full inline-block"></span>
                         Semua Voucher Promo Tersedia
                     </h3>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     @forelse($allVouchers as $v)
                         @include('user.vouchers.partials.voucher-card', ['v' => $v, 'claimedVoucherIds' => $claimedVoucherIds, 'user' => $user])
                     @empty
@@ -174,12 +174,12 @@
                         </div>
                         <div>
                             <h4 class="text-xs font-bold text-amber-950 uppercase tracking-wider">Tukarkan Poin PTS Kamu dengan Voucher Belanja</h4>
-                            <p class="text-xs text-amber-800">Saldo poin saat ini: <strong class="font-bold text-amber-950 font-mono">{{ number_format($user->total_points ?? 0) }} PTS</strong></p>
+                            <p class="text-xs text-amber-800">Saldo poin saat ini: <strong class="font-bold text-amber-950 font-mono tabular-nums">{{ number_format($user->total_points ?? 0) }} PTS</strong></p>
                         </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     @forelse($pointVouchers as $v)
                         @include('user.vouchers.partials.voucher-card', ['v' => $v, 'claimedVoucherIds' => $claimedVoucherIds, 'user' => $user])
                     @empty
@@ -207,7 +207,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     @forelse($eventVouchers as $v)
                         @include('user.vouchers.partials.voucher-card', ['v' => $v, 'claimedVoucherIds' => $claimedVoucherIds, 'user' => $user])
                     @empty
@@ -224,16 +224,14 @@
             {{-- 4. TAB: VOUCHER SAYA (CLAIMED) --}}
             <div x-show="!loading && activeTab === 'my_vouchers'" class="space-y-4">
 
-
-
                 <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2 font-headline">
+                    <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2 font-headline [text-wrap:balance]">
                         <span class="w-2.5 h-6 bg-emerald-500 rounded-full inline-block"></span>
                         Voucher yang Sudah Anda Klaim
                     </h3>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     @forelse($myVouchers as $uv)
                         @if($uv->voucher)
                             @include('user.vouchers.partials.user-claimed-card', ['uv' => $uv, 'v' => $uv->voucher])

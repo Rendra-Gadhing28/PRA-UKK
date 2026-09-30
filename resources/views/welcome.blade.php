@@ -144,13 +144,13 @@
                             </div>
 
                             <!-- HEADLINE -->
-                            <h1 class="font-serif-heading font-bold text-4xl sm:text-5xl lg:text-6xl text-[#25181c] leading-[1.15] mb-6">
+                            <h1 class="font-serif-heading font-bold text-4xl sm:text-5xl lg:text-6xl text-[#25181c] leading-[1.15] mb-6 [text-wrap:balance]">
                                 Perawatan Salon & Nail Art Elegance,<br>
                                 <span class="text-[#b01f44] italic">Tanpa Antri Online</span>
                             </h1>
 
                             <!-- SUBHEADLINE -->
-                            <p class="text-base sm:text-lg text-[#594043] leading-relaxed mb-8 max-w-2xl">
+                            <p class="text-base sm:text-lg text-[#594043] leading-relaxed mb-8 max-w-2xl [text-wrap:pretty]">
                                 Nikmati perawatan kecantikan profesional — mulai dari Facial Glow, Manicure Nail Art, Hair Spa, hingga Body Treatment. Bebas pilih datang ke Studio Salon atau dipanggil ke rumah Anda.
                             </p>
 
@@ -259,84 +259,84 @@
                     
                     <div class="text-center max-w-2xl mx-auto mb-16">
                         <span class="text-xs uppercase tracking-widest font-semibold text-[#9b4054]">Katalog Treatment</span>
-                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c] mt-2 mb-4">
+                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c] mt-2 mb-4 [text-wrap:balance]">
                             Layanan Perawatan Favorit
                         </h2>
-                        <p class="text-base text-[#594043]">
+                        <p class="text-base text-[#594043] [text-wrap:pretty]">
                             Dirancang dengan produk medis bersertifikasi & formula organik untuk hasil kecantikan maksimal.
                         </p>
                     </div>
 
                     <!-- GRID 4 KARTU LAYANAN -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
                         
                         <!-- CARD 1: FACIAL -->
-                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] hover:shadow-[0_8px_24px_rgba(37,24,28,0.08)] hover:-translate-y-1 transition-all flex flex-col justify-between w-full">
-                            <div>
-                                <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-6">
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] hover:shadow-[0_8px_24px_rgba(37,24,28,0.08)] hover:-translate-y-1 transition-all flex flex-col justify-between h-full w-full">
+                            <div class="flex flex-col flex-1">
+                                <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-6 shrink-0">
                                     <i class="fa-solid fa-spa text-xl"></i>
                                 </div>
-                                <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2">Facial & Skincare</h3>
-                                <p class="text-xs text-[#594043] leading-relaxed mb-4">Deep cleansing, detox jerawat, serum anti-aging, dan totok wajah pencerah alami.</p>
+                                <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2 [text-wrap:balance]">Facial & Skincare</h3>
+                                <p class="text-xs text-[#594043] leading-relaxed mb-4 [text-wrap:pretty] flex-1">Deep cleansing, detox jerawat, serum anti-aging, dan totok wajah pencerah alami.</p>
                             </div>
-                            <div class="pt-4 border-t border-[#e0bec1]/50 flex items-center justify-between">
+                            <div class="pt-4 border-t border-[#e0bec1]/50 flex items-center justify-between mt-auto">
                                 <div>
                                     <span class="text-xs text-[#594043] block">Mulai dari</span>
-                                    <span class="text-sm font-bold text-[#b01f44]">Rp 180.000</span>
+                                    <span class="text-sm font-bold text-[#b01f44] tabular-nums">Rp 180.000</span>
                                 </div>
                                 <a href="{{ route('user.bookings.create') }}" class="px-4 py-2 rounded-xl bg-[#b01f44] text-white text-xs font-semibold hover:bg-[#910030] transition-colors">Booking</a>
                             </div>
                         </div>
 
                         <!-- CARD 2: HAIR -->
-                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] hover:shadow-[0_8px_24px_rgba(37,24,28,0.08)] hover:-translate-y-1 transition-all flex flex-col justify-between w-full">
-                            <div>
-                                <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-6">
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] hover:shadow-[0_8px_24px_rgba(37,24,28,0.08)] hover:-translate-y-1 transition-all flex flex-col justify-between h-full w-full">
+                            <div class="flex flex-col flex-1">
+                                <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-6 shrink-0">
                                     <i class="fa-solid fa-scissors text-xl"></i>
                                 </div>
-                                <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2">Hair Treatment</h3>
-                                <p class="text-xs text-[#594043] leading-relaxed mb-4">Creambath buah, hair spa nutrisi tinggi, keratin smoothing, dan pewarnaan tren.</p>
+                                <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2 [text-wrap:balance]">Hair Treatment</h3>
+                                <p class="text-xs text-[#594043] leading-relaxed mb-4 [text-wrap:pretty] flex-1">Creambath buah, hair spa nutrisi tinggi, keratin smoothing, dan pewarnaan tren.</p>
                             </div>
-                            <div class="pt-4 border-t border-[#e0bec1]/50 flex items-center justify-between">
+                            <div class="pt-4 border-t border-[#e0bec1]/50 flex items-center justify-between mt-auto">
                                 <div>
                                     <span class="text-xs text-[#594043] block">Mulai dari</span>
-                                    <span class="text-sm font-bold text-[#b01f44]">Rp 150.000</span>
+                                    <span class="text-sm font-bold text-[#b01f44] tabular-nums">Rp 150.000</span>
                                 </div>
                                 <a href="{{ route('user.bookings.create') }}" class="px-4 py-2 rounded-xl bg-[#b01f44] text-white text-xs font-semibold hover:bg-[#910030] transition-colors">Booking</a>
                             </div>
                         </div>
 
                         <!-- CARD 3: NAIL ART -->
-                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] hover:shadow-[0_8px_24px_rgba(37,24,28,0.08)] hover:-translate-y-1 transition-all flex flex-col justify-between w-full">
-                            <div>
-                                <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-6">
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] hover:shadow-[0_8px_24px_rgba(37,24,28,0.08)] hover:-translate-y-1 transition-all flex flex-col justify-between h-full w-full">
+                            <div class="flex flex-col flex-1">
+                                <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-6 shrink-0">
                                     <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
                                 </div>
-                                <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2">Nail Art & Pedicure</h3>
-                                <p class="text-xs text-[#594043] leading-relaxed mb-4">Custom gel polish art, manicure spa, kuku palsu extension, dan vitamin kuku.</p>
+                                <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2 [text-wrap:balance]">Nail Art & Pedicure</h3>
+                                <p class="text-xs text-[#594043] leading-relaxed mb-4 [text-wrap:pretty] flex-1">Custom gel polish art, manicure spa, kuku palsu extension, dan vitamin kuku.</p>
                             </div>
-                            <div class="pt-4 border-t border-[#e0bec1]/50 flex items-center justify-between">
+                            <div class="pt-4 border-t border-[#e0bec1]/50 flex items-center justify-between mt-auto">
                                 <div>
                                     <span class="text-xs text-[#594043] block">Mulai dari</span>
-                                    <span class="text-sm font-bold text-[#b01f44]">Rp 120.000</span>
+                                    <span class="text-sm font-bold text-[#b01f44] tabular-nums">Rp 120.000</span>
                                 </div>
                                 <a href="{{ route('user.bookings.create') }}" class="px-4 py-2 rounded-xl bg-[#b01f44] text-white text-xs font-semibold hover:bg-[#910030] transition-colors">Booking</a>
                             </div>
                         </div>
 
                         <!-- CARD 4: BODY SPA -->
-                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] hover:shadow-[0_8px_24px_rgba(37,24,28,0.08)] hover:-translate-y-1 transition-all flex flex-col justify-between w-full">
-                            <div>
-                                <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-6">
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] hover:shadow-[0_8px_24px_rgba(37,24,28,0.08)] hover:-translate-y-1 transition-all flex flex-col justify-between h-full w-full">
+                            <div class="flex flex-col flex-1">
+                                <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-6 shrink-0">
                                     <i class="fa-solid fa-hot-tub-person text-xl"></i>
                                 </div>
-                                <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2">Body Treatment & Spa</h3>
-                                <p class="text-xs text-[#594043] leading-relaxed mb-4">Body scrub lulur rempah, pijat aromaterapi relaksasi, dan lulur susu murni.</p>
+                                <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2 [text-wrap:balance]">Body Treatment & Spa</h3>
+                                <p class="text-xs text-[#594043] leading-relaxed mb-4 [text-wrap:pretty] flex-1">Body scrub lulur rempah, pijat aromaterapi relaksasi, dan lulur susu murni.</p>
                             </div>
-                            <div class="pt-4 border-t border-[#e0bec1]/50 flex items-center justify-between">
+                            <div class="pt-4 border-t border-[#e0bec1]/50 flex items-center justify-between mt-auto">
                                 <div>
                                     <span class="text-xs text-[#594043] block">Mulai dari</span>
-                                    <span class="text-sm font-bold text-[#b01f44]">Rp 220.000</span>
+                                    <span class="text-sm font-bold text-[#b01f44] tabular-nums">Rp 220.000</span>
                                 </div>
                                 <a href="{{ route('user.bookings.create') }}" class="px-4 py-2 rounded-xl bg-[#b01f44] text-white text-xs font-semibold hover:bg-[#910030] transition-colors">Booking</a>
                             </div>
@@ -353,47 +353,55 @@
                     
                     <div class="text-center max-w-2xl mx-auto mb-16">
                         <span class="text-xs uppercase tracking-widest font-semibold text-[#9b4054]">Komitmen Kualitas</span>
-                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c] mt-2 mb-4">
+                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c] mt-2 mb-4 [text-wrap:balance]">
                             Kenapa Memilih Yalia Beauty?
                         </h2>
-                        <p class="text-base text-[#594043]">
+                        <p class="text-base text-[#594043] [text-wrap:pretty]">
                             Kami menggabungkan standar kesehatan tinggi dengan pelayanan ramah nan profesional.
                         </p>
                     </div>
 
                     <!-- 4 VALUE PROPOSITIONS HORIZONTAL GRID -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 w-full">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
                         
-                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs text-left w-full">
-                            <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-5">
-                                <i class="fa-solid fa-user-nurse text-xl"></i>
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs text-left w-full flex flex-col justify-between h-full">
+                            <div>
+                                <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-5 shrink-0">
+                                    <i class="fa-solid fa-user-nurse text-xl"></i>
+                                </div>
+                                <h3 class="font-serif-heading font-bold text-lg text-[#25181c] mb-2 [text-wrap:balance]">Terapis Bersertifikasi</h3>
+                                <p class="text-xs text-[#594043] leading-relaxed [text-wrap:pretty]">Seluruh beautician berpengalaman min 3 tahun dan telah lulus ujian sertifikasi resmi.</p>
                             </div>
-                            <h3 class="font-serif-heading font-bold text-lg text-[#25181c] mb-2">Terapis Bersertifikasi</h3>
-                            <p class="text-xs text-[#594043] leading-relaxed">Seluruh beautician berpengalaman min 3 tahun dan telah lulus ujian sertifikasi resmi.</p>
                         </div>
 
-                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs text-left w-full">
-                            <div class="w-12 h-12 rounded-2xl bg-[#d2fff0] text-[#2a3330] flex items-center justify-center mb-5 border border-[#7e9990]/40">
-                                <i class="fa-solid fa-shield-virus text-xl text-[#059669]"></i>
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs text-left w-full flex flex-col justify-between h-full">
+                            <div>
+                                <div class="w-12 h-12 rounded-2xl bg-[#d2fff0] text-[#2a3330] flex items-center justify-center mb-5 border border-[#7e9990]/40 shrink-0">
+                                    <i class="fa-solid fa-shield-virus text-xl text-[#059669]"></i>
+                                </div>
+                                <h3 class="font-serif-heading font-bold text-lg text-[#25181c] mb-2 [text-wrap:balance]">100% Higienis & Steril</h3>
+                                <p class="text-xs text-[#594043] leading-relaxed [text-wrap:pretty]">Peralatan kuku & jarum sekali pakai, disinfeksi UV instrumen sebelum & sesudah perawatan.</p>
                             </div>
-                            <h3 class="font-serif-heading font-bold text-lg text-[#25181c] mb-2">100% Higienis & Steril</h3>
-                            <p class="text-xs text-[#594043] leading-relaxed">Peralatan kuku & jarum sekali pakai, disinfeksi UV instrumen sebelum & sesudah perawatan.</p>
                         </div>
 
-                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs text-left w-full">
-                            <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-5">
-                                <i class="fa-solid fa-bottle-droplet text-xl"></i>
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs text-left w-full flex flex-col justify-between h-full">
+                            <div>
+                                <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-5 shrink-0">
+                                    <i class="fa-solid fa-bottle-droplet text-xl"></i>
+                                </div>
+                                <h3 class="font-serif-heading font-bold text-lg text-[#25181c] mb-2 [text-wrap:balance]">Produk Premium BPOM</h3>
+                                <p class="text-xs text-[#594043] leading-relaxed [text-wrap:pretty]">Hanya menggunakan bahan skincare & kutek gel bersertifikasi BPOM yang aman bagi kulit.</p>
                             </div>
-                            <h3 class="font-serif-heading font-bold text-lg text-[#25181c] mb-2">Produk Premium BPOM</h3>
-                            <p class="text-xs text-[#594043] leading-relaxed">Hanya menggunakan bahan skincare & kutek gel bersertifikasi BPOM yang aman bagi kulit.</p>
                         </div>
 
-                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs text-left w-full">
-                            <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-5">
-                                <i class="fa-solid fa-calendar-check text-xl"></i>
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs text-left w-full flex flex-col justify-between h-full">
+                            <div>
+                                <div class="w-12 h-12 rounded-2xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center mb-5 shrink-0">
+                                    <i class="fa-solid fa-calendar-check text-xl"></i>
+                                </div>
+                                <h3 class="font-serif-heading font-bold text-lg text-[#25181c] mb-2 [text-wrap:balance]">Booking Online Tanpa Antri</h3>
+                                <p class="text-xs text-[#594043] leading-relaxed [text-wrap:pretty]">Pilih jam & beautician favorit Anda dari HP, konfirmasi instan via WhatsApp & Midtrans.</p>
                             </div>
-                            <h3 class="font-serif-heading font-bold text-lg text-[#25181c] mb-2">Booking Online Tanpa Antri</h3>
-                            <p class="text-xs text-[#594043] leading-relaxed">Pilih jam & beautician favorit Anda dari HP, konfirmasi instan via WhatsApp & Midtrans.</p>
                         </div>
 
                     </div>
@@ -407,10 +415,10 @@
                     
                     <div class="text-center max-w-2xl mx-auto mb-16">
                         <span class="text-xs uppercase tracking-widest font-semibold text-[#9b4054]">Galeri Karya</span>
-                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c] mt-2 mb-4">
+                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c] mt-2 mb-4 [text-wrap:balance]">
                             Hasil Karya & Nail Art Custom
                         </h2>
-                        <p class="text-base text-[#594043]">
+                        <p class="text-base text-[#594043] [text-wrap:pretty]">
                             Intip beberapa kreasi manicure, facial glow, dan penataan rambut hasil beautician kami.
                         </p>
                     </div>
@@ -424,14 +432,14 @@
                             @else
                                 <div class="absolute inset-0 bg-gradient-to-br from-[#ffd2e1] via-[#ffe8ed] to-[#ffdbcb] flex flex-col items-center justify-center p-4 text-center">
                                     <i class="fa-solid fa-sparkles text-3xl text-[#b01f44] mb-2 opacity-80"></i>
-                                    <span class="font-serif-heading font-bold text-sm text-[#25181c]">{{ $item->name }}</span>
+                                    <span class="font-serif-heading font-bold text-sm text-[#25181c] [text-wrap:balance]">{{ $item->name }}</span>
                                 </div>
                             @endif
                             <div class="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-[#25181c]/90 via-[#25181c]/30 to-transparent opacity-90 group-hover:opacity-100 transition-opacity">
-                                <span class="text-xs font-bold text-white leading-tight font-serif-heading">{{ $item->name }}</span>
-                                <span class="text-[11px] text-[#ffd2e1] mt-0.5 font-medium flex items-center justify-between">
-                                    <span>{{ $item->category?->name ?? 'Treatment' }}</span>
-                                    <span class="font-bold text-white">Rp {{ number_format((float) $item->price, 0, ',', '.') }}</span>
+                                <span class="text-xs font-bold text-white leading-tight font-serif-heading truncate [text-wrap:balance]">{{ $item->name }}</span>
+                                <span class="text-xs text-[#ffd2e1] mt-0.5 font-medium flex items-center justify-between">
+                                    <span class="truncate">{{ $item->category?->name ?? 'Treatment' }}</span>
+                                    <span class="font-bold text-white tabular-nums shrink-0 ml-2">Rp {{ number_format((float) $item->price, 0, ',', '.') }}</span>
                                 </span>
                             </div>
                         </div>
@@ -451,24 +459,24 @@
                     
                     <div class="text-center max-w-2xl mx-auto mb-16">
                         <span class="text-xs uppercase tracking-widest font-semibold text-[#9b4054]">Ulasan Asli</span>
-                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c] mt-2 mb-4">
+                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c] mt-2 mb-4 [text-wrap:balance]">
                             Apa Kata Pelanggan Kami?
                         </h2>
-                        <p class="text-base text-[#594043]">
+                        <p class="text-base text-[#594043] [text-wrap:pretty]">
                             Pengalaman nyata pelanggan yang telah mencoba perawatan di salon maupun layanan panggilan rumah.
                         </p>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
                         @forelse($approvedReviews as $review)
-                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs flex flex-col justify-between w-full">
-                            <div>
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs flex flex-col justify-between h-full w-full">
+                            <div class="flex-1 flex flex-col">
                                 <div class="text-[#f59e0b] text-sm mb-3 space-x-1">
                                     @for($i = 1; $i <= 5; $i++)
                                         <i class="{{ $i <= $review->rating ? 'fa-solid' : 'fa-regular' }} fa-star"></i>
                                     @endfor
                                 </div>
-                                <p class="text-xs text-[#594043] leading-relaxed italic mb-4">
+                                <p class="text-xs text-[#594043] leading-relaxed italic mb-4 [text-wrap:pretty] flex-1">
                                     "{{ $review->comment }}"
                                 </p>
                                 @if($review->photo)
@@ -477,7 +485,7 @@
                                     </div>
                                 @endif
                             </div>
-                            <div class="flex items-center gap-3 pt-4 border-t border-[#e0bec1]/50">
+                            <div class="flex items-center gap-3 pt-4 border-t border-[#e0bec1]/50 mt-auto">
                                 <div class="w-9 h-9 rounded-full bg-[#ffd2e1] text-[#b01f44] font-bold text-xs flex items-center justify-center shrink-0 uppercase">
                                     {{ substr($review->Users?->name ?? 'U', 0, 2) }}
                                 </div>
@@ -490,8 +498,8 @@
                             </div>
                         </div>
                         @empty
-                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs flex flex-col justify-between w-full">
-                            <div>
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs flex flex-col justify-between h-full w-full">
+                            <div class="flex-1 flex flex-col">
                                 <div class="text-[#f59e0b] text-sm mb-3 space-x-1">
                                     <i class="fa-solid fa-star"></i>
                                     <i class="fa-solid fa-star"></i>
@@ -499,21 +507,21 @@
                                     <i class="fa-solid fa-star"></i>
                                     <i class="fa-solid fa-star"></i>
                                 </div>
-                                <p class="text-xs text-[#594043] leading-relaxed italic mb-4">
+                                <p class="text-xs text-[#594043] leading-relaxed italic mb-4 [text-wrap:pretty] flex-1">
                                     "Sangat puas dengan layanan Home Visit nya! Mbak beautician-nya ramah banget, alat-alatnya steril. Hasil facialnya langsung kelihatan glowing segar."
                                 </p>
                             </div>
-                            <div class="flex items-center gap-3 pt-4 border-t border-[#e0bec1]/50">
-                                <div class="w-9 h-9 rounded-full bg-[#ffd2e1] text-[#b01f44] font-bold text-xs flex items-center justify-center">SR</div>
-                                <div>
-                                    <span class="text-xs font-bold text-[#25181c] block">Siti Rahmawati</span>
-                                    <span class="text-xs text-[#594043]">Pelanggan Home Visit</span>
+                            <div class="flex items-center gap-3 pt-4 border-t border-[#e0bec1]/50 mt-auto">
+                                <div class="w-9 h-9 rounded-full bg-[#ffd2e1] text-[#b01f44] font-bold text-xs flex items-center justify-center shrink-0">SR</div>
+                                <div class="min-w-0 flex-1">
+                                    <span class="text-xs font-bold text-[#25181c] block truncate">Siti Rahmawati</span>
+                                    <span class="text-xs text-[#594043] truncate block">Pelanggan Home Visit</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs flex flex-col justify-between w-full">
-                            <div>
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs flex flex-col justify-between h-full w-full">
+                            <div class="flex-1 flex flex-col">
                                 <div class="text-[#f59e0b] text-sm mb-3 space-x-1">
                                     <i class="fa-solid fa-star"></i>
                                     <i class="fa-solid fa-star"></i>
@@ -521,21 +529,21 @@
                                     <i class="fa-solid fa-star"></i>
                                     <i class="fa-solid fa-star"></i>
                                 </div>
-                                <p class="text-xs text-[#594043] leading-relaxed italic mb-4">
+                                <p class="text-xs text-[#594043] leading-relaxed italic mb-4 [text-wrap:pretty] flex-1">
                                     "Tempat salonnya wangi, estetik, dan menenangkan. Creambath & massage-nya juara bikin pegal-pegal langsung hilang. Pasti langganan!"
                                 </p>
                             </div>
-                            <div class="flex items-center gap-3 pt-4 border-t border-[#e0bec1]/50">
-                                <div class="w-9 h-9 rounded-full bg-[#ffd2e1] text-[#b01f44] font-bold text-xs flex items-center justify-center">DP</div>
-                                <div>
-                                    <span class="text-xs font-bold text-[#25181c] block">Dian Permata</span>
-                                    <span class="text-xs text-[#594043]">Pelanggan Studio Salon</span>
+                            <div class="flex items-center gap-3 pt-4 border-t border-[#e0bec1]/50 mt-auto">
+                                <div class="w-9 h-9 rounded-full bg-[#ffd2e1] text-[#b01f44] font-bold text-xs flex items-center justify-center shrink-0">DP</div>
+                                <div class="min-w-0 flex-1">
+                                    <span class="text-xs font-bold text-[#25181c] block truncate">Dian Permata</span>
+                                    <span class="text-xs text-[#594043] truncate block">Pelanggan Studio Salon</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs flex flex-col justify-between w-full">
-                            <div>
+                        <div class="bg-white/95 rounded-2xl p-6 border border-[#e0bec1] shadow-xs flex flex-col justify-between h-full w-full">
+                            <div class="flex-1 flex flex-col">
                                 <div class="text-[#f59e0b] text-sm mb-3 space-x-1">
                                     <i class="fa-solid fa-star"></i>
                                     <i class="fa-solid fa-star"></i>
@@ -543,15 +551,15 @@
                                     <i class="fa-solid fa-star"></i>
                                     <i class="fa-solid fa-star"></i>
                                 </div>
-                                <p class="text-xs text-[#594043] leading-relaxed italic mb-4">
+                                <p class="text-xs text-[#594043] leading-relaxed italic mb-4 [text-wrap:pretty] flex-1">
                                     "Nail art nya rapi banget dan awet tahan 3 minggu lebih! Gak gampang mengelupas. Sistem booking online Midtrans juga praktis."
                                 </p>
                             </div>
-                            <div class="flex items-center gap-3 pt-4 border-t border-[#e0bec1]/50">
-                                <div class="w-9 h-9 rounded-full bg-[#ffd2e1] text-[#b01f44] font-bold text-xs flex items-center justify-center">AL</div>
-                                <div>
-                                    <span class="text-xs font-bold text-[#25181c] block">Anisa Larasati</span>
-                                    <span class="text-xs text-[#594043]">Gold Member VIP</span>
+                            <div class="flex items-center gap-3 pt-4 border-t border-[#e0bec1]/50 mt-auto">
+                                <div class="w-9 h-9 rounded-full bg-[#ffd2e1] text-[#b01f44] font-bold text-xs flex items-center justify-center shrink-0">AL</div>
+                                <div class="min-w-0 flex-1">
+                                    <span class="text-xs font-bold text-[#25181c] block truncate">Anisa Larasati</span>
+                                    <span class="text-xs text-[#594043] truncate block">Gold Member VIP</span>
                                 </div>
                             </div>
                         </div>
@@ -570,67 +578,70 @@
                     
                     <div class="text-center max-w-2xl mx-auto mb-16">
                         <span class="text-xs uppercase tracking-widest font-semibold text-[#ffd2e1]">Loyalty Rewards</span>
-                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-white mt-2 mb-4">
+                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-white mt-2 mb-4 [text-wrap:balance]">
                             Keanggotaan VIP Membership
                         </h2>
-                        <p class="text-base text-rose-200/90">
+                        <p class="text-base text-rose-200/90 [text-wrap:pretty]">
                             Kumpulkan poin setiap perawatan dan nikmati diskon khusus serta voucher gratis di setiap tier.
                         </p>
                     </div>
 
                     <!-- 3 VIP TIER CARDS WITH GRADIENTS -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
                         
                         <!-- SILVER TIER CARD -->
-                        <div class="rounded-2xl p-8 text-white shadow-lg flex flex-col justify-between relative overflow-hidden bg-[#0f172a] w-full border border-cyan-400/30" 
-                             style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #0369a1 70%, #0c4a6e 100%);">
-                            <div>
+                        <div class="rounded-2xl p-8 text-white shadow-lg flex flex-col justify-between h-full relative overflow-hidden bg-[#0f172a] w-full border border-cyan-400/30" 
+                             style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #0369a1 70%, #1e293b 100%);">
+                            <div class="flex-1 flex flex-col">
                                 <span class="text-xs uppercase tracking-widest text-[#e2e8f0] font-semibold">Tier Starter</span>
-                                <h3 class="font-serif-heading font-bold text-2xl mt-1 mb-4 text-white">Silver Badge</h3>
+                                <h3 class="font-serif-heading font-bold text-2xl mt-1 mb-4 text-white [text-wrap:balance]">Silver Badge</h3>
                                 <div class="text-2xl font-bold text-[#38bdf8] mb-6">Gratis saat daftar</div>
-                                <ul class="space-y-3 text-xs text-slate-200 mb-8">
-                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#38bdf8]"></i> Kumpulkan 1 Poin tiap transaksi Rp 10rb</li>
-                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#38bdf8]"></i> Diskon 5% di hari ulang tahun</li>
-                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#38bdf8]"></i> Voucher diskon Rp 20rb booking pertama</li>
+                                <ul class="space-y-3 text-xs text-slate-200 mb-8 flex-1">
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#38bdf8] shrink-0"></i> <span>Kumpulkan 1 Poin tiap transaksi Rp 10rb</span></li>
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#38bdf8] shrink-0"></i> <span>Diskon 5% di hari ulang tahun</span></li>
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#38bdf8] shrink-0"></i> <span>Voucher diskon Rp 20rb booking pertama</span></li>
                                 </ul>
                             </div>
-                            <a href="{{ route('register') }}" class="w-full py-3 rounded-xl bg-white/20 hover:bg-white/30 text-white font-semibold text-xs text-center border border-white/30 transition-all">Daftar Akun Baru</a>
+                            <a href="{{ route('register') }}" class="w-full py-3 rounded-xl bg-white/20 hover:bg-white/30 text-white font-semibold text-xs text-center border border-white/30 transition-all mt-auto">Daftar Akun Baru</a>
                         </div>
 
                         <!-- GOLD TIER CARD -->
-                        <div class="rounded-2xl p-8 text-white shadow-xl flex flex-col justify-between relative overflow-hidden transform md:-translate-y-2 border-2 border-[#f59e0b] bg-[#451a03] w-full" 
+                        <div class="rounded-2xl p-8 text-white shadow-xl flex flex-col justify-between h-full relative overflow-hidden transform md:-translate-y-2 border-2 border-[#f59e0b] bg-[#451a03] w-full" 
                              style="background: linear-gradient(135deg, #451a03 0%, #78350f 40%, #b45309 70%, #78350f 100%);">
                             <div class="absolute top-4 right-4 bg-[#f59e0b] text-[#451a03] text-xs font-bold uppercase px-3 py-1 rounded-full">Paling Populer</div>
-                            <div>
+                            <div class="flex-1 flex flex-col">
                                 <span class="text-xs uppercase tracking-widest text-[#fde68a] font-semibold">Tier Favorit</span>
-                                <h3 class="font-serif-heading font-bold text-2xl mt-1 mb-4 text-white">Gold VIP</h3>
+                                <h3 class="font-serif-heading font-bold text-2xl mt-1 mb-4 text-white [text-wrap:balance]">Gold VIP</h3>
                                 <div class="text-2xl font-bold text-[#fbbf24] mb-6">500 Poin Terkumpul</div>
-                                <ul class="space-y-3 text-xs text-amber-100 mb-8">
-                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#fbbf24]"></i> Diskon 10% untuk semua perawatan salon</li>
-                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#fbbf24]"></i> Prioritas bebas antri slot jam sibuk</li>
-                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#fbbf24]"></i> Gratis Creambath di bulan ulang tahun</li>
+                                <ul class="space-y-3 text-xs text-amber-100 mb-8 flex-1">
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#fbbf24] shrink-0"></i> <span>Diskon 10% untuk semua perawatan salon</span></li>
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#fbbf24] shrink-0"></i> <span>Prioritas bebas antri slot jam sibuk</span></li>
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#fbbf24] shrink-0"></i> <span>Gratis Creambath di bulan ulang tahun</span></li>
                                 </ul>
                             </div>
-                            <a href="{{ route('register') }}" class="w-full py-3 rounded-xl bg-[#f59e0b] hover:bg-[#d97706] text-[#451a03] font-bold text-xs text-center shadow-md transition-all">Gabung Gold VIP</a>
+                            <a href="{{ route('register') }}" class="w-full py-3 rounded-xl bg-[#f59e0b] hover:bg-[#d97706] text-[#451a03] font-bold text-xs text-center shadow-md transition-all mt-auto">Gabung Gold VIP</a>
                         </div>
 
                         <!-- PURPLE VIP TIER CARD -->
-                        <div class="rounded-2xl p-8 text-white shadow-lg flex flex-col justify-between relative overflow-hidden bg-[#1e1b4b] w-full border border-purple-400/30" 
+                        <div class="rounded-2xl p-8 text-white shadow-lg flex flex-col justify-between h-full relative overflow-hidden bg-[#1e1b4b] w-full border border-purple-400/30" 
                              style="background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 40%, #6b21a8 70%, #2e1065 100%);">
-                            <div>
+                            <div class="flex-1 flex flex-col">
                                 <span class="text-xs uppercase tracking-widest text-[#e9d5ff] font-semibold">Tier Eksklusif</span>
-                                <h3 class="font-serif-heading font-bold text-2xl mt-1 mb-4 text-white">Purple Elite VIP</h3>
+                                <h3 class="font-serif-heading font-bold text-2xl mt-1 mb-4 text-white [text-wrap:balance]">Purple Elite VIP</h3>
                                 <div class="text-2xl font-bold text-[#c084fc] mb-6">1.500 Poin Terkumpul</div>
-                                <ul class="space-y-3 text-xs text-purple-200 mb-8">
-                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#c084fc]"></i> Diskon 15% tanpa minimum transaksi</li>
-                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#c084fc]"></i> Layanan panggil Home Visit tanpa ongkos jalan</li>
-                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#c084fc]"></i> Layanan VIP Room Privat khusus di Salon</li>
+                                <ul class="space-y-3 text-xs text-purple-200 mb-8 flex-1">
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#c084fc] shrink-0"></i> <span>Diskon 15% tanpa minimum transaksi</span></li>
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#c084fc] shrink-0"></i> <span>Layanan panggil Home Visit tanpa ongkos jalan</span></li>
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[#c084fc] shrink-0"></i> <span>Layanan VIP Room Privat khusus di Salon</span></li>
                                 </ul>
                             </div>
-                            <a href="{{ route('register') }}" class="w-full py-3 rounded-xl bg-white/20 hover:bg-white/30 text-white font-semibold text-xs text-center border border-white/30 transition-all">Gabung Elite VIP</a>
+                            <a href="{{ route('register') }}" class="w-full py-3 rounded-xl bg-white/20 hover:bg-white/30 text-white font-semibold text-xs text-center border border-white/30 transition-all mt-auto">Gabung Elite VIP</a>
                         </div>
 
                     </div>
+
+                </div>
+            </section>
 
                 </div>
             </section>
@@ -641,32 +652,32 @@
                     
                     <div class="text-center max-w-2xl mx-auto mb-16">
                         <span class="text-xs uppercase tracking-widest font-semibold text-[#9b4054]">Alur Praktis</span>
-                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c] mt-2 mb-4">
+                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c] mt-2 mb-4 [text-wrap:balance]">
                             3 Langkah Mudah Booking Online
                         </h2>
-                        <p class="text-base text-[#594043]">
+                        <p class="text-base text-[#594043] [text-wrap:pretty]">
                             Pesan perawatan favorit Anda kurang dari 2 menit dari HP.
                         </p>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center w-full">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center w-full">
                         
-                        <div class="bg-white/95 rounded-2xl p-8 border border-[#e0bec1] shadow-xs w-full">
-                            <div class="w-12 h-12 rounded-full bg-[#b01f44] text-white font-bold text-lg flex items-center justify-center mx-auto mb-6 shadow-sm">1</div>
-                            <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2">Pilih Layanan & Lokasi</h3>
-                            <p class="text-xs text-[#594043] leading-relaxed">Tentukan jenis perawatan (Facial, Hair, Nail) serta pilih datang ke Salon atau Dipanggil ke Rumah.</p>
+                        <div class="bg-white/95 rounded-2xl p-8 border border-[#e0bec1] shadow-xs w-full flex flex-col justify-between h-full">
+                            <div class="w-12 h-12 rounded-full bg-[#b01f44] text-white font-bold text-lg flex items-center justify-center mx-auto mb-6 shadow-sm shrink-0">1</div>
+                            <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2 [text-wrap:balance]">Pilih Layanan & Lokasi</h3>
+                            <p class="text-xs text-[#594043] leading-relaxed [text-wrap:pretty]">Tentukan jenis perawatan (Facial, Hair, Nail) serta pilih datang ke Salon atau Dipanggil ke Rumah.</p>
                         </div>
 
-                        <div class="bg-white/95 rounded-2xl p-8 border border-[#e0bec1] shadow-xs w-full">
-                            <div class="w-12 h-12 rounded-full bg-[#b01f44] text-white font-bold text-lg flex items-center justify-center mx-auto mb-6 shadow-sm">2</div>
-                            <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2">Pilih Jadwal & Beautician</h3>
-                            <p class="text-xs text-[#594043] leading-relaxed">Lihat slot jam ketersediaan realtime dan pilih beautician favorit langganan Anda.</p>
+                        <div class="bg-white/95 rounded-2xl p-8 border border-[#e0bec1] shadow-xs w-full flex flex-col justify-between h-full">
+                            <div class="w-12 h-12 rounded-full bg-[#b01f44] text-white font-bold text-lg flex items-center justify-center mx-auto mb-6 shadow-sm shrink-0">2</div>
+                            <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2 [text-wrap:balance]">Pilih Jadwal & Beautician</h3>
+                            <p class="text-xs text-[#594043] leading-relaxed [text-wrap:pretty]">Lihat slot jam ketersediaan realtime dan pilih beautician favorit langganan Anda.</p>
                         </div>
 
-                        <div class="bg-white/95 rounded-2xl p-8 border border-[#e0bec1] shadow-xs w-full">
-                            <div class="w-12 h-12 rounded-full bg-[#b01f44] text-white font-bold text-lg flex items-center justify-center mx-auto mb-6 shadow-sm">3</div>
-                            <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2">Konfirmasi & Pembayaran</h3>
-                            <p class="text-xs text-[#594043] leading-relaxed">Bayar praktis via QRIS/Transfer Midtrans atau pilih opsi Cash saat perawatan selesai.</p>
+                        <div class="bg-white/95 rounded-2xl p-8 border border-[#e0bec1] shadow-xs w-full flex flex-col justify-between h-full">
+                            <div class="w-12 h-12 rounded-full bg-[#b01f44] text-white font-bold text-lg flex items-center justify-center mx-auto mb-6 shadow-sm shrink-0">3</div>
+                            <h3 class="font-serif-heading font-bold text-xl text-[#25181c] mb-2 [text-wrap:balance]">Konfirmasi & Pembayaran</h3>
+                            <p class="text-xs text-[#594043] leading-relaxed [text-wrap:pretty]">Bayar praktis via QRIS/Transfer Midtrans atau pilih opsi Cash saat perawatan selesai.</p>
                         </div>
 
                     </div>
@@ -682,10 +693,10 @@
                         <!-- LEFT COLUMN: LOKASI INFO -->
                         <div class="w-full space-y-6">
                             <span class="text-xs uppercase tracking-widest font-semibold text-[#9b4054]">Kunjungi Kami</span>
-                            <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c]">
+                            <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c] [text-wrap:balance]">
                                 Lokasi Studio & Jam Operasional
                             </h2>
-                            <p class="text-sm text-[#594043] leading-relaxed">
+                            <p class="text-sm text-[#594043] leading-relaxed [text-wrap:pretty]">
                                 Studio Salon Yalia Beauty berlokasi strategis di pusat kota dengan area parkir luas dan suasana interior nyaman.
                             </p>
 
@@ -694,9 +705,9 @@
                                     <div class="w-10 h-10 rounded-xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center shrink-0">
                                         <i class="fa-solid fa-location-dot text-lg"></i>
                                     </div>
-                                    <div>
+                                    <div class="min-w-0 flex-1">
                                         <h4 class="text-sm font-bold text-[#25181c]">Alamat Studio Salon</h4>
-                                        <p class="text-xs text-[#594043] mt-0.5">Jl. Beauty Beauty No. 88, Kota Beauty, Indonesia</p>
+                                        <p class="text-xs text-[#594043] mt-0.5 [text-wrap:pretty]">Jl. Beauty Beauty No. 88, Kota Beauty, Indonesia</p>
                                     </div>
                                 </div>
 
@@ -704,7 +715,7 @@
                                     <div class="w-10 h-10 rounded-xl bg-[#ffd2e1] text-[#b01f44] flex items-center justify-center shrink-0">
                                         <i class="fa-solid fa-clock text-lg"></i>
                                     </div>
-                                    <div>
+                                    <div class="min-w-0 flex-1">
                                         <h4 class="text-sm font-bold text-[#25181c]">Jam Operasional</h4>
                                         <p class="text-xs text-[#594043] mt-0.5">Senin – Minggu: 09.00 – 20.00 WIB (Buka Setiap Hari)</p>
                                     </div>
@@ -714,7 +725,7 @@
                                     <div class="w-10 h-10 rounded-xl bg-[#d2fff0] text-[#2a3330] flex items-center justify-center shrink-0 border border-[#7e9990]/40">
                                         <i class="fa-brands fa-whatsapp text-lg text-[#059669]"></i>
                                     </div>
-                                    <div>
+                                    <div class="min-w-0 flex-1">
                                         <h4 class="text-sm font-bold text-[#25181c]">Bantuan WhatsApp Langsung</h4>
                                         <p class="text-xs text-[#594043] mt-0.5">+62 822-2702-3362 (Customer Service Quick Response)</p>
                                     </div>
@@ -796,10 +807,10 @@
                     
                     <div class="text-center max-w-2xl mx-auto mb-16">
                         <span class="text-xs uppercase tracking-widest font-semibold text-[#9b4054]">Pertanyaan Umum</span>
-                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c] mt-2 mb-4">
+                        <h2 class="font-serif-heading font-bold text-3xl sm:text-4xl text-[#25181c] mt-2 mb-4 [text-wrap:balance]">
                             Pertanyaan Sering Diajukan
                         </h2>
-                        <p class="text-base text-[#594043]">
+                        <p class="text-base text-[#594043] [text-wrap:pretty]">
                             Temukan jawaban seputar layanan, jadwal, dan metode pembayaran kami.
                         </p>
                     </div>
@@ -811,11 +822,11 @@
                         <div class="bg-white/95 rounded-2xl border border-[#e0bec1] overflow-hidden shadow-xs w-full">
                             <button @click="activeFaq = (activeFaq === 1 ? null : 1)" 
                                     type="button"
-                                    class="w-full p-6 text-left font-serif-heading font-bold text-lg text-[#25181c] flex items-center justify-between focus:outline-none">
-                                <span>Bagaimana cara jadwal ulang (reschedule) booking saya?</span>
-                                <i class="fa-solid" :class="activeFaq === 1 ? 'fa-minus text-[#b01f44]' : 'fa-plus text-[#b01f44]'"></i>
+                                    class="w-full p-6 text-left font-serif-heading font-bold text-lg text-[#25181c] flex items-center justify-between gap-4 focus:outline-none cursor-pointer">
+                                <span class="[text-wrap:balance] flex-1">Bagaimana cara jadwal ulang (reschedule) booking saya?</span>
+                                <i class="fa-solid shrink-0" :class="activeFaq === 1 ? 'fa-minus text-[#b01f44]' : 'fa-plus text-[#b01f44]'"></i>
                             </button>
-                            <div x-show="activeFaq === 1" x-cloak class="px-6 pb-6 text-xs text-[#594043] leading-relaxed border-t border-[#e0bec1]/40 pt-4">
+                            <div x-show="activeFaq === 1" x-cloak class="px-6 pb-6 text-xs text-[#594043] leading-relaxed border-t border-[#e0bec1]/40 pt-4 [text-wrap:pretty]">
                                 Anda dapat melakukan reschedule jadwal minimal 3 jam sebelum jam perawatan melalui menu Dashboard Pengguna di bagian "Riwayat Booking" atau menghubungi Customer Service kami via WhatsApp.
                             </div>
                         </div>
@@ -824,11 +835,11 @@
                         <div class="bg-white/95 rounded-2xl border border-[#e0bec1] overflow-hidden shadow-xs w-full">
                             <button @click="activeFaq = (activeFaq === 2 ? null : 2)" 
                                     type="button"
-                                    class="w-full p-6 text-left font-serif-heading font-bold text-lg text-[#25181c] flex items-center justify-between focus:outline-none">
-                                <span>Apakah peralatan kuku dan kecantikan dijamin steril?</span>
-                                <i class="fa-solid" :class="activeFaq === 2 ? 'fa-minus text-[#b01f44]' : 'fa-plus text-[#b01f44]'"></i>
+                                    class="w-full p-6 text-left font-serif-heading font-bold text-lg text-[#25181c] flex items-center justify-between gap-4 focus:outline-none cursor-pointer">
+                                <span class="[text-wrap:balance] flex-1">Apakah peralatan kuku dan kecantikan dijamin steril?</span>
+                                <i class="fa-solid shrink-0" :class="activeFaq === 2 ? 'fa-minus text-[#b01f44]' : 'fa-plus text-[#b01f44]'"></i>
                             </button>
-                            <div x-show="activeFaq === 2" x-cloak class="px-6 pb-6 text-xs text-[#594043] leading-relaxed border-t border-[#e0bec1]/40 pt-4">
+                            <div x-show="activeFaq === 2" x-cloak class="px-6 pb-6 text-xs text-[#594043] leading-relaxed border-t border-[#e0bec1]/40 pt-4 [text-wrap:pretty]">
                                 Ya, 100%! Semua instrumen kuku logam melewati proses sterilisasi autoklaf & sinar UV medis. Handuk dan kuas yang digunakan selalu dicuci bersih dan dikemas steril per pelanggan.
                             </div>
                         </div>
@@ -837,11 +848,11 @@
                         <div class="bg-white/95 rounded-2xl border border-[#e0bec1] overflow-hidden shadow-xs w-full">
                             <button @click="activeFaq = (activeFaq === 3 ? null : 3)" 
                                     type="button"
-                                    class="w-full p-6 text-left font-serif-heading font-bold text-lg text-[#25181c] flex items-center justify-between focus:outline-none">
-                                <span>Metode pembayaran apa saja yang didukung?</span>
-                                <i class="fa-solid" :class="activeFaq === 3 ? 'fa-minus text-[#b01f44]' : 'fa-plus text-[#b01f44]'"></i>
+                                    class="w-full p-6 text-left font-serif-heading font-bold text-lg text-[#25181c] flex items-center justify-between gap-4 focus:outline-none cursor-pointer">
+                                <span class="[text-wrap:balance] flex-1">Metode pembayaran apa saja yang didukung?</span>
+                                <i class="fa-solid shrink-0" :class="activeFaq === 3 ? 'fa-minus text-[#b01f44]' : 'fa-plus text-[#b01f44]'"></i>
                             </button>
-                            <div x-show="activeFaq === 3" x-cloak class="px-6 pb-6 text-xs text-[#594043] leading-relaxed border-t border-[#e0bec1]/40 pt-4">
+                            <div x-show="activeFaq === 3" x-cloak class="px-6 pb-6 text-xs text-[#594043] leading-relaxed border-t border-[#e0bec1]/40 pt-4 [text-wrap:pretty]">
                                 Kami mendukung pembayaran otomatis online melalui Midtrans (QRIS GoPay/OVO/ShopeePay, Transfer Bank BCA/Mandiri/BRI, Kartu Kredit) serta opsi bayar Cash langsung di salon/saat home visit.
                             </div>
                         </div>
@@ -850,11 +861,11 @@
                         <div class="bg-white/95 rounded-2xl border border-[#e0bec1] overflow-hidden shadow-xs w-full">
                             <button @click="activeFaq = (activeFaq === 4 ? null : 4)" 
                                     type="button"
-                                    class="w-full p-6 text-left font-serif-heading font-bold text-lg text-[#25181c] flex items-center justify-between focus:outline-none">
-                                <span>Bagaimana syarat dan jangkauan area untuk Home Visit?</span>
-                                <i class="fa-solid" :class="activeFaq === 4 ? 'fa-minus text-[#b01f44]' : 'fa-plus text-[#b01f44]'"></i>
+                                    class="w-full p-6 text-left font-serif-heading font-bold text-lg text-[#25181c] flex items-center justify-between gap-4 focus:outline-none cursor-pointer">
+                                <span class="[text-wrap:balance] flex-1">Bagaimana syarat dan jangkauan area untuk Home Visit?</span>
+                                <i class="fa-solid shrink-0" :class="activeFaq === 4 ? 'fa-minus text-[#b01f44]' : 'fa-plus text-[#b01f44]'"></i>
                             </button>
-                            <div x-show="activeFaq === 4" x-cloak class="px-6 pb-6 text-xs text-[#594043] leading-relaxed border-t border-[#e0bec1]/40 pt-4">
+                            <div x-show="activeFaq === 4" x-cloak class="px-6 pb-6 text-xs text-[#594043] leading-relaxed border-t border-[#e0bec1]/40 pt-4 [text-wrap:pretty]">
                                 Layanan Home Visit mencakup area radius hingga 15 km dari Studio Salon. Beautician kami membawa seluruh peralatan lengkap termasuk lampu & alas steril, Anda tinggal duduk santai di rumah.
                             </div>
                         </div>

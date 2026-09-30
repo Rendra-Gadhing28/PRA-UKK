@@ -71,7 +71,7 @@
 
         {{-- Voucher name + type badge --}}
         <div class="mb-1 relative z-10">
-            <h3 class="font-black text-sm leading-tight truncate" style="color: #2B0F23 !important;" title="{{ $v->name }}">
+            <h3 class="font-black text-sm leading-tight truncate [text-wrap:balance]" style="color: #2B0F23 !important;" title="{{ $v->name }}">
                 {{ $v->name }}
             </h3>
             @if($v->is_event && $v->event_name)
@@ -80,7 +80,7 @@
                 </span>
             @elseif($v->points_required > 0)
                 <span class="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-widest bg-[#FAF3E8] text-[#8C6D37] border border-[#E8D4B5] px-2 py-0.5 rounded-full mt-1">
-                    <i class="fas fa-coins text-xs text-[#8C6D37]"></i> {{ $v->points_required }} PTS
+                    <i class="fas fa-coins text-xs text-[#8C6D37]"></i> <span class="tabular-nums">{{ $v->points_required }}</span> PTS
                 </span>
             @endif
         </div>
@@ -89,12 +89,12 @@
         <div class="flex items-center gap-2 text-xs mb-1.5 relative z-10 font-medium" style="color: #594043 !important;">
             <span class="flex items-center gap-1">
                 <i class="fas fa-shopping-bag text-xs opacity-70"></i>
-                {{ $v->min_purchase > 0 ? 'Min Rp '.number_format($v->min_purchase, 0, ',', '.') : 'Tanpa Min.' }}
+                <span class="tabular-nums">{{ $v->min_purchase > 0 ? 'Min Rp '.number_format($v->min_purchase, 0, ',', '.') : 'Tanpa Min.' }}</span>
             </span>
             <span class="opacity-40">·</span>
             <span class="flex items-center gap-1">
                 <i class="far fa-calendar-alt text-xs opacity-70"></i>
-                s/d {{ \Carbon\Carbon::parse($v->valid_until)->format('d M Y') }}
+                <span class="tabular-nums">s/d {{ \Carbon\Carbon::parse($v->valid_until)->format('d M Y') }}</span>
             </span>
         </div>
 
@@ -107,7 +107,7 @@
             <div class="mb-1.5 relative z-10">
                 <div class="flex justify-between text-xs mb-0.5 font-semibold" style="color: #7A4B56 !important;">
                     <span>Sisa Kuota</span>
-                    <span class="font-mono font-bold" style="color: #2B0F23 !important;">{{ max(0, $v->quota - $v->used_count) }}/{{ $v->quota }}</span>
+                    <span class="font-mono font-bold tabular-nums" style="color: #2B0F23 !important;">{{ max(0, $v->quota - $v->used_count) }}/{{ $v->quota }}</span>
                 </div>
                 <div class="w-full h-1.5 rounded-full overflow-hidden bg-[#F4DDE1]">
                     <div class="h-full rounded-full transition-all duration-500"

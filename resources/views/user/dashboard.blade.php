@@ -32,11 +32,11 @@
                     {{-- Greeting & Account Status --}}
                     <div>
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <div>
-                                <h1 class="font-headline-xl text-3xl md:text-4xl font-black text-[#2B0F23] mb-1">
+                            <div class="min-w-0 flex-1">
+                                <h1 class="font-headline-xl text-3xl md:text-4xl font-black text-[#2B0F23] mb-1 [text-wrap:balance]">
                                     Hello, <span class="text-[#E0247E] italic">{{ explode(' ', $user->name)[0] }}</span> 
                                 </h1>
-                                <p class="font-body-md text-[#5C1439]/80 font-medium">
+                                <p class="font-body-md text-[#5C1439]/80 font-medium [text-wrap:pretty]">
                                     Ready for your glow up today? Jelajahi treatment & klaim reward harianmu!
                                 </p>
                             </div>
@@ -50,36 +50,36 @@
 
                     {{-- Compact 3 Stats Grid --}}
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
-                        <div class="rounded-2xl p-4 flex flex-col justify-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg backdrop-blur-xl shadow-sm" style="background: rgba(255, 240, 245, 0.85); border: 1px solid rgba(224, 36, 126, 0.15);">
+                        <div class="rounded-2xl p-4 flex flex-col justify-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg backdrop-blur-xl shadow-sm min-w-0" style="background: rgba(255, 240, 245, 0.85); border: 1px solid rgba(224, 36, 126, 0.15);">
                             <div class="flex items-center justify-between mb-2">
                                 <p class="text-xs font-extrabold uppercase tracking-wider" style="color: #9B4054;">Bookings</p>
                                 <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style="background: rgba(224, 36, 126, 0.12); color: #E0247E;">
                                     <i class="fa-solid fa-calendar-check text-base"></i>
                                 </div>
                             </div>
-                            <p class="font-headline-md text-xl font-black" style="color: #2B0F23;">{{ number_format($stats['total_bookings']) }} Bookings</p>
+                            <p class="font-headline-md text-xl font-black tabular-nums truncate" style="color: #2B0F23;">{{ number_format($stats['total_bookings']) }} Bookings</p>
                         </div>
 
-                        <div class="rounded-2xl p-4 flex flex-col justify-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg backdrop-blur-xl shadow-sm" style="background: rgba(255, 240, 245, 0.85); border: 1px solid rgba(224, 36, 126, 0.15);">
+                        <div class="rounded-2xl p-4 flex flex-col justify-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg backdrop-blur-xl shadow-sm min-w-0" style="background: rgba(255, 240, 245, 0.85); border: 1px solid rgba(224, 36, 126, 0.15);">
                             <div class="flex items-center justify-between mb-2">
                                 <p class="text-xs font-extrabold uppercase tracking-wider" style="color: #9B4054;">Spending</p>
                                 <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style="background: rgba(92, 20, 57, 0.12); color: #5C1439;">
                                     <i class="fa-solid fa-wallet text-base"></i>
                                 </div>
                             </div>
-                            <p class="font-headline-md text-xl font-black truncate" style="color: #2B0F23;">Rp {{ number_format($stats['total_spending'], 0, ',', '.') }}</p>
+                            <p class="font-headline-md text-xl font-black tabular-nums truncate" style="color: #2B0F23;">Rp {{ number_format($stats['total_spending'], 0, ',', '.') }}</p>
                         </div>
 
-                        <div class="rounded-2xl p-4 flex flex-col justify-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg backdrop-blur-xl shadow-sm" style="background: rgba(255, 240, 245, 0.85); border: 1px solid rgba(224, 36, 126, 0.15);">
+                        <div class="rounded-2xl p-4 flex flex-col justify-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg backdrop-blur-xl shadow-sm min-w-0" style="background: rgba(255, 240, 245, 0.85); border: 1px solid rgba(224, 36, 126, 0.15);">
                             <div class="flex items-center justify-between mb-2">
                                 <p class="text-xs font-extrabold uppercase tracking-wider" style="color: #9B4054;">Total Points</p>
                                 <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style="background: rgba(244, 185, 66, 0.25); color: #9A6200;">
                                     <i class="fa-solid fa-award text-base"></i>
                                 </div>
                             </div>
-                            <p class="font-headline-md text-xl font-black flex items-center gap-1.5" style="color: #E0247E;">
+                            <p class="font-headline-md text-xl font-black tabular-nums flex items-center gap-1.5 truncate" style="color: #E0247E;">
                                 <span x-text="userPoints">{{ number_format($user->total_points) }}</span> pts
-                                <span class="material-symbols-outlined text-base" style="color: #F4B942; font-variation-settings: 'FILL' 1;">stars</span>
+                                <span class="material-symbols-outlined text-base shrink-0" style="color: #F4B942; font-variation-settings: 'FILL' 1;">stars</span>
                             </p>
                         </div>
                     </div>
@@ -348,27 +348,27 @@
 
                                 {{-- Body Area (Title, Rating, Description, Tags) --}}
                                 <div class="px-1 flex flex-col flex-1 justify-between">
-                                    <div>
+                                    <div class="flex-1 flex flex-col">
                                         <div class="flex justify-between items-start mb-1.5 gap-2">
-                                            <h3 class="font-bold text-base text-[#111827] line-clamp-1 font-headline" title="{{ $tName }}">{{ $tName }}</h3>
+                                            <h3 class="font-bold text-base text-[#111827] line-clamp-1 font-headline [text-wrap:balance]" title="{{ $tName }}">{{ $tName }}</h3>
                                             <div class="flex items-center gap-1 text-amber-800 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-200/80 shrink-0">
-                                                <span class="material-symbols-outlined text-xs text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span>
-                                                <span class="font-label-md text-xs font-extrabold">{{ number_format($tRating, 1) }}</span>
+                                                <span class="material-symbols-outlined text-xs text-amber-500 shrink-0" style="font-variation-settings: 'FILL' 1;">star</span>
+                                                <span class="font-label-md text-xs font-extrabold tabular-nums">{{ number_format($tRating, 1) }}</span>
                                             </div>
                                         </div>
 
-                                        <p class="font-body-sm text-xs text-[#594043] mb-3 line-clamp-2 leading-relaxed" title="{{ $tDesc }}">{{ $tDesc }}</p>
+                                        <p class="font-body-sm text-xs text-[#594043] mb-3 line-clamp-2 leading-relaxed [text-wrap:pretty] flex-1" title="{{ $tDesc }}">{{ $tDesc }}</p>
 
                                         {{-- Chips Row (Duration & Category) --}}
                                         <div class="flex items-center gap-2 mb-4 flex-wrap">
                                             <span class="inline-flex items-center gap-1 text-xs font-bold text-[#594043] bg-[#FFF0F2] border border-[#F4DDE1] px-2 py-0.5 rounded-md">
                                                 <span class="material-symbols-outlined text-xs text-[#B01F44]">schedule</span>
-                                                <span>{{ $tDuration }} min</span>
+                                                <span class="tabular-nums">{{ $tDuration }} min</span>
                                             </span>
                                             @if($catName)
                                                 <span class="inline-flex items-center gap-1 text-xs font-bold text-[#B01F44] bg-[#FFF0F2] border border-[#F4DDE1] px-2 py-0.5 rounded-md">
                                                     <span class="material-symbols-outlined text-xs">category</span>
-                                                    <span>{{ $catName }}</span>
+                                                    <span class="truncate max-w-[120px]">{{ $catName }}</span>
                                                 </span>
                                             @endif
                                         </div>
@@ -378,7 +378,7 @@
                                     <div class="flex items-center justify-between pt-3 border-t border-[#F4DDE1]/70 mt-auto">
                                         <div class="flex flex-col">
                                             <span class="text-xs uppercase tracking-wider font-bold text-[#8D7072]">Harga</span>
-                                            <span class="font-black text-base text-[#111827] tracking-tight">
+                                            <span class="font-black text-base text-[#111827] tracking-tight tabular-nums">
                                                 Rp {{ number_format($tPrice, 0, ',', '.') }}
                                             </span>
                                         </div>
@@ -585,7 +585,7 @@
                                         :disabled="hasClaimedToday"
                                         type="button"
                                         class="shimmer-btn relative w-full py-3.5 rounded-full font-button text-xs shadow-md transition-all duration-300 flex justify-center items-center gap-2 group transform active:scale-95 disabled:cursor-not-allowed overflow-hidden"
-                                        :style="hasClaimedToday ? 'background: #F0FDF4; color: #15803D; border: 1.5px solid #BBF7D0; box-shadow: none;' : 'background: linear-gradient(to right, #B01F44, #C82D53, #9B4054); color: white;'">
+                                        :class="hasClaimedToday ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-none' : 'bg-gradient-to-r from-[#B01F44] via-[#C82D53] to-[#9B4054] text-white'">
                                     <span class="material-symbols-outlined text-lg" :class="!hasClaimedToday ? 'group-hover:rotate-12 transition-transform text-white' : 'text-emerald-600'">
                                         <span x-text="hasClaimedToday ? 'check_circle' : 'celebration'"></span>
                                     </span>

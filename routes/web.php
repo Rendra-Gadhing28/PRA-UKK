@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminBeauticianController;
 use App\Http\Controllers\Admin\AdminBookingController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminFinanceController;
+use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\AdminReviewController;
 use App\Http\Controllers\Admin\AdminTrashController;
@@ -217,6 +218,21 @@ Route::middleware(['auth', AdminMiddleware::class])
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::get('/export/pdf', [AdminDashboardController::class, 'exportPdf'])->name('export.pdf');
         Route::get('/export/excel', [AdminDashboardController::class, 'exportExcel'])->name('export.excel');
+
+        // Admin Notifications Management
+        Route::prefix('notifications')->name('notifications.')->group(function () {
+            Route::get('/', [AdminNotificationController::class, 'index'])->name('index');
+            Route::post('/{notification}/confirm', [AdminNotificationController::class, 'confirm'])->name('confirm');
+            Route::post('/{notification}/cancel', [AdminNotificationController::class, 'cancel'])->name('cancel');
+            Route::post('/{notification}/archive', [AdminNotificationController::class, 'archive'])->name('archive');
+            Route::post('/{notification}/unarchive', [AdminNotificationController::class, 'unarchive'])->name('unarchive');
+            Route::delete('/{notification}', [AdminNotificationController::class, 'destroy'])->name('destroy');
+            Route::post('/bulk-archive', [AdminNotificationController::class, 'bulkArchive'])->name('bulk-archive');
+            Route::post('/bulk-delete', [AdminNotificationController::class, 'bulkDelete'])->name('bulk-delete');
+            Route::post('/archive-all-read', [AdminNotificationController::class, 'archiveAllRead'])->name('archive-all-read');
+            Route::delete('/clear-all', [AdminNotificationController::class, 'clearAll'])->name('clear-all');
+            Route::post('/mark-all-read', [AdminNotificationController::class, 'markAllAsRead'])->name('mark-all-read');
+        });
 
         // Admin Booking Management
         Route::prefix('bookings')->name('bookings.')->group(function () {

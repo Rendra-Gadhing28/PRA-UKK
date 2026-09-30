@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Helpers\ToastHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Beauticians;
+use App\Models\BeauticiansSchedules;
 use App\Services\ActivityLogger;
 use App\Support\ImageHelper;
 use Illuminate\Http\Request;
@@ -13,6 +14,16 @@ use Illuminate\Support\Str;
 
 class AdminBeauticianController extends Controller
 {
+    public const DAYS = [
+        1 => 'Senin',
+        2 => 'Selasa',
+        3 => 'Rabu',
+        4 => 'Kamis',
+        5 => 'Jumat',
+        6 => 'Sabtu',
+        0 => 'Minggu',
+    ];
+
     /**
      * Tampilkan daftar staf beautician dengan pencarian & statistik booking.
      */
@@ -46,7 +57,9 @@ class AdminBeauticianController extends Controller
      */
     public function create()
     {
-        return view('admin.beauticians.create');
+        $days = self::DAYS;
+
+        return view('admin.beauticians.create', compact('days'));
     }
 
     /**
@@ -61,6 +74,10 @@ class AdminBeauticianController extends Controller
             'bio' => ['required', 'string'],
             'is_active' => ['nullable', 'boolean'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'schedules' => ['nullable', 'array'],
+            'schedules.*.is_working' => ['nullable'],
+            'schedules.*.start_time' => ['nullable', 'string'],
+            'schedules.*.end_time' => ['nullable', 'string'],
         ]);
 
         $photoName = null;
@@ -80,6 +97,22 @@ class AdminBeauticianController extends Controller
             'total_bookings' => 0,
         ]);
 
+        $schedulesInput = $request->input('schedules', []);
+        for ($day = 0; $day <= 6; $day++) {
+            $dayData = $schedulesInput[$day] ?? [];
+            $isWorking = ! empty($dayData['is_working']);
+            $startTime = ! empty($dayData['start_time']) ? $dayData['start_time'] : '09:00';
+            $endTime = ! empty($dayData['end_time']) ? $dayData['end_time'] : '18:00';
+
+            BeauticiansSchedules::create([
+                'beautician_id' => $beautician->id,
+                'day_of_week' => $day,
+                'start_time' => $startTime,
+                'end_time' => $endTime,
+                'is_working' => $isWorking,
+            ]);
+        }
+
         ActivityLogger::log('create', "Menambahkan staf beautician baru '{$beautician->name}'.", $beautician);
 
         ToastHelper::success("Staf beautician '{$validated['name']}' berhasil ditambahkan.");
@@ -93,6 +126,10 @@ class AdminBeauticianController extends Controller
     public function show(Beauticians $beautician)
     {
         $beautician->loadCount('bookings');
+        $beautician->load('schedules');
+        $schedules = $beautician->schedules->keyBy('day_of_week');
+        $days = self::DAYS;
+
         $recentBookings = $beautician->bookings()
             ->with(['user', 'treatments'])
             ->orderBy('booking_date', 'desc')
@@ -101,7 +138,7 @@ class AdminBeauticianController extends Controller
 
         $avgRating = (float) $beautician->reviews()->avg('rating');
 
-        return view('admin.beauticians.show', compact('beautician', 'recentBookings', 'avgRating'));
+        return view('admin.beauticians.show', compact('beautician', 'recentBookings', 'avgRating', 'schedules', 'days'));
     }
 
     /**
@@ -109,7 +146,11 @@ class AdminBeauticianController extends Controller
      */
     public function edit(Beauticians $beautician)
     {
-        return view('admin.beauticians.edit', compact('beautician'));
+        $beautician->load('schedules');
+        $schedules = $beautician->schedules->keyBy('day_of_week');
+        $days = self::DAYS;
+
+        return view('admin.beauticians.edit', compact('beautician', 'schedules', 'days'));
     }
 
     /**
@@ -124,6 +165,10 @@ class AdminBeauticianController extends Controller
             'bio' => ['required', 'string'],
             'is_active' => ['nullable', 'boolean'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'schedules' => ['nullable', 'array'],
+            'schedules.*.is_working' => ['nullable'],
+            'schedules.*.start_time' => ['nullable', 'string'],
+            'schedules.*.end_time' => ['nullable', 'string'],
         ]);
 
         $updateData = [
@@ -148,6 +193,26 @@ class AdminBeauticianController extends Controller
         }
 
         $beautician->update($updateData);
+
+        $schedulesInput = $request->input('schedules', []);
+        for ($day = 0; $day <= 6; $day++) {
+            $dayData = $schedulesInput[$day] ?? [];
+            $isWorking = ! empty($dayData['is_working']);
+            $startTime = ! empty($dayData['start_time']) ? $dayData['start_time'] : '09:00';
+            $endTime = ! empty($dayData['end_time']) ? $dayData['end_time'] : '18:00';
+
+            BeauticiansSchedules::updateOrCreate(
+                [
+                    'beautician_id' => $beautician->id,
+                    'day_of_week' => $day,
+                ],
+                [
+                    'start_time' => $startTime,
+                    'end_time' => $endTime,
+                    'is_working' => $isWorking,
+                ]
+            );
+        }
 
         ActivityLogger::log('update', "Memperbarui profil beautician '{$beautician->name}'.", $beautician);
 

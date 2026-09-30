@@ -292,11 +292,11 @@
                 <p class="text-xs font-semibold tracking-widest uppercase mb-3" style="color: var(--yalia-pink);">
                     Layanan Perawatan Salon
                 </p>
-                <h1 class="yalia-heading text-4xl sm:text-5xl font-bold leading-tight mb-4">
+                <h1 class="yalia-heading text-4xl sm:text-5xl font-bold leading-tight mb-4 [text-wrap:balance]">
                     Jelajahi Perawatan <br class="hidden sm:block">
                     <span style="color: var(--yalia-pink);">Eksklusif Yalia</span>
                 </h1>
-                <p class="max-w-xl mx-auto text-base" style="color: #9b6374; font-family: 'Work Sans', sans-serif;">
+                <p class="max-w-xl mx-auto text-base [text-wrap:pretty]" style="color: #9b6374; font-family: 'Work Sans', sans-serif;">
                     Nikmati pengalaman perawatan kecantikan dan relaksasi terbaik dari terapis profesional Yalia Beauty.
                 </p>
 
@@ -460,57 +460,58 @@
                     </div>
 
                     {{-- Body --}}
-                    <div class="p-5 flex flex-col flex-1">
-
-                        {{-- Name + rating --}}
-                        <div class="flex justify-between items-start gap-2 mb-2">
-                            <h3 class="yalia-heading text-base font-bold leading-snug">
-                                {{ $treatment->name }}
-                            </h3>
-                            @if((float)$treatment->rating > 0)
-                                <span class="rating-chip shrink-0 inline-flex items-center gap-1">
-                                    <i class="fas fa-star text-amber-400"></i>
-                                    <span class="font-bold text-gray-800">{{ number_format($treatment->rating, 1) }}</span>
-                                    @if($treatment->rating_count > 0)
-                                        <span class="text-xs text-gray-400 font-normal">({{ $treatment->rating_count }})</span>
-                                    @endif
-                                </span>
-                            @else
-                                <span class="new-chip shrink-0 inline-flex items-center gap-1">
-                                    <i class="fas fa-star text-amber-400"></i>
-                                    <span>Baru</span>
-                                </span>
-                            @endif
-                        </div>
-
-                        {{-- Description --}}
-                        <p class="text-sm leading-relaxed line-clamp-2 mb-4 flex-1"
-                           style="color:#9b6374;">
-                            {{ $treatment->description }}
-                        </p>
-
-                        {{-- Meta row: duration + category pill --}}
-                        <div class="flex items-center gap-2 mb-5 flex-wrap">
-                            <div class="flex items-center gap-1 text-xs font-medium"
-                                 style="color:#9b6374;">
-                                <i class="fa-solid fa-clock text-xs text-[#ff8fa4]"></i>
-                                {{ $treatment->duration_minutes }} menit
+                    <div class="p-5 flex flex-col flex-1 justify-between">
+                        <div class="flex-1 flex flex-col">
+                            {{-- Name + rating --}}
+                            <div class="flex justify-between items-start gap-2 mb-2">
+                                <h3 class="yalia-heading text-base font-bold leading-snug [text-wrap:balance] line-clamp-1" title="{{ $treatment->name }}">
+                                    {{ $treatment->name }}
+                                </h3>
+                                @if((float)$treatment->rating > 0)
+                                    <span class="rating-chip shrink-0 inline-flex items-center gap-1">
+                                        <i class="fas fa-star text-amber-400"></i>
+                                        <span class="font-bold text-gray-800 tabular-nums">{{ number_format($treatment->rating, 1) }}</span>
+                                        @if($treatment->rating_count > 0)
+                                            <span class="text-xs text-gray-400 font-normal tabular-nums">({{ $treatment->rating_count }})</span>
+                                        @endif
+                                    </span>
+                                @else
+                                    <span class="new-chip shrink-0 inline-flex items-center gap-1">
+                                        <i class="fas fa-star text-amber-400"></i>
+                                        <span>Baru</span>
+                                    </span>
+                                @endif
                             </div>
 
-                            {{-- Category pill badge --}}
-                            <span class="category-pill">
-                                @if($treatment->category?->icon)
-                                    <i class="{{ $treatment->category->icon }} text-xs"></i>
-                                @else
-                                    <i class="fa-solid fa-tag text-xs"></i>
-                                @endif
-                                {{ $treatment->category?->name }}
-                            </span>
+                            {{-- Description --}}
+                            <p class="text-sm leading-relaxed line-clamp-2 mb-4 flex-1 [text-wrap:pretty]"
+                               style="color:#9b6374;" title="{{ $treatment->description }}">
+                                {{ $treatment->description }}
+                            </p>
+
+                            {{-- Meta row: duration + category pill --}}
+                            <div class="flex items-center gap-2 mb-5 flex-wrap">
+                                <div class="flex items-center gap-1 text-xs font-medium"
+                                     style="color:#9b6374;">
+                                    <i class="fa-solid fa-clock text-xs text-[#ff8fa4]"></i>
+                                    <span class="tabular-nums">{{ $treatment->duration_minutes }} menit</span>
+                                </div>
+
+                                {{-- Category pill badge --}}
+                                <span class="category-pill">
+                                    @if($treatment->category?->icon)
+                                        <i class="{{ $treatment->category->icon }} text-xs"></i>
+                                    @else
+                                        <i class="fa-solid fa-tag text-xs"></i>
+                                    @endif
+                                    <span class="truncate max-w-[120px]">{{ $treatment->category?->name }}</span>
+                                </span>
+                            </div>
                         </div>
 
                         {{-- Price + CTA --}}
-                        <div class="flex items-center justify-between mt-auto">
-                            <span class="price-text">
+                        <div class="flex items-center justify-between pt-3 border-t border-[#f4dde1]/70 mt-auto">
+                            <span class="price-text tabular-nums">
                                 Rp {{ number_format($treatment->price, 0, ',', '.') }}
                             </span>
 

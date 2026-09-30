@@ -115,6 +115,153 @@
 
             </div>
 
+            {{-- RECENT NOTIFICATIONS SECTION --}}
+            <div class="bg-white/90 backdrop-blur-xl rounded-3xl p-6 md:p-8 shadow-[0_12px_40px_rgba(176,31,68,0.06)] border border-rose-100">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#f45472] to-[#b01f44] flex items-center justify-center text-white shadow-md shadow-rose-200">
+                            <i class="fa-solid fa-bell text-lg"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-xl font-bold text-gray-900 font-headline">Notifikasi Booking Terbaru</h3>
+                                @if(isset($unreadNotificationsCount) && $unreadNotificationsCount > 0)
+                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-rose-500 text-white animate-pulse">
+                                        {{ $unreadNotificationsCount }} Baru
+                                    </span>
+                                @endif
+                            </div>
+                            <p class="text-xs text-gray-500 mt-0.5">Pantau dan kelola konfirmasi reservasi baru dari pelanggan secara langsung</p>
+                        </div>
+                    </div>
+
+                    <a href="{{ route('admin.notifications.index') }}" 
+                       class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-50 text-[#b01f44] hover:bg-rose-100 border border-rose-200 text-xs font-bold transition-all self-start sm:self-auto">
+                        <span>Lihat Semua Notifikasi</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+
+                @if($recentNotifications->isEmpty())
+                    <div class="p-8 text-center rounded-2xl bg-rose-50/40 border border-dashed border-rose-200">
+                        <div class="w-12 h-12 mx-auto rounded-full bg-rose-100 flex items-center justify-center text-rose-500 mb-3">
+                            <i class="fa-solid fa-check-double text-lg"></i>
+                        </div>
+                        <p class="text-sm font-bold text-gray-800">Semua reservasi telah terkonfirmasi!</p>
+                        <p class="text-xs text-gray-500 mt-1">Tidak ada notifikasi booking baru yang membutuhkan tindakan saat ini.</p>
+                    </div>
+                @else
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        @foreach($recentNotifications as $notif)
+                        @php
+                            $bk = $notif->booking;
+                            $bkStatus = $bk ? (is_object($bk->status) ? $bk->status->value : (string)$bk->status) : ($notif->data['status'] ?? 'pending');
+                            $isPending = in_array($bkStatus, ['pending']);
+                            $custName = $notif->data['customer_name'] ?? ($bk?->user?->name ?? 'Pelanggan');
+                            $custPhone = $notif->data['customer_phone'] ?? ($bk?->user?->phone ?? '-');
+                            $bkCode = $notif->data['booking_code'] ?? ($bk?->booking_code ?? 'BK-'.$notif->id);
+                            $treatments = $notif->data['treatments'] ?? ($bk?->treatments->pluck('name')->join(', ') ?? '-');
+                            $totalAmt = $notif->data['total_amount'] ?? ($bk?->total_amount ?? 0);
+                            $bkDate = $notif->data['booking_date'] ?? ($bk?->booking_date ? $bk->booking_date->format('d M Y') : '-');
+                            $bkTime = $notif->data['time_start'] ?? ($bk?->time_start ?? '-');
+                            $bkType = $notif->data['booking_type'] ?? ($bk?->booking_type ?? 'salon');
+                        @endphp
+                        <div class="bg-gradient-to-br from-white to-rose-50/30 p-5 rounded-2xl border border-rose-100 shadow-xs hover:shadow-md transition-all flex flex-col justify-between relative overflow-hidden group">
+                            <div class="space-y-3">
+                                <div class="flex items-start justify-between gap-2">
+                                    <div class="min-w-0">
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-100 text-[#b01f44] uppercase tracking-wider font-mono">
+                                            #{{ $bkCode }}
+                                        </span>
+                                        <h4 class="text-sm font-bold text-gray-900 truncate mt-1">{{ $custName }}</h4>
+                                    </div>
+                                    <span class="text-[11px] text-gray-400 shrink-0 tabular-nums">
+                                        {{ $notif->created_at->diffForHumans(null, true, true) }}
+                                    </span>
+                                </div>
+
+                                <div class="text-xs text-gray-600 space-y-1 bg-white/70 p-3 rounded-xl border border-rose-100/60">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-gray-400">Treatment:</span>
+                                        <span class="font-medium text-gray-800 truncate max-w-[160px]">{{ $treatments ?: 'Layanan Salon' }}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-gray-400">Jadwal:</span>
+                                        <span class="font-medium text-gray-800">{{ $bkDate }} • {{ substr($bkTime, 0, 5) }}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-gray-400">Total:</span>
+                                        <span class="font-bold text-rose-600 tabular-nums">Rp {{ number_format((float)$totalAmt, 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-gray-400">Layanan:</span>
+                                        <span class="inline-flex items-center gap-1 font-semibold text-gray-700">
+                                            <i class="fa-solid {{ $bkType === 'home_service' ? 'fa-house-user text-purple-500' : 'fa-store text-rose-500' }} text-[10px]"></i>
+                                            {{ $bkType === 'home_service' ? 'Home Service' : 'Salon Visit' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Action Buttons --}}
+                            <div class="mt-4 pt-3 border-t border-rose-100/80 flex items-center justify-between gap-2">
+                                @if($bkStatus === 'confirmed')
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                            <i class="fa-solid fa-circle-check text-xs"></i>
+                                            <span>Confirmed</span>
+                                        </span>
+                                    </div>
+
+                                    {{-- Cancelled Button if sudden problem arises --}}
+                                    <form action="{{ route('admin.notifications.cancel', $notif) }}" method="POST"
+                                          onsubmit="return confirm('Batalkan reservasi #{{ $bkCode }}? Status reservasi akan menjadi Cancelled dan notifikasi dipindahkan ke arsip.');">
+                                        @csrf
+                                        <button type="submit" 
+                                                class="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 text-[#b01f44] border border-rose-200 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-2xs">
+                                            <i class="fa-solid fa-xmark text-xs"></i>
+                                            <span>Cancelled</span>
+                                        </button>
+                                    </form>
+                                @elseif($bkStatus === 'pending')
+                                    {{-- Confirmed Button --}}
+                                    <form action="{{ route('admin.notifications.confirm', $notif) }}" method="POST" class="flex-1"
+                                          onsubmit="return confirm('Konfirmasi reservasi #{{ $bkCode }}? Status booking akan otomatis menjadi Confirmed.');">
+                                        @csrf
+                                        <button type="submit" 
+                                                class="w-full py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-sm hover:shadow">
+                                            <i class="fa-solid fa-check text-xs"></i>
+                                            <span>Confirmed</span>
+                                        </button>
+                                    </form>
+
+                                    {{-- Cancelled Button --}}
+                                    <form action="{{ route('admin.notifications.cancel', $notif) }}" method="POST" class="flex-1"
+                                          onsubmit="return confirm('Batalkan reservasi #{{ $bkCode }}?');">
+                                        @csrf
+                                        <button type="submit" 
+                                                class="w-full py-2 px-3 bg-rose-50 hover:bg-rose-100 text-[#b01f44] border border-rose-200 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5">
+                                            <i class="fa-solid fa-xmark text-xs"></i>
+                                            <span>Cancelled</span>
+                                        </button>
+                                    </form>
+                                @else
+                                    {{-- Status Selesai / Dibatalkan --}}
+                                    <div class="w-full flex items-center justify-between text-xs">
+                                        <span class="text-gray-400">Status:</span>
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold {{ $bkStatus === 'completed' ? 'bg-blue-100 text-blue-900 border border-blue-200' : 'bg-rose-100 text-rose-800 border border-rose-200' }}">
+                                            <i class="fa-solid {{ $bkStatus === 'completed' ? 'fa-check-double' : 'fa-circle-xmark' }} text-xs"></i>
+                                            <span>{{ ucfirst($bkStatus) }}</span>
+                                        </span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
             {{-- 2. MONITORING CHART & DOUGHNUT SECTION --}}
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 

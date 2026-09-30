@@ -37,18 +37,14 @@ class BeauticianAssignmentService
             return collect();
         }
 
-        // Beautician yang secara spesifik punya jadwal libur / diluar jam kerja di hari tersebut
-        $offBeauticianIds = BeauticiansSchedules::query()
+        // Ambil beautician aktif yang memiliki jadwal kerja terdaftar dan aktif pada hari dan jam tersebut
+        return BeauticiansSchedules::query()
             ->whereIn('beautician_id', $activeBeauticianIds)
             ->where('day_of_week', $dayOfWeek)
-            ->where(function ($q) use ($timeStart, $timeEnd) {
-                $q->where('is_working', false)
-                    ->orWhere('start_time', '>', $timeStart)
-                    ->orWhere('end_time', '<', $timeEnd);
-            })
+            ->where('is_working', true)
+            ->where('start_time', '<=', $timeStart)
+            ->where('end_time', '>=', $timeEnd)
             ->pluck('beautician_id');
-
-        return $activeBeauticianIds->diff($offBeauticianIds);
     }
 
     /**
@@ -69,7 +65,7 @@ class BeauticianAssignmentService
 
         if ($candidateBeauticianIds->isEmpty()) {
             throw new NoBeauticianAvailableException(
-                'Tidak ada beautician aktif yang bertugas di jam tersebut. Silakan pilih jam lain.'
+                'Salon tutup atau tidak ada beautician yang bertugas pada hari/jam tersebut. Silakan pilih hari atau jam lain.'
             );
         }
 

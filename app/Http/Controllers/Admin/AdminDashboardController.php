@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Exports\MonthlyFinanceExport;
 use App\Http\Controllers\Controller;
 use App\Models\Bookings;
+use App\Models\Notifications;
 use App\Models\Transactions;
 use App\Models\Treatments;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -182,6 +183,15 @@ class AdminDashboardController extends Controller
             ->take(6)
             ->get();
 
+        // 8. Recent Notifications (Aktif & Belum diarsipkan)
+        $recentNotifications = Notifications::with(['booking.user', 'booking.treatments'])
+            ->active()
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $unreadNotificationsCount = Notifications::unread()->active()->count();
+
         return view('admin.dashboard', compact(
             'incomeThisMonth',
             'incomeGrowth',
@@ -200,7 +210,9 @@ class AdminDashboardController extends Controller
             'treatmentChartData',
             'treatmentChartPercentages',
             'treatmentChartColors',
-            'recentBookings'
+            'recentBookings',
+            'recentNotifications',
+            'unreadNotificationsCount'
         ));
     }
 

@@ -38,17 +38,23 @@
     color: #ffffff !important;
 }
 .admin-nav-idle {
-    color: #475569 !important;
-    font-weight: 600;
+    color: #ffd6df !important;
+    font-weight: 500;
+}
+.admin-nav-idle svg,
+.admin-nav-idle i,
+.admin-nav-idle span {
+    color: #f1cbd2 !important;
+    transition: color 0.2s ease;
 }
 .admin-nav-idle:hover {
-    background-color: #fff0f3 !important;
-    color: #b01f44 !important;
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
 }
 .admin-nav-idle:hover svg,
 .admin-nav-idle:hover i,
 .admin-nav-idle:hover span {
-    color: #b01f44 !important;
+    color: #ffffff !important;
 }
 
 

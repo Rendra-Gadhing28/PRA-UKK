@@ -67,6 +67,41 @@
                 </div>
             </div>
 
+            {{-- WORKING SCHEDULE CARD --}}
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-rose-100">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-gray-900 font-headline flex items-center gap-2">
+                        <svg class="w-5 h-5 text-[#f45472]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        <span>Jadwal Hari & Jam Kerja Staf</span>
+                    </h3>
+                    <a href="{{ route('admin.beauticians.edit', $beautician->id) }}" class="text-xs font-bold text-[#f45472] hover:text-[#d93856] flex items-center gap-1">
+                        <span>Ubah Jadwal</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-3">
+                    @foreach($days as $dayNum => $dayName)
+                        @php
+                            $sched = $schedules->get($dayNum);
+                            $isWorking = $sched ? (bool) $sched->is_working : false;
+                            $startTime = $sched && $sched->start_time ? substr((string)$sched->start_time, 0, 5) : '09:00';
+                            $endTime = $sched && $sched->end_time ? substr((string)$sched->end_time, 0, 5) : '18:00';
+                        @endphp
+                        <div class="p-3 rounded-2xl border text-center {{ $isWorking ? 'bg-rose-50/50 border-rose-200' : 'bg-gray-50 border-gray-200 opacity-60' }}">
+                            <p class="text-xs font-bold {{ $dayNum === 0 ? 'text-rose-600' : 'text-gray-800' }}">{{ $dayName }}</p>
+                            @if($isWorking)
+                                <span class="inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">Masuk</span>
+                                <p class="text-[11px] font-semibold text-gray-600 mt-1.5">{{ $startTime }} - {{ $endTime }}</p>
+                            @else
+                                <span class="inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-200 text-gray-600">Libur</span>
+                                <p class="text-[11px] font-semibold text-gray-400 mt-1.5">-</p>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
             {{-- RECENT BOOKINGS TABLE ASSIGNED TO BEAUTICIAN --}}
             <div class="bg-white rounded-3xl p-6 shadow-sm border border-rose-100">
                 <h3 class="text-lg font-bold text-gray-900 mb-4 font-headline flex items-center justify-between">

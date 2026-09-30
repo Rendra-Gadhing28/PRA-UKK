@@ -187,9 +187,9 @@ class AdminUserController extends Controller
      */
     public function simulateQuarterReset(Request $request)
     {
-        // Set timestamp reset terakhir ke 91 hari yang lalu untuk simulasi
+        // Set timestamp reset terakhir ke kuartal sebelumnya (100 hari lalu) untuk simulasi
         User::where('role', '!=', 'admin')->update([
-            'last_tier_reset_at' => now()->subDays(91),
+            'last_tier_reset_at' => now()->subDays(100),
         ]);
 
         $users = User::where('role', '!=', 'admin')->get();

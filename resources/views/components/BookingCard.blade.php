@@ -75,23 +75,23 @@
                 </span>
             </div>
 
-            <h3 class="font-bold text-[#2B0F23] text-sm sm:text-base leading-snug truncate group-hover:text-primary transition-colors" style="font-family:'Playfair Display',serif">
+            <h3 class="font-bold text-[#2B0F23] text-sm sm:text-base leading-snug truncate [text-wrap:balance] group-hover:text-primary transition-colors" style="font-family:'Playfair Display',serif">
                 {{ $treatmentNames }}
             </h3>
 
             <div class="flex items-center gap-2 text-xs text-[#5C1439]/70 flex-wrap">
                 <span class="inline-flex items-center gap-1 font-medium">
-                    <i class="fa-regular fa-calendar text-primary text-xs"></i>
-                    <span>{{ $dayStr }}, {{ $dateStr }}</span>
+                    <i class="fa-regular fa-calendar text-primary text-xs shrink-0"></i>
+                    <span class="tabular-nums">{{ $dayStr }}, {{ $dateStr }}</span>
                 </span>
                 <span class="opacity-40">·</span>
                 <span class="inline-flex items-center gap-1 font-medium">
-                    <i class="fa-regular fa-clock text-primary text-xs"></i>
-                    <span>{{ $tStart }} – {{ $tEnd }}</span>
+                    <i class="fa-regular fa-clock text-primary text-xs shrink-0"></i>
+                    <span class="tabular-nums">{{ $tStart }} – {{ $tEnd }}</span>
                 </span>
                 <span class="opacity-40">·</span>
                 <span class="inline-flex items-center gap-1 font-medium truncate max-w-[140px]">
-                    <i class="fa-solid fa-wand-magic-sparkles text-primary text-xs"></i>
+                    <i class="fa-solid fa-wand-magic-sparkles text-primary text-xs shrink-0"></i>
                     <span>{{ $booking->beautician?->name ?? 'Auto' }}</span>
                 </span>
             </div>
@@ -102,7 +102,7 @@
     <div class="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#F4DDE1]/60">
         <div class="text-left sm:text-right">
             <span class="text-xs font-extrabold text-[#5C1439]/60 uppercase tracking-wider block sm:leading-none">Total</span>
-            <span class="text-sm sm:text-base font-black text-primary font-mono leading-tight">
+            <span class="text-sm sm:text-base font-black text-primary font-mono leading-tight tabular-nums">
                 {{ $booking->formatted_total }}
             </span>
         </div>

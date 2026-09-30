@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Beauticians;
 use App\Models\Bookings;
 use App\Models\Expense;
+use App\Models\Notifications;
 use App\Models\Reviews;
 use App\Models\Treatments;
 use App\Models\User;
@@ -30,6 +31,7 @@ class AdminTrashController extends Controller
         'vouchers' => Vouchers::class,
         'reviews' => Reviews::class,
         'expenses' => Expense::class,
+        'notifications' => Notifications::class,
     ];
 
     /**
@@ -259,6 +261,7 @@ class AdminTrashController extends Controller
             'vouchers' => $item->code ?? $item->name ?? 'Voucher #'.$item->id,
             'reviews' => 'Ulasan #'.$item->id.' (Rating: '.$item->rating.')',
             'expenses' => 'Pengeluaran '.$item->merchant.' (Rp '.number_format($item->total_amount ?? 0, 0, ',', '.').')',
+            'notifications' => 'Notifikasi #'.$item->id.' ('.($item->data['title'] ?? 'Reservasi').')',
             default => '#'.$item->id,
         };
     }
@@ -331,6 +334,11 @@ class AdminTrashController extends Controller
             }),
             'reviews' => $query->where('comment', 'like', "%{$search}%"),
             'expenses' => $query->where('merchant', 'like', "%{$search}%"),
+            'notifications' => $query->where(function ($q) use ($search) {
+                $q->where('data->title', 'like', "%{$search}%")
+                    ->orWhere('data->booking_code', 'like', "%{$search}%")
+                    ->orWhere('data->customer_name', 'like', "%{$search}%");
+            }),
             default => $query,
         };
     }
